@@ -1,0 +1,34 @@
+﻿using System.Threading.Tasks;
+
+using Raven.Client.Documents.Session;
+using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Database.Models;
+using Raven.Yabt.Domain.Common;
+using Raven.Yabt.Domain.Infrastructure;
+
+namespace Raven.Yabt.Domain.UserServices
+{
+	public class UserReferenceResolver : BaseService<User>, IUserReferenceResolver
+	{
+		private readonly ICurrentUserResolver _currentUserResolver;
+
+		public UserReferenceResolver(IAsyncDocumentSession dbSession, ICurrentUserResolver currentUserResolver) : base(dbSession)
+		{
+			_currentUserResolver = currentUserResolver;
+		}
+
+		public async Task<UserReference> GetReferenceById(string id)
+		{
+			var fullId = GetFullId(id);
+
+			var user = await DbSession.LoadAsync<User>(fullId);
+
+			return user.ToReference();
+		}
+
+		public Task<UserReference> GetCurrentUserReference()
+		{
+			return GetReferenceById(_currentUserResolver.GetCurrentUserId());
+		}
+	}
+}
