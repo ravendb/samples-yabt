@@ -11,27 +11,21 @@ This is a sample solution to showcase [RavenDB](https://ravendb.net) features wi
 
 ## Getting Started
 
-The easiest way to get started is to check out the solution and run the tests locally:
+The easiest way to get started is to check out the solution and run the tests locally (WebAPI and UI will be added later):
 
 1. Install the latest [.NET Core SDK](https://dotnet.microsoft.com/download).
-2. Open the solution in (VS .NET, VS Code or Rider IDE).
+2. Open the solution (e.g. in VS .NET, VS Code or Rider IDE).
 3. Build & Run the tests.
 
 Check out a series of _YABT_ posts at [this blog](https://alex-klaus.com/tags/yabt/) for more information.
 
 ## Overview of the solution
 
-### 'Database' project
-
-Contains all entities and aggregates, related classes and enums and DB-related settings.
-
-### 'Domain' project
-
-Contain all interfaces, types and logic specific to the domain layer.
-
-### 'Domain.Tests' project
-
-Automation of test scenarios via Behavior Driven Tests (BDT).
+|Project name|Description|
+| ---------- | ----------|
+|Database|All entities and aggregates, related classes and enums and DB-related settings.|
+|Domain|All interfaces, types and logic specific to the domain layer.|
+|Domain.Tests|Automation of test scenarios applying Behavior Driven Tests (BDT).|
 
 ## Support
 
