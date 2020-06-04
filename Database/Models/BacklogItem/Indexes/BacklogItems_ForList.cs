@@ -48,11 +48,12 @@ namespace Raven.Yabt.Database.Models.BacklogItem.Indexes
 																	 )
 													),
 					// Create a dictionary for Custom Fields
-					__ = ticket.CustomFields
-								.Select(x => 
-									(LoadDocument<CustomField.CustomField>($"{nameof(CustomField.CustomField)}s/{x.Key}").FieldType == CustomFieldType.Text)
-										? CreateField($"{nameof(BacklogItem.CustomFields)}_F{x.Key}", x.Value, false, true)			// search in text Custom Fields
-										: CreateField($"{nameof(BacklogItem.CustomFields)}_F{x.Key}", x.Value))						// filter by other Custom Fields (exact match)
+					__ = from x in ticket.CustomFields
+						 let fieldType = LoadDocument<CustomField.CustomField>($"{nameof(CustomField.CustomField)}s/{x.Key}").FieldType
+						 select 
+							(fieldType == CustomFieldType.Text)
+								? CreateField($"{nameof(BacklogItem.CustomFields)}_F{x.Key}", x.Value, false, true)	// search in text Custom Fields
+								: CreateField($"{nameof(BacklogItem.CustomFields)}_F{x.Key}", x.Value)				// filter by other Custom Fields (exact match)
 				};
 
 			Index(m => m.Search, FieldIndexing.Search);

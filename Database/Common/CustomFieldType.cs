@@ -5,6 +5,7 @@
 		Text,
 		Date,
 		Checkbox,
-		Numeric
+		Numeric,
+		List
 	}
 }
