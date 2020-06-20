@@ -1,5 +1,6 @@
 ﻿using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common;
+using Raven.Yabt.Domain.Helpers;
 
 namespace Raven.Yabt.Domain.Common
 {
@@ -12,6 +13,6 @@ namespace Raven.Yabt.Domain.Common
 			DbSession = dbSession;
 		}
 
-		protected string GetFullId(string id) => $"{typeof(TEntity).Name}s/{id}";
+		protected string GetFullId(string id) => id.GetFullId<TEntity>();
 	}
 }

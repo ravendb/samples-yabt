@@ -13,6 +13,7 @@ using Raven.Yabt.Domain.BacklogItemServices.ListQuery;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs;
 using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.Domain.UserServices;
+using Raven.Yabt.Domain.UserServices.DTOs;
 
 using Xunit;
 
@@ -22,13 +23,17 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 	{
 		private IBacklogItemCommandService _commandService;
 		private IBacklogItemListQueryService _queryService;
+		private IUserCommandService _userCommandService;
 
-		private UserReference _currentUser = new UserReference { Id = "1", Name = "H. Simpson", FullName = "Homer Simpson" };
+		private string _currentUserId;
 
 		public BacklogItemListQueryServiceTests() : base() 
 		{
 			_commandService = Container.GetService<IBacklogItemCommandService>();
 			_queryService = Container.GetService<IBacklogItemListQueryService>();
+			_userCommandService = Container.GetService<IUserCommandService>();
+
+			_currentUserId = CreateSampleUser().Result.Id;
 		}
 
 		protected override void ConfigureIocContainer(IServiceCollection services)
@@ -36,13 +41,8 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			base.ConfigureIocContainer(services);
 
 			var currentUserResolver = Substitute.For<ICurrentUserResolver>();
-				currentUserResolver.GetCurrentUserId().Returns(_currentUser.Id);
+				currentUserResolver.GetCurrentUserId().Returns(c => _currentUserId);
 			services.AddScoped(x => currentUserResolver);
-
-			var userResolver = Substitute.For<IUserReferenceResolver>();
-				userResolver.GetCurrentUserReference().Returns(_currentUser);
-				userResolver.GetReferenceById(null).ReturnsForAnyArgs(_currentUser);
-			services.AddScoped(x => userResolver);
 		}
 
 		[Theory]
@@ -76,11 +76,11 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			// GIVEN two backlog items, where only one is assigned to the user
 			await CreateBacklogItem<UserStoryAddUpdRequest>();
 			var assignedRef = await CreateBacklogItem<BugAddUpdRequest>();
-			await _commandService.AssignToUser(assignedRef.Id, _currentUser.Id);
+			await _commandService.AssignToUser(assignedRef.Id, _currentUserId);
 			await SaveChanges();
 
 			// WHEN querying by assigned to the user
-			var items = await _queryService.GetList(new BacklogItemListGetRequest { AssignedUserId = _currentUser.Id });
+			var items = await _queryService.GetList(new BacklogItemListGetRequest { AssignedUserId = _currentUserId });
 
 			// THEN 
 			// the returned only 1 record
@@ -88,7 +88,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			// with correct backlog ID
 			Assert.Equal(assignedRef.Id, items[0].Id);
 			// and with correct user ID
-			Assert.Equal(_currentUser.Id, items[0].Assignee.Id);
+			Assert.Equal(_currentUserId, items[0].Assignee.Id);
 		}
 
 		private async Task<BacklogItemReference> CreateBacklogItem<T>() where T: BacklogItemAddUpdRequest, new ()
@@ -98,6 +98,19 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			await SaveChanges();
 
 			return addedRef;
+		}
+
+		private async Task<UserReference> CreateSampleUser()
+		{
+			var dto = new UserAddUpdRequest
+				{
+					FirstName = "Homer",
+					LastName = "Simpson"
+				};
+			var userAddedRef = await _userCommandService.Create(dto);
+			await SaveChanges();
+
+			return userAddedRef;
 		}
 	}
 }

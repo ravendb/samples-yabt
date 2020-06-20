@@ -8,12 +8,15 @@ using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Database.Models;
 using Raven.Yabt.Database.Models.BacklogItem;
 using Raven.Yabt.Database.Models.BacklogItem.Indexes;
+using Raven.Yabt.Database.Models.CustomField;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.CustomFieldServices.Query;
 using Raven.Yabt.Domain.CustomFieldServices.Query.DTOs;
+using Raven.Yabt.Domain.Helpers;
 using Raven.Yabt.Domain.Infrastructure;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
@@ -22,6 +25,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 	{
 		private readonly ICustomFieldQueryService _customFieldService;
 		private readonly ICurrentUserResolver _userResolver;
+
 		public BacklogItemListQueryService (IAsyncDocumentSession dbSession,
 											ICustomFieldQueryService customFieldService, 
 											ICurrentUserResolver userResolver) : base(dbSession)
@@ -40,17 +44,21 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 
 			query = query.Skip(dto.PageIndex * dto.PageSize).Take(dto.PageSize);
 
-			return await query.As<BacklogItem>().Select(b => 
-					new BacklogItemListGetResponse
-					{ 
-						Id = b.Id,
-						Title = b.Title,
-						Type = b.Type,
-						Assignee = b.Assignee,
-						// Have to re-calculate 'Created' and 'LastUpdated' server-side, as the entity model's fields get calculated client-side only 
-						Created		= b.Modifications.OrderBy(m => m.Timestamp).FirstOrDefault() as ChangedByUserReference,
-						LastUpdated = b.Modifications.OrderBy(m => m.Timestamp).LastOrDefault() as ChangedByUserReference
-					}).ToListAsync();
+			var ret = await (from b in query.As<BacklogItem>()
+							select new BacklogItemListGetResponse
+							{ 
+								Id = b.Id,
+								Title = b.Title,
+								Type = b.Type,
+								Assignee = b.Assignee,
+								// Have to re-calculate 'Created' and 'LastUpdated' server-side, as the entity model's fields get calculated client-side only 
+								Created		= b.ModifiedBy.OrderBy(m => m.Timestamp).FirstOrDefault() as ChangedByUserReference,
+								LastUpdated = b.ModifiedBy.OrderBy(m => m.Timestamp).LastOrDefault() as ChangedByUserReference
+							}
+						).ToListAsync();
+			ret.RemoveEntityPrefixFromIds(r => r.Assignee, r => r.Created.ActionedBy, r => r.LastUpdated.ActionedBy);
+
+			return ret;
 		}
 
 		private async Task<IRavenQueryable<BacklogItemIndexedForList>> ApplyFilters(IRavenQueryable<BacklogItemIndexedForList> query, BacklogItemListGetRequest dto)
@@ -60,22 +68,26 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 
 			if (dto.ModifiedByTheCurrentUserOnly)
 			{
-				var userKey = GetModificationKeyForUser();
-				query = query.Where(t => t.ModifiedByUser[userKey] > DateTime.MinValue);
+				var userIdForDynamicField = GetUserIdForDynamicField();
+				query = query.Where(t => t.ModifiedByUser[userIdForDynamicField] > DateTime.MinValue);
 			}
 
 			if (!string.IsNullOrEmpty(dto.AssignedUserId))
-				query = query.Where(t => t.AssignedUserId == dto.AssignedUserId);
+			{
+				var fullUserId = dto.AssignedUserId.GetFullId<User>();
+				query = query.Where(t => t.AssignedUserId == fullUserId);
+			}
 
 			// Special filters for user's modifications (modified by, created by, etc.)
 			if (dto.UserModification != null)
 			{
-				var userKey = GetModificationKeyForUser(dto.UserModification.UserId);
+				var userIdForDynamicField = GetUserIdForDynamicField(dto.UserModification.UserId);
+				var fullUserId = dto.UserModification.UserId?.GetFullId<User>();
 
 				query = dto.UserModification.Type switch
 				{
-					BacklogItemModification.ModificationType.Any		 => query.Where(t => t.ModifiedByUser[userKey] > DateTime.MinValue),
-					BacklogItemModification.ModificationType.CreatedOnly => query.Where(t => t.CreatedByUserId == dto.UserModification.UserId),
+					BacklogItemModification.ModificationType.Any		 => query.Where(t => t.ModifiedByUser[userIdForDynamicField] > DateTime.MinValue),
+					BacklogItemModification.ModificationType.CreatedOnly => query.Where(t => t.CreatedByUserId == fullUserId),
 					_ => throw new NotSupportedException(),
 				};
 			}
@@ -86,8 +98,10 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 				var customFields = await _customFieldService.GetArray(new CustomFieldListGetRequest { Ids = dto.CustomField.Keys });
 				foreach (var customField in customFields)
 				{
+					if (string.IsNullOrEmpty(customField.Id))
+						continue;
 					var val = dto.CustomField.First(cf => cf.Key == customField.Id).Value;
-					var customFieldIdForIndex = "F" + customField.Id;  // Note: Don't concatenate the suffix in the Where/Search expression, Raven.Linq would fail with a mysterious error
+					var customFieldIdForIndex = customField.Id.GetIdForDynamicField<CustomField>();
 					
 					query = customField.FieldType switch
 					{
@@ -113,7 +127,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 				dto.OrderDirection = OrderDirections.Desc;
 			}
 
-			var userKey = GetModificationKeyForUser();
+			var userKey = GetUserIdForDynamicField();
 
 			return dto.OrderBy switch
 			{
@@ -127,6 +141,6 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			};
 		}
 
-		private string GetModificationKeyForUser(string? userId = null) => $"M{userId ?? _userResolver.GetCurrentUserId()}";
+		private string GetUserIdForDynamicField(string? userId = null) => (userId ?? _userResolver.GetCurrentUserId()).GetIdForDynamicField<User>();
 	}
 }

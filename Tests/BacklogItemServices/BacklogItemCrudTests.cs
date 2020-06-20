@@ -34,7 +34,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			base.ConfigureIocContainer(services);
 
 			var userResolver = Substitute.For<IUserReferenceResolver>();
-			userResolver.GetCurrentUserReference().Returns(_currentUser);
+				userResolver.GetCurrentUserReference().Returns(_currentUser);
 			services.AddScoped(x => userResolver);
 		}
 

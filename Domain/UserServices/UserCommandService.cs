@@ -5,6 +5,7 @@ using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Database.Models;
 using Raven.Yabt.Domain.Common;
+using Raven.Yabt.Domain.Helpers;
 using Raven.Yabt.Domain.UserServices.DTOs;
 
 namespace Raven.Yabt.Domain.UserServices
@@ -23,7 +24,7 @@ namespace Raven.Yabt.Domain.UserServices
 			var user = dto.ConvertToUser();
 			await DbSession.StoreAsync(user);
 
-			return user.ToReference();
+			return user.ToReference().RemoveEntityPrefixFromId();
 		}
 
 		public async Task<UserReference?> Delete(string id)
@@ -40,7 +41,7 @@ namespace Raven.Yabt.Domain.UserServices
 			foreach (var updateUserRef in _updateUserReferences)
 				updateUserRef.ClearUserId(id);
 
-			return user.ToReference();
+			return user.ToReference().RemoveEntityPrefixFromId();
 		}
 
 		public async Task<UserReference?> Update(string id, UserAddUpdRequest dto)
@@ -57,7 +58,7 @@ namespace Raven.Yabt.Domain.UserServices
 			foreach (var updateUserRef in _updateUserReferences)
 				updateUserRef.UpdateReferences(newRef);
 
-			return newRef;
+			return user.ToReference().RemoveEntityPrefixFromId();
 		}
 	}
 }

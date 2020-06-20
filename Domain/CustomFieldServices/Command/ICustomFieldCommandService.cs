@@ -6,10 +6,10 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 {
 	public interface ICustomFieldCommandService
 	{
-		Task<CustomFieldReference> Create(CustomFieldAddRequest dto);
+		Task<CustomFieldReferenceDto> Create(CustomFieldAddRequest dto);
 
-		Task<CustomFieldReference?> Rename(string id, CustomFieldRenameRequest dto);
+		Task<CustomFieldReferenceDto?> Rename(string id, CustomFieldRenameRequest dto);
 
-		Task<CustomFieldReference?> Delete(string id);
+		Task<CustomFieldReferenceDto?> Delete(string id);
 	}
 }
