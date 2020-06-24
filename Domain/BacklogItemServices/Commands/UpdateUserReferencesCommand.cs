@@ -3,8 +3,10 @@
 using Raven.Client;
 using Raven.Client.Documents.Queries;
 using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Database.Models;
 using Raven.Yabt.Database.Models.BacklogItem;
 using Raven.Yabt.Database.Models.BacklogItem.Indexes;
+using Raven.Yabt.Domain.Helpers;
 using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.Domain.UserServices;
 
@@ -21,16 +23,17 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 		public void ClearUserId(string userId)
 		{
-			// Replace invalid characters with empty strings.
-			userId = Regex.Replace(userId, @"[^\w\.@-]", "");
+			// Replace invalid characters with empty strings. Can't pass it as a parameter, as string parameters get quated when inserted
+			var idForDynamicField = Regex.Replace(userId, @"[^\w\.@-]", "").GetIdForDynamicField<User>();
+			var fullId = userId.GetFullId<User>();
 
 			// Form a patch query
 			var queryString = $@"FROM INDEX '{new BacklogItems_ForList().IndexName}' AS i
-								WHERE i.{nameof(BacklogItemIndexedForList.Modifications)}_M{userId} != null
+								WHERE i.{nameof(BacklogItemIndexedForList.ModifiedBy)}_{idForDynamicField} != null
 								UPDATE
 								{{
-									i.{nameof(BacklogItem.Modifications)}.forEach(modif => {{
-																			if (modif.{nameof(BacklogItemHistoryRecord.ActionedBy)}.{nameof(UserReference.Id)} == '{userId}')
+									i.{nameof(BacklogItem.ModifiedBy)}.forEach(modif => {{
+																			if (modif.{nameof(BacklogItemHistoryRecord.ActionedBy)}.{nameof(UserReference.Id)}.toLowerCase() == '{fullId}'.toLowerCase())
 																				modif.{nameof(BacklogItemHistoryRecord.ActionedBy)}.{nameof(UserReference.Id)} = null;
 																		}});
 								}}";
@@ -42,16 +45,16 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 		public void UpdateReferences(UserReference newUserReference)
 		{
-			// Replace invalid characters with empty strings.
-			newUserReference.Id = Regex.Replace(newUserReference.Id, @"[^\w\.@-]", "");
+			// Replace invalid characters with empty strings. Can't pass it as a parameter, as string parameters get quated when inserted
+			var idForDynamicField = Regex.Replace(newUserReference.Id, @"[^\w\.@-]", "");
 
 			// Form a patch query
 			var queryString = $@"FROM INDEX '{new BacklogItems_ForList().IndexName}' AS i
-								WHERE i.{nameof(BacklogItemIndexedForList.Modifications)}_M{newUserReference.Id} != null
+								WHERE i.{nameof(BacklogItemIndexedForList.ModifiedBy)}_{idForDynamicField} != null
 								UPDATE
 								{{
-									i.{nameof(BacklogItem.Modifications)}.forEach(modif => {{
-																			if (modif.{nameof(BacklogItemHistoryRecord.ActionedBy)}.{nameof(UserReference.Id)} == $userId)
+									i.{nameof(BacklogItem.ModifiedBy)}.forEach(modif => {{
+																			if (modif.{nameof(BacklogItemHistoryRecord.ActionedBy)}.{nameof(UserReference.Id)}.toLowerCase() == $userId.toLowerCase())
 																				modif.{nameof(BacklogItemHistoryRecord.ActionedBy)} = $userRef;
 																		}});
 								}}";

@@ -40,17 +40,17 @@ namespace Raven.Yabt.Database.Models.BacklogItem
 		///		List of all users who modified the ticket.
 		///		The first record is creation of the ticket
 		/// </summary>
-		public IList<BacklogItemHistoryRecord> Modifications { get; } = new List<BacklogItemHistoryRecord>();
+		public IList<BacklogItemHistoryRecord> ModifiedBy { get; } = new List<BacklogItemHistoryRecord>();
 
 		[JsonIgnore]
-		public ChangedByUserReference Created		=> Modifications.OrderBy(m => m.Timestamp).FirstOrDefault() as ChangedByUserReference;
+		public ChangedByUserReference Created		=> ModifiedBy.OrderBy(m => m.Timestamp).FirstOrDefault() as ChangedByUserReference;
 		[JsonIgnore]
-		public ChangedByUserReference LastUpdated	=> Modifications.OrderBy(m => m.Timestamp).LastOrDefault() as ChangedByUserReference;
+		public ChangedByUserReference LastUpdated	=> ModifiedBy.OrderBy(m => m.Timestamp).LastOrDefault() as ChangedByUserReference;
 
 		/// <summary>
-		///		Related tickets: { Backlog Item ID, Relationship type }.
+		///		Related tickets
 		/// </summary>
-		public IDictionary<string, BacklogItemRelatedItem> RelatedItems { get; set; } = new Dictionary<string, BacklogItemRelatedItem>();
+		public IList<BacklogItemRelatedItem> RelatedItems { get; set; } = new List<BacklogItemRelatedItem>();
 
 		/// <summary>
 		///		Comments on the ticket
@@ -63,9 +63,9 @@ namespace Raven.Yabt.Database.Models.BacklogItem
 		/// </summary>
 		public IDictionary<string, object> CustomFields { get; set; } = new Dictionary<string, object>();
 
-		public BacklogItemReference GetReference() => new BacklogItemReference
+		public BacklogItemReference ToReference() => new BacklogItemReference
 		{
-			Id = Id?.Split('/').Last(),
+			Id = Id,
 			Name = Title,
 			Type = Type
 		};

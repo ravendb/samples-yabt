@@ -15,7 +15,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 	{
 		public CustomFieldCommandService(IAsyncDocumentSession dbSession) : base(dbSession)	{}
 
-		public async Task<CustomFieldReference> Create(CustomFieldAddRequest dto)
+		public async Task<CustomFieldReferenceDto> Create(CustomFieldAddRequest dto)
 		{
 			if (await DbSession.Query<CustomFieldIndexedForList, CustomFields_ForList>()
 							   .Where(cf => cf.Name == dto.Name)
@@ -32,7 +32,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 			return GetReference(entity);
 		}
 
-		public async Task<CustomFieldReference?> Delete(string id)
+		public async Task<CustomFieldReferenceDto?> Delete(string id)
 		{
 			// TODO: Prohibit deletion if there are any references
 
@@ -45,7 +45,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 			return GetReference(cf);
 		}
 
-		public async Task<CustomFieldReference?> Rename(string id, CustomFieldRenameRequest dto)
+		public async Task<CustomFieldReferenceDto?> Rename(string id, CustomFieldRenameRequest dto)
 		{
 			if (dto?.Name == null)
 				throw new ArgumentNullException(nameof(dto));
@@ -59,6 +59,6 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 			return GetReference(entity);
 		}
 
-		private CustomFieldReference GetReference (CustomField entity) => new CustomFieldReference { Id = entity.Id, Name = entity.Name };
+		private CustomFieldReferenceDto GetReference (CustomField entity) => new CustomFieldReferenceDto { Id = entity.Id, Name = entity.Name };
 	}
 }

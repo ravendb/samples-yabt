@@ -1,6 +1,4 @@
-﻿using System.Linq;
-
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.References;
@@ -34,7 +32,7 @@ namespace Raven.Yabt.Database.Models
 
 		public UserReference ToReference() => new UserReference
 		{
-			Id = Id?.Split('/').Last(),
+			Id = Id,
 			Name = ShortName,
 			FullName = FullName,
 			Avatar = Avatar

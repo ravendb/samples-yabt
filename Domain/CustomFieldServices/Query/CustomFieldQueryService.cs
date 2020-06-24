@@ -9,6 +9,7 @@ using Raven.Yabt.Database.Models.CustomField;
 using Raven.Yabt.Database.Models.CustomField.Indexes;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.CustomFieldServices.Query.DTOs;
+using Raven.Yabt.Domain.Helpers;
 
 namespace Raven.Yabt.Domain.CustomFieldServices.Query
 {
@@ -29,6 +30,17 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query
 			}
 
 			return query.ProjectInto<CustomFieldListGetResponse>().ToArrayAsync();
+		}
+
+		public async Task<IDictionary<string, string>> GetFullIdsOfExistingItems(IEnumerable<string> ids)
+		{
+			var fullIds = ids.Select(GetFullId);
+
+			var resolvedIds= await (from b in DbSession.Query<CustomFieldIndexedForList, CustomFields_ForList>()
+									where b.Id.In(fullIds)
+									select b.Id
+									).ToArrayAsync();
+			return resolvedIds.ToDictionary(id => id.ShortenId()!, id => id);
 		}
 	}
 }

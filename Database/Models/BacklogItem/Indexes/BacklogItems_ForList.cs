@@ -14,8 +14,8 @@ namespace Raven.Yabt.Database.Models.BacklogItem.Indexes
 			// Add fields that are used for filtering and sorting
 			Map = tickets =>
 				from ticket in tickets
-					let created		= ticket.Modifications.OrderBy(t => t.Timestamp).First()
-					let lastUpdated	= ticket.Modifications.OrderBy(t => t.Timestamp).Last()
+					let created		= ticket.ModifiedBy.OrderBy(t => t.Timestamp).First()
+					let lastUpdated	= ticket.ModifiedBy.OrderBy(t => t.Timestamp).Last()
 				select new
 				{
 					ticket.Title,       // sort
@@ -42,18 +42,18 @@ namespace Raven.Yabt.Database.Models.BacklogItem.Indexes
 					//	- Prefix is vital, see https://groups.google.com/d/msg/ravendb/YvPZFIn5GVg/907Msqv4CQAJ
 
 					// Create a dictionary for Modifications
-					_ = ticket.Modifications.GroupBy(m => m.ActionedBy.Id)                                                           // filter & sort by Timestamp
-											.Select(x => CreateField($"{nameof(BacklogItemIndexedForList.ModifiedByUser)}_M{x.Key}", 
+					_ = ticket.ModifiedBy.GroupBy(m => m.ActionedBy.Id)                                                           // filter & sort by Timestamp
+											.Select(x => CreateField($"{nameof(BacklogItemIndexedForList.ModifiedByUser)}_{x.Key!.Replace("/","").ToLower()}", 
 																	 x.Max(o => o.Timestamp)
 																	 )
 													),
 					// Create a dictionary for Custom Fields
 					__ = from x in ticket.CustomFields
-						 let fieldType = LoadDocument<CustomField.CustomField>($"{nameof(CustomField.CustomField)}s/{x.Key}").FieldType
+						 let fieldType = LoadDocument<CustomField.CustomField>(x.Key).FieldType
 						 select 
 							(fieldType == CustomFieldType.Text)
-								? CreateField($"{nameof(BacklogItem.CustomFields)}_F{x.Key}", x.Value, false, true)	// search in text Custom Fields
-								: CreateField($"{nameof(BacklogItem.CustomFields)}_F{x.Key}", x.Value)				// filter by other Custom Fields (exact match)
+								? CreateField($"{nameof(BacklogItem.CustomFields)}_{x.Key.Replace("/","").ToLower()}", x.Value, false, true)	// search in text Custom Fields
+								: CreateField($"{nameof(BacklogItem.CustomFields)}_{x.Key.Replace("/","").ToLower()}", x.Value)					// filter by other Custom Fields (exact match)
 				};
 
 			Index(m => m.Search, FieldIndexing.Search);

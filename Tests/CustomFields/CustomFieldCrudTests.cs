@@ -77,7 +77,7 @@ namespace Raven.Yabt.Domain.Tests.CustomFields
 			Assert.False(record.Any());
 		}
 
-		private async Task<CustomFieldReference> CreateSampleCustomField()
+		private async Task<CustomFieldReferenceDto> CreateSampleCustomField()
 		{
 			var dto = new CustomFieldAddRequest
 			{

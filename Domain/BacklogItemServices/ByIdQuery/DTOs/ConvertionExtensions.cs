@@ -1,4 +1,6 @@
-﻿using Raven.Yabt.Database.Models.BacklogItem;
+﻿using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Database.Models.BacklogItem;
+using Raven.Yabt.Domain.Helpers;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 {
@@ -21,6 +23,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				CustomFields = entity.CustomFields,
 				Type = entity.Type
 			};
+			response.RemoveEntityPrefixFromIds(r => r.Created.ActionedBy, r => r.LastUpdated.ActionedBy);
 
 			if (entity is BacklogItemBug entityBug 
 				&& response is BugGetResponse responseBug)

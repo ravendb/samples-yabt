@@ -8,5 +8,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query
 	public interface ICustomFieldQueryService
 	{
 		Task<CustomFieldListGetResponse[]> GetArray(CustomFieldListGetRequest dto);
+
+		Task<IDictionary<string, string>> GetFullIdsOfExistingItems(IEnumerable<string> ids);
 	}
 }

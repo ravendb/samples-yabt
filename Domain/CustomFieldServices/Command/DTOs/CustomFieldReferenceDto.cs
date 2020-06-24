@@ -6,7 +6,7 @@ using Raven.Yabt.Database.Common.References;
 
 namespace Raven.Yabt.Domain.CustomFieldServices.Command.DTOs
 {
-	public class CustomFieldReference : IEntityReference
+	public class CustomFieldReferenceDto : IEntityReference
 	{
 		private string _id;
 

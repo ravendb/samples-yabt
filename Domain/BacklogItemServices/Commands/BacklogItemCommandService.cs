@@ -1,12 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using Raven.Client.Documents;
+using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
+using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Database.Models.BacklogItem;
+using Raven.Yabt.Database.Models.BacklogItem.Indexes;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.Common;
+using Raven.Yabt.Domain.CustomFieldServices.Query;
+using Raven.Yabt.Domain.Helpers;
 using Raven.Yabt.Domain.UserServices;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.Commands
@@ -14,10 +21,12 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 	public class BacklogItemCommandService : BaseService<BacklogItem>, IBacklogItemCommandService
 	{
 		private readonly IUserReferenceResolver _userResolver;
+		private readonly ICustomFieldQueryService _customFieldQueryService;
 
-		public BacklogItemCommandService(IAsyncDocumentSession dbSession, IUserReferenceResolver userResolver) : base(dbSession)
+		public BacklogItemCommandService(IAsyncDocumentSession dbSession, IUserReferenceResolver userResolver, ICustomFieldQueryService customFieldQueryService) : base(dbSession)
 		{
 			_userResolver = userResolver;
+			_customFieldQueryService = customFieldQueryService;
 		}
 
 		public async Task<BacklogItemReference> Create<T>(T dto) where T : BacklogItemAddUpdRequest
@@ -31,7 +40,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 			await DbSession.StoreAsync(ticket);
 
-			return ticket.GetReference();
+			return ticket.ToReference().RemoveEntityPrefixFromId();
 		}
 
 		public async Task<BacklogItemReference?> Delete(string id)
@@ -42,7 +51,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 			DbSession.Delete(ticket);
 
-			return ticket.GetReference();
+			return ticket.ToReference().RemoveEntityPrefixFromId();
 		}
 
 		public async Task<BacklogItemReference?> Update<T>(string id, T dto) where T : BacklogItemAddUpdRequest
@@ -61,35 +70,35 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				_ => throw new ArgumentException("Incorrect type", nameof(dto)),
 			};
 
-			return entity.GetReference();
+			return entity.ToReference().RemoveEntityPrefixFromId();
 		}
 
-		public async Task<BacklogItemReference?> AssignToUser(string backlogItemId, string userId)
+		public async Task<BacklogItemReference?> AssignToUser(string backlogItemId, string userShortenId)
 		{
 			var backlogItem = await DbSession.LoadAsync<BacklogItem>(GetFullId(backlogItemId));
 			if (backlogItem == null)
 				return null;
 
-			if (userId == null)
+			if (userShortenId == null)
 			{
 				backlogItem.Assignee = null;
 			}
 			else
 			{
-				var userRef = await _userResolver.GetReferenceById(userId);
+				var userRef = await _userResolver.GetReferenceById(userShortenId);
 				if (userRef == null)
 					return null;
 
 				backlogItem.Assignee = userRef;
 			}
 
-			backlogItem.Modifications.Add(new BacklogItemHistoryRecord
+			backlogItem.ModifiedBy.Add(new BacklogItemHistoryRecord
 				{
 					ActionedBy = await _userResolver.GetCurrentUserReference(),
 					Summary = "Assigned user"
 				});
 
-			return backlogItem.GetReference();
+			return backlogItem.ToReference().RemoveEntityPrefixFromId();
 		}
 
 		private async Task<TModel> ConvertDtoToEntity<TModel, TDto>(TDto dto, TModel? entity = null)
@@ -101,19 +110,22 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 			entity.Title = dto.Title;
 			entity.Assignee = dto.AssigneeId != null ? await _userResolver.GetReferenceById(dto.AssigneeId) : null;
-			entity.Modifications.Add(new BacklogItemHistoryRecord
+			entity.ModifiedBy.Add(new BacklogItemHistoryRecord
 				{
 					ActionedBy = await _userResolver.GetCurrentUserReference(),
-					Summary = entity.Modifications?.Any() == true ? "Modified" : "Created"
+					Summary = entity.ModifiedBy?.Any() == true ? "Modified" : "Created"
 				});
 
 			if (dto.CustomFields != null)
-				entity.CustomFields = dto.CustomFields;
+			{
+				var verifiedCustomFieldIds = await _customFieldQueryService.GetFullIdsOfExistingItems(dto.CustomFields.Keys);
+				entity.CustomFields = verifiedCustomFieldIds.ToDictionary(x => x.Value, x => dto.CustomFields[x.Key]);
+			}
 			else
 				entity.CustomFields.Clear();
 
 			if (dto.RelatedItems != null)
-				entity.RelatedItems = dto.RelatedItems;
+				entity.RelatedItems = await ResolveRelatedItems(dto.RelatedItems);
 			else
 				entity.RelatedItems.Clear();
 
@@ -131,6 +143,30 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			}
 
 			return entity;
+		}
+
+		private async Task<IList<BacklogItemRelatedItem>> ResolveRelatedItems(IDictionary<string, BacklogRelationshipType>? relatedItems)
+		{
+			if (relatedItems == null)
+				return new List<BacklogItemRelatedItem>();
+
+			var ids = relatedItems.Keys.Select(GetFullId);
+
+			var references = await (from b in DbSession.Query<BacklogItemIndexedForList, BacklogItems_ForList>()
+									where b.Id.In(ids)
+									select new BacklogItemReference
+									{
+										Id = b.Id,
+										Name = b.Title,
+										Type = b.Type
+									}).ToListAsync();
+
+			return (from r in references
+					select new BacklogItemRelatedItem
+					{
+						RelatedTo = r,
+						LinkType = relatedItems[r.Id!]
+					}).ToList();
 		}
 	}
 }
