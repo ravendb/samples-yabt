@@ -40,7 +40,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query
 									where b.Id.In(fullIds)
 									select b.Id
 									).ToArrayAsync();
-			return resolvedIds.ToDictionary(id => id.ShortenId()!, id => id);
+			return resolvedIds.ToDictionary(id => id.GetShortId()!, id => id);
 		}
 	}
 }

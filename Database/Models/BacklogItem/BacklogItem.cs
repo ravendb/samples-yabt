@@ -14,16 +14,8 @@ namespace Raven.Yabt.Database.Models.BacklogItem
 	/// <remarks>
 	///		Can't make the class 'abstract', due to getting exception: Cannot find collection name for abstract class, only concrete class are supported. 
 	/// </remarks>
-	public class BacklogItem : IEntity
+	public class BacklogItem : BaseEntity
 	{
-		/// <summary>
-		///		The record ID
-		/// </summary>
-		/// <remarks>
-		///		Set by Raven Client. Can be temporarily null before passed to the DocumentSession.Store() method
-		/// </remarks>
-		public string Id { get; set; } = null!;
-
 		/// <summary>
 		///		The Title [mandatory field]
 		/// </summary>
