@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 
@@ -16,17 +15,16 @@ namespace Raven.Yabt.Domain.Common
 
 		protected BaseQueryService(IAsyncDocumentSession dbSession) : base(dbSession) { }
 
-		[SuppressMessage("Compiler", "CS8602")] // Supress 'Dereference of a possibly null reference.', as compiler doesn't see a sophisticated validation of the type implementing 'ISearchable'
-		protected virtual IRavenQueryable<TIndexModel> ApplySearch<TIndexModel>(IRavenQueryable<TIndexModel> query, string? search)
+		protected virtual IRavenQueryable<TIndexModel> ApplySearch<TIndexModel>(IRavenQueryable<TIndexModel> query, string? search) where TIndexModel: ISearchable
 		{
-			if (string.IsNullOrWhiteSpace(search) || !typeof(ISearchable).IsAssignableFrom(typeof(TIndexModel)))
-				return query;
-
 			return ApplySearch(query, s => (s as ISearchable).Search, search);
 		}
 
-		protected IRavenQueryable<T> ApplySearch<T>(IRavenQueryable<T> query, Expression<Func<T, object>> fieldExpression, string search)
+		protected IRavenQueryable<T> ApplySearch<T>(IRavenQueryable<T> query, Expression<Func<T, object?>> fieldExpression, string? search)
 		{
+			if (string.IsNullOrWhiteSpace(search))
+				return query;
+
 			search = search.Trim();
 
 			// Generate a search string for just beginning of the words.

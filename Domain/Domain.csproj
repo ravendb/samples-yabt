@@ -4,7 +4,9 @@
 	<TargetFramework>netcoreapp3.1</TargetFramework>
 	<AssemblyName>Domain</AssemblyName>
 	<RootNamespace>Raven.Yabt.Domain</RootNamespace>
+    <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+	<Features>strict</Features>
   </PropertyGroup>
 
   <ItemGroup>

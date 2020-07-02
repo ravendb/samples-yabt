@@ -76,12 +76,13 @@ namespace Raven.Yabt.Domain.Infrastructure
 		/// <remarks>
 		///		The implementation was copied from Autofac - https://github.com/autofac/Autofac/blob/develop/src/Autofac/Util/TypeExtensions.cs
 		/// </remarks>
-		[SuppressMessage("Compiler", "CS8603")] // Pretty sure that 't.GetTypeInfo().BaseType' won't be null :)
 		private static IEnumerable<Type> TypesAssignableFrom(Type candidateType)
 		{
 			return candidateType.GetTypeInfo().ImplementedInterfaces
 								.Concat(
+#pragma warning disable CS8603 // Pretty sure that 't.GetTypeInfo().BaseType' won't be null :)
 										Across(candidateType, t => t.GetTypeInfo().BaseType)
+#pragma warning restore CS8603
 								);
 		}
 

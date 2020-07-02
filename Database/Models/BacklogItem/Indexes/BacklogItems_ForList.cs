@@ -1,12 +1,11 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Linq;
+﻿using System.Linq;
 
 using Raven.Client.Documents.Indexes;
 using Raven.Yabt.Database.Common;
 
 namespace Raven.Yabt.Database.Models.BacklogItem.Indexes
 {
-	[SuppressMessage("Compiler", "CS8602")] // Suppress "Dereference of a possibly null reference", as Raven handles it on its own
+#pragma warning disable CS8602  // Suppress "Dereference of a possibly null reference", as Raven handles it on its own
 	public class BacklogItems_ForList : AbstractIndexCreationTask<BacklogItem, BacklogItemIndexedForList>
 	{
 		public BacklogItems_ForList()
@@ -62,3 +61,4 @@ namespace Raven.Yabt.Database.Models.BacklogItem.Indexes
 		}
 	}
 }
+#pragma warning restore CS8602 // Dereference of a possibly null reference.

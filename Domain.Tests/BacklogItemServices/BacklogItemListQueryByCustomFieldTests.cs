@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -67,6 +68,64 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			Assert.Single(items);
 			Assert.Equal(backlogItem1Id, items[0].Id);
 		}
+		
+		[Theory]
+		[InlineData(new int[] { 1, 5 },		"eq|1", 0)]
+		[InlineData(new int[] { 1, 5 },		"lt|3", 0)]
+		[InlineData(new int[] { 1, 2, 5 },	"gt|3", 2)]
+		[InlineData(new int[] { 2, 5 },		"lte|2", 0)]
+		[InlineData(new int[] { 2, 5 },		"gte|5", 1)]
+		private async Task Querying_By_Greate_On_Numeric_CustomField_Works(int[] customValues, string filter, int indexOfValidTicket)
+		{
+			// GIVEN 2 custom fields
+			_currentUserId = await SeedCurrentUsers();
+			var customFieldId = await CreateCustomField(Database.Common.CustomFieldType.Numeric);
+			//	and several backlog items with different custom field values
+			var backlogItems = new List<string>();
+			foreach (var cv in customValues)
+				backlogItems.Add(await CreateBacklogItem(customFieldId, cv));
+
+			// WHEN querying items by a custom field value
+			var items = await _queryService.GetList(
+						new BacklogItemListGetRequest
+						{
+							CustomField = new Dictionary<string, string> { { customFieldId, filter } }
+						});
+
+			// THEN 
+			// the returned only one correct record 
+			Assert.Single(items);
+			Assert.Equal(backlogItems[indexOfValidTicket], items[0].Id);
+		}
+
+		[Theory]
+		[InlineData(new string[] { "2000-01-01", "2000-01-02" }, "eq|2000-01-02",  1)]
+		[InlineData(new string[] { "2000-01-01", "2000-01-02" }, "lt|2000-01-02",  0)]
+		[InlineData(new string[] { "2000-01-01", "2000-01-02" }, "lte|2000-01-01", 0)]
+		[InlineData(new string[] { "2000-01-01", "2000-01-02" }, "gt|2000-01-01",  1)]
+		[InlineData(new string[] { "2000-01-01", "2000-01-02" }, "gte|2000-01-02", 1)]
+		private async Task Querying_By_Greate_On_Date_CustomField_Works(string[] customValues, string filter, int indexOfValidTicket)
+		{
+			// GIVEN 2 custom fields
+			_currentUserId = await SeedCurrentUsers();
+			var customFieldId = await CreateCustomField(Database.Common.CustomFieldType.Date);
+			//	and several backlog items with different custom field values
+			var backlogItems = new List<string>();
+			foreach (var cv in customValues)
+				backlogItems.Add(await CreateBacklogItem(customFieldId, DateTime.Parse(cv)));
+
+			// WHEN querying items by a custom field value
+			var items = await _queryService.GetList(
+						new BacklogItemListGetRequest
+						{
+							CustomField = new Dictionary<string, string> { { customFieldId, filter } }
+						});
+
+			// THEN 
+			// the returned only one correct record 
+			Assert.Single(items);
+			Assert.Equal(backlogItems[indexOfValidTicket], items[0].Id);
+		}
 
 		[Fact]
 		private async Task Querying_By_Partial_Match_Of_Text_CustomField_Works()
@@ -125,7 +184,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			return homer.Id;
 		}
 
-		private async Task<string> CreateBacklogItem(string customFieldId, string customFieldValue)
+		private async Task<string> CreateBacklogItem<T>(string customFieldId, T customFieldValue)
 		{
 			var dto = new BugAddUpdRequest 
 				{ 
@@ -138,13 +197,15 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			return addedRef.Id;
 		}
 
-		private async Task<string> CreateTextCustomField()
+		private Task<string> CreateTextCustomField() => CreateCustomField(Database.Common.CustomFieldType.Text);
+
+		private async Task<string> CreateCustomField(Database.Common.CustomFieldType type)
 		{
 			var dto = new CustomFieldAddRequest
-				{
-					Name = "Test Custom Field 1",
-					Type = Database.Common.CustomFieldType.Text
-				};
+			{
+				Name = "Test Custom Field 1",
+				Type = type
+			};
 			var customField = await _customFieldCommandService.Create(dto);
 			await SaveChanges();
 

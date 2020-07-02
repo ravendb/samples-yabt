@@ -30,6 +30,6 @@ namespace Raven.Yabt.Database.Models.BacklogItem.Indexes
 		///		Custom fields: { Custom Field ID, Value }.
 		///		Change the data type from the model to trick eliminate C# value comparison checks as it's handled on the Raven's side
 		/// </summary>
-		public new IDictionary<string, string> CustomFields { get; set; } = null!;
+		public new IDictionary<string, object> CustomFields { get; set; } = null!;
 	}
 }
