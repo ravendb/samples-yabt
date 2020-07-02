@@ -74,7 +74,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 
 			if (!string.IsNullOrEmpty(dto.AssignedUserId))
 			{
-				var fullUserId = dto.AssignedUserId.GetFullId<User>();
+				var fullUserId = DbSession.GetFullId<User>(dto.AssignedUserId);
 				query = query.Where(t => t.AssignedUserId == fullUserId);
 			}
 
@@ -82,7 +82,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			if (dto.UserModification != null)
 			{
 				var userIdForDynamicField = GetUserIdForDynamicField(dto.UserModification.UserId);
-				var fullUserId = dto.UserModification.UserId?.GetFullId<User>();
+				var fullUserId = DbSession.GetFullId<User>(dto.UserModification.UserId);
 
 				query = dto.UserModification.Type switch
 				{
@@ -101,7 +101,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 					if (string.IsNullOrEmpty(customField.Id))
 						continue;
 					var val = dto.CustomField.First(cf => cf.Key == customField.Id).Value;
-					var customFieldIdForIndex = customField.Id.GetIdForDynamicField<CustomField>();
+					var customFieldIdForIndex = DbSession.GetIdForDynamicField<CustomField>(customField.Id);
 					
 					query = customField.FieldType switch
 					{
@@ -141,6 +141,6 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			};
 		}
 
-		private string GetUserIdForDynamicField(string? userId = null) => (userId ?? _userResolver.GetCurrentUserId()).GetIdForDynamicField<User>();
+		private string GetUserIdForDynamicField(string? userId = null) => DbSession.GetIdForDynamicField<User>(userId ?? _userResolver.GetCurrentUserId());
 	}
 }

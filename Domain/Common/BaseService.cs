@@ -13,6 +13,6 @@ namespace Raven.Yabt.Domain.Common
 			DbSession = dbSession;
 		}
 
-		protected string GetFullId(string id) => id.GetFullId<TEntity>();
+		protected string GetFullId(string id) => DbSession.GetFullId<TEntity>(id);
 	}
 }

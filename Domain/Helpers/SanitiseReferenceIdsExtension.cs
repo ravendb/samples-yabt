@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 
 using Raven.Client.Documents.Conventions;
+using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common;
 
 namespace Raven.Yabt.Domain.Helpers
@@ -69,16 +70,21 @@ namespace Raven.Yabt.Domain.Helpers
 		///		Get full document ID for a given entity (e.g. for '1-A' returns 'users/1-A')
 		/// </summary>
 		/// <typeparam name="T"> The entity type (e.g. class `Users`) </typeparam>
+		/// <param name="session"> Session to resolve conventions for converting the ID </param>
 		/// <param name="shortId"> The short ID (e.g. '1-A') </param>
 		/// <returns> A full ID (e.g. 'users/1-A') </returns>
-		internal static string GetFullId<T>(this string shortId) where T : IEntity
+		internal static string GetFullId<T>(this IAsyncDocumentSession session, string shortId) where T : IEntity
 		{
 			// In input we don't trust. Though I might be a bit paranoid, but this value can come from outside of the app and be passed to Raven
 			if (!new Regex(@"^\d{1,19}\-[a-z]{1}$", RegexOptions.IgnoreCase).IsMatch(shortId))
 				throw new ArgumentException("ID has incorrect format", nameof(shortId));
 
-			// Pluralise the collection name by the Raven rules (e.g. for `User` class we get `users`)
-			return $"{DocumentConventions.DefaultGetCollectionName(typeof(T))}/{shortId}";
+			// E.g. for 'User' get 'Users', for 'Person' get 'people'
+			var pluralisedName = DocumentConventions.DefaultGetCollectionName(typeof(T));
+			// Fix the casing issue - for 'Users' get 'users', for 'BacklogItems' get 'BacklogItems'
+			var prefix = session.Advanced.DocumentStore.Conventions.TransformTypeCollectionNameToDocumentIdPrefix(pluralisedName);
+
+			return $"{prefix}/{shortId}";
 		}
 
 		/// <summary>
@@ -89,9 +95,10 @@ namespace Raven.Yabt.Domain.Helpers
 		///		Short ID can't be used due to https://issues.hibernatingrhinos.com/issue/RavenDB-15234.
 		/// </remarks>
 		/// <typeparam name="T"> The entity type (e.g. class `Users`) </typeparam>
+		/// <param name="session"> Session to resolve conventions for converting the ID </param>
 		/// <param name="shortId"> The short ID (e.g. '1-A') </param>
 		/// <returns> A special ID for dynamic fields (e.g. 'users1-A') </returns>
-		internal static string GetIdForDynamicField<T>(this string shortId) where T : IEntity
-				=> shortId.GetFullId<T>().Replace("/", "").ToLower();
+		internal static string GetIdForDynamicField<T>(this IAsyncDocumentSession session, string shortId) where T : IEntity
+				=> session.GetFullId<T>(shortId).Replace("/", "").ToLower();
 	}
 }

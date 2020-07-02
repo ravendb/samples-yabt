@@ -2,7 +2,7 @@
 {
 	public class BacklogItemModification
 	{
-		public string? UserId { get; set; }
+		public string UserId { get; set; } = null!;
 		public ModificationType Type { get; set; } = ModificationType.Any;
 
 		public enum ModificationType

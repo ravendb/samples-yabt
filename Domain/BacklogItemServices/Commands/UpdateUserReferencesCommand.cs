@@ -2,6 +2,7 @@
 
 using Raven.Client;
 using Raven.Client.Documents.Queries;
+using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Database.Models;
 using Raven.Yabt.Database.Models.BacklogItem;
@@ -15,17 +16,21 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 	internal class UpdateUserReferencesCommand : IUpdateUserReferencesCommand
 	{
 		private readonly IPatchOperationsExecuteAsync _patchOperations;
+		private readonly IAsyncDocumentSession _dbSession;
 
-		public UpdateUserReferencesCommand(IPatchOperationsExecuteAsync patchOperations)
+		public UpdateUserReferencesCommand(IAsyncDocumentSession dbSession, IPatchOperationsExecuteAsync patchOperations)
 		{
+			_dbSession = dbSession;
 			_patchOperations = patchOperations;
 		}
 
 		public void ClearUserId(string userId)
 		{
 			// Replace invalid characters with empty strings. Can't pass it as a parameter, as string parameters get quated when inserted
-			var idForDynamicField = Regex.Replace(userId, @"[^\w\.@-]", "").GetIdForDynamicField<User>();
-			var fullId = userId.GetFullId<User>();
+			var sanitisedUserId = Regex.Replace(userId, @"[^\w\.@-]", "");
+			// Get full ID
+			var idForDynamicField = _dbSession.GetIdForDynamicField<User>(sanitisedUserId);
+			var fullId = _dbSession.GetFullId<User>(userId);
 
 			// Form a patch query
 			var queryString = $@"FROM INDEX '{new BacklogItems_ForList().IndexName}' AS i
