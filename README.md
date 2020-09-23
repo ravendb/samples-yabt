@@ -6,7 +6,7 @@ This is a sample solution to showcase [RavenDB](https://ravendb.net) features wi
 
 ## Technologies
 * ASP .NET Core 3.1
-* RavenDB 4.2
+* RavenDB 5.0
 * xUnit, NSubstitute
 
 ## Getting Started
