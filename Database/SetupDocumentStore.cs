@@ -1,8 +1,8 @@
-﻿
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 using Raven.Client.Documents;
 using Raven.Client.Documents.Conventions;
+using Raven.Client.Json.Serialization.NewtonsoftJson;
 using Raven.Yabt.Database.Models.BacklogItem;
 
 namespace Raven.Yabt.Database
@@ -17,7 +17,10 @@ namespace Raven.Yabt.Database
 			store.Conventions.UseOptimisticConcurrency = true;
 
 			// Added this so that when the property is missing in the DB, default values are assigned during serialization
-			store.Conventions.CustomizeJsonSerializer = serializer => serializer.NullValueHandling = NullValueHandling.Ignore;
+			store.Conventions.Serialization = new NewtonsoftJsonSerializationConventions
+				{
+					CustomizeJsonSerializer = serializer => serializer.NullValueHandling = NullValueHandling.Ignore
+				};
 
 			// Set one collection for derived classes
 			store.Conventions.FindCollectionName = type =>
