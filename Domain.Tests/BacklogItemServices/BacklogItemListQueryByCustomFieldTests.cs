@@ -54,7 +54,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			var customFieldId = await CreateTextCustomField();
 			//	and 2 backlog items with different custom field values
 			var backlogItem1Id = await CreateBacklogItem(customFieldId, "val1");
-			var backlogItem2Id = await CreateBacklogItem(customFieldId, "val2");
+								 await CreateBacklogItem(customFieldId, "val2");
 
 			// WHEN querying items by a custom field value
 			var items = await _queryService.GetList(

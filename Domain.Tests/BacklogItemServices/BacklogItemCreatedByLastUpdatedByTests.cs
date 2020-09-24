@@ -4,10 +4,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using NSubstitute;
 
-using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery;
-using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery;
@@ -22,7 +20,6 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 	{
 		private readonly IBacklogItemCommandService _commandService;
 		private readonly IBacklogItemByIdQueryService _queryByIdService;
-		private readonly IBacklogItemListQueryService _queryListService;
 		private readonly IUserCommandService _userCmdService;
 		private ICurrentUserResolver _currentUserResolver;
 
@@ -32,7 +29,6 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		{
 			_commandService = Container.GetService<IBacklogItemCommandService>();
 			_queryByIdService = Container.GetService<IBacklogItemByIdQueryService>();
-			_queryListService = Container.GetService<IBacklogItemListQueryService>();
 			_userCmdService = Container.GetService<IUserCommandService>();
 		}
 

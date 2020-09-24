@@ -18,9 +18,9 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 {
 	public class UpdateUserReferencesTests : ConfigureTestEnvironment
 	{
-		private IUserCommandService _userCommandService;
-		private IBacklogItemCommandService _backlogCommandService;
-		private IBacklogItemByIdQueryService _backlogQueryService;
+		private readonly IUserCommandService _userCommandService;
+		private readonly IBacklogItemCommandService _backlogCommandService;
+		private readonly IBacklogItemByIdQueryService _backlogQueryService;
 		private ICurrentUserResolver _currentUserResolver;
 
 		private string _currentUserId;

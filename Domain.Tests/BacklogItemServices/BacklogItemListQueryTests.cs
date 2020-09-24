@@ -1,5 +1,4 @@
-﻿
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -21,11 +20,11 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 {
 	public class BacklogItemListQueryServiceTests : ConfigureTestEnvironment
 	{
-		private IBacklogItemCommandService _commandService;
-		private IBacklogItemListQueryService _queryService;
-		private IUserCommandService _userCommandService;
+		private readonly IBacklogItemCommandService _commandService;
+		private readonly IBacklogItemListQueryService _queryService;
+		private readonly IUserCommandService _userCommandService;
 
-		private string _currentUserId;
+		private readonly string _currentUserId;
 
 		public BacklogItemListQueryServiceTests() : base() 
 		{

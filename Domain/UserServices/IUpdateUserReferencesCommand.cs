@@ -4,7 +4,7 @@ using Raven.Yabt.Domain.Common;
 namespace Raven.Yabt.Domain.UserServices
 {
 	/// <summary>
-	///		Handles updates & deletes of users.
+	///		Handles updates and deletes of users.
 	///		Multiple instances of the interface are supported.
 	/// </summary>
 	public interface IUpdateUserReferencesCommand : IPatchUpdateNotificationHandler

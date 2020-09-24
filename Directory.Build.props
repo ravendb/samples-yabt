@@ -1,0 +1,12 @@
+<Project>
+	 <PropertyGroup>
+		<TargetFramework>netcoreapp3.1</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<Features>strict</Features>
+
+		<Authors>Alex Klaus</Authors>
+
+    	<NoWarn>$(NoWarn);CS1591</NoWarn>
+	</PropertyGroup>
+</Project>

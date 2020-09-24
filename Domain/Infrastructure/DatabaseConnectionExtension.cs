@@ -25,7 +25,7 @@ namespace Raven.Yabt.Domain.Infrastructure
 
 		/// <summary>
 		///     Get Document Store connected to a non-embedded instance of RavenDB.
-		///		Note: it DOESN'T create/update the indexes (by calling <seealso cref="IndexCreation.CreateIndexes"/>), as it may interfier complex migration processes! Index creation/update should be called outside (along with the migration process).
+		///		Note: it DOESN'T create/update the indexes (by calling 'IndexCreation.CreateIndexes()'), as it may interfier complex migration processes! Index creation/update should be called outside (along with the migration process).
 		/// </summary>
 		private static IDocumentStore GetDocumentStore(string[] ravenDbUrls, string base64EncodedCertificate, string dbName)
 		{

@@ -12,8 +12,8 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 {
 	public class UserCommandServiceTests : ConfigureTestEnvironment
 	{
-		private IUserCommandService _userCommandService;
-		private IUserQueryService _userQueryService;
+		private readonly IUserCommandService _userCommandService;
+		private readonly IUserQueryService _userQueryService;
 
 		private const string SampleFirstName = "John";
 		private const string SampleLastName = "Smith";

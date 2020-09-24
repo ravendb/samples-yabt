@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	<TargetFramework>netcoreapp3.1</TargetFramework>
-	<RootNamespace>Raven.Yabt.Database</RootNamespace>
-	<Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<RootNamespace>Raven.Yabt.Database</RootNamespace>
 
-  <ItemGroup>
-	<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-	<PackageReference Include="RavenDB.Client" Version="5.0.2" />
-  </ItemGroup>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+		<PackageReference Include="RavenDB.Client" Version="5.0.2" />
+	</ItemGroup>
 
 </Project>
