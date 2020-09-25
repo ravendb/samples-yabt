@@ -7,12 +7,11 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.WebApi.Authorization;
 using Raven.Yabt.WebApi.Configuration;
-using Raven.Yabt.WebApi.Configuration.Settings;
+using Raven.Yabt.WebApi.Infrastructure;
 
 namespace Raven.Yabt.WebApi
 {
@@ -31,10 +30,13 @@ namespace Raven.Yabt.WebApi
 		public void ConfigureServices(IServiceCollection services)
 		{
 			// Register Global Settings.
-			AddGlobalSettings(services);
+			services.AddAndConfigureAppSettings(_configuration);
 
 			services.AddControllers(o =>
 						{
+							// Register a filter to manage RavenDB session
+							o.Filters.Add<DbSessionManagementFilter>();
+
 							// Force all API methods to require authentication
 							AuthorizationPolicy policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
 							o.Filters.Add(new GlobalAuthorizeFilter(policy));
@@ -49,6 +51,9 @@ namespace Raven.Yabt.WebApi
 
 			// Rigister all domain dependencies
 			services.RegisterModules(assembly: Assembly.GetAssembly(typeof(ModuleRegistration))!);
+
+			// Register the database and DB session
+			services.AddAndConfigureDatabase();
 
 			// Register authentication
 			services.AddAndConfigureAuthentication();
@@ -68,18 +73,6 @@ namespace Raven.Yabt.WebApi
 			app.ConfigureSwagger();
 
 			app.UseEndpoints(endpoints =>endpoints.MapControllers());
-		}
-
-		/// <summary>
-		///		Register Global Settings
-		/// </summary>
-		private void AddGlobalSettings(IServiceCollection services)
-		{
-			services.AddOptions();
-
-			services.Configure<AppSettings>(_configuration, c => c.BindNonPublicProperties = true);
-			services.AddSingleton(r => r.GetRequiredService<IOptions<AppSettings>>().Value);
-			services.AddSingleton(r => r.GetRequiredService<AppSettings>().Database);
 		}
 	}
 }
