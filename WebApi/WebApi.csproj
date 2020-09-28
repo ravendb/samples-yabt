@@ -15,8 +15,4 @@
 	  <ProjectReference Include="..\Database.Migration\Database.Migration.csproj" />
 	  <ProjectReference Include="..\Domain\Domain.csproj" />
 	</ItemGroup>
-
-	<Target Name="AfterBuild" Condition="'$(Configuration)' == 'Debug'">
-		<Exec Command="$(ProjectDir)$(OutputPath)Database.Migration" />
-	</Target>
 </Project>

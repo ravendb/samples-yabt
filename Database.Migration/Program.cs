@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -28,6 +30,13 @@ namespace Database.Migration
 
 		private static IHostBuilder CreateHostBuilder(string[] args) =>
 			Host.CreateDefaultBuilder(args)
+				.ConfigureAppConfiguration((builderContext, config) =>
+				{
+					// The 'CreateDefaultBuilder()' resolves 'DOTNET_' environments, then the WebAPI uses the 'ASPNETCORE_' ones, so add it manually
+					var env = builderContext.HostingEnvironment;
+						env.EnvironmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+					config.AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+				})
 				.UseConsoleLifetime()
 				.ConfigureServices(ConfigureServices);
 

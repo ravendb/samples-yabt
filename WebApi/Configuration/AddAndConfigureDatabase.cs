@@ -3,6 +3,8 @@
 using Raven.Client.Documents;
 using Raven.Yabt.Database;
 using Raven.Yabt.Database.Configuration;
+using Raven.Yabt.WebApi.Infrastructure;
+using Raven.Yabt.WebApi.Infrastructure.StartupTasks;
 
 namespace Raven.Yabt.WebApi.Configuration
 {
@@ -26,6 +28,9 @@ namespace Raven.Yabt.WebApi.Configuration
 						session.Advanced.WaitForIndexesAfterSaveChanges();  // Wait on each change to avoid adding WaitForIndexing() in each test
 					return session;
 				});
+
+			// A start-up task to update DB indexes
+			services.AddStartupTask<DbStartupTask>();
 		}
 	}
 }
