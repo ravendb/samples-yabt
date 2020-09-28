@@ -1,15 +1,13 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-using Raven.Client.Documents;
-using Raven.Yabt.Database;
 using Raven.Yabt.Database.Configuration;
 
-namespace Raven.Yabt.WebApi.Configuration
+namespace Raven.Yabt.Database.Migration.Configuration
 {
 	internal static partial class ServiceCollectionExtensions
 	{
 		/// <summary>
-		///		Register the document store as single instance, initializing it on first use
+		///		Register the document store as single instance
 		/// </summary>
 		public static void AddAndConfigureDatabase(this IServiceCollection services)
 		{
@@ -17,14 +15,8 @@ namespace Raven.Yabt.WebApi.Configuration
 				{
 					var config = x.GetService<DatabaseSettings>();
 					var store = SetupDocumentStore.GetDocumentStore(config.RavenDbUrls, config.Certificate, config.DbName);
-						store.PreInitializeDocumentStore();
+					store.PreInitializeDocumentStore();
 					return store.Initialize();
-				});
-			services.AddScoped(c =>
-				{
-					var session = c.GetService<IDocumentStore>().OpenAsyncSession();
-						session.Advanced.WaitForIndexesAfterSaveChanges();  // Wait on each change to avoid adding WaitForIndexing() in each test
-					return session;
 				});
 		}
 	}

@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using System.Security.Cryptography.X509Certificates;
+
+using Newtonsoft.Json;
 
 using Raven.Client.Documents;
 using Raven.Client.Documents.Conventions;
@@ -29,6 +32,30 @@ namespace Raven.Yabt.Database
 						return DocumentConventions.DefaultGetCollectionName(typeof(BacklogItem)); // "BacklogItems";
 
 					return DocumentConventions.DefaultGetCollectionName(type);
+				};
+		}
+
+		/// <summary>
+		///     Configure RavenDB Document Store
+		/// </summary>
+		public static IDocumentStore GetDocumentStore(string[] ravenDbUrl, string base64EncodedCertificate, string dbName)
+		{
+			// Connect to a public RavenDB (authentication via certificate)
+			if (!string.IsNullOrEmpty(base64EncodedCertificate))
+			{
+				byte[] certificate = Convert.FromBase64String(base64EncodedCertificate);
+				return new DocumentStore
+				{
+					Certificate = new X509Certificate2(certificate),
+					Urls = ravenDbUrl,
+					Database = dbName
+				};
+			}
+			else    // Connect to local RavenDB (no authentication)
+				return new DocumentStore
+				{
+					Urls = ravenDbUrl,
+					Database = dbName
 				};
 		}
 	}

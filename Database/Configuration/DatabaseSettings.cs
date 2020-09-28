@@ -1,10 +1,10 @@
-﻿namespace Raven.Yabt.WebApi.Configuration.Settings
+﻿namespace Raven.Yabt.Database.Configuration
 {
 #nullable disable
 	/// <summary>
 	///     Connection to the Raven database
 	/// </summary>
-	public class AppSettingsRavenDb
+	public class DatabaseSettings
 	{
 		/// <summary>
 		///     URL of the RavenDB API

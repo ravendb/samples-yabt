@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 
 using Raven.Client.Documents.Session;
-using Raven.Yabt.WebApi.Configuration.Settings;
+using Raven.Yabt.Database.Configuration;
 
 namespace Raven.Yabt.WebApi.Infrastructure
 {
@@ -20,7 +20,7 @@ namespace Raven.Yabt.WebApi.Infrastructure
 		public DbSessionManagementFilter(
 			IAsyncDocumentSession dbSession,
 			ILogger<DbSessionManagementFilter> logger,
-			AppSettingsRavenDb ravenDbSettings)
+			DatabaseSettings ravenDbSettings)
 		{
 			_dbSession = dbSession ?? throw new ArgumentNullException(nameof(dbSession));
 			_logger = logger;
