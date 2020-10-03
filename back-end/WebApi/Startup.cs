@@ -68,7 +68,7 @@ namespace Raven.Yabt.WebApi
 
 			app.UseRouting();
 
-			app.UseAuthorization();
+			app.UseAuthentication();
 
 			app.ConfigureSwagger();
 

@@ -15,9 +15,9 @@ namespace Raven.Yabt.WebApi.Configuration
 		{
 			services.AddScoped<ICurrentUserResolver, CurrentUserResolver>();
 
-			services.AddAuthentication(sharedOptions =>
+			services.AddAuthentication(options =>
 				{
-					sharedOptions.DefaultScheme = PredefinedUserApiKeyAuthOptions.DefaultScheme;
+					options.DefaultScheme = PredefinedUserApiKeyAuthOptions.DefaultScheme;
 				})
 				// Add support for API key authentication
 				.AddScheme<PredefinedUserApiKeyAuthOptions, PredefinedUserApiKeyAuthHandler>(PredefinedUserApiKeyAuthOptions.DefaultScheme, _=>{});

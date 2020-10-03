@@ -33,14 +33,15 @@ namespace Raven.Yabt.WebApi.Configuration
 					options.IncludeXmlComments(domainXmlPath);
 
 					// Configure authentication
-					options.AddSecurityDefinition(PredefinedUserApiKeyAuthOptions.DefaultScheme, new OpenApiSecurityScheme
-					{
-						Description = "My description",
-						Name = PredefinedUserApiKeyAuthHandler.API_KEY_HEADER_NAME,
-						In = ParameterLocation.Header,
-						Type = SecuritySchemeType.ApiKey,
-						Scheme = PredefinedUserApiKeyAuthOptions.DefaultScheme
-					});
+					options.AddSecurityDefinition ( PredefinedUserApiKeyAuthOptions.DefaultScheme, 
+													new OpenApiSecurityScheme
+													{
+														Description = "The API key corresponds to the user",
+														Name = PredefinedUserApiKeyAuthHandler.API_KEY_HEADER_NAME,
+														In = ParameterLocation.Header,
+														Type = SecuritySchemeType.ApiKey,
+														Scheme = PredefinedUserApiKeyAuthOptions.DefaultScheme
+													});
 					options.OperationFilter<SwaggerSecurityRequirementsOperationFilter>();
 				});
 		}
