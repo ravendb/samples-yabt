@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -54,7 +55,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			await SaveChanges();
 
 			// THEN all the references to the deleted user lack of its ID
-			var item = await _backlogQueryService.GetById(backlogItemRef.Id);
+			var item = (await _backlogQueryService.GetById(backlogItemRef.Id)).Value;
 			Assert.Null(item.Created.ActionedBy.Id);
 			Assert.Null(item.LastUpdated.ActionedBy.Id);
 			// and the user's name remains
@@ -76,7 +77,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			await SaveChanges();
 
 			// THEN all the references to the updated user have the new name
-			var item = await _backlogQueryService.GetById(backlogItemRef.Id);
+			var item = (await _backlogQueryService.GetById(backlogItemRef.Id)).Value;
 			Assert.Equal(updatedRef.FullName, item.Created.ActionedBy.FullName);
 			Assert.Equal(updatedRef.FullName, item.LastUpdated.ActionedBy.FullName);
 		}
@@ -98,7 +99,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			await SaveChanges();
 
 			// THEN only "Created" property has the references updated
-			var item = await _backlogQueryService.GetById(backlogItemRef.Id);
+			var item = (await _backlogQueryService.GetById(backlogItemRef.Id)).Value;
 			Assert.Equal(updatedRef.FullName, item.Created.ActionedBy.FullName);
 			// and "LastUpdated" property hasn't changed
 			Assert.Equal(nedRef.FullName, item.LastUpdated.ActionedBy.FullName);
@@ -121,9 +122,12 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 		{
 			var dto = new BugAddUpdRequest { Title = "Test_" + GetRandomString() };
 			var addedRef = await _backlogCommandService.Create(dto);
+			if (!addedRef.IsSuccess)
+				throw new Exception("Failed to create a backlog item");
+
 			await SaveChanges();
 
-			return addedRef;
+			return addedRef.Value;
 		}
 	}
 }

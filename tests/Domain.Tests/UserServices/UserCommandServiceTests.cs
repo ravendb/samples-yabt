@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
 
+using DomainResults.Common;
+
 using Microsoft.Extensions.DependencyInjection;
 
 using Raven.Yabt.Database.Common.References;
@@ -38,9 +40,10 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			Assert.NotNull(userRef);
 
 			// the user appears in the DB
-			var user = await _userQueryService.GetById(userRef.Id);
-			Assert.Equal(SampleFirstName, user.FirstName);
-			Assert.Equal(SampleLastName, user.LastName);
+			var user = await _userQueryService.GetById(userRef.Id!);
+			Assert.True(user.IsSuccess);
+			Assert.Equal(SampleFirstName, user.Value.FirstName);
+			Assert.Equal(SampleLastName, user.Value.LastName);
 		}
 
 		[Fact]
@@ -56,17 +59,18 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 				LastName = SampleLastName,
 				Email = SampleEmail
 			};
-			var userUpdatedRef = await _userCommandService.Update(userAddedRef.Id, dto);
+			var userUpdatedRef = await _userCommandService.Update(userAddedRef.Id!, dto);
 			await SaveChanges();
 
 			// THEN 
 			// The ID of the edited user remains the same
-			Assert.Equal(userAddedRef.Id, userUpdatedRef.Id);
+			Assert.Equal(userAddedRef.Id, userUpdatedRef?.Id);
 
 			// the user's name in the DB is correct
-			var user = await _userQueryService.GetById(userAddedRef.Id);
-			Assert.Equal("David", user.FirstName);
-			Assert.Equal(SampleLastName, user.LastName);
+			var user = await _userQueryService.GetById(userAddedRef.Id!);
+			Assert.True(user.IsSuccess);
+			Assert.Equal("David", user.Value.FirstName);
+			Assert.Equal(SampleLastName, user.Value.LastName);
 		}
 
 		[Fact]
@@ -86,7 +90,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 
 			// the user disappear from the DB
 			var user = await _userQueryService.GetById(userAddedRef.Id);
-			Assert.Null(user);
+			Assert.Equal(DomainOperationStatus.NotFound, user.Status);
 		}
 
 		private async Task<UserReference> CreateSampleUser()

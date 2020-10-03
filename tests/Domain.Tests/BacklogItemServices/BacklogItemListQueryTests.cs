@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -94,9 +95,11 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		{
 			var dto = new T { Title = "Test_"+ GetRandomString() };
 			var addedRef = await _commandService.Create(dto);
+			if (!addedRef.IsSuccess)
+				throw new Exception("Failed to create a backlog item");
 			await SaveChanges();
 
-			return addedRef;
+			return addedRef.Value;
 		}
 
 		private async Task<UserReference> CreateSampleUser()

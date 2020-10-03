@@ -1,4 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+
+using DomainResults.Common;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -51,8 +54,9 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			Assert.NotNull(ticketRef);
 
 			// the ticket appears in the DB
-			var ticket = await _queryService.GetById(ticketRef.Id);
-			Assert.Equal(ticketRef.Name, ticket.Title);
+			var ticket = await _queryService.GetById(ticketRef.Id!);
+			Assert.True(ticket.IsSuccess);
+			Assert.Equal(ticketRef.Name, ticket.Value.Title);
 		}
 
 		[Fact]
@@ -68,18 +72,22 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 				Severity = BugSeverity.Low,
 				Priority = BugPriority.P1
 			};
-			var ticketUpdatedRef = await _commandService.Update(ticketRef.Id, dto);
+			var ticketUpdatedRef = await _commandService.Update(ticketRef.Id!, dto);
 			await SaveChanges();
 
 			// THEN 
 			// The returned ID of the updated ticket hasn't changed
-			Assert.Equal(ticketRef.Id, ticketUpdatedRef.Id);
+			Assert.True(ticketUpdatedRef.IsSuccess);
+			Assert.Equal(ticketRef.Id, ticketUpdatedRef.Value.Id);
 
 			// the new ticket's properties appear in the DB
-			var ticket = await _queryService.GetById(ticketRef.Id) as BugGetResponse;
-			Assert.Equal(dto.Title, ticket.Title);
-			Assert.Equal(dto.Severity, ticket.Severity);
-			Assert.Equal(dto.Priority, ticket.Priority);
+			var ticket = await _queryService.GetById(ticketRef.Id!);
+			Assert.True(ticket.IsSuccess);
+			var bug = ticket.Value as BugGetResponse;
+			Assert.NotNull(bug);
+			Assert.Equal(dto.Title, bug!.Title);
+			Assert.Equal(dto.Severity, bug.Severity);
+			Assert.Equal(dto.Priority, bug.Priority);
 		}
 
 		[Fact]
@@ -89,16 +97,17 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			var ticketRef = await CreateSampleBug();
 
 			// WHEN deleting the 'bug'
-			var ticketDeletedRef = await _commandService.Delete(ticketRef.Id);
+			var ticketDeletedRef = await _commandService.Delete(ticketRef.Id!);
 			await SaveChanges();
 
 			// THEN 
 			// The returned ID of the deleted ticket is correct
-			Assert.Equal(ticketRef.Id, ticketDeletedRef.Id);
+			Assert.True(ticketDeletedRef.IsSuccess);
+			Assert.Equal(ticketRef.Id, ticketDeletedRef.Value.Id);
 
 			// the ticket disappears from the DB
-			var ticket = await _queryService.GetById(ticketRef.Id);
-			Assert.Null(ticket);
+			var ticket = await _queryService.GetById(ticketRef.Id!);
+			Assert.Equal(DomainOperationStatus.NotFound, ticket.Status);
 		}
 
 		private async Task<BacklogItemReference> CreateSampleBug()
@@ -110,9 +119,11 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 				Priority = BugPriority.Unknown
 			};
 			var ticketAddedRef = await _commandService.Create(dto);
+			if (!ticketAddedRef.IsSuccess)
+				throw new Exception("Failed to create a backlog item");
 			await SaveChanges();
 
-			return ticketAddedRef;
+			return ticketAddedRef.Value;
 		}
 	}
 }

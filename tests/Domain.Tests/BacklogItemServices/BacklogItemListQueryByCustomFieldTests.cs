@@ -181,7 +181,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			var homer = await _userCmdService.Create(dto);
 			await SaveChanges();
 
-			return homer.Id;
+			return homer.Id!;
 		}
 
 		private async Task<string> CreateBacklogItem<T>(string customFieldId, T customFieldValue)
@@ -192,9 +192,12 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 					CustomFields = new Dictionary<string, object> { { customFieldId, customFieldValue } }
 				};
 			var addedRef = await _commandService.Create(dto);
+			if (!addedRef.IsSuccess)
+				throw new Exception("Failed to create a backlog item");
+
 			await SaveChanges();
 
-			return addedRef.Id;
+			return addedRef.Value.Id!;
 		}
 
 		private Task<string> CreateTextCustomField() => CreateCustomField(Database.Common.CustomFieldType.Text);

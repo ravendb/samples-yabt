@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,7 +9,6 @@ using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery;
 using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
-using Raven.Yabt.Domain.BacklogItemServices.ListQuery;
 using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.Domain.UserServices;
 
@@ -52,11 +52,12 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			var itemRef = await CreateBacklogItem();
 
 			// THEN both its properties 'Created By' and 'Modified By' show Homer Simpson
-			var item = await _queryByIdService.GetById(itemRef.Id);
+			var item = (await _queryByIdService.GetById(itemRef.Id!)).Value;
+			Assert.NotNull(item);
 			Assert.NotNull(item.Created?.ActionedBy);
-			Assert.Equal(homerId, item.Created.ActionedBy.Id);
+			Assert.Equal(homerId, item.Created?.ActionedBy.Id);
 			Assert.NotNull(item.LastUpdated?.ActionedBy);
-			Assert.Equal(homerId, item.LastUpdated.ActionedBy.Id);
+			Assert.Equal(homerId, item.LastUpdated?.ActionedBy.Id);
 		}
 
 		[Fact]
@@ -69,11 +70,11 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			// WHEN Marge Simpson updates the backlog item
 			_currentUserId = margeId;
-			await _commandService.Update(itemRef.Id, new BugAddUpdRequest { Title = "Updated" });
+			await _commandService.Update(itemRef.Id!, new BugAddUpdRequest { Title = "Updated" });
 			await SaveChanges();
 
 			// THEN 
-			var item = await _queryByIdService.GetById(itemRef.Id);
+			var item = (await _queryByIdService.GetById(itemRef.Id!)).Value;
 			//  its 'Created By' remains unchanged
 			Assert.Equal(homerId, item.Created.ActionedBy.Id);
 			// its 'Modified By' points to Marge Simpson
@@ -84,9 +85,11 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		{
 			var dto = new BugAddUpdRequest { Title = "Test_" + GetRandomString() };
 			var addedRef = await _commandService.Create(dto);
+			if (!addedRef.IsSuccess)
+				throw new Exception("Failed to create a backlog item");
 			await SaveChanges();
 
-			return addedRef;
+			return addedRef.Value;
 		}
 
 		private async Task<(string, string)> SeedTwoUsers()
