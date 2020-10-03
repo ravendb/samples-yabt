@@ -1,7 +1,9 @@
 ﻿using System.Threading.Tasks;
 
+using DomainResults.Mvc;
+
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 using Raven.Yabt.Domain.UserServices;
 using Raven.Yabt.Domain.UserServices.DTOs;
@@ -9,23 +11,17 @@ using Raven.Yabt.Domain.UserServices.DTOs;
 namespace WebApi.Controllers
 {
 	[ApiController]
-	[Route("[controller]")]
+	[Route("api/[controller]")]
 	public class UsersController : ControllerBase
 	{
-		private readonly ILogger<UsersController> _logger;
-
-		public UsersController(ILogger<UsersController> logger)
-		{
-			_logger = logger;
-		}
-
 		/// <summary>
 		///		Get a single user by ID
 		/// </summary>
 		[HttpGet("{id}")]
-		public async Task<ActionResult<UserGetByIdResponse>> Get([FromServices] IUserQueryService service, [FromRoute] string id)
-		{
-			return await service.GetById(id);
-		}
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public Task<ActionResult<UserGetByIdResponse>> Get ([FromServices] IUserQueryService service, 
+															[FromRoute] string id
+														   ) 
+			=> service.GetById(id).ToActionResultOfT();
 	}
 }

@@ -1,11 +1,13 @@
 ﻿using System.Threading.Tasks;
 
+using DomainResults.Common;
+
 using Raven.Yabt.Domain.UserServices.DTOs;
 
 namespace Raven.Yabt.Domain.UserServices
 {
 	public interface IUserQueryService
 	{
-		Task<UserGetByIdResponse?> GetById(string id);
+		Task<IDomainResult<UserGetByIdResponse>> GetById(string id);
 	}
 }

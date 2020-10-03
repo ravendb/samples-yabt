@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using DomainResults.Common;
+
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -29,55 +31,65 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			_customFieldQueryService = customFieldQueryService;
 		}
 
-		public async Task<BacklogItemReference> Create<T>(T dto) where T : BacklogItemAddUpdRequest
+		public async Task<IDomainResult<BacklogItemReference>> Create<T>(T dto) where T : BacklogItemAddUpdRequest
 		{
-			BacklogItem ticket = dto switch
+			BacklogItem? ticket = dto switch
 			{
 				BugAddUpdRequest bug		 => await ConvertDtoToEntity<BacklogItemBug, BugAddUpdRequest>(bug),
 				UserStoryAddUpdRequest story => await ConvertDtoToEntity<BacklogItemUserStory, UserStoryAddUpdRequest>(story),
-				_ => throw new ArgumentException("Incorrect type", nameof(dto)),
+				_ => null,
 			};
+			if (ticket == null)
+				return DomainResult.Error<BacklogItemReference>("Incorrect Backlog structure");
 
 			await DbSession.StoreAsync(ticket);
 
-			return ticket.ToReference().RemoveEntityPrefixFromId();
+			return DomainResult.Success(
+									ticket.ToReference().RemoveEntityPrefixFromId()
+								);
 		}
 
-		public async Task<BacklogItemReference?> Delete(string id)
+		public async Task<IDomainResult<BacklogItemReference>> Delete(string id)
 		{
 			var ticket = await DbSession.LoadAsync<BacklogItem>(GetFullId(id));
 			if (ticket == null)
-				return null;
+				return DomainResult.NotFound<BacklogItemReference>();
 
 			DbSession.Delete(ticket);
 
-			return ticket.ToReference().RemoveEntityPrefixFromId();
+			return DomainResult.Success(
+									ticket.ToReference().RemoveEntityPrefixFromId()
+								);
 		}
 
-		public async Task<BacklogItemReference?> Update<T>(string id, T dto) where T : BacklogItemAddUpdRequest
+		public async Task<IDomainResult<BacklogItemReference>> Update<T>(string id, T dto) where T : BacklogItemAddUpdRequest
 		{
 			if (dto == null)
-				throw new ArgumentNullException(nameof(dto));
+				return DomainResult.Error<BacklogItemReference>("Invalid update parameters");
 
 			var entity = await DbSession.LoadAsync<BacklogItem>(GetFullId(id));
 			if (entity == null)
-				return null;
+				return DomainResult.NotFound<BacklogItemReference>();
 
 			entity = dto switch
 			{
 				BugAddUpdRequest bug			=> await ConvertDtoToEntity (bug,	entity as BacklogItemBug),
 				UserStoryAddUpdRequest story	=> await ConvertDtoToEntity (story,	entity as BacklogItemUserStory),
-				_ => throw new ArgumentException("Incorrect type", nameof(dto)),
+				_ => null
 			};
+			if (entity == null)
+				return DomainResult.Error<BacklogItemReference>("Incorrect Backlog structure");
 
-			return entity.ToReference().RemoveEntityPrefixFromId();
+			return DomainResult.Success(
+									entity.ToReference().RemoveEntityPrefixFromId()
+								);
 		}
 
-		public async Task<BacklogItemReference?> AssignToUser(string backlogItemId, string userShortenId)
+		public async Task<IDomainResult<BacklogItemReference>> AssignToUser(string backlogItemId, string userShortenId)
 		{
 			var backlogItem = await DbSession.LoadAsync<BacklogItem>(GetFullId(backlogItemId));
 			if (backlogItem == null)
-				return null;
+				return DomainResult.NotFound<BacklogItemReference>("The Backlog Item not found");
 
 			if (userShortenId == null)
 			{
@@ -87,7 +99,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			{
 				var userRef = await _userResolver.GetReferenceById(userShortenId);
 				if (userRef == null)
-					return null;
+					return DomainResult.NotFound<BacklogItemReference>("The user not found");
 
 				backlogItem.Assignee = userRef;
 			}
@@ -98,7 +110,9 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 					Summary = "Assigned user"
 				});
 
-			return backlogItem.ToReference().RemoveEntityPrefixFromId();
+			return DomainResult.Success(
+									backlogItem.ToReference().RemoveEntityPrefixFromId()
+								);
 		}
 
 		private async Task<TModel> ConvertDtoToEntity<TModel, TDto>(TDto dto, TModel? entity = null)
