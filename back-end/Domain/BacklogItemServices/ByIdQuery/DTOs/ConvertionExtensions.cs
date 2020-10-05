@@ -1,5 +1,4 @@
-﻿using Raven.Yabt.Database.Common.References;
-using Raven.Yabt.Database.Models.BacklogItem;
+﻿using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Domain.Helpers;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs

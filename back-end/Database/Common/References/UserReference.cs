@@ -1,7 +1,7 @@
 ﻿namespace Raven.Yabt.Database.Common.References
 {
 	/// <summary>
-	///		Reference to a <see cref="Models.User"/> record
+	///		Reference to a <see cref="Models.Users.User"/> record
 	/// </summary>
 	public class UserReference : IEntityReference
 	{

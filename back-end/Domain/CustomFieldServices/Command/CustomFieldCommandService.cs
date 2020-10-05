@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
-using Raven.Yabt.Database.Models.CustomField;
-using Raven.Yabt.Database.Models.CustomField.Indexes;
+using Raven.Yabt.Database.Models.CustomFields;
+using Raven.Yabt.Database.Models.CustomFields.Indexes;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.CustomFieldServices.Command.DTOs;
 

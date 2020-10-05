@@ -10,8 +10,8 @@ using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery;
 using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.Infrastructure;
-using Raven.Yabt.Domain.UserServices;
-using Raven.Yabt.Domain.UserServices.DTOs;
+using Raven.Yabt.Domain.UserServices.Command;
+using Raven.Yabt.Domain.UserServices.Command.DTOs;
 
 using Xunit;
 
@@ -72,9 +72,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			var backlogItemRef = await CreateBacklogItem();
 
 			// WHEN the user changes its name
-			var dto = new UserAddUpdRequest { FirstName = "Marge", LastName = "Simpson" };
-			var updatedRef = await _userCommandService.Update(userRef.Id, dto);
-			await SaveChanges();
+			var updatedRef = await UpdateUser(userRef.Id, "Marge", "Simpson");
 
 			// THEN all the references to the updated user have the new name
 			var item = (await _backlogQueryService.GetById(backlogItemRef.Id)).Value;
@@ -94,9 +92,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			await _backlogCommandService.AssignToUser(backlogItemRef.Id, nedRef.Id);
 
 			// WHEN the one user changes its name
-			var dto = new UserAddUpdRequest { FirstName = "Marge", LastName = "Simpson" };
-			var updatedRef = await _userCommandService.Update(homerRef.Id, dto);
-			await SaveChanges();
+			var updatedRef = await UpdateUser(homerRef.Id, "Marge", "Simpson");
 
 			// THEN only "Created" property has the references updated
 			var item = (await _backlogQueryService.GetById(backlogItemRef.Id)).Value;
@@ -113,10 +109,26 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 					LastName = lastName
 				};
 			var userAddedRef = await _userCommandService.Create(dto);
+			if (!userAddedRef.IsSuccess)
+				throw new Exception("Failed to create a user");
+
 			await SaveChanges();
 
-			return userAddedRef as UserReference;
+			return userAddedRef.Value;
 		}
+
+		private async Task<UserReference> UpdateUser(string id, string firstName, string lastName)
+		{
+			var dto = new UserAddUpdRequest { FirstName = firstName, LastName = lastName };
+			var updatedRef = await _userCommandService.Update(id, dto);
+			if (!updatedRef.IsSuccess)
+				throw new Exception("Failed to update a user");
+
+			await SaveChanges();
+
+			return updatedRef.Value;
+		}
+
 
 		private async Task<BacklogItemReference> CreateBacklogItem()
 		{

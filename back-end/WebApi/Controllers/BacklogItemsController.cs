@@ -28,9 +28,9 @@ namespace WebApi.Controllers
 		[HttpGet("{id}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public Task<ActionResult<BacklogItemGetResponse>> Get([FromServices] IBacklogItemByIdQueryService service,
-															  [FromRoute] string id
-															)
+		public Task<ActionResult<BacklogItemGetResponse>> GetById (	[FromServices] IBacklogItemByIdQueryService service,
+																	[FromRoute] string id
+																  )
 			=> service.GetById(id).ToActionResultOfT();
 
 		/// <summary>
@@ -39,7 +39,7 @@ namespace WebApi.Controllers
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public Task<List<BacklogItemListGetResponse>> GetList([FromServices] IBacklogItemListQueryService service,
-															  BacklogItemListGetRequest dto
+															  [FromQuery] BacklogItemListGetRequest dto
 															)
 			=> service.GetList(dto);
 

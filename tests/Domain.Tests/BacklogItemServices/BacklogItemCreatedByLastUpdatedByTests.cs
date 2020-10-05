@@ -10,7 +10,8 @@ using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery;
 using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.Infrastructure;
-using Raven.Yabt.Domain.UserServices;
+using Raven.Yabt.Domain.UserServices.Command;
+using Raven.Yabt.Domain.UserServices.Command.DTOs;
 
 using Xunit;
 
@@ -94,11 +95,11 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 		private async Task<(string, string)> SeedTwoUsers()
 		{
-			var dto = new Domain.UserServices.DTOs.UserAddUpdRequest { FirstName = "Homer", LastName = "Simpson" };
-			var homerId = (await _userCmdService.Create(dto)).Id;
+			var dto = new UserAddUpdRequest { FirstName = "Homer", LastName = "Simpson" };
+			var homerId = (await _userCmdService.Create(dto)).Value.Id;
 
 			dto.FirstName = "Marge";
-			var margeId = (await _userCmdService.Create(dto)).Id;
+			var margeId = (await _userCmdService.Create(dto)).Value.Id;
 
 			await SaveChanges();
 

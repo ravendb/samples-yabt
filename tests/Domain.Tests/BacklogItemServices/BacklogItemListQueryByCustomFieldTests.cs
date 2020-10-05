@@ -14,7 +14,8 @@ using Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs;
 using Raven.Yabt.Domain.CustomFieldServices.Command;
 using Raven.Yabt.Domain.CustomFieldServices.Command.DTOs;
 using Raven.Yabt.Domain.Infrastructure;
-using Raven.Yabt.Domain.UserServices;
+using Raven.Yabt.Domain.UserServices.Command;
+using Raven.Yabt.Domain.UserServices.Command.DTOs;
 
 using Xunit;
 
@@ -177,11 +178,13 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 		private async Task<string> SeedCurrentUsers()
 		{
-			var dto = new Domain.UserServices.DTOs.UserAddUpdRequest { FirstName = "Homer", LastName = "Simpson" };
+			var dto = new UserAddUpdRequest { FirstName = "Homer", LastName = "Simpson" };
 			var homer = await _userCmdService.Create(dto);
+			if (!homer.IsSuccess)
+				throw new Exception("Failed to create a user for Homer");
 			await SaveChanges();
 
-			return homer.Id!;
+			return homer.Value.Id!;
 		}
 
 		private async Task<string> CreateBacklogItem<T>(string customFieldId, T customFieldValue)

@@ -2,7 +2,7 @@
 
 using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.References;
-using Raven.Yabt.Database.Models.BacklogItem;
+using Raven.Yabt.Database.Models.BacklogItems;
 
 #nullable disable  // Disable nullable check for a response DTO file
 

@@ -4,12 +4,12 @@ using Raven.Client;
 using Raven.Client.Documents.Queries;
 using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common.References;
-using Raven.Yabt.Database.Models;
-using Raven.Yabt.Database.Models.BacklogItem;
-using Raven.Yabt.Database.Models.BacklogItem.Indexes;
+using Raven.Yabt.Database.Models.BacklogItems;
+using Raven.Yabt.Database.Models.BacklogItems.Indexes;
+using Raven.Yabt.Database.Models.Users;
 using Raven.Yabt.Domain.Helpers;
 using Raven.Yabt.Domain.Infrastructure;
-using Raven.Yabt.Domain.UserServices;
+using Raven.Yabt.Domain.UserServices.Command;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 {

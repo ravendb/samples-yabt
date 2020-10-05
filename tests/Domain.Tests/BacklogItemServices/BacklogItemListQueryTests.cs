@@ -12,8 +12,8 @@ using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs;
 using Raven.Yabt.Domain.Infrastructure;
-using Raven.Yabt.Domain.UserServices;
-using Raven.Yabt.Domain.UserServices.DTOs;
+using Raven.Yabt.Domain.UserServices.Command;
+using Raven.Yabt.Domain.UserServices.Command.DTOs;
 
 using Xunit;
 
@@ -94,12 +94,12 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		private async Task<BacklogItemReference> CreateBacklogItem<T>() where T: BacklogItemAddUpdRequest, new ()
 		{
 			var dto = new T { Title = "Test_"+ GetRandomString() };
-			var addedRef = await _commandService.Create(dto);
-			if (!addedRef.IsSuccess)
+			var added = await _commandService.Create(dto);
+			if (!added.IsSuccess)
 				throw new Exception("Failed to create a backlog item");
 			await SaveChanges();
 
-			return addedRef.Value;
+			return added.Value;
 		}
 
 		private async Task<UserReference> CreateSampleUser()
@@ -109,10 +109,12 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 					FirstName = "Homer",
 					LastName = "Simpson"
 				};
-			var userAddedRef = await _userCommandService.Create(dto);
+			var userAdded = await _userCommandService.Create(dto);
+			if (!userAdded.IsSuccess)
+				throw new Exception("Failed to create a user");
 			await SaveChanges();
 
-			return userAddedRef;
+			return userAdded.Value;
 		}
 	}
 }

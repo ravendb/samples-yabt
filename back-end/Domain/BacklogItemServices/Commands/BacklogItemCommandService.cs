@@ -10,13 +10,13 @@ using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.References;
-using Raven.Yabt.Database.Models.BacklogItem;
-using Raven.Yabt.Database.Models.BacklogItem.Indexes;
+using Raven.Yabt.Database.Models.BacklogItems;
+using Raven.Yabt.Database.Models.BacklogItems.Indexes;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.CustomFieldServices.Query;
 using Raven.Yabt.Domain.Helpers;
-using Raven.Yabt.Domain.UserServices;
+using Raven.Yabt.Domain.UserServices.Query;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 {

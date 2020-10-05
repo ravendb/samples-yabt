@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Conventions;
 using Raven.Client.Json.Serialization.NewtonsoftJson;
-using Raven.Yabt.Database.Models.BacklogItem;
+using Raven.Yabt.Database.Models.BacklogItems;
 
 namespace Raven.Yabt.Database
 {

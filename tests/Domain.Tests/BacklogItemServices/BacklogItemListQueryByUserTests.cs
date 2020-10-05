@@ -11,7 +11,8 @@ using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs;
 using Raven.Yabt.Domain.Infrastructure;
-using Raven.Yabt.Domain.UserServices;
+using Raven.Yabt.Domain.UserServices.Command;
+using Raven.Yabt.Domain.UserServices.Command.DTOs;
 
 using Xunit;
 
@@ -174,15 +175,19 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 		private async Task<(string, string)> SeedTwoUsers()
 		{
-			var dto = new Domain.UserServices.DTOs.UserAddUpdRequest { FirstName = "Homer", LastName = "Simpson" };
-			var homerId = (await _userCmdService.Create(dto)).Id;
+			var dto = new UserAddUpdRequest { FirstName = "Homer", LastName = "Simpson" };
+			var homer = await _userCmdService.Create(dto);
+			if (!homer.IsSuccess)
+				throw new Exception("Failed to create a user for Homer");
 
 			dto.FirstName = "Marge";
-			var margeId = (await _userCmdService.Create(dto)).Id;
+			var marge = await _userCmdService.Create(dto);
+			if (!marge.IsSuccess)
+				throw new Exception("Failed to create a user for Marge");
 
 			await SaveChanges();
 
-			return (homerId!, margeId!);
+			return (homer.Value.Id!, marge.Value.Id!);
 		}
 	}
 }

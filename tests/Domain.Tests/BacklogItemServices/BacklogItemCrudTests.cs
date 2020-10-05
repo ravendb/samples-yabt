@@ -13,7 +13,7 @@ using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery;
 using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
-using Raven.Yabt.Domain.UserServices;
+using Raven.Yabt.Domain.UserServices.Query;
 
 using Xunit;
 

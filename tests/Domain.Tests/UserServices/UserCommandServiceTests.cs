@@ -5,8 +5,9 @@ using DomainResults.Common;
 using Microsoft.Extensions.DependencyInjection;
 
 using Raven.Yabt.Database.Common.References;
-using Raven.Yabt.Domain.UserServices;
-using Raven.Yabt.Domain.UserServices.DTOs;
+using Raven.Yabt.Domain.UserServices.Command;
+using Raven.Yabt.Domain.UserServices.Command.DTOs;
+using Raven.Yabt.Domain.UserServices.Query;
 
 using Xunit;
 
@@ -59,12 +60,13 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 				LastName = SampleLastName,
 				Email = SampleEmail
 			};
-			var userUpdatedRef = await _userCommandService.Update(userAddedRef.Id!, dto);
+			var userUpdated = await _userCommandService.Update(userAddedRef.Id!, dto);
 			await SaveChanges();
 
 			// THEN 
+			Assert.True(userUpdated.IsSuccess);
 			// The ID of the edited user remains the same
-			Assert.Equal(userAddedRef.Id, userUpdatedRef?.Id);
+			Assert.Equal(userAddedRef.Id, userUpdated.Value.Id);
 
 			// the user's name in the DB is correct
 			var user = await _userQueryService.GetById(userAddedRef.Id!);
@@ -80,13 +82,14 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			var userAddedRef = await CreateSampleUser();
 
 			// WHEN deleting the user
-			var userDeletedRef = await _userCommandService.Delete(userAddedRef.Id);
+			var userDeleted = await _userCommandService.Delete(userAddedRef.Id);
 			await SaveChanges();
 
 			// THEN 
+			Assert.True(userDeleted.IsSuccess);
 			// The reference of the deleted user has correct info
-			Assert.Equal(userAddedRef.Id, userDeletedRef.Id);
-			Assert.Equal(userAddedRef.Name, userDeletedRef.Name);
+			Assert.Equal(userAddedRef.Id, userDeleted.Value.Id);
+			Assert.Equal(userAddedRef.Name, userDeleted.Value.Name);
 
 			// the user disappear from the DB
 			var user = await _userQueryService.GetById(userAddedRef.Id);
@@ -101,10 +104,12 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 				LastName = SampleLastName,
 				Email = SampleEmail
 			};
-			var userAddedRef = await _userCommandService.Create(dto);
+			var userAddedRes = await _userCommandService.Create(dto);
+			if (!userAddedRes.IsSuccess)
+				throw new System.Exception("Can't create a user");
 			await SaveChanges();
 
-			return userAddedRef as UserReference;
+			return userAddedRes.Value;
 		}
 	}
 }
