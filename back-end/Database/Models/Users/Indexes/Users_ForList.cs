@@ -15,7 +15,7 @@ namespace Raven.Yabt.Database.Models.Users.Indexes
 				select new
 				{
 					FullName = user.LastName + " " + user.FirstName,    // sort
-
+					user.Email,											// sort
 					user.RegistrationDate,								// sort
 
 					Search = new[] { user.FirstName.ToLower(), user.LastName.ToLower() },

@@ -1,12 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs;
+using Raven.Yabt.Domain.Common;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 {
 	public interface IBacklogItemListQueryService
 	{
-		Task<List<BacklogItemListGetResponse>> GetList(BacklogItemListGetRequest dto);
+		Task<ListResponse<BacklogItemListGetResponse>> GetList(BacklogItemListGetRequest dto);
 	}
 }

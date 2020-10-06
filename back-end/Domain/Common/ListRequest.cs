@@ -11,6 +11,9 @@ namespace Raven.Yabt.Domain.Common
 
 		public OrderDirections OrderDirection { get; set; } = OrderDirections.Asc;
 
+		/// <summary>
+		///		Zero-based page index
+		/// </summary>
 		[Range(0, int.MaxValue, ErrorMessage = "Must be greater than or equal to 0.")]
 		public int PageIndex { get; set; } = 0;
 

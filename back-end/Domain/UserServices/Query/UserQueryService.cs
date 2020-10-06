@@ -9,7 +9,6 @@ using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Models.Users;
 using Raven.Yabt.Database.Models.Users.Indexes;
-using Raven.Yabt.Domain.BacklogItemServices.Query.DTOs;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.UserServices.Query.DTOs;
 
@@ -30,13 +29,15 @@ namespace Raven.Yabt.Domain.UserServices.Query
 			return DomainResult.Success(user.ConvertToUserDto());
 		}
 
-		public async Task<List<UserListGetResponse>> GetList(UserListGetRequest dto)
+		public async Task<ListResponse<UserListGetResponse>> GetList(UserListGetRequest dto)
 		{
 			var query = DbSession.Query<UserIndexedForList, Users_ForList>();
 
 			query = ApplySearch(query, dto.Search);
-			query = ApplySorting(query, dto);
 
+			var totalRecords = await query.CountAsync();
+
+			query = ApplySorting(query, dto);
 			query = query.Skip(dto.PageIndex * dto.PageSize).Take(dto.PageSize);
 
 			var ret = await (from u in query
@@ -51,7 +52,7 @@ namespace Raven.Yabt.Domain.UserServices.Query
 							 }
 						).ToListAsync();
 
-			return ret;
+			return new ListResponse<UserListGetResponse>(ret, totalRecords, dto.PageIndex, dto.PageSize);
 		}
 
 		private IRavenQueryable<UserIndexedForList> ApplySorting(IRavenQueryable<UserIndexedForList> query, UserListGetRequest dto)

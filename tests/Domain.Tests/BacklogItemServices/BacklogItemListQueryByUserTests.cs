@@ -70,10 +70,10 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			// THEN 
 			// the returned only 1 record created by 'another' user
-			Assert.Single(items);
-			Assert.Equal(margeId, items[0].Created.ActionedBy.Id);
+			Assert.Equal(1, items.TotalRecords);
+			Assert.Equal(margeId, items.Entries[0].Created.ActionedBy.Id);
 			// with correct backlog ID
-			Assert.Equal(anotherRef.Id, items[0].Id);
+			Assert.Equal(anotherRef.Id, items.Entries[0].Id);
 		}
 
 		[Fact]
@@ -104,10 +104,10 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			// THEN 
 			// only 1 record modified by 'another' user is returned
-			Assert.Single(items);
-			Assert.Equal(margeId, items[0].LastUpdated.ActionedBy.Id);
+			Assert.Equal(1, items.TotalRecords);
+			Assert.Equal(margeId, items.Entries[0].LastUpdated.ActionedBy.Id);
 			// with correct backlog ID
-			Assert.Equal(modifRef.Id, items[0].Id);
+			Assert.Equal(modifRef.Id, items.Entries[0].Id);
 		}
 
 		[Fact]
@@ -130,9 +130,9 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			// THEN 
 			//  only 2 record created by Homer are returned
-			Assert.Equal(2, homersItems.Count);
-			Assert.Equal(homerId, homersItems[0].Created.ActionedBy.Id);
-			Assert.Equal(homerId, homersItems[1].Created.ActionedBy.Id);
+			Assert.Equal(2, homersItems.TotalRecords);
+			Assert.Equal(homerId, homersItems.Entries[0].Created.ActionedBy.Id);
+			Assert.Equal(homerId, homersItems.Entries[1].Created.ActionedBy.Id);
 		}
 
 		[Fact]
@@ -157,9 +157,9 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			// THEN 
 			// only 2 record created/modified by Marge are returned
-			Assert.Equal(2, margesItems.Count);
-			Assert.Contains(margesItems, i => i.Id == createdRef.Id);
-			Assert.Contains(margesItems, i => i.Id == modifRef.Id);
+			Assert.Equal(2, margesItems.TotalRecords);
+			Assert.Contains(margesItems.Entries, i => i.Id == createdRef.Id);
+			Assert.Contains(margesItems.Entries, i => i.Id == modifRef.Id);
 		}
 
 		private async Task<BacklogItemReference> CreateBacklogItem()

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using DomainResults.Mvc;
 
@@ -13,6 +12,7 @@ using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs;
+using Raven.Yabt.Domain.Common;
 
 namespace WebApi.Controllers
 {
@@ -38,9 +38,9 @@ namespace WebApi.Controllers
 		/// </summary>
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public Task<List<BacklogItemListGetResponse>> GetList([FromServices] IBacklogItemListQueryService service,
-															  [FromQuery] BacklogItemListGetRequest dto
-															)
+		public Task<ListResponse<BacklogItemListGetResponse>> GetList([FromServices] IBacklogItemListQueryService service,
+																	  [FromQuery] BacklogItemListGetRequest dto
+																	)
 			=> service.GetList(dto);
 
 		#endregion / GET requests ---------------

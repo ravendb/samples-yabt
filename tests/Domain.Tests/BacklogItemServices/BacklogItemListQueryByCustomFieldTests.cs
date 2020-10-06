@@ -66,8 +66,8 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			// THEN 
 			// the returned only one correct record 
-			Assert.Single(items);
-			Assert.Equal(backlogItem1Id, items[0].Id);
+			Assert.Single(items.Entries);
+			Assert.Equal(backlogItem1Id, items.Entries[0].Id);
 		}
 		
 		[Theory]
@@ -95,8 +95,8 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			// THEN 
 			// the returned only one correct record 
-			Assert.Single(items);
-			Assert.Equal(backlogItems[indexOfValidTicket], items[0].Id);
+			Assert.Single(items.Entries);
+			Assert.Equal(backlogItems[indexOfValidTicket], items.Entries[0].Id);
 		}
 
 		[Theory]
@@ -124,8 +124,8 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			// THEN 
 			// the returned only one correct record 
-			Assert.Single(items);
-			Assert.Equal(backlogItems[indexOfValidTicket], items[0].Id);
+			Assert.Single(items.Entries);
+			Assert.Equal(backlogItems[indexOfValidTicket], items.Entries[0].Id);
 		}
 
 		[Fact]
@@ -148,10 +148,10 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			// THEN 
 			// the returned only 2 correct record 
-			Assert.Equal(2, items.Count);
-			Assert.Contains(items, i => new[] { backlogItem1Id, backlogItem2Id }.Contains(i.Id));
+			Assert.Equal(2, items.TotalRecords);
+			Assert.Contains(items.Entries, i => new[] { backlogItem1Id, backlogItem2Id }.Contains(i.Id));
 			// and the first record is the exact match
-			Assert.Equal(backlogItem1Id, items[0].Id);
+			Assert.Equal(backlogItem1Id, items.Entries[0].Id);
 		}
 
 		[Theory]
@@ -173,7 +173,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			// THEN 
 			// the record found
-			Assert.Single(items);
+			Assert.Single(items.Entries);
 		}
 
 		private async Task<string> SeedCurrentUsers()

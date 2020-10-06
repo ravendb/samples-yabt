@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -60,13 +61,13 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			// THEN 
 			// the returned number of records is correct
-			Assert.Equal(expectedRecordCount, items.Count);
+			Assert.Equal(expectedRecordCount, items.TotalRecords);
 			if (expectedRecordCount == 1)
 			{
 				// with correct type
-				Assert.Equal(type, items[0].Type);
+				Assert.Equal(type, items.Entries.First().Type);
 				// and with correct ID
-				Assert.Equal((type == BacklogItemType.Bug) ? bugRef.Id : usRef.Id, items[0].Id);
+				Assert.Equal((type == BacklogItemType.Bug) ? bugRef.Id : usRef.Id, items.Entries.First().Id);
 			}
 		}
 
@@ -84,11 +85,11 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			// THEN 
 			// the returned only 1 record
-			Assert.Single(items);
+			Assert.Equal(1, items.TotalRecords);
 			// with correct backlog ID
-			Assert.Equal(assignedRef.Id, items[0].Id);
+			Assert.Equal(assignedRef.Id, items.Entries.First().Id);
 			// and with correct user ID
-			Assert.Equal(_currentUserId, items[0].Assignee.Id);
+			Assert.Equal(_currentUserId, items.Entries.First().Assignee.Id);
 		}
 
 		private async Task<BacklogItemReference> CreateBacklogItem<T>() where T: BacklogItemAddUpdRequest, new ()

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using DomainResults.Mvc;
 
@@ -7,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.UserServices.Command;
 using Raven.Yabt.Domain.UserServices.Command.DTOs;
 using Raven.Yabt.Domain.UserServices.Query;
@@ -36,9 +36,9 @@ namespace WebApi.Controllers
 		/// </summary>
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public Task<List<UserListGetResponse>> GetList ( [FromServices] IUserQueryService service,
-														 [FromQuery] UserListGetRequest dto
-														)
+		public Task<ListResponse<UserListGetResponse>> GetList ( [FromServices] IUserQueryService service,
+																 [FromQuery] UserListGetRequest dto
+																)
 			=> service.GetList(dto);
 
 		#endregion / GET requests ---------------

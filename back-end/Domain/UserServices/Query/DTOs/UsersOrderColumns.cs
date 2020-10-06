@@ -1,4 +1,4 @@
-﻿namespace Raven.Yabt.Domain.BacklogItemServices.Query.DTOs
+﻿namespace Raven.Yabt.Domain.UserServices.Query.DTOs
 {
 	public enum UsersOrderColumns
 	{

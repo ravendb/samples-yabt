@@ -1,5 +1,4 @@
-﻿using Raven.Yabt.Domain.BacklogItemServices.Query.DTOs;
-using Raven.Yabt.Domain.Common;
+﻿using Raven.Yabt.Domain.Common;
 
 namespace Raven.Yabt.Domain.UserServices.Query.DTOs
 {

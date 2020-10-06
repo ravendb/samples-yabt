@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -35,12 +34,15 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			_userResolver = userResolver;
 		}
 
-		public async Task<List<BacklogItemListGetResponse>> GetList(BacklogItemListGetRequest dto)
+		public async Task<ListResponse<BacklogItemListGetResponse>> GetList(BacklogItemListGetRequest dto)
 		{
 			var query = DbSession.Query<BacklogItemIndexedForList, BacklogItems_ForList>();
 
 			query = await ApplyFilters(query, dto);
 			query = ApplySearch(query, dto.Search);
+
+			var totalRecords = await query.CountAsync();
+
 			query = ApplySorting(query, dto);
 
 			query = query.Skip(dto.PageIndex * dto.PageSize).Take(dto.PageSize);
@@ -59,7 +61,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 						).ToListAsync();
 			ret.RemoveEntityPrefixFromIds(r => r.Assignee, r => r.Created.ActionedBy, r => r.LastUpdated.ActionedBy);
 
-			return ret;
+			return new ListResponse<BacklogItemListGetResponse>(ret, totalRecords, dto.PageIndex, dto.PageSize);
 		}
 
 		private async Task<IRavenQueryable<BacklogItemIndexedForList>> ApplyFilters(IRavenQueryable<BacklogItemIndexedForList> query, BacklogItemListGetRequest dto)
