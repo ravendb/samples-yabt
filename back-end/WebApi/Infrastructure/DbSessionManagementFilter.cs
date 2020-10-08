@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Mvc.Filters;
@@ -63,7 +64,7 @@ namespace Raven.Yabt.WebApi.Infrastructure
 		public bool HasSessionChanges() => 
 				!(_dbSession?.Advanced == null
 					 // Check if a record was created/updated
-					 || (!_dbSession.Advanced.HasChanges
+					 || (_dbSession.Advanced.WhatChanged()?.Values.Any() != true /* Use it instead of '!_dbSession.HasChanges' while https://issues.hibernatingrhinos.com/issue/RavenDB-15690 is not fixed */
 						 // Check if there is a PATCH request
 						 && (!(_dbSession.Advanced is InMemoryDocumentSessionOperations operations)
 							 || operations.DeferredCommandsCount == 0
