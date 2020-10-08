@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<RootNamespace>Raven.Yabt.WebApi</RootNamespace>
+
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="DomainResult" Version="1.0.2" />
+	  <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
+	  <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Domain\Domain.csproj" />
+	</ItemGroup>
+</Project>

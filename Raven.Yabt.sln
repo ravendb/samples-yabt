@@ -3,11 +3,23 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{04FF4150-3493-47D7-B7FE-76F415EB8C60}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "back-end\Domain\Domain.csproj", "{04FF4150-3493-47D7-B7FE-76F415EB8C60}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Tests", "Domain.Tests\Domain.Tests.csproj", "{14F0163E-279B-4D66-828C-199F21E405C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain.Tests", "tests\Domain.Tests\Domain.Tests.csproj", "{14F0163E-279B-4D66-828C-199F21E405C6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database", "Database\Database.csproj", "{E5053B2D-F3A6-4FA4-8408-9720820E7804}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database", "back-end\Database\Database.csproj", "{E5053B2D-F3A6-4FA4-8408-9720820E7804}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "back-end\WebApi\WebApi.csproj", "{790AC7C8-B079-4278-89A5-B5B1ABD5F46C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database.Migration", "tools\Database.Migration\Database.Migration.csproj", "{22FE0EF0-B224-4587-A0F0-660502EC28E5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{4DFEDF21-6F51-41E0-AB66-9FDC050108F8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{1F9AC656-63B9-448F-81D7-5FC34C27E624}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "back-end", "back-end", "{6DACF9C1-7879-4132-8A7E-99115200EA3C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "front-end", "front-end", "{ABF5D058-5EB5-4002-85AF-D5A03F0E20B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,9 +39,24 @@ Global
 		{E5053B2D-F3A6-4FA4-8408-9720820E7804}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5053B2D-F3A6-4FA4-8408-9720820E7804}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5053B2D-F3A6-4FA4-8408-9720820E7804}.Release|Any CPU.Build.0 = Release|Any CPU
+		{790AC7C8-B079-4278-89A5-B5B1ABD5F46C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{790AC7C8-B079-4278-89A5-B5B1ABD5F46C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{790AC7C8-B079-4278-89A5-B5B1ABD5F46C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{790AC7C8-B079-4278-89A5-B5B1ABD5F46C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22FE0EF0-B224-4587-A0F0-660502EC28E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22FE0EF0-B224-4587-A0F0-660502EC28E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22FE0EF0-B224-4587-A0F0-660502EC28E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22FE0EF0-B224-4587-A0F0-660502EC28E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{04FF4150-3493-47D7-B7FE-76F415EB8C60} = {6DACF9C1-7879-4132-8A7E-99115200EA3C}
+		{14F0163E-279B-4D66-828C-199F21E405C6} = {1F9AC656-63B9-448F-81D7-5FC34C27E624}
+		{E5053B2D-F3A6-4FA4-8408-9720820E7804} = {6DACF9C1-7879-4132-8A7E-99115200EA3C}
+		{790AC7C8-B079-4278-89A5-B5B1ABD5F46C} = {6DACF9C1-7879-4132-8A7E-99115200EA3C}
+		{22FE0EF0-B224-4587-A0F0-660502EC28E5} = {4DFEDF21-6F51-41E0-AB66-9FDC050108F8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE3A5CE0-9137-4438-AE89-215C547E8DCC}

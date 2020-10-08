@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<AssemblyName>Domain</AssemblyName>
+		<RootNamespace>Raven.Yabt.Domain</RootNamespace>
+
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="DomainResult.Common" Version="1.0.2" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.8" />
+		<PackageReference Include="RavenDB.Client" Version="5.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Database\Database.csproj" />
+	</ItemGroup>
+
+</Project>
