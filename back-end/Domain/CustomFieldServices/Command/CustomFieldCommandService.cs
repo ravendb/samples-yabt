@@ -1,5 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+
+using DomainResults.Common;
 
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
@@ -15,12 +16,12 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 	{
 		public CustomFieldCommandService(IAsyncDocumentSession dbSession) : base(dbSession)	{}
 
-		public async Task<CustomFieldReferenceDto> Create(CustomFieldAddRequest dto)
+		public async Task<IDomainResult<CustomFieldReferenceDto>> Create(CustomFieldAddRequest dto)
 		{
 			if (await DbSession.Query<CustomFieldIndexedForList, CustomFields_ForList>()
 							   .Where(cf => cf.Name == dto.Name)
 							   .AnyAsync())
-				throw new ApplicationException($"Custom Field with name '{dto.Name}' already exist");
+				return DomainResult.Error<CustomFieldReferenceDto>($"Custom Field with name '{dto.Name}' already exist");
 
 			var entity = new CustomField
 				{
@@ -29,34 +30,34 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 				};
 			await DbSession.StoreAsync(entity);
 
-			return GetReference(entity);
+			return DomainResult.Success(GetReference(entity));
 		}
 
-		public async Task<CustomFieldReferenceDto?> Delete(string id)
+		public async Task<IDomainResult<CustomFieldReferenceDto>> Delete(string id)
 		{
 			// TODO: Prohibit deletion if there are any references
 
 			var cf = await DbSession.LoadAsync<CustomField>(GetFullId(id));
 			if (cf == null)
-				return null;
+				return DomainResult.NotFound<CustomFieldReferenceDto>();
 
 			DbSession.Delete(cf);
 
-			return GetReference(cf);
+			return DomainResult.Success(GetReference(cf));
 		}
 
-		public async Task<CustomFieldReferenceDto?> Rename(string id, CustomFieldRenameRequest dto)
+		public async Task<IDomainResult<CustomFieldReferenceDto>> Rename(string id, CustomFieldRenameRequest dto)
 		{
 			if (dto?.Name == null)
-				throw new ArgumentNullException(nameof(dto));
+				return DomainResult.Error<CustomFieldReferenceDto>($"New name can't be empty");
 
 			var entity = await DbSession.LoadAsync<CustomField>(GetFullId(id));
 			if (entity == null)
-				return null;
+				return DomainResult.NotFound<CustomFieldReferenceDto>();
 
 			entity.Name = dto.Name;
 
-			return GetReference(entity);
+			return DomainResult.Success(GetReference(entity));
 		}
 
 		private CustomFieldReferenceDto GetReference (CustomField entity) => new CustomFieldReferenceDto { Id = entity.Id, Name = entity.Name };
