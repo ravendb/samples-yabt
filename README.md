@@ -15,7 +15,9 @@ The easiest way to get started is to check out the solution and run the tests lo
 
 1. Install the latest [.NET Core SDK](https://dotnet.microsoft.com/download).
 2. Open the solution (e.g. in VS .NET, VS Code or Rider IDE).
-3. Build & Run the tests.
+3. Build & fiddle with the tests.<br>Want more?
+4. Acquire a RavenDB instance (either in the [cloud](https://cloud.ravendb.net/) or [download](https://ravendb.net/download) and install locally).
+5. Run the WebAPI (Swagger).
 
 Check out a series of _YABT_ posts at [this blog](https://alex-klaus.com/tags/yabt/) for more information.
 
@@ -25,6 +27,7 @@ Check out a series of _YABT_ posts at [this blog](https://alex-klaus.com/tags/ya
 | ---------- | ----------|
 |Database|All entities and aggregates, related classes and enums and DB-related settings.|
 |Domain|All interfaces, types and logic specific to the domain layer.|
+|WebAPI|The application layer (WebAPI).|
 |Domain.Tests|Automation of test scenarios applying Behavior Driven Tests (BDT).|
 
 ## Support
