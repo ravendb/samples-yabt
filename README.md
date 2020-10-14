@@ -2,7 +2,7 @@
 ![.NET Core](https://github.com/ravendb/samples-yabt/workflows/.NET%20Core/badge.svg?branch=master)
 <br/>
 
-This is a sample solution to showcase [RavenDB](https://ravendb.net) features with a minimum involvement of third-party dependencies. It also demonstrates some of the best practices like the [Domain Driven Design](https://en.wikipedia.org/wiki/Domain-driven_design) (DDD), [Command Query Responsibility Segregation](https://martinfowler.com/bliki/CQRS.html) (CQRS) and the [Onion Architecture](https://jeffreypalermo.com/2008/07/the-onion-architecture-part-1/).
+A sample solution to showcase [RavenDB](https://ravendb.net) features accompanied with a [series of articles](https://ravendb.net/articles/building-application-with-net-core-and-ravendb-nosql-database). It has minimum third-party dependencies and many examples of the best practices like the [Domain Driven Design](https://en.wikipedia.org/wiki/Domain-driven_design) (DDD), [Command Query Responsibility Segregation](https://martinfowler.com/bliki/CQRS.html) (CQRS) and the [Onion Architecture](https://jeffreypalermo.com/2008/07/the-onion-architecture-part-1/).
 
 ## Technologies
 * ASP .NET Core 3.1
@@ -19,7 +19,7 @@ The easiest way to get started is to check out the solution and run the tests lo
 4. Acquire a RavenDB instance (either in the [cloud](https://cloud.ravendb.net/) or [download](https://ravendb.net/download) and install locally).
 5. Run the WebAPI (Swagger).
 
-Check out a series of _YABT_ posts at [this blog](https://alex-klaus.com/tags/yabt/) for more information.
+Check out a series of _YABT_ articles on the [RavenDB website](https://ravendb.net/articles/building-application-with-net-core-and-ravendb-nosql-database).
 
 ## Overview of the solution
 
