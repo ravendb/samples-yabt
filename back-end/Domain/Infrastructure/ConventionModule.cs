@@ -8,7 +8,7 @@ using Raven.Yabt.Domain.Common;
 
 namespace Raven.Yabt.Domain.Infrastructure
 {
-	internal class ConventionModule : ModuleRegistration
+	internal class ConventionModule : ModuleRegistrationBase
 	{
 		protected override void Load(IServiceCollection services)
 		{

@@ -6,7 +6,7 @@ namespace Raven.Yabt.Domain.Infrastructure
 	///		Base class for user-defined modules. Modules can add a set of related components
 	///		to a container (<see cref="Load"/>)
 	/// </summary>
-	public abstract class ModuleRegistration
+	public abstract class ModuleRegistrationBase
 	{
 		/// <summary>
 		///		Apply the module to the component registry.

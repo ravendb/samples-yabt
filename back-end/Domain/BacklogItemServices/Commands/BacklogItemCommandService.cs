@@ -31,7 +31,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			_customFieldQueryService = customFieldQueryService;
 		}
 
-		public async Task<IDomainResult<BacklogItemReference>> Create<T>(T dto) where T : BacklogItemAddUpdRequest
+		public async Task<IDomainResult<BacklogItemReference>> Create<T>(T dto) where T : BacklogItemAddUpdRequestBase
 		{
 			BacklogItem? ticket = dto switch
 			{
@@ -62,7 +62,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 								);
 		}
 
-		public async Task<IDomainResult<BacklogItemReference>> Update<T>(string id, T dto) where T : BacklogItemAddUpdRequest
+		public async Task<IDomainResult<BacklogItemReference>> Update<T>(string id, T dto) where T : BacklogItemAddUpdRequestBase
 		{
 			if (dto == null)
 				return DomainResult.Error<BacklogItemReference>("Invalid update parameters");
@@ -117,7 +117,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 		private async Task<TModel> ConvertDtoToEntity<TModel, TDto>(TDto dto, TModel? entity = null)
 			where TModel : BacklogItem, new()
-			where TDto : BacklogItemAddUpdRequest
+			where TDto : BacklogItemAddUpdRequestBase
 		{
 			if (entity == null)
 				entity = new TModel();

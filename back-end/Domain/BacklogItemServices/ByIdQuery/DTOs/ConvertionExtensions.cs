@@ -10,7 +10,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 	{
 		public static TResponse ConvertToDto<TEntity, TResponse>(this TEntity entity)
 			where TEntity : BacklogItem
-			where TResponse : BacklogItemGetResponse, new()
+			where TResponse : BacklogItemGetResponseBase, new()
 		{
 			var response = new TResponse()
 			{

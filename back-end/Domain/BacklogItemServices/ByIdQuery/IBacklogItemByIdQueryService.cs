@@ -8,6 +8,6 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery
 {
 	public interface IBacklogItemByIdQueryService
 	{
-		Task<IDomainResult<BacklogItemGetResponse>> GetById(string id);
+		Task<IDomainResult<BacklogItemGetResponseBase>> GetById(string id);
 	}
 }

@@ -5,7 +5,7 @@ using Raven.Yabt.Database.Common;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs
 {
-	public abstract class BacklogItemAddUpdRequest
+	public abstract class BacklogItemAddUpdRequestBase
 	{
 		/// <summary>
 		///		The ticket's title

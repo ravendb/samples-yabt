@@ -8,9 +8,9 @@ using Raven.Yabt.Database.Models.BacklogItems;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 {
-	public abstract class BacklogItemGetResponse
+	public abstract class BacklogItemGetResponseBase
 	{
-		protected BacklogItemGetResponse() { }
+		protected BacklogItemGetResponseBase() { }
 
 		public string Id { get; set; }
 		public string Title { get; set; }

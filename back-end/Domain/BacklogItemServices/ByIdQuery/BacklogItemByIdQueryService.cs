@@ -15,18 +15,18 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery
 	{
 		public BacklogItemByIdQueryService(IAsyncDocumentSession dbSession) : base(dbSession) { }
 
-		public async Task<IDomainResult<BacklogItemGetResponse>> GetById(string id)
+		public async Task<IDomainResult<BacklogItemGetResponseBase>> GetById(string id)
 		{
 			var fullId = GetFullId(id);
 
 			var ticket = await DbSession.LoadAsync<BacklogItem>(fullId);
 			if (ticket == null)
-				return DomainResult.NotFound<BacklogItemGetResponse>();
+				return DomainResult.NotFound<BacklogItemGetResponseBase>();
 
 			var dto = (ticket.Type) switch
 			{
-				BacklogItemType.Bug			=> (ticket as BacklogItemBug)		?.ConvertToDto<BacklogItemBug, BugGetResponse>() as  BacklogItemGetResponse,
-				BacklogItemType.UserStory	=> (ticket as BacklogItemUserStory)	?.ConvertToDto<BacklogItemUserStory, UserStoryGetResponse>() as BacklogItemGetResponse,
+				BacklogItemType.Bug			=> (ticket as BacklogItemBug)		?.ConvertToDto<BacklogItemBug, BugGetResponse>() as  BacklogItemGetResponseBase,
+				BacklogItemType.UserStory	=> (ticket as BacklogItemUserStory)	?.ConvertToDto<BacklogItemUserStory, UserStoryGetResponse>() as BacklogItemGetResponseBase,
 				_ => throw new NotImplementedException($"Not supported Backlog Item Type: {ticket.Type}"),
 			};
 			if (dto == null)
