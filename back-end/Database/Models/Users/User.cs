@@ -26,7 +26,7 @@ namespace Raven.Yabt.Database.Models.Users
 		/// </summary>
 		public string ShortName { get; set; } = string.Empty;
 
-		public string? Avatar { get; set; }
+		public string? AvatarUrl { get; set; }
 		public string? Email { get; set; }
 
 		/// <summary>
@@ -39,7 +39,7 @@ namespace Raven.Yabt.Database.Models.Users
 			Id = Id,
 			Name = ShortName,
 			FullName = FullName,
-			Avatar = Avatar
+			AvatarUrl = AvatarUrl
 		};
 	}
 }

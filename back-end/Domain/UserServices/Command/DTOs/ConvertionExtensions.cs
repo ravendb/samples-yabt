@@ -15,7 +15,7 @@ namespace Raven.Yabt.Domain.UserServices.Command.DTOs
 			entity.FirstName = dto.FirstName;
 			entity.LastName = dto.LastName;
 			entity.ShortName = $"{dto.FirstName.Substring(0, 1)}. {dto.LastName}";
-			entity.Avatar = dto.Avatar;
+			entity.AvatarUrl = dto.AvatarUrl;
 			entity.Email = dto.Email;
 
 			return entity;
