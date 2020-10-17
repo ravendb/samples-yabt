@@ -28,13 +28,13 @@ namespace Raven.Yabt.Domain.Infrastructure
 		}
 
 		/// <summary>
-		///		Register all modules (classes derived from <see cref="ModuleRegistration"/>) in the specified assembly
+		///		Register all modules (classes derived from <see cref="ModuleRegistrationBase"/>) in the specified assembly
 		/// </summary>
 		public static void RegisterModules(this IServiceCollection services, Assembly assembly)
 		{
-			foreach (Type tp in assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(ModuleRegistration))))
+			foreach (Type tp in assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(ModuleRegistrationBase))))
 			{
-				if (Activator.CreateInstance(tp) is ModuleRegistration module)
+				if (Activator.CreateInstance(tp) is ModuleRegistrationBase module)
 					module.Configure(services);
 			}
 		}

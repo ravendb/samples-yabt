@@ -14,7 +14,7 @@ using Raven.Yabt.Domain.BacklogItemServices.ListQuery;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs;
 using Raven.Yabt.Domain.Common;
 
-namespace WebApi.Controllers
+namespace Raven.Yabt.WebApi.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
@@ -28,7 +28,7 @@ namespace WebApi.Controllers
 		[HttpGet("{id}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public Task<ActionResult<BacklogItemGetResponse>> GetById (	[FromServices] IBacklogItemByIdQueryService service,
+		public Task<ActionResult<BacklogItemGetResponseBase>> GetById([FromServices] IBacklogItemByIdQueryService service,
 																	[FromRoute] string id
 																  )
 			=> service.GetById(id).ToActionResultOfT();
@@ -52,26 +52,26 @@ namespace WebApi.Controllers
 		/// </summary>
 		/// <remarks> 
 		///		.NET is not friendly with ambigous input parameters in controller methods. It has no support of generic controller methods.
-		///		It could be possible to have one POST (create) method and use 'dynamic' type of <paramref name="dto"/>, but finding all derived classes from <see cref="BacklogItemAddUpdRequest"/>
+		///		It could be possible to have one POST (create) method and use 'dynamic' type of <paramref name="dto"/>, but finding all derived classes from <see cref="BacklogItemAddUpdRequestBase"/>
 		///		and matching them to our DTO would be on our shoulders.
 		/// </remarks>
 		[HttpPost("bug")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public Task<ActionResult<BacklogItemReference>> Create([FromServices] IBacklogItemCommandService service, BugAddUpdRequest dto	)		=> service.Create(dto).ToActionResultOfT();
+		public Task<ActionResult<BacklogItemReference>> Create([FromServices] IBacklogItemCommandService service, BugAddUpdRequest dto) => service.Create(dto).ToActionResultOfT();
 
 		/// <summary>
 		///		Create a new user story
 		/// </summary>
 		/// <remarks> 
 		///		.NET is not friendly with ambigous input parameters in controller methods. It has no support of generic controller methods.
-		///		It could be possible to have one POST (create) method and use 'dynamic' type of <paramref name="dto"/>, but finding all derived classes from <see cref="BacklogItemAddUpdRequest"/>
+		///		It could be possible to have one POST (create) method and use 'dynamic' type of <paramref name="dto"/>, but finding all derived classes from <see cref="BacklogItemAddUpdRequestBase"/>
 		///		and matching them to our DTO would be on our shoulders.
 		/// </remarks>
 		[HttpPost("story")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		public Task<ActionResult<BacklogItemReference>> Create([FromServices] IBacklogItemCommandService service, UserStoryAddUpdRequest dto)	=> service.Create(dto).ToActionResultOfT();
+		public Task<ActionResult<BacklogItemReference>> Create([FromServices] IBacklogItemCommandService service, UserStoryAddUpdRequest dto) => service.Create(dto).ToActionResultOfT();
 
 		#endregion / POST requests --------------
 
@@ -83,14 +83,14 @@ namespace WebApi.Controllers
 		/// <remarks> 
 		///		The same as for the POST methods.
 		///		.NET is not friendly with ambigous input parameters in controller methods. It has no support of generic controller methods.
-		///		It could be possible to have one POST (create) method and use 'dynamic' type of <paramref name="dto"/>, but finding all derived classes from <see cref="BacklogItemAddUpdRequest"/>
+		///		It could be possible to have one POST (create) method and use 'dynamic' type of <paramref name="dto"/>, but finding all derived classes from <see cref="BacklogItemAddUpdRequestBase"/>
 		///		and matching them to our DTO would be on our shoulders.
 		/// </remarks>
 		[HttpPut("{id}/bug")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public Task<ActionResult<BacklogItemReference>> Update( [FromServices] IBacklogItemCommandService service,
+		public Task<ActionResult<BacklogItemReference>> Update([FromServices] IBacklogItemCommandService service,
 																[FromRoute] string id,
 																BugAddUpdRequest dto
 																)
@@ -102,14 +102,14 @@ namespace WebApi.Controllers
 		/// <remarks> 
 		///		The same as for the POST methods.
 		///		.NET is not friendly with ambigous input parameters in controller methods. It has no support of generic controller methods.
-		///		It could be possible to have one POST (create) method and use 'dynamic' type of <paramref name="dto"/>, but finding all derived classes from <see cref="BacklogItemAddUpdRequest"/>
+		///		It could be possible to have one POST (create) method and use 'dynamic' type of <paramref name="dto"/>, but finding all derived classes from <see cref="BacklogItemAddUpdRequestBase"/>
 		///		and matching them to our DTO would be on our shoulders.
 		/// </remarks>
 		[HttpPut("{id}/story")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public Task<ActionResult<BacklogItemReference>> Update( [FromServices] IBacklogItemCommandService service,
+		public Task<ActionResult<BacklogItemReference>> Update([FromServices] IBacklogItemCommandService service,
 																[FromRoute] string id,
 																UserStoryAddUpdRequest dto
 																)
@@ -136,7 +136,7 @@ namespace WebApi.Controllers
 		[HttpDelete("{id}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public Task<ActionResult<BacklogItemReference>> Delete ([FromServices] IBacklogItemCommandService service,
+		public Task<ActionResult<BacklogItemReference>> Delete([FromServices] IBacklogItemCommandService service,
 																[FromRoute] string id
 																)
 			=> service.Delete(id).ToActionResultOfT();

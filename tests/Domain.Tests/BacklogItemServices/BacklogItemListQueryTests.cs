@@ -92,7 +92,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			Assert.Equal(_currentUserId, items.Entries.First().Assignee.Id);
 		}
 
-		private async Task<BacklogItemReference> CreateBacklogItem<T>() where T: BacklogItemAddUpdRequest, new ()
+		private async Task<BacklogItemReference> CreateBacklogItem<T>() where T: BacklogItemAddUpdRequestBase, new ()
 		{
 			var dto = new T { Title = "Test_"+ GetRandomString() };
 			var added = await _commandService.Create(dto);

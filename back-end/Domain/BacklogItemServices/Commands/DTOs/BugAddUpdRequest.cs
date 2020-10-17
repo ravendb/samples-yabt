@@ -2,7 +2,7 @@
 
 namespace Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs
 {
-	public class BugAddUpdRequest : BacklogItemAddUpdRequest
+	public class BugAddUpdRequest : BacklogItemAddUpdRequestBase
 	{
 		public BugSeverity Severity { get; set; }
 		public BugPriority Priority { get; set; }

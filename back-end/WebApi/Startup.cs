@@ -50,7 +50,7 @@ namespace Raven.Yabt.WebApi
 			services.AddApplicationInsightsTelemetry();
 
 			// Rigister all domain dependencies
-			services.RegisterModules(assembly: Assembly.GetAssembly(typeof(ModuleRegistration))!);
+			services.RegisterModules(assembly: Assembly.GetAssembly(typeof(ModuleRegistrationBase))!);
 
 			// Register the database and DB session
 			services.AddAndConfigureDatabase();

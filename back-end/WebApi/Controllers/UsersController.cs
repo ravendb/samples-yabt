@@ -12,7 +12,7 @@ using Raven.Yabt.Domain.UserServices.Command.DTOs;
 using Raven.Yabt.Domain.UserServices.Query;
 using Raven.Yabt.Domain.UserServices.Query.DTOs;
 
-namespace WebApi.Controllers
+namespace Raven.Yabt.WebApi.Controllers
 {
 	[ApiController]
 	[Route("api/[controller]")]
@@ -26,7 +26,7 @@ namespace WebApi.Controllers
 		[HttpGet("{id}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public Task<ActionResult<UserGetByIdResponse>> GetById( [FromServices] IUserQueryService service,
+		public Task<ActionResult<UserGetByIdResponse>> GetById([FromServices] IUserQueryService service,
 																[FromRoute] string id
 															  )
 			=> service.GetById(id).ToActionResultOfT();
@@ -36,7 +36,7 @@ namespace WebApi.Controllers
 		/// </summary>
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public Task<ListResponse<UserListGetResponse>> GetList ( [FromServices] IUserQueryService service,
+		public Task<ListResponse<UserListGetResponse>> GetList([FromServices] IUserQueryService service,
 																 [FromQuery] UserListGetRequest dto
 																)
 			=> service.GetList(dto);
