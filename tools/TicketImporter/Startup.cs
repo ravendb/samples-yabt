@@ -27,11 +27,13 @@ namespace Raven.Yabt.TicketImporter
 						//  a) need to set the environment manually
 						builderContext.HostingEnvironment.EnvironmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 						//  b) add user secrets, as at the time 'CreateDefaultBuilder()' called it the environment was 'PROD'
-						config.AddUserSecrets<Program>();
+						if (builderContext.HostingEnvironment.IsDevelopment())
+							config.AddUserSecrets<Program>();
 					})
 					.ConfigureServices((context, services) =>
 					{
 						services.AddAndConfigureAppSettings(context.Configuration);
+						services.AddAndConfigureHttpClients();
 						services.AddHostedService<TicketDownloadService>();
 					});
 		}
