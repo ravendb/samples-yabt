@@ -1,4 +1,6 @@
 ﻿#nullable disable
+using Raven.Yabt.Database.Configuration;
+
 namespace Raven.Yabt.TicketImporter.Configuration
 {
 	internal class AppSettings
@@ -7,6 +9,8 @@ namespace Raven.Yabt.TicketImporter.Configuration
 		///		The GitHub settings
 		/// </summary>
 		public GitHubSettings GitHub { get; private set; }
+
+		public DatabaseSettings Database { get; private set; }
 	}
 
 	internal class GitHubSettings

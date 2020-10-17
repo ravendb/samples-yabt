@@ -11,7 +11,5 @@ namespace Raven.Yabt.TicketImporter.Infrastructure.DTOs
 		public string AvatarUrl { get; set; }
 		[JsonPropertyName("gravatar_id")]
 		public string GravatarUrl { get; set; }
-		public string Title { get; set; }
-		public string Body { get; set; }
 	}
 }

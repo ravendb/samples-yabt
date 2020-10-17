@@ -1,10 +1,12 @@
 ﻿using System;
-using System.Threading.Tasks;
+using System.Reflection;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using Raven.Yabt.Domain.Common;
+using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.TicketImporter.Configuration;
 using Raven.Yabt.TicketImporter.Services;
 
@@ -32,9 +34,12 @@ namespace Raven.Yabt.TicketImporter
 					})
 					.ConfigureServices((context, services) =>
 					{
-						services.AddAndConfigureAppSettings(context.Configuration);
-						services.AddAndConfigureHttpClients();
-						services.AddHostedService<TicketDownloadService>();
+						services.AddAndConfigureAppSettings(context.Configuration)
+								.AddAndConfigureHttpClients()
+								.AddAndConfigureDatabase()
+								.AddAndConfigureAuthentication()
+								.AddHostedService<TicketImportService>()
+								.RegisterModules(Assembly.GetAssembly(typeof(BaseService<>)));
 					});
 		}
 	}
