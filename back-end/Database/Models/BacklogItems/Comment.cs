@@ -7,8 +7,8 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 {
 	public class Comment
 	{
-		public Guid Id { get; set; }
-		public DateTime CreatedDate { get; set; }
+		public string Id { get; set; } = Guid.NewGuid().ToString();
+		public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 
 		public UserReference Author { get; set; } = null!;  // Non-nullable
 		public string Message { get; set; } = null!;    // Non-nullable
