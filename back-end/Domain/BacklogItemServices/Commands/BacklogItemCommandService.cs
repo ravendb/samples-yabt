@@ -123,6 +123,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				entity = new TModel();
 
 			entity.Title = dto.Title;
+			entity.Tags = dto.Tags;
 			entity.Assignee = dto.AssigneeId != null ? await _userResolver.GetReferenceById(dto.AssigneeId) : null;
 			entity.ModifiedBy.Add(new BacklogItemHistoryRecord
 				{
@@ -150,6 +151,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				bugEntity.Severity = bugDto.Severity;
 				bugEntity.Priority = bugDto.Priority;
 				bugEntity.StepsToReproduce = bugDto.StepsToReproduce;
+				bugEntity.AcceptanceCriteria = bugDto.AcceptanceCriteria;
 			}
 			else if (dto is UserStoryAddUpdRequest storyDto && entity is BacklogItemUserStory storyEntity)
 			{

@@ -40,6 +40,11 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		public ChangedByUserReference LastUpdated	=> ModifiedBy.OrderBy(m => m.Timestamp).LastOrDefault() as ChangedByUserReference;
 
 		/// <summary>
+		///		Tags/Labels on the ticket
+		/// </summary>
+		public string[] Tags { get; set; } = new string[0];
+
+		/// <summary>
 		///		Related tickets
 		/// </summary>
 		public IList<BacklogItemRelatedItem> RelatedItems { get; set; } = new List<BacklogItemRelatedItem>();

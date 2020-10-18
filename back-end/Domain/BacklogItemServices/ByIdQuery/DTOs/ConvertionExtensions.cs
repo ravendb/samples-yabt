@@ -18,6 +18,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				Title = entity.Title,
 				Created = entity.Created,
 				LastUpdated = entity.LastUpdated,
+				Tags = entity.Tags,
 				Comments = entity.Comments,
 				CustomFields = entity.CustomFields,
 				Type = entity.Type
