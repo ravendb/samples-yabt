@@ -2,13 +2,11 @@
 using System.Reflection;
 
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.TicketImporter.Configuration;
-using Raven.Yabt.TicketImporter.Services;
 
 namespace Raven.Yabt.TicketImporter
 {
@@ -38,7 +36,7 @@ namespace Raven.Yabt.TicketImporter
 								.AddAndConfigureHttpClients()
 								.AddAndConfigureDatabase()
 								.AddAndConfigureAuthentication()
-								.AddHostedService<TicketImportService>()
+								.AddAndConfigureJobServices()
 								.RegisterModules(Assembly.GetAssembly(typeof(BaseService<>)));
 					});
 		}

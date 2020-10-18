@@ -1,76 +1,87 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-using Microsoft.Extensions.Hosting;
-
+using Raven.Client.Documents.Session;
+using Raven.Yabt.Database.Common;
+using Raven.Yabt.Domain.BacklogItemServices.Commands;
+using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.TicketImporter.Configuration;
 using Raven.Yabt.TicketImporter.Infrastructure;
 using Raven.Yabt.TicketImporter.Infrastructure.DTOs;
-using Raven.Yabt.Domain.BacklogItemServices.Commands;
-using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 
 namespace Raven.Yabt.TicketImporter.Services
 {
-	internal class TicketImportService : IHostedService
+	internal class TicketImportService
 	{
 		private readonly IGitHubService _gitHubService;
 		private readonly IBacklogItemCommandService _backlogItemService;
-		private readonly AppSettings _settings;
+		private readonly ISeededUsers _seededUser;
+		private readonly IAsyncDocumentSession _dbSession;
+		private readonly string[] _gitHubRepos;
 
-		public TicketImportService(IGitHubService gitHubService, AppSettings settings, IBacklogItemCommandService backlogItemService)
+		public TicketImportService(	AppSettings settings, 
+									IGitHubService gitHubService, 
+									IBacklogItemCommandService backlogItemService,
+									ISeededUsers seededUser,
+									IAsyncDocumentSession dbSession)
 		{
 			_gitHubService = gitHubService;
-			_settings = settings;
+			_gitHubRepos = settings.GitHub.Repos;
+			_dbSession = dbSession;
 			_backlogItemService = backlogItemService;
+			_seededUser = seededUser;
 		}
 
-		public async Task StartAsync(CancellationToken cancellationToken)
+		public async Task Run(CancellationToken cancellationToken)
 		{
-			foreach (var repo in _settings.GitHub.Repos)
+			var userIds = await _seededUser.GetGeneratedUsers();
+			await _dbSession.SaveChangesAsync();
+
+			foreach (var repo in _gitHubRepos)
 			{
 				List<IssueResponse> l = new List<IssueResponse>();
 				await foreach (var issues in _gitHubService.GetIssues(repo, 200, cancellationToken).WithCancellation(cancellationToken))
+				{
 					foreach (var issue in issues)
 					{
 						BacklogItemAddUpdRequestBase dto;
 						if (issue.Labels.Any(l => l.Name == "bug"))
-							dto = new BugAddUpdRequest 
-							{
-								Title = issue.Title,
-								StepsToReproduce = issue.Body,
-								
-							};
+						{
+							dto = ConvertToBacklogItem<BugAddUpdRequest>(issue, userIds, 
+									d => {
+											var rnd = new Random();
+											d.StepsToReproduce = issue.Body; 
+											d.Severity = (BugSeverity)rnd.Next(Enum.GetNames(typeof(BugSeverity)).Length);
+											d.Priority = (BugPriority)rnd.Next(Enum.GetNames(typeof(BugPriority)).Length);
+										}
+								);
+						}
 						else
-							dto = new UserStoryAddUpdRequest 
-							{
-								Title = issue.Title,
-								AcceptanceCriteria = issue.Body
-							};
+							dto = ConvertToBacklogItem<UserStoryAddUpdRequest>(issue, userIds, d => d.AcceptanceCriteria = issue.Body);
 
 						var importResult = await _backlogItemService.Create(dto);
 						if (!importResult.IsSuccess)
 							throw new Exception($"Failed to import issue #{issue.Number}");
 					}
+					await _dbSession.SaveChangesAsync();
+				}
 			}
-
-			throw new NotImplementedException();
 		}
 
-		public Task StopAsync(CancellationToken cancellationToken)
+		private T ConvertToBacklogItem<T>(IssueResponse issue, IEnumerable<string> userIds, Action<T> settingExtraFields) where T : BacklogItemAddUpdRequestBase, new()
 		{
-			throw new NotImplementedException();
-		}
+			var dto = new T { Title = issue.Title };
+			if (issue.Labels?.Any() == true)
+				dto.Tags = issue.Labels.Select(l => l.Name).ToArray();
+			if (userIds.Any())
+				dto.AssigneeId = userIds.OrderBy(x => Guid.NewGuid()).First();
 
-		private T ConvertToBacklogItem<T>(IssueResponse issue) where T : BacklogItemAddUpdRequestBase, new()
-		{
-			return new T
-			{
-				Title = issue.Title
-			};
+			settingExtraFields?.Invoke(dto);
+
+			return dto;
 		}
 	}
 }

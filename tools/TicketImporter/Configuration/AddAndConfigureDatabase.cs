@@ -18,6 +18,7 @@ namespace Raven.Yabt.TicketImporter.Configuration
 					var config = x.GetService<DatabaseSettings>();
 					var store = SetupDocumentStore.GetDocumentStore(config.RavenDbUrls, config.Certificate, config.DbName);
 					store.PreInitializeDocumentStore();
+					store.Conventions.MaxNumberOfRequestsPerSession = 20000;
 					return store.Initialize();
 				});
 			services.AddScoped(c =>
