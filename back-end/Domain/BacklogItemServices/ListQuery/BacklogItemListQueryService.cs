@@ -69,6 +69,10 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			if (dto.Type != BacklogItemType.Unknown)
 				query = query.Where(t => t.Type == dto.Type);
 
+			if (dto.Tags?.Any() == true)
+				foreach (var tag in dto.Tags)
+					query = query.Where(e => e.Tags.Contains(tag));
+
 			if (dto.ModifiedByTheCurrentUserOnly)
 			{
 				var userIdForDynamicField = GetUserIdForDynamicField();

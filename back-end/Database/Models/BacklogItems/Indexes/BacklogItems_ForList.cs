@@ -35,13 +35,16 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 							}
 							.Concat(ticket.Comments.Select(c => c.Message)),
 
+					MentionedUserIds = ticket.Comments.SelectMany(c => c.MentionedUserIds).Distinct().ToList(),	// filter by 'Mentioned UserIDs'
+					Tags = ticket.Tags.Distinct().ToList(),																	// filter by 'Tags'
+
 					// Dynamic fields
 					// Notes:
 					//	- The format 'collection_key' is required to treat them as dictionary in the C# code
 					//	- Prefix is vital, see https://groups.google.com/d/msg/ravendb/YvPZFIn5GVg/907Msqv4CQAJ
 
 					// Create a dictionary for Modifications
-					_ = ticket.ModifiedBy.GroupBy(m => m.ActionedBy.Id)                                                           // filter & sort by Timestamp
+					_ = ticket.ModifiedBy.GroupBy(m => m.ActionedBy.Id)															// filter & sort by Timestamp
 											.Select(x => CreateField($"{nameof(BacklogItemIndexedForList.ModifiedByUser)}_{x.Key!.Replace("/","").ToLower()}", 
 																	 x.Max(o => o.Timestamp)
 																	 )

@@ -62,7 +62,7 @@ namespace Raven.Yabt.Domain.UserServices.Command
 
 			var newRef = dto.ConvertToUser(user).ToReference();
 
-			// Update the name in all refrences to this user
+			// Update the name in all references to this user
 			foreach (var updateUserRef in _updateUserReferences)
 				updateUserRef.UpdateReferences(newRef);
 

@@ -9,7 +9,7 @@ using Raven.Yabt.Database.Common.References;
 namespace Raven.Yabt.Database.Models.BacklogItems
 {
 	/// <summary>
-	///		Base class representing common properties accross all types of tickets: bugs, user stories, etc.
+	///		Base class representing common properties across all types of tickets: bugs, user stories, etc.
 	/// </summary>
 	/// <remarks>
 	///		Can't make the class 'abstract', due to getting exception: Cannot find collection name for abstract class, only concrete class are supported. 
