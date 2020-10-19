@@ -4,6 +4,7 @@
 *.userosscache
 *.sln.docstates
 .vs
+.idea
 
 node_modules
 

@@ -77,11 +77,11 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 			return DomainResult.Success(ToLastCommentReference(ticket, true));
 		}
 
-		private BacklogItemCommentReference ToLastCommentReference(BacklogItem ticket, bool nullCommentId = false) => new BacklogItemCommentReference
+		private static BacklogItemCommentReference ToLastCommentReference(BacklogItem ticket, bool nullCommentId = false) => new BacklogItemCommentReference
 		{
 			Id = ticket.Id,
 			Name = ticket.Title,
-			CommentId = nullCommentId ? null : ticket.Comments.LastOrDefault()?.Message
+			CommentId = nullCommentId ? null : ticket.Comments.LastOrDefault()?.Id
 		};
 /*
 		public async Task<IDomainResult<BacklogItemCommentReference>> Create(string backlogItemId, CommentAddRequest dto)

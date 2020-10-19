@@ -1,4 +1,6 @@
-﻿using Raven.Yabt.Database.Models.BacklogItems;
+﻿using System.Linq;
+
+using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Domain.Helpers;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
@@ -19,7 +21,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				Created = entity.Created,
 				LastUpdated = entity.LastUpdated,
 				Tags = entity.Tags,
-				Comments = entity.Comments,
+				Comments = entity.Comments.Select(c => c.ConvertToDto()).ToList(),
 				CustomFields = entity.CustomFields,
 				Type = entity.Type
 			};
@@ -40,5 +42,14 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 
 			return response;
 		}
+
+		private static BacklogItemCommentGetResponse ConvertToDto(this Comment comment) =>
+			new BacklogItemCommentGetResponse
+			{
+				Id = comment.Id,
+				Author = comment.Author,
+				Message = comment.Message,
+				CreatedDate = comment.CreatedDate
+			};
 	}
 }
