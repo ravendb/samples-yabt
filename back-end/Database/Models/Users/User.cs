@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 using Newtonsoft.Json;
 
@@ -20,7 +21,13 @@ namespace Raven.Yabt.Database.Models.Users
 		///		Full name of the user, e.g. "Homer Simpson"
 		/// </summary>
 		[JsonIgnore]
-		public string FullName => (string.IsNullOrEmpty(FirstName) ? $"{FirstName} " : "") + LastName ?? "";
+		public string FullName => (!string.IsNullOrEmpty(FirstName) ? $"{FirstName} " : "") + LastName ?? "";
+		/// <summary>
+		///		User's name how it appears in the text as a user's mentioning, e.g. "HomerSimpson".
+		/// 	Strip all [\r\n\t\f\v] characters
+		/// </summary>
+		[JsonIgnore]
+		public string MentionedName => Regex.Replace((!string.IsNullOrEmpty(FirstName) ? $"{FirstName}" : "") + LastName ?? "", @"\s+", "");
 		/// <summary>
 		///		Shorten name of the user, e.g. "Simpson H."
 		/// </summary>

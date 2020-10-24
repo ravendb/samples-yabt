@@ -21,6 +21,11 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 		public string Search { get; set; } = null!;
 
 		/// <summary>
+		/// 	Mentioned users: { User ID, Timestamp of the corresponding comment }.
+		/// </summary>
+		public IDictionary<string, DateTime> MentionedUser { get; set; } = null!;
+		
+		/// <summary>
 		///		Ticket modifications: { User ID, Timestamp of a change }.
 		///		Used for searching changes by a user.
 		/// </summary>

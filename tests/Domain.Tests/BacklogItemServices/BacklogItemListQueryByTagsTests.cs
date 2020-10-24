@@ -13,7 +13,6 @@ using Raven.Yabt.Domain.BacklogItemServices.ListQuery;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.Infrastructure;
-using Raven.Yabt.Domain.UserServices.Command;
 using Raven.Yabt.Domain.UserServices.Query;
 
 using Xunit;
@@ -24,15 +23,13 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 	{
 		private readonly IBacklogItemCommandService _commandService;
 		private readonly IBacklogItemListQueryService _queryService;
-		private readonly IUserCommandService _userCmdService;
 
 		private readonly UserReference _currentUser = new UserReference { Id = "1-A", Name = "H. Simpson", FullName = "Homer Simpson" };
 
-		public BacklogItemListQueryByTagsTests() : base()
+		public BacklogItemListQueryByTagsTests()
 		{
 			_commandService = Container.GetService<IBacklogItemCommandService>();
 			_queryService = Container.GetService<IBacklogItemListQueryService>();
-			_userCmdService = Container.GetService<IUserCommandService>();
 		}
 
 		protected override void ConfigureIocContainer(IServiceCollection services)

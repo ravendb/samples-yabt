@@ -49,7 +49,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				Id = comment.Id,
 				Author = comment.Author,
 				Message = comment.Message,
-				CreatedDate = comment.CreatedDate
+				CreatedDate = comment.CreatedDate,
+				ModifiedDate = comment.ModifiedDate
 			};
 	}
 }

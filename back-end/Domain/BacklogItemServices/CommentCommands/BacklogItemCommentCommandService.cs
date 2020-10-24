@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 using DomainResults.Common;
@@ -15,10 +16,14 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 	public class BacklogItemCommentCommandService : BaseService<BacklogItem>, IBacklogItemCommentCommandService
 	{
 		private readonly IUserReferenceResolver _userResolver;
+		private readonly IMentionedUserResolver _mentionedUserResolver;
 
-		public BacklogItemCommentCommandService(IAsyncDocumentSession dbSession, IUserReferenceResolver userResolver) : base(dbSession)
+		public BacklogItemCommentCommandService(IAsyncDocumentSession dbSession, 
+		                                        IUserReferenceResolver userResolver,
+		                                        IMentionedUserResolver mentionedUserResolver) : base(dbSession)
 		{
 			_userResolver = userResolver;
+			_mentionedUserResolver = mentionedUserResolver;
 		}
 
 		public async Task<IDomainResult<BacklogItemCommentReference>> Create(string backlogItemId, CommentAddRequest dto)
@@ -29,10 +34,13 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 			if (ticket == null)
 				return DomainResult.NotFound<BacklogItemCommentReference>();
 
+			var mentionedUsers = await _mentionedUserResolver.GetMentionedUsers(dto.Message);
+			
 			var comment = new Comment
 				{
 					Author = await _userResolver.GetCurrentUserReference(),
-					Message = dto.Message
+					Message = dto.Message,
+					MentionedUserIds = mentionedUsers
 				};
 			ticket.Comments.Add(comment);
 
@@ -55,7 +63,11 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 			if (comment.Author.Id != originalAuthor.Id)
 				return DomainResult.Error<BacklogItemCommentReference>("Cannot edit comments of other users");
 
+			var mentionedUsers = await _mentionedUserResolver.GetMentionedUsers(dto.Message);
+
 			comment.Message = dto.Message;
+			comment.MentionedUserIds = mentionedUsers;
+			comment.ModifiedDate = DateTime.UtcNow;
 
 			return DomainResult.Success(ToLastCommentReference(ticket));
 		}

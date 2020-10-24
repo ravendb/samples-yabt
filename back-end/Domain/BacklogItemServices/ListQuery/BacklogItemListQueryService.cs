@@ -33,7 +33,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			_customFieldService = customFieldService;
 			_userResolver = userResolver;
 		}
-
+		
 		public async Task<ListResponse<BacklogItemListGetResponse>> GetList(BacklogItemListGetRequest dto)
 		{
 			var query = DbSession.Query<BacklogItemIndexedForList, BacklogItems_ForList>();
@@ -73,7 +73,12 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 				foreach (var tag in dto.Tags)
 					query = query.Where(e => e.Tags.Contains(tag));
 
-			if (dto.ModifiedByTheCurrentUserOnly)
+			if (dto.MentionsOfTheCurrentUserOnly)
+			{
+				var userIdForDynamicField = GetUserIdForDynamicField();
+				query = query.Where(t => t.MentionedUser[userIdForDynamicField] > DateTime.MinValue);
+			}
+			else if (dto.ModifiedByTheCurrentUserOnly)
 			{
 				var userIdForDynamicField = GetUserIdForDynamicField();
 				query = query.Where(t => t.ModifiedByUser[userIdForDynamicField] > DateTime.MinValue);
@@ -168,7 +173,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			if (dto.OrderBy == BacklogItemsOrderColumns.Default)
 			{
 				if (isSearchResult)
-					return query;   // Use default order by releavnce
+					return query;   // Use default order by relevance
 				// Otherwise descending sort by number
 				dto.OrderBy = BacklogItemsOrderColumns.Number;
 				dto.OrderDirection = OrderDirections.Desc;
@@ -184,6 +189,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 				BacklogItemsOrderColumns.TimestampLastModified=>dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.LastUpdatedTimestamp) : query.OrderByDescending(t => t.LastUpdatedTimestamp),
 				BacklogItemsOrderColumns.TimestampModifiedByCurrentUser =>
 																dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.ModifiedByUser[userKey]) : query.OrderByDescending(t => t.ModifiedByUser[userKey]),
+				BacklogItemsOrderColumns.TimestampMentionsOfCurrentUser =>
+																dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.MentionedUser[userKey]) : query.OrderByDescending(t => t.MentionedUser[userKey]),
 				_ => throw new NotImplementedException()
 			};
 		}

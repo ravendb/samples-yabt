@@ -8,18 +8,18 @@ namespace Raven.Yabt.Domain.UserServices.Query.DTOs
 		private string? _id;
 		public string? Id
 		{
-			get { return _id; }
-			set { _id = value?.Split('/').Last(); }
+			get => _id;
+			set => _id = value?.Split('/').Last();
 		}
 
 		/// <summary>
 		///		First name. One of the first/last names should be mandatory
 		/// </summary>
-		public string FirstName { get; set; } = string.Empty;
+		public string? FirstName { get; set; } = string.Empty;
 		/// <summary>
 		///		First name. One of the first/last names should be mandatory
 		/// </summary>
-		public string LastName { get; set; } = string.Empty;
+		public string? LastName { get; set; } = string.Empty;
 		/// <summary>
 		///		Full name of the user, e.g. "Homer Simpson"
 		/// </summary>

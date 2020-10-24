@@ -9,10 +9,14 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 	{
 		public string Id { get; set; } = Guid.NewGuid().ToString();
 		public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+		public DateTime ModifiedDate { get; set; } = DateTime.UtcNow;
 
-		public UserReference Author { get; set; } = null!;  // Non-nullable
-		public string Message { get; set; } = null!;    // Non-nullable
+		public UserReference Author { get; set; } = null!;	// Non-nullable
+		public string Message { get; set; } = null!;		// Non-nullable
 
-		public IList<string> MentionedUserIds { get; } = new List<string>();
+		/// <summary>
+		/// 	Mentioned users in the <see cref="Message"/>, e.g. { 'HomerSimpson', 'users/2-A' }
+		/// </summary>
+		public IDictionary<string, string> MentionedUserIds { get; set; } = new Dictionary<string, string>();
 	}
 }

@@ -35,7 +35,6 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 							}
 							.Concat(ticket.Comments.Select(c => c.Message)),
 
-					MentionedUserIds = ticket.Comments.SelectMany(c => c.MentionedUserIds).Distinct().ToList(),	// filter by 'Mentioned UserIDs'
 					Tags = ticket.Tags.Distinct().ToList(),																	// filter by 'Tags'
 
 					// Dynamic fields
@@ -49,8 +48,18 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 																	 x.Max(o => o.Timestamp)
 																	 )
 													),
+					// Create a dictionary for mentioned users
+					_1 = from um in 
+							(from comment in ticket.Comments 
+							 from user in comment.MentionedUserIds 
+							 select new { user, comment.ModifiedDate })
+						 group um by um.user into g
+						 select CreateField(
+								$"{nameof(BacklogItemIndexedForList.MentionedUser)}_{g.Key.Value!.Replace("/","").ToLower()}",
+								g.Max(f => f.ModifiedDate)
+								),
 					// Create a dictionary for Custom Fields
-					__ = from x in ticket.CustomFields
+					_2 = from x in ticket.CustomFields
 						 let fieldType = LoadDocument<CustomFields.CustomField>(x.Key).FieldType
 						 let key = $"{nameof(BacklogItem.CustomFields)}_{x.Key.Replace("/", "").ToLower()}"
 						 select 

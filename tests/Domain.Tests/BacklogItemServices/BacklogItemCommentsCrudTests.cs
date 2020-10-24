@@ -100,7 +100,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		}
 
 		[Fact]
-		private async Task Deleted_Bug_Disappears_From_Db()
+		private async Task Deleted_Comment_Disappears_From_Db()
 		{
 			// GIVEN a 'bug' with a comment
 			var ticketRef = await CreateSampleBug();
