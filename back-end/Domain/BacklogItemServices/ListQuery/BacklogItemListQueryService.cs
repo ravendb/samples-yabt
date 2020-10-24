@@ -75,8 +75,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 
 			if (dto.MentionsOfTheCurrentUserOnly)
 			{
-				var userIdForDynamicField = GetUserIdForDynamicField();
-				query = query.Where(t => t.MentionedUser[userIdForDynamicField] > DateTime.MinValue);
+				var userId = _userResolver.GetCurrentUserId().ToLower();
+				query = query.Where(t => t.MentionedUser[userId] > DateTime.MinValue);
 			}
 			else if (dto.ModifiedByTheCurrentUserOnly)
 			{

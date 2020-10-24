@@ -26,7 +26,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 		public void ClearUserId(string userId)
 		{
-			// Replace invalid characters with empty strings. Can't pass it as a parameter, as string parameters get quated when inserted
+			// Replace invalid characters with empty strings. Can't pass it as a parameter, as string parameters get wrapped in '\"' when inserted
 			var sanitisedUserId = Regex.Replace(userId, @"[^\w\.@-]", "");
 			// Get full ID
 			var idForDynamicField = _dbSession.GetIdForDynamicField<User>(sanitisedUserId);
