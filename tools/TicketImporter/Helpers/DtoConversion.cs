@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 using Microsoft.Extensions.Primitives;
@@ -10,7 +9,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Raven.Yabt.TicketImporter.Helpers
 {
-	internal class DtoConvertion
+	internal static class DtoConversion
 	{
 		/// <summary>
 		///		Convert a DTO to a flatten out dictionary
@@ -18,11 +17,11 @@ namespace Raven.Yabt.TicketImporter.Helpers
 		public static Dictionary<string, StringValues> ToDictionary<T>(T dto)
 		{
 			var jsonSettings = new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore };
-				jsonSettings.Converters.Add(new StringEnumConverter());
-			string json = JsonConvert.SerializeObject(dto, jsonSettings);
+			jsonSettings.Converters.Add(new StringEnumConverter());
+			var json = JsonConvert.SerializeObject(dto, jsonSettings);
 
-			JObject jsonObject = JObject.Parse(json);
-			IEnumerable<JToken> jTokens = jsonObject.Descendants().Where(p => !p.Any());
+			var jsonObject = JObject.Parse(json);
+			var jTokens = jsonObject.Descendants().Where(p => !p.Any());
 
 			var results = jTokens.Aggregate(
 				new Dictionary<string, StringValues>(),
@@ -30,13 +29,7 @@ namespace Raven.Yabt.TicketImporter.Helpers
 				{
 					if (jToken is JValue jValue)
 					{
-						string? value;
-						if (DateTime.TryParse(Convert.ToString(jValue.Value), out DateTime dateVal))
-							value = dateVal.ToString("O");
-						else if (jValue.Value is DateTime dateV)
-							value = dateV.ToString("O");
-						else
-							value = jValue.Value?.ToString()?.ToLower();
+						var value = jValue.Value?.ToString()?.ToLower();
 
 						if (!string.IsNullOrEmpty(value))
 							pairs.Add(jToken.Path.ToLower(), new StringValues(value));
@@ -45,6 +38,5 @@ namespace Raven.Yabt.TicketImporter.Helpers
 				});
 			return results;
 		}
-
 	}
 }

@@ -27,7 +27,7 @@ namespace Raven.Yabt.TicketImporter.Infrastructure
 
 		public IAsyncEnumerable<IssueResponse[]> GetIssues(string repoName, int maxNumber = int.MaxValue, CancellationToken cancellationToken = default)
 		{
-			var builder = new QueryBuilder(DtoConvertion.ToDictionary(new IssuesRequest()));
+			var builder = new QueryBuilder(DtoConversion.ToDictionary(new IssuesRequest()));
 			var requestString = string.Concat($"repos/{repoName}/issues", builder.ToString());
 
 			async Task<IssueResponse[]> issueProcessing(IssueResponse[] issues)
