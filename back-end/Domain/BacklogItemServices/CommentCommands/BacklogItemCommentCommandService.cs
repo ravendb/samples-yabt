@@ -26,7 +26,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 			_mentionedUserResolver = mentionedUserResolver;
 		}
 
-		public async Task<IDomainResult<BacklogItemCommentReference>> Create(string backlogItemId, CommentAddRequest dto)
+		public async Task<IDomainResult<BacklogItemCommentReference>> Create(string backlogItemId, CommentAddUpdRequest dto)
 		{
 			var fullId = GetFullId(backlogItemId);
 
@@ -47,7 +47,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 			return DomainResult.Success(ToLastCommentReference(ticket));
 		}
 
-		public async Task<IDomainResult<BacklogItemCommentReference>> Update(string backlogItemId, CommentUpdRequest dto)
+		public async Task<IDomainResult<BacklogItemCommentReference>> Update(string backlogItemId, string commentId, CommentAddUpdRequest dto)
 		{
 			var fullId = GetFullId(backlogItemId);
 
@@ -55,7 +55,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 			if (ticket == null)
 				return DomainResult.NotFound<BacklogItemCommentReference>();
 
-			var comment = ticket.Comments.SingleOrDefault(c => c.Id == dto.CommentId);
+			var comment = ticket.Comments.SingleOrDefault(c => c.Id == commentId);
 			if (comment == null)
 				return DomainResult.NotFound<BacklogItemCommentReference>("Comment not found");
 
@@ -72,7 +72,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 			return DomainResult.Success(ToLastCommentReference(ticket));
 		}
 
-		public async Task<IDomainResult<BacklogItemCommentReference>> Delete(string backlogItemId, CommentDelRequest dto)
+		public async Task<IDomainResult<BacklogItemCommentReference>> Delete(string backlogItemId, string commentId)
 		{
 			var fullId = GetFullId(backlogItemId);
 
@@ -80,7 +80,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 			if (ticket == null)
 				return DomainResult.NotFound<BacklogItemCommentReference>();
 
-			var comment = ticket.Comments.SingleOrDefault(c => c.Id == dto.CommentId);
+			var comment = ticket.Comments.SingleOrDefault(c => c.Id == commentId);
 			if (comment == null)
 				return DomainResult.NotFound<BacklogItemCommentReference>("Comment not found");
 

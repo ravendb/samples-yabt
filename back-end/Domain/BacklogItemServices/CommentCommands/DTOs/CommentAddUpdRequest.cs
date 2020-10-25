@@ -2,7 +2,7 @@
 
 namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands.DTOs
 {
-	public class CommentAddRequest
+	public class CommentAddUpdRequest
 	{
 		[Required]
 		public string Message { get; set; } = null!;

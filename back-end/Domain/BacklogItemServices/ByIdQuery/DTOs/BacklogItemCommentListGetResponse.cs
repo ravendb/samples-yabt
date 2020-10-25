@@ -5,7 +5,7 @@ using Raven.Yabt.Database.Common.References;
 
 #nullable disable	// Disable nullable check for a response DTO file
 
-namespace Raven.Yabt.Domain.BacklogItemServices.CommentQuery.DTOs
+namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 {
 	public class BacklogItemCommentListGetResponse
 	{

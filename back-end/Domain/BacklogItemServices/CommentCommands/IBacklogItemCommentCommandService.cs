@@ -9,8 +9,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 {
 	public interface IBacklogItemCommentCommandService
 	{
-		Task<IDomainResult<BacklogItemCommentReference>> Create(string backlogItemId, CommentAddRequest dto);
-		Task<IDomainResult<BacklogItemCommentReference>> Update(string backlogItemId, CommentUpdRequest dto);
-		Task<IDomainResult<BacklogItemCommentReference>> Delete(string backlogItemId, CommentDelRequest dto);
+		Task<IDomainResult<BacklogItemCommentReference>> Create(string backlogItemId, CommentAddUpdRequest dto);
+		Task<IDomainResult<BacklogItemCommentReference>> Update(string backlogItemId, string commentId, CommentAddUpdRequest dto);
+		Task<IDomainResult<BacklogItemCommentReference>> Delete(string backlogItemId, string commentId);
 	}
 }

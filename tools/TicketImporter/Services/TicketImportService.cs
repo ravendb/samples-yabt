@@ -74,7 +74,7 @@ namespace Raven.Yabt.TicketImporter.Services
 						if (issue.CommentsCount > 0)
 							foreach (var comment in issue.Comments)
 							{
-								var commentDto = new CommentAddRequest { Message = comment.Body};
+								var commentDto = new CommentAddUpdRequest { Message = comment.Body};
 								await _backlogCommentService.Create(importResult.Value.Id!, commentDto);
 							}
 					}

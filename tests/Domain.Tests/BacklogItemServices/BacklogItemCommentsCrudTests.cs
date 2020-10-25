@@ -50,7 +50,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			var ticketRef = await CreateSampleBug();
 
 			// WHEN adding a new comment
-			var commentRefRes = await _commentCommandService.Create(ticketRef.Id!, new CommentAddRequest { Message = "Test" });
+			var commentRefRes = await _commentCommandService.Create(ticketRef.Id!, new CommentAddUpdRequest { Message = "Test" });
 			await SaveChanges();
 
 			// THEN 
@@ -75,16 +75,15 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		{
 			// GIVEN a 'bug' with a comment
 			var ticketRef = await CreateSampleBug();
-			var commentRef = (await _commentCommandService.Create(ticketRef.Id!, new CommentAddRequest { Message = "Test" })).Value;
+			var commentRef = (await _commentCommandService.Create(ticketRef.Id!, new CommentAddUpdRequest { Message = "Test" })).Value;
 			await SaveChanges();
 
 			// WHEN changing the message of the comment
-			var dto = new CommentUpdRequest
+			var dto = new CommentAddUpdRequest
 			{
-				CommentId = commentRef.CommentId!,
 				Message = "Test (Updated)"
 			};
-			var commentUpdatedRef = await _commentCommandService.Update(ticketRef.Id!, dto);
+			var commentUpdatedRef = await _commentCommandService.Update(ticketRef.Id!, commentRef.CommentId!, dto);
 			await SaveChanges();
 
 			// THEN 
@@ -104,11 +103,11 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		{
 			// GIVEN a 'bug' with a comment
 			var ticketRef = await CreateSampleBug();
-			var commentRef = (await _commentCommandService.Create(ticketRef.Id!, new CommentAddRequest { Message = "Test" })).Value;
+			var commentRef = (await _commentCommandService.Create(ticketRef.Id!, new CommentAddUpdRequest { Message = "Test" })).Value;
 			await SaveChanges();
 
 			// WHEN deleting the comment
-			var ticketDeletedRef = await _commentCommandService.Delete(ticketRef.Id!, new CommentDelRequest { CommentId = commentRef.CommentId! });
+			var ticketDeletedRef = await _commentCommandService.Delete(ticketRef.Id!, commentRef.CommentId!);
 			await SaveChanges();
 
 			// THEN 

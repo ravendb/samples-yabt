@@ -19,7 +19,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 		public ChangedByUserReference LastUpdated { get; set; }
 
 		public string[] Tags { get; set; }
-		public IList<BacklogItemCommentGetResponse> Comments { get; set; }
+		public IList<BacklogItemCommentListGetResponse>? Comments { get; set; }
 
 		public IDictionary<string, object> CustomFields { get; set; }
 	}

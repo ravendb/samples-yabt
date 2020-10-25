@@ -62,7 +62,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			await CreateSampleBug();
 
 			// WHEN adding a new comment
-			var dto = new CommentAddRequest { Message = message };
+			var dto = new CommentAddUpdRequest { Message = message };
 			var commentRefRes = await _commentCommandService.Create(ticketRef.Id!, dto);
 			await SaveChanges();
 			

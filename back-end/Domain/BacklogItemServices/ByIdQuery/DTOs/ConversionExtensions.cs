@@ -1,4 +1,4 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
 
 using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Domain.Helpers;
@@ -8,20 +8,20 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 	/// <summary>
 	///		Adapter design pattern in mapping DTOs instead of AutoMapper to enforce strong type checks (see more https://gigi.nullneuron.net/gigilabs/the-adapter-design-pattern-for-dtos-in-c/, https://cezarypiatek.github.io/post/why-i-dont-use-automapper/)
 	/// </summary>
-	internal static class ConvertionExtensions
+	internal static class ConversionExtensions
 	{
-		public static TResponse ConvertToDto<TEntity, TResponse>(this TEntity entity)
+		public static TResponse ConvertToDto<TEntity, TResponse>(this TEntity entity, List<BacklogItemCommentListGetResponse>? comments)
 			where TEntity : BacklogItem
 			where TResponse : BacklogItemGetResponseBase, new()
 		{
-			var response = new TResponse()
+			var response = new TResponse
 			{
 				Id = entity.Id,
 				Title = entity.Title,
 				Created = entity.Created,
 				LastUpdated = entity.LastUpdated,
 				Tags = entity.Tags,
-				Comments = entity.Comments.Select(c => c.ConvertToDto()).ToList(),
+				Comments = comments,
 				CustomFields = entity.CustomFields,
 				Type = entity.Type
 			};
@@ -42,15 +42,5 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 
 			return response;
 		}
-
-		private static BacklogItemCommentGetResponse ConvertToDto(this Comment comment) =>
-			new BacklogItemCommentGetResponse
-			{
-				Id = comment.Id,
-				Author = comment.Author,
-				Message = comment.Message,
-				CreatedDate = comment.CreatedDate,
-				ModifiedDate = comment.ModifiedDate
-			};
 	}
 }

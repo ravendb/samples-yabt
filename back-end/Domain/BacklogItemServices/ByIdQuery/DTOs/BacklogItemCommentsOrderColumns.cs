@@ -1,4 +1,4 @@
-﻿namespace Raven.Yabt.Domain.BacklogItemServices.CommentQuery.DTOs
+﻿namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 {
 	public enum BacklogItemCommentsOrderColumns
 	{
