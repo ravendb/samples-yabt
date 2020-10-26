@@ -15,6 +15,11 @@ namespace Raven.Yabt.Domain.UserServices.Query
 {
 	public class MentionedUserResolver : BaseService<User>, IMentionedUserResolver
 	{
+		/// <summary>
+		/// 	Gets any word starting with '@'
+		/// </summary>
+		private readonly Regex _mentionRegex = new Regex(@"(?<=\B\@)([\w\._\-\/]+)", RegexOptions.Compiled);
+		
 		public MentionedUserResolver(IAsyncDocumentSession dbSession) : base(dbSession) {}
 
 		/// <summary>
@@ -27,8 +32,7 @@ namespace Raven.Yabt.Domain.UserServices.Query
 		public async Task<IDictionary<string, string>> GetMentionedUsers(string text)
 		{
 			// Get mentions of users from the text
-			Regex mentionRegex = new Regex(@"(?<=\B\@)([\w\._\-\/]+)", RegexOptions.Compiled);	// Get any word starting with '@'
-			var matches = mentionRegex.Matches(text);
+			var matches = _mentionRegex.Matches(text);
 			var userReferences = matches.Distinct().Select(m => m.Value).ToArray();
 			
 			// Resolve all the mentioned names with user's IDs from the DB

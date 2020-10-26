@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
 using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common;
+using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.CommentCommands;
@@ -25,6 +27,8 @@ namespace Raven.Yabt.TicketImporter.Services
 		private readonly IAsyncDocumentSession _dbSession;
 		private readonly string[] _gitHubRepos;
 
+		private readonly Regex _mentionRegex = new Regex(@"(?<=\B\@)([\w\._\-\/]+)", RegexOptions.Compiled);	// Get any word starting with '@'
+
 		public TicketImportService(	AppSettings settings, 
 									IGitHubService gitHubService, 
 									IBacklogItemCommandService backlogItemService,
@@ -42,12 +46,11 @@ namespace Raven.Yabt.TicketImporter.Services
 
 		public async Task Run(CancellationToken cancellationToken)
 		{
-			var userIds = await _seededUser.GetGeneratedUsers();
+			var userReferences = await _seededUser.GetGeneratedUsers();
 			await _dbSession.SaveChangesAsync(cancellationToken);
 
 			foreach (var repo in _gitHubRepos)
 			{
-				List<IssueResponse> l = new List<IssueResponse>();
 				await foreach (var issues in _gitHubService.GetIssues(repo, 200, cancellationToken).WithCancellation(cancellationToken))
 				{
 					foreach (var issue in issues)
@@ -55,7 +58,7 @@ namespace Raven.Yabt.TicketImporter.Services
 						BacklogItemAddUpdRequestBase dto;
 						if (issue.Labels.Any(l => l.Name == "bug"))
 						{
-							dto = ConvertToBacklogItem<BugAddUpdRequest>(issue, userIds, 
+							dto = ConvertToBacklogItem<BugAddUpdRequest>(issue, userReferences, 
 									d => {
 											var rnd = new Random();
 											d.StepsToReproduce = issue.Body; 
@@ -65,16 +68,15 @@ namespace Raven.Yabt.TicketImporter.Services
 								);
 						}
 						else
-							dto = ConvertToBacklogItem<UserStoryAddUpdRequest>(issue, userIds, d => d.AcceptanceCriteria = issue.Body);
+							dto = ConvertToBacklogItem<UserStoryAddUpdRequest>(issue, userReferences, d => d.AcceptanceCriteria = issue.Body);
 
 						var importResult = await _backlogItemService.Create(dto);
 						if (!importResult.IsSuccess)
 							throw new Exception($"Failed to import issue #{issue.Number}");
 
 						if (issue.CommentsCount > 0)
-							foreach (var comment in issue.Comments)
+							foreach (var commentDto in issue.Comments.Select(comment => ConvertToComment(comment, userReferences)))
 							{
-								var commentDto = new CommentAddUpdRequest { Message = comment.Body};
 								await _backlogCommentService.Create(importResult.Value.Id!, commentDto);
 							}
 					}
@@ -83,15 +85,32 @@ namespace Raven.Yabt.TicketImporter.Services
 			}
 		}
 
-		private T ConvertToBacklogItem<T>(IssueResponse issue, IList<string> userIds, Action<T> settingExtraFields) where T : BacklogItemAddUpdRequestBase, new()
+		private static T ConvertToBacklogItem<T>(IssueResponse issue, IList<UserReference> userReferences, Action<T> settingExtraFields) where T : BacklogItemAddUpdRequestBase, new()
 		{
 			var dto = new T { Title = issue.Title };
 			if (issue.Labels?.Any() == true)
 				dto.Tags = issue.Labels.Select(l => l.Name).ToArray();
-			if (userIds.Any())
-				dto.AssigneeId = userIds.OrderBy(x => Guid.NewGuid()).First();
+			if (userReferences.Any())
+				dto.AssigneeId = userReferences.OrderBy(x => Guid.NewGuid()).First().Id;
 
 			settingExtraFields?.Invoke(dto);
+
+			return dto;
+		}
+
+		private CommentAddUpdRequest ConvertToComment(CommentResponse comment, IList<UserReference> userReferences)
+		{
+			var matches = _mentionRegex.Matches(comment.Body);
+			var references = matches.Distinct().Select(m => m.Value).ToArray();
+
+			// Replace referred users to random users
+			var body = comment.Body;
+			foreach (var reference in references)
+			{
+				body = body.Replace(reference, userReferences.OrderBy(x => Guid.NewGuid()).First().MentionedName);
+			}
+
+			var dto = new CommentAddUpdRequest { Message = body };
 
 			return dto;
 		}

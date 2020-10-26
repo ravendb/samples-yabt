@@ -30,9 +30,6 @@ namespace Raven.Yabt.TicketImporter
 			await worker.Run(cancellationToken);
 		}
 
-		public Task StopAsync(CancellationToken cancellationToken)
-		{
-			return Task.CompletedTask;
-		}
+		public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 	}
 }
