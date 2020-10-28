@@ -25,7 +25,7 @@ namespace Raven.Yabt.TicketImporter.Services
 		private readonly IBacklogItemCommentCommandService _backlogCommentService;
 		private readonly ISeededUsers _seededUser;
 		private readonly IAsyncDocumentSession _dbSession;
-		private readonly string[] _gitHubRepos;
+		private readonly GitHubSettings _gitHubSettings;
 
 		private readonly Regex _mentionRegex = new Regex(@"(?<=\B\@)([\w\._\-\/]+)", RegexOptions.Compiled);	// Get any word starting with '@'
 
@@ -37,7 +37,7 @@ namespace Raven.Yabt.TicketImporter.Services
 									IAsyncDocumentSession dbSession)
 		{
 			_gitHubService = gitHubService;
-			_gitHubRepos = settings.GitHub.Repos;
+			_gitHubSettings = settings.GitHub;
 			_dbSession = dbSession;
 			_backlogItemService = backlogItemService;
 			_backlogCommentService = backlogCommentService;
@@ -49,9 +49,9 @@ namespace Raven.Yabt.TicketImporter.Services
 			var userReferences = await _seededUser.GetGeneratedUsers();
 			await _dbSession.SaveChangesAsync(cancellationToken);
 
-			foreach (var repo in _gitHubRepos)
+			foreach (var repo in _gitHubSettings.Repos)
 			{
-				await foreach (var issues in _gitHubService.GetIssues(repo, 200, cancellationToken).WithCancellation(cancellationToken))
+				await foreach (var issues in _gitHubService.GetIssues(repo, _gitHubSettings.MaxImportedIssues, cancellationToken).WithCancellation(cancellationToken))
 				{
 					foreach (var issue in issues)
 					{

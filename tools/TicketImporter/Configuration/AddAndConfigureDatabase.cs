@@ -17,14 +17,14 @@ namespace Raven.Yabt.TicketImporter.Configuration
 				{
 					var config = x.GetService<DatabaseSettings>();
 					var store = SetupDocumentStore.GetDocumentStore(config.RavenDbUrls, config.Certificate, config.DbName);
-					store.PreInitializeDocumentStore();
-					store.Conventions.MaxNumberOfRequestsPerSession = 20000;
+						store.PreInitializeDocumentStore();
+						store.Conventions.MaxNumberOfRequestsPerSession = 20000;
 					return store.Initialize();
 				});
 			services.AddScoped(c =>
 				{
 					var session = c.GetService<IDocumentStore>().OpenAsyncSession();
-					session.Advanced.WaitForIndexesAfterSaveChanges();  // Wait on each change to avoid adding WaitForIndexing() in each test
+						session.Advanced.WaitForIndexesAfterSaveChanges();  // Wait on each change to avoid adding WaitForIndexing() in each test
 					return session;
 				});
 			return services;

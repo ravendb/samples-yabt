@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
+using Raven.Client.Documents;
+using Raven.Client.Documents.Indexes;
+using Raven.Yabt.Database;
 using Raven.Yabt.TicketImporter.Services;
 
 namespace Raven.Yabt.TicketImporter
@@ -26,6 +29,12 @@ namespace Raven.Yabt.TicketImporter
 		public async Task StartAsync(CancellationToken cancellationToken)
 		{
 			using var scope = _serviceFactory.CreateScope();
+			
+			// Make sure that indexes are in place
+			var dbStore = scope.ServiceProvider.GetService<IDocumentStore>();
+			await IndexCreation.CreateIndexesAsync(typeof(SetupDocumentStore).Assembly, dbStore, null, dbStore.Database, cancellationToken);
+			
+			// Kick off the import process
 			var worker = scope.ServiceProvider.GetService<TicketImportService>();
 			await worker.Run(cancellationToken);
 		}
