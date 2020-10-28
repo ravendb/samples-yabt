@@ -71,7 +71,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 
 			if (dto.Tags?.Any() == true)
 				foreach (var tag in dto.Tags)
-					query = query.Where(e => e.Tags.Contains(tag));
+					query = query.Where(e => e.Tags!.Contains(tag));	// Note: [Tags] is a nullable field, but when the LINQ gets converted to RQL the potential NULLs get handled 
 
 			if (dto.MentionsOfTheCurrentUserOnly)
 			{

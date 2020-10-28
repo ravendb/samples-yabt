@@ -42,7 +42,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		/// <summary>
 		///		Tags/Labels on the ticket
 		/// </summary>
-		public string[] Tags { get; set; } = new string[0];
+		public string[]? Tags { get; set; }
 
 		/// <summary>
 		///		Related tickets
