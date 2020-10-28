@@ -1,15 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using NSubstitute;
-
 using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.References;
-using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery;
 using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.CommentCommands;
@@ -40,7 +36,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			new TestUser("Ned", "Flanders", "ned@gmail.com")
 		};
 
-		public BacklogItemUserMentionsTests() : base()
+		public BacklogItemUserMentionsTests()
 		{
 			_userCommandService = Container.GetService<IUserCommandService>();
 			_backlogItemCommandService = Container.GetService<IBacklogItemCommandService>();
@@ -63,7 +59,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			// WHEN adding a new comment
 			var dto = new CommentAddUpdRequest { Message = message };
-			var commentRefRes = await _commentCommandService.Create(ticketRef.Id!, dto);
+			await _commentCommandService.Create(ticketRef.Id!, dto);
 			await SaveChanges();
 			
 			// THEN 
@@ -87,8 +83,8 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		}
 
 		public Task<UserReference> GetCurrentUserReference() => Task.FromResult(_currentUser);
-		public Task<UserReference> GetReferenceById(string id) => throw new NotImplementedException();
-		public string GetCurrentUserId() => _currentUser?.Id ?? "";
+		public Task<UserReference?> GetReferenceById(string id) => throw new NotImplementedException();
+		public string GetCurrentUserId() => _currentUser.Id ?? "";
 
 		private async Task<BacklogItemReference> CreateSampleBug()
 		{

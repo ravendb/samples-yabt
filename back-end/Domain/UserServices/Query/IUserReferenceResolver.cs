@@ -6,7 +6,7 @@ namespace Raven.Yabt.Domain.UserServices.Query
 {
 	public interface IUserReferenceResolver
 	{
-		Task<UserReference> GetReferenceById(string id);
+		Task<UserReference?> GetReferenceById(string id);
 
 		Task<UserReference> GetCurrentUserReference();
 	}

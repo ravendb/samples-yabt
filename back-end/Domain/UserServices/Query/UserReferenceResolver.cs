@@ -17,18 +17,18 @@ namespace Raven.Yabt.Domain.UserServices.Query
 			_currentUserResolver = currentUserResolver;
 		}
 
-		public async Task<UserReference> GetReferenceById(string id)
+		public async Task<UserReference?> GetReferenceById(string id)
 		{
 			var fullId = GetFullId(id);
 
 			var user = await DbSession.LoadAsync<User>(fullId);
 
-			return user.ToReference();
+			return user?.ToReference();
 		}
 
 		public Task<UserReference> GetCurrentUserReference()
 		{
-			return GetReferenceById(_currentUserResolver.GetCurrentUserId());
+			return GetReferenceById(_currentUserResolver.GetCurrentUserId())!;
 		}
 	}
 }
