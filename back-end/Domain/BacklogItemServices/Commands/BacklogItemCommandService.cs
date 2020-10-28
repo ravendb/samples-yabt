@@ -134,10 +134,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			else
 				entity.CustomFields = null;
 
-			if (dto.RelatedItems != null)
-				entity.RelatedItems = await ResolveRelatedItems(dto.RelatedItems);
-			else
-				entity.RelatedItems.Clear();
+			entity.RelatedItems = dto.RelatedItems != null ? await ResolveRelatedItems(dto.RelatedItems) : null;
 
 			// entity.CustomProperties = dto.CustomProperties;	TODO: De-serialise custom properties
 
@@ -156,10 +153,10 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			return entity;
 		}
 
-		private async Task<IList<BacklogItemRelatedItem>> ResolveRelatedItems(IDictionary<string, BacklogRelationshipType>? relatedItems)
+		private async Task<IList<BacklogItemRelatedItem>?> ResolveRelatedItems(IDictionary<string, BacklogRelationshipType>? relatedItems)
 		{
 			if (relatedItems == null)
-				return new List<BacklogItemRelatedItem>();
+				return null;
 
 			var ids = relatedItems.Keys.Select(GetFullId);
 

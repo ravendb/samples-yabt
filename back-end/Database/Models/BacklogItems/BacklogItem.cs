@@ -47,7 +47,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		/// <summary>
 		///		Related tickets
 		/// </summary>
-		public IList<BacklogItemRelatedItem> RelatedItems { get; set; } = new List<BacklogItemRelatedItem>();
+		public IList<BacklogItemRelatedItem>? RelatedItems { get; set; }
 
 		/// <summary>
 		///		Comments on the ticket
