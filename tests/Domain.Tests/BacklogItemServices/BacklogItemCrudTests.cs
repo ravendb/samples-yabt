@@ -116,7 +116,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			{
 				Title = "Test Bug",
 				Severity = BugSeverity.Critical,
-				Priority = BugPriority.Unknown
+				Priority = BugPriority.P1
 			};
 			var ticketAddedRef = await _commandService.Create(dto);
 			if (!ticketAddedRef.IsSuccess)

@@ -33,7 +33,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			_customFieldService = customFieldService;
 			_userResolver = userResolver;
 		}
-
+		
 		public async Task<ListResponse<BacklogItemListGetResponse>> GetList(BacklogItemListGetRequest dto)
 		{
 			var query = DbSession.Query<BacklogItemIndexedForList, BacklogItems_ForList>();
@@ -69,7 +69,16 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			if (dto.Type != BacklogItemType.Unknown)
 				query = query.Where(t => t.Type == dto.Type);
 
-			if (dto.ModifiedByTheCurrentUserOnly)
+			if (dto.Tags?.Any() == true)
+				foreach (var tag in dto.Tags)
+					query = query.Where(e => e.Tags!.Contains(tag));					// Note: [Tags] is a nullable field, but when the LINQ gets converted to RQL the potential NULLs get handled 
+
+			if (dto.MentionsOfTheCurrentUserOnly)
+			{
+				var userId = GetUserIdForDynamicField();
+				query = query.Where(t => t.MentionedUser![userId] > DateTime.MinValue);	// Note: [MentionedUser] is a nullable field, but when the LINQ gets converted to RQL the potential NULLs get handled
+			}
+			else if (dto.ModifiedByTheCurrentUserOnly)
 			{
 				var userIdForDynamicField = GetUserIdForDynamicField();
 				query = query.Where(t => t.ModifiedByUser[userIdForDynamicField] > DateTime.MinValue);
@@ -110,27 +119,27 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 					query = customField.FieldType switch
 					{
 						// Search in text custom fields
-						CustomFieldType.Text	=> ApplySearch(query, b => b.CustomFields[customFieldIdForIndex], val),
+						CustomFieldType.Text	=> ApplySearch(query, b => b.CustomFields![customFieldIdForIndex], val),
 						CustomFieldType.Numeric =>
 						op switch
 						{
-							FieldOperators.GreaterThan		  => query.Where(b => (decimal)b.CustomFields[customFieldIdForIndex] >  decimal.Parse(val)),
-							FieldOperators.GreaterThanOrEqual => query.Where(b => (decimal)b.CustomFields[customFieldIdForIndex] >= decimal.Parse(val)),
-							FieldOperators.LessThan			  => query.Where(b => (decimal)b.CustomFields[customFieldIdForIndex] <  decimal.Parse(val)),
-							FieldOperators.LessThanOrEqual	  => query.Where(b => (decimal)b.CustomFields[customFieldIdForIndex] <= decimal.Parse(val)),
-							_								  => query.Where(b => (decimal)b.CustomFields[customFieldIdForIndex] == decimal.Parse(val)),
+							FieldOperators.GreaterThan		  => query.Where(b => (decimal)b.CustomFields![customFieldIdForIndex] >  decimal.Parse(val)),
+							FieldOperators.GreaterThanOrEqual => query.Where(b => (decimal)b.CustomFields![customFieldIdForIndex] >= decimal.Parse(val)),
+							FieldOperators.LessThan			  => query.Where(b => (decimal)b.CustomFields![customFieldIdForIndex] <  decimal.Parse(val)),
+							FieldOperators.LessThanOrEqual	  => query.Where(b => (decimal)b.CustomFields![customFieldIdForIndex] <= decimal.Parse(val)),
+							_								  => query.Where(b => (decimal)b.CustomFields![customFieldIdForIndex] == decimal.Parse(val)),
 						},
 						CustomFieldType.Date =>
 						op switch
 						{
-							FieldOperators.GreaterThan		  => query.Where(b => (DateTime)b.CustomFields[customFieldIdForIndex] >  DateTime.Parse(val)),
-							FieldOperators.GreaterThanOrEqual => query.Where(b => (DateTime)b.CustomFields[customFieldIdForIndex] >= DateTime.Parse(val)),
-							FieldOperators.LessThan			  => query.Where(b => (DateTime)b.CustomFields[customFieldIdForIndex] <  DateTime.Parse(val)),
-							FieldOperators.LessThanOrEqual	  => query.Where(b => (DateTime)b.CustomFields[customFieldIdForIndex] <= DateTime.Parse(val)),
-							_								  => query.Where(b => (DateTime)b.CustomFields[customFieldIdForIndex] == DateTime.Parse(val)),
+							FieldOperators.GreaterThan		  => query.Where(b => (DateTime)b.CustomFields![customFieldIdForIndex] >  DateTime.Parse(val)),
+							FieldOperators.GreaterThanOrEqual => query.Where(b => (DateTime)b.CustomFields![customFieldIdForIndex] >= DateTime.Parse(val)),
+							FieldOperators.LessThan			  => query.Where(b => (DateTime)b.CustomFields![customFieldIdForIndex] <  DateTime.Parse(val)),
+							FieldOperators.LessThanOrEqual	  => query.Where(b => (DateTime)b.CustomFields![customFieldIdForIndex] <= DateTime.Parse(val)),
+							_								  => query.Where(b => (DateTime)b.CustomFields![customFieldIdForIndex] == DateTime.Parse(val)),
 						},
 						// Exact match in others
-						_ => query.Where(t => t.CustomFields[customFieldIdForIndex].ToString() == val),
+						_ => query.Where(t => t.CustomFields![customFieldIdForIndex].ToString() == val),
 					};
 				}
 			}
@@ -138,7 +147,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			return query;
 		}
 
-		private FieldOperators GetCustomFieldExpression(ref string val)
+		private static FieldOperators GetCustomFieldExpression(ref string val)
 		{
 			var supportedOperators = new[] { "lt", "lte", "gt", "gte", "eq" };
 			var regExMatch = new Regex(@$"^({string.Join("|", supportedOperators)})\|", RegexOptions.IgnoreCase).Match(val.ToString());
@@ -164,7 +173,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			if (dto.OrderBy == BacklogItemsOrderColumns.Default)
 			{
 				if (isSearchResult)
-					return query;   // Use default order by releavnce
+					return query;   // Use default order by relevance
 				// Otherwise descending sort by number
 				dto.OrderBy = BacklogItemsOrderColumns.Number;
 				dto.OrderDirection = OrderDirections.Desc;
@@ -180,6 +189,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 				BacklogItemsOrderColumns.TimestampLastModified=>dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.LastUpdatedTimestamp) : query.OrderByDescending(t => t.LastUpdatedTimestamp),
 				BacklogItemsOrderColumns.TimestampModifiedByCurrentUser =>
 																dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.ModifiedByUser[userKey]) : query.OrderByDescending(t => t.ModifiedByUser[userKey]),
+				BacklogItemsOrderColumns.TimestampMentionsOfCurrentUser =>
+																dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.MentionedUser![userKey]) : query.OrderByDescending(t => t.MentionedUser![userKey]),
 				_ => throw new NotImplementedException()
 			};
 		}

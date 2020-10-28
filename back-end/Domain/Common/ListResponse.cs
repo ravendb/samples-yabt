@@ -24,5 +24,10 @@ namespace Raven.Yabt.Domain.Common
 			PageIndex = currentPageIndex;
 			TotalPages = (totalRecords / pageSize) + (totalRecords % pageSize == 0 ? 0 : 1);
 		}
+
+		public ListResponse()
+		{
+			Entries = new List<T>();
+		}
 	}
 }

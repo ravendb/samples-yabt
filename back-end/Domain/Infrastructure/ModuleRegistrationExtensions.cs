@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
 
@@ -13,30 +12,33 @@ namespace Raven.Yabt.Domain.Infrastructure
 		/// <summary>
 		///     Register a service against all interfaces of <typeparamref name="T"/> with a life time scope <paramref name="lifetime"/>
 		/// </summary>
-		public static void RegisterAsImplementedInterfaces<T>(this IServiceCollection services, ServiceLifetime lifetime = ServiceLifetime.Transient, IEnumerable<Type>? skipInterfaces = null)
+		public static IServiceCollection RegisterAsImplementedInterfaces<T>(this IServiceCollection services, ServiceLifetime lifetime = ServiceLifetime.Transient, IEnumerable<Type>? skipInterfaces = null)
 		{
 			services.RegisterAsImplementedInterfaces(typeof(T), lifetime, skipInterfaces);
+			return services;
 		}
 
 		/// <summary>
 		///		Register a collection of types (<paramref name="types"/>) for their implemented interfaces
 		/// </summary>
-		public static void RegisterAsImplementedInterfaces(this IServiceCollection services, IEnumerable<Type> types, ServiceLifetime lifetime, IEnumerable<Type>? skipInterfaces = null)
+		public static IServiceCollection RegisterAsImplementedInterfaces(this IServiceCollection services, IEnumerable<Type> types, ServiceLifetime lifetime, IEnumerable<Type>? skipInterfaces = null)
 		{
 			foreach (Type type in types)
 				services.RegisterAsImplementedInterfaces(type, lifetime, skipInterfaces);
+			return services;
 		}
 
 		/// <summary>
 		///		Register all modules (classes derived from <see cref="ModuleRegistrationBase"/>) in the specified assembly
 		/// </summary>
-		public static void RegisterModules(this IServiceCollection services, Assembly assembly)
+		public static IServiceCollection RegisterModules(this IServiceCollection services, Assembly assembly)
 		{
 			foreach (Type tp in assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(ModuleRegistrationBase))))
 			{
 				if (Activator.CreateInstance(tp) is ModuleRegistrationBase module)
 					module.Configure(services);
 			}
+			return services;
 		}
 
 		/// <summary>

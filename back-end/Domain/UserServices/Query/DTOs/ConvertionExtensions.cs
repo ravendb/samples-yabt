@@ -15,7 +15,7 @@ namespace Raven.Yabt.Domain.UserServices.Query.DTOs
 				LastName = dto.LastName,
 				FullName = dto.FullName,
 				ShortName = dto.ShortName,
-				Avatar = dto.Avatar,
+				Avatar = dto.AvatarUrl,
 				Email = dto.Email
 			};
 		}

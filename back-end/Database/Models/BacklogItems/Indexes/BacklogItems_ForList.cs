@@ -35,19 +35,31 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 							}
 							.Concat(ticket.Comments.Select(c => c.Message)),
 
+					Tags = ticket.Tags.Distinct().ToList(),		// filter by 'Tags'
+
 					// Dynamic fields
 					// Notes:
 					//	- The format 'collection_key' is required to treat them as dictionary in the C# code
 					//	- Prefix is vital, see https://groups.google.com/d/msg/ravendb/YvPZFIn5GVg/907Msqv4CQAJ
 
 					// Create a dictionary for Modifications
-					_ = ticket.ModifiedBy.GroupBy(m => m.ActionedBy.Id)                                                           // filter & sort by Timestamp
+					_ = ticket.ModifiedBy.GroupBy(m => m.ActionedBy.Id)															// filter & sort by Timestamp
 											.Select(x => CreateField($"{nameof(BacklogItemIndexedForList.ModifiedByUser)}_{x.Key!.Replace("/","").ToLower()}", 
 																	 x.Max(o => o.Timestamp)
 																	 )
 													),
+					// Create a dictionary for mentioned users
+					_1 = from um in 
+							(from comment in ticket.Comments 
+							 from user in comment.MentionedUserIds 
+							 select new { user, comment.ModifiedDate })
+						 group um by um.user into g
+						 select CreateField(
+								$"{nameof(BacklogItemIndexedForList.MentionedUser)}_{g.Key.Value!.Replace("/","").ToLower()}",
+								g.Max(f => f.ModifiedDate)
+								),
 					// Create a dictionary for Custom Fields
-					__ = from x in ticket.CustomFields
+					_2 = from x in ticket.CustomFields
 						 let fieldType = LoadDocument<CustomFields.CustomField>(x.Key).FieldType
 						 let key = $"{nameof(BacklogItem.CustomFields)}_{x.Key.Replace("/", "").ToLower()}"
 						 select 

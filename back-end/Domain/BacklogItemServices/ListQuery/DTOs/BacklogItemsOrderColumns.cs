@@ -8,5 +8,6 @@
 		TimestampCreated,
 		TimestampLastModified,
 		TimestampModifiedByCurrentUser,
+		TimestampMentionsOfCurrentUser,
 	}
 }

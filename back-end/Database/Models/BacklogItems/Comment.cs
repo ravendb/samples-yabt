@@ -7,12 +7,19 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 {
 	public class Comment
 	{
-		public Guid Id { get; set; }
-		public DateTime CreatedDate { get; set; }
+		public string Id { get; set; } = Guid.NewGuid().ToString();
+		public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
+		public DateTime ModifiedDate { get; set; } = DateTime.UtcNow;
 
-		public UserReference Author { get; set; } = null!;  // Non-nullable
-		public string Message { get; set; } = null!;    // Non-nullable
+		public UserReference Author { get; set; } = null!;	// Non-nullable
+		public string Message { get; set; } = null!;		// Non-nullable
 
-		public IList<string> MentionedUserIds { get; } = new List<string>();
+		/// <summary>
+		/// 	Mentioned users in the <see cref="Message"/>, e.g. { 'HomerSimpson', 'users/2-A' }
+		/// </summary>
+		/// <remarks>
+		/// 	It's nullable to avoid storing in the DB a field without any values
+		/// </remarks>
+		public IDictionary<string, string>? MentionedUserIds { get; set; }
 	}
 }

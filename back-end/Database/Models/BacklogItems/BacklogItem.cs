@@ -9,7 +9,7 @@ using Raven.Yabt.Database.Common.References;
 namespace Raven.Yabt.Database.Models.BacklogItems
 {
 	/// <summary>
-	///		Base class representing common properties accross all types of tickets: bugs, user stories, etc.
+	///		Base class representing common properties across all types of tickets: bugs, user stories, etc.
 	/// </summary>
 	/// <remarks>
 	///		Can't make the class 'abstract', due to getting exception: Cannot find collection name for abstract class, only concrete class are supported. 
@@ -40,9 +40,14 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		public ChangedByUserReference LastUpdated	=> ModifiedBy.OrderBy(m => m.Timestamp).LastOrDefault() as ChangedByUserReference;
 
 		/// <summary>
+		///		Tags/Labels on the ticket
+		/// </summary>
+		public string[]? Tags { get; set; }
+
+		/// <summary>
 		///		Related tickets
 		/// </summary>
-		public IList<BacklogItemRelatedItem> RelatedItems { get; set; } = new List<BacklogItemRelatedItem>();
+		public IList<BacklogItemRelatedItem>? RelatedItems { get; set; }
 
 		/// <summary>
 		///		Comments on the ticket
@@ -53,7 +58,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		///		Extra custom properties of various data types configured by the user,
 		///		Stored as { custom field ID, value }
 		/// </summary>
-		public IDictionary<string, object> CustomFields { get; set; } = new Dictionary<string, object>();
+		public IDictionary<string, object>? CustomFields { get; set; }
 
 		public BacklogItemReference ToReference() => new BacklogItemReference
 		{

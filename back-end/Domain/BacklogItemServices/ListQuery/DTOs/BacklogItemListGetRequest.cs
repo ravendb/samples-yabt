@@ -9,11 +9,14 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs
 	{
 		public BacklogItemType Type { get; set; } = BacklogItemType.Unknown;
 
+		public string[]? Tags { get; set; }
+
 		public string? Search { get; set; }
 
 		public string? AssignedUserId { get; set; }
 
 		public bool ModifiedByTheCurrentUserOnly { get; set; }
+		public bool MentionsOfTheCurrentUserOnly { get; set; }
 
 		public BacklogItemModification? UserModification { get; set; }
 

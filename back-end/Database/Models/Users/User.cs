@@ -11,22 +11,22 @@ namespace Raven.Yabt.Database.Models.Users
 		/// <summary>
 		///		First name. One of the first/last names should be mandatory
 		/// </summary>
-		public string FirstName { get; set; } = string.Empty;
+		public string? FirstName { get; set; } = string.Empty;
 		/// <summary>
 		///		First name. One of the first/last names should be mandatory
 		/// </summary>
-		public string LastName { get; set; } = string.Empty;
+		public string? LastName { get; set; } = string.Empty;
 		/// <summary>
 		///		Full name of the user, e.g. "Homer Simpson"
 		/// </summary>
 		[JsonIgnore]
-		public string FullName => $"{FirstName} {LastName}";
+		public string FullName => (!string.IsNullOrEmpty(FirstName) ? $"{FirstName} " : "") + LastName ?? "";
 		/// <summary>
 		///		Shorten name of the user, e.g. "Simpson H."
 		/// </summary>
 		public string ShortName { get; set; } = string.Empty;
 
-		public string? Avatar { get; set; }
+		public string? AvatarUrl { get; set; }
 		public string? Email { get; set; }
 
 		/// <summary>
@@ -39,7 +39,7 @@ namespace Raven.Yabt.Database.Models.Users
 			Id = Id,
 			Name = ShortName,
 			FullName = FullName,
-			Avatar = Avatar
+			AvatarUrl = AvatarUrl
 		};
 	}
 }

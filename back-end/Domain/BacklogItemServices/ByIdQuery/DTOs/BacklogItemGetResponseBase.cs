@@ -2,25 +2,21 @@
 
 using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.References;
-using Raven.Yabt.Database.Models.BacklogItems;
-
-#nullable disable  // Disable nullable check for a response DTO file
+using Raven.Yabt.Domain.Common;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 {
 	public abstract class BacklogItemGetResponseBase
 	{
-		protected BacklogItemGetResponseBase() { }
-
-		public string Id { get; set; }
-		public string Title { get; set; }
+		public string Title { get; set; } = null!;
 		public BacklogItemType Type { get; set; }
 
-		public ChangedByUserReference Created { get; set; }
-		public ChangedByUserReference LastUpdated { get; set; }
+		public ChangedByUserReference Created { get; set; } = null!;
+		public ChangedByUserReference LastUpdated { get; set; } = null!;
 
-		public IList<Comment> Comments { get; set; }
+		public string[]? Tags { get; set; }
+		public ListResponse<BacklogItemCommentListGetResponse>? Comments { get; set; }
 
-		public IDictionary<string, object> CustomFields { get; set; }
+		public IDictionary<string, object>? CustomFields { get; set; }
 	}
 }

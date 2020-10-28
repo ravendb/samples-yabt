@@ -30,7 +30,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 		private string _currentUserId;
 
-		public BacklogItemListQueryByCustomFieldTests() : base()
+		public BacklogItemListQueryByCustomFieldTests()
 		{
 			_commandService = Container.GetService<IBacklogItemCommandService>();
 			_queryService = Container.GetService<IBacklogItemListQueryService>();
@@ -76,7 +76,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		[InlineData(new int[] { 1, 2, 5 },	"gt|3", 2)]
 		[InlineData(new int[] { 2, 5 },		"lte|2", 0)]
 		[InlineData(new int[] { 2, 5 },		"gte|5", 1)]
-		private async Task Querying_By_Greate_On_Numeric_CustomField_Works(int[] customValues, string filter, int indexOfValidTicket)
+		private async Task Querying_By_MoreLess_Condition_For_Numeric_CustomField_Works(int[] customValues, string filter, int indexOfValidTicket)
 		{
 			// GIVEN 2 custom fields
 			_currentUserId = await SeedCurrentUsers();
@@ -105,7 +105,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		[InlineData(new string[] { "2000-01-01", "2000-01-02" }, "lte|2000-01-01", 0)]
 		[InlineData(new string[] { "2000-01-01", "2000-01-02" }, "gt|2000-01-01",  1)]
 		[InlineData(new string[] { "2000-01-01", "2000-01-02" }, "gte|2000-01-02", 1)]
-		private async Task Querying_By_Greate_On_Date_CustomField_Works(string[] customValues, string filter, int indexOfValidTicket)
+		private async Task Querying_By_MoreLess_Condition_For_Date_CustomField_Works(string[] customValues, string filter, int indexOfValidTicket)
 		{
 			// GIVEN 2 custom fields
 			_currentUserId = await SeedCurrentUsers();

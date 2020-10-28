@@ -15,6 +15,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs
 
 		public string? AssigneeId { get; set; }
 
+		public string[]? Tags { get; set; }
+
 		/// <summary>
 		///		Related tickets: { Backlog Item ID, Relationship type }.
 		/// </summary>

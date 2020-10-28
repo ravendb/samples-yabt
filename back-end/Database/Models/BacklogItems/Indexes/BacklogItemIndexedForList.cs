@@ -21,15 +21,14 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 		public string Search { get; set; } = null!;
 
 		/// <summary>
+		/// 	Mentioned users: { User ID, Timestamp of the corresponding comment }.
+		/// </summary>
+		public IDictionary<string, DateTime>? MentionedUser { get; set; }
+		
+		/// <summary>
 		///		Ticket modifications: { User ID, Timestamp of a change }.
 		///		Used for searching changes by a user.
 		/// </summary>
 		public IDictionary<string, DateTime> ModifiedByUser { get; set; } = null!;
-
-		/// <summary>
-		///		Custom fields: { Custom Field ID, Value }.
-		///		Change the data type from the model to trick eliminate C# value comparison checks as it's handled on the Raven's side
-		/// </summary>
-		public new IDictionary<string, object> CustomFields { get; set; } = null!;
 	}
 }
