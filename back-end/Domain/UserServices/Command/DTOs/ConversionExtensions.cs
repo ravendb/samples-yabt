@@ -9,8 +9,7 @@ namespace Raven.Yabt.Domain.UserServices.Command.DTOs
 	{
 		public static User ConvertToUser(this UserAddUpdRequest dto, User? entity = null)
 		{
-			if (entity == null)
-				entity = new User();
+			entity ??= new User();
 
 			entity.FirstName = dto.FirstName;
 			entity.LastName = dto.LastName;
