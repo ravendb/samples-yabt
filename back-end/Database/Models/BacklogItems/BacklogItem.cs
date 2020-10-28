@@ -58,7 +58,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		///		Extra custom properties of various data types configured by the user,
 		///		Stored as { custom field ID, value }
 		/// </summary>
-		public IDictionary<string, object> CustomFields { get; set; } = new Dictionary<string, object>();
+		public IDictionary<string, object>? CustomFields { get; set; }
 
 		public BacklogItemReference ToReference() => new BacklogItemReference
 		{

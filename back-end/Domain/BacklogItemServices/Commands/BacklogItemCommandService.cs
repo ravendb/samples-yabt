@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -64,9 +63,6 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 		public async Task<IDomainResult<BacklogItemReference>> Update<T>(string id, T dto) where T : BacklogItemAddUpdRequestBase
 		{
-			if (dto == null)
-				return DomainResult.Error<BacklogItemReference>("Invalid update parameters");
-
 			var entity = await DbSession.LoadAsync<BacklogItem>(GetFullId(id));
 			if (entity == null)
 				return DomainResult.NotFound<BacklogItemReference>();
@@ -85,7 +81,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 								);
 		}
 
-		public async Task<IDomainResult<BacklogItemReference>> AssignToUser(string backlogItemId, string userShortenId)
+		public async Task<IDomainResult<BacklogItemReference>> AssignToUser(string backlogItemId, string? userShortenId)
 		{
 			var backlogItem = await DbSession.LoadAsync<BacklogItem>(GetFullId(backlogItemId));
 			if (backlogItem == null)
@@ -119,8 +115,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			where TModel : BacklogItem, new()
 			where TDto : BacklogItemAddUpdRequestBase
 		{
-			if (entity == null)
-				entity = new TModel();
+			entity ??= new TModel();
 
 			entity.Title = dto.Title;
 			entity.Tags = dto.Tags;
@@ -128,7 +123,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			entity.ModifiedBy.Add(new BacklogItemHistoryRecord
 				{
 					ActionedBy = await _userResolver.GetCurrentUserReference(),
-					Summary = entity.ModifiedBy?.Any() == true ? "Modified" : "Created"
+					Summary = entity.ModifiedBy.Any() ? "Modified" : "Created"
 				});
 
 			if (dto.CustomFields != null)
@@ -137,7 +132,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				entity.CustomFields = verifiedCustomFieldIds.ToDictionary(x => x.Value, x => dto.CustomFields[x.Key]);
 			}
 			else
-				entity.CustomFields.Clear();
+				entity.CustomFields = null;
 
 			if (dto.RelatedItems != null)
 				entity.RelatedItems = await ResolveRelatedItems(dto.RelatedItems);

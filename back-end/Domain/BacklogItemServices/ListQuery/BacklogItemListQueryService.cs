@@ -119,27 +119,27 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 					query = customField.FieldType switch
 					{
 						// Search in text custom fields
-						CustomFieldType.Text	=> ApplySearch(query, b => b.CustomFields[customFieldIdForIndex], val),
+						CustomFieldType.Text	=> ApplySearch(query, b => b.CustomFields![customFieldIdForIndex], val),
 						CustomFieldType.Numeric =>
 						op switch
 						{
-							FieldOperators.GreaterThan		  => query.Where(b => (decimal)b.CustomFields[customFieldIdForIndex] >  decimal.Parse(val)),
-							FieldOperators.GreaterThanOrEqual => query.Where(b => (decimal)b.CustomFields[customFieldIdForIndex] >= decimal.Parse(val)),
-							FieldOperators.LessThan			  => query.Where(b => (decimal)b.CustomFields[customFieldIdForIndex] <  decimal.Parse(val)),
-							FieldOperators.LessThanOrEqual	  => query.Where(b => (decimal)b.CustomFields[customFieldIdForIndex] <= decimal.Parse(val)),
-							_								  => query.Where(b => (decimal)b.CustomFields[customFieldIdForIndex] == decimal.Parse(val)),
+							FieldOperators.GreaterThan		  => query.Where(b => (decimal)b.CustomFields![customFieldIdForIndex] >  decimal.Parse(val)),
+							FieldOperators.GreaterThanOrEqual => query.Where(b => (decimal)b.CustomFields![customFieldIdForIndex] >= decimal.Parse(val)),
+							FieldOperators.LessThan			  => query.Where(b => (decimal)b.CustomFields![customFieldIdForIndex] <  decimal.Parse(val)),
+							FieldOperators.LessThanOrEqual	  => query.Where(b => (decimal)b.CustomFields![customFieldIdForIndex] <= decimal.Parse(val)),
+							_								  => query.Where(b => (decimal)b.CustomFields![customFieldIdForIndex] == decimal.Parse(val)),
 						},
 						CustomFieldType.Date =>
 						op switch
 						{
-							FieldOperators.GreaterThan		  => query.Where(b => (DateTime)b.CustomFields[customFieldIdForIndex] >  DateTime.Parse(val)),
-							FieldOperators.GreaterThanOrEqual => query.Where(b => (DateTime)b.CustomFields[customFieldIdForIndex] >= DateTime.Parse(val)),
-							FieldOperators.LessThan			  => query.Where(b => (DateTime)b.CustomFields[customFieldIdForIndex] <  DateTime.Parse(val)),
-							FieldOperators.LessThanOrEqual	  => query.Where(b => (DateTime)b.CustomFields[customFieldIdForIndex] <= DateTime.Parse(val)),
-							_								  => query.Where(b => (DateTime)b.CustomFields[customFieldIdForIndex] == DateTime.Parse(val)),
+							FieldOperators.GreaterThan		  => query.Where(b => (DateTime)b.CustomFields![customFieldIdForIndex] >  DateTime.Parse(val)),
+							FieldOperators.GreaterThanOrEqual => query.Where(b => (DateTime)b.CustomFields![customFieldIdForIndex] >= DateTime.Parse(val)),
+							FieldOperators.LessThan			  => query.Where(b => (DateTime)b.CustomFields![customFieldIdForIndex] <  DateTime.Parse(val)),
+							FieldOperators.LessThanOrEqual	  => query.Where(b => (DateTime)b.CustomFields![customFieldIdForIndex] <= DateTime.Parse(val)),
+							_								  => query.Where(b => (DateTime)b.CustomFields![customFieldIdForIndex] == DateTime.Parse(val)),
 						},
 						// Exact match in others
-						_ => query.Where(t => t.CustomFields[customFieldIdForIndex].ToString() == val),
+						_ => query.Where(t => t.CustomFields![customFieldIdForIndex].ToString() == val),
 					};
 				}
 			}
@@ -147,7 +147,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			return query;
 		}
 
-		private FieldOperators GetCustomFieldExpression(ref string val)
+		private static FieldOperators GetCustomFieldExpression(ref string val)
 		{
 			var supportedOperators = new[] { "lt", "lte", "gt", "gte", "eq" };
 			var regExMatch = new Regex(@$"^({string.Join("|", supportedOperators)})\|", RegexOptions.IgnoreCase).Match(val.ToString());
