@@ -53,7 +53,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			if (string.IsNullOrEmpty(newUserReference?.Id))
 				return;
 			
-			// Replace invalid characters with empty strings. Can't pass it as a parameter, as string parameters get quated when inserted
+			// Replace invalid characters with empty strings. Can't pass it as a parameter, as string parameters get wrapped in '\"' when inserted
 			var idForDynamicField = Regex.Replace(newUserReference.Id, @"[^\w\.@-]", "");
 
 			// Form a patch query

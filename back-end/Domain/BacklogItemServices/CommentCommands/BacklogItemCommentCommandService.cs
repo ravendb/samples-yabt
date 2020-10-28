@@ -40,7 +40,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 				{
 					Author = await _userResolver.GetCurrentUserReference(),
 					Message = dto.Message,
-					MentionedUserIds = mentionedUsers
+					MentionedUserIds = mentionedUsers.Any() ? mentionedUsers : null,
 				};
 			ticket.Comments.Add(comment);
 
@@ -66,7 +66,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 			var mentionedUsers = await _mentionedUserResolver.GetMentionedUsers(dto.Message);
 
 			comment.Message = dto.Message;
-			comment.MentionedUserIds = mentionedUsers;
+			comment.MentionedUserIds = mentionedUsers.Any() ? mentionedUsers : null;
 			comment.ModifiedDate = DateTime.UtcNow;
 
 			return DomainResult.Success(ToLastCommentReference(ticket));

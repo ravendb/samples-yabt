@@ -19,8 +19,10 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery
 		public BacklogItemByIdQueryService(IAsyncDocumentSession dbSession) : base(dbSession) { }
 
 		/// <inheritdoc/>
-		public async Task<IDomainResult<BacklogItemGetResponseBase>> GetById(string id, BacklogItemCommentListGetRequest? @params=null)
+		public async Task<IDomainResult<BacklogItemGetResponseBase>> GetById(string id, BacklogItemCommentListGetRequest? @params = null)
 		{
+			@params ??= new BacklogItemCommentListGetRequest();
+
 			var fullId = GetFullId(id);
 
 			var ticket = await DbSession.LoadAsync<BacklogItem>(fullId);
@@ -28,11 +30,12 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery
 				return DomainResult.NotFound<BacklogItemGetResponseBase>();
 
 			var comments = GetCommentsList(ticket, @params);
+			var pagedComments = (comments?.Any() == true) ? new ListResponse<BacklogItemCommentListGetResponse>(comments, ticket.Comments.Count, @params.PageIndex, @params.PageSize) : null;
 
 			var dto = (ticket.Type) switch
 			{
-				BacklogItemType.Bug			=> (ticket as BacklogItemBug)		?.ConvertToDto<BacklogItemBug, BugGetResponse>(comments) as  BacklogItemGetResponseBase,
-				BacklogItemType.UserStory	=> (ticket as BacklogItemUserStory)	?.ConvertToDto<BacklogItemUserStory, UserStoryGetResponse>(comments) as BacklogItemGetResponseBase,
+				BacklogItemType.Bug			=> (ticket as BacklogItemBug)		?.ConvertToDto<BacklogItemBug, BugGetResponse>(pagedComments) as  BacklogItemGetResponseBase,
+				BacklogItemType.UserStory	=> (ticket as BacklogItemUserStory)	?.ConvertToDto<BacklogItemUserStory, UserStoryGetResponse>(pagedComments) as BacklogItemGetResponseBase,
 				_ => throw new NotImplementedException($"Not supported Backlog Item Type: {ticket.Type}"),
 			};
 			if (dto == null)
@@ -55,7 +58,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery
 			return new ListResponse<BacklogItemCommentListGetResponse>(ret, ticket.Comments.Count, @params.PageIndex, @params.PageSize);
 		}
 
-		private List<BacklogItemCommentListGetResponse>? GetCommentsList(BacklogItem backlogEntity, BacklogItemCommentListGetRequest? dto)
+		private List<BacklogItemCommentListGetResponse>? GetCommentsList(BacklogItem backlogEntity, BacklogItemCommentListGetRequest dto)
 		{
 			dto ??= new BacklogItemCommentListGetRequest();
 			if (dto.PageSize == 0)
@@ -72,7 +75,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery
 					Author = comment.Author,
 					Created = comment.CreatedDate,
 					LastUpdated = comment.ModifiedDate,
-					MentionedUserIds = comment.MentionedUserIds
+					MentionedUserIds = comment.MentionedUserIds?.ToDictionary(pair => pair.Key, pair => pair.Value.GetShortId())
 				}).ToList();
 			ret.RemoveEntityPrefixFromIds(r => r.Author);
 			return ret;

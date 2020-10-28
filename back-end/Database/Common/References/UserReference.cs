@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 
-using Newtonsoft.Json;
+using NewtonsoftJson = Newtonsoft.Json;
+using TextJson = System.Text.Json.Serialization;
 
 namespace Raven.Yabt.Database.Common.References
 {
@@ -28,7 +29,8 @@ namespace Raven.Yabt.Database.Common.References
 		///		User's name how it appears in the text as a user's mentioning, e.g. "HomerSimpson".
 		/// 	Strip all [\r\n\t\f\v] characters
 		/// </summary>
-		[JsonIgnore]
+		[TextJson.JsonIgnore]			// Ignore in the controller output
+		[NewtonsoftJson.JsonIgnore]		// Ignore in the RavenDB storage 
 		public string MentionedName => Regex.Replace(FullName, @"\s+", "");
 	}
 }

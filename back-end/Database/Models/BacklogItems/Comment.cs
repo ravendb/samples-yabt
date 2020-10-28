@@ -17,6 +17,9 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		/// <summary>
 		/// 	Mentioned users in the <see cref="Message"/>, e.g. { 'HomerSimpson', 'users/2-A' }
 		/// </summary>
-		public IDictionary<string, string> MentionedUserIds { get; set; } = new Dictionary<string, string>();
+		/// <remarks>
+		/// 	It's nullable to avoid storing in the DB a field without any values
+		/// </remarks>
+		public IDictionary<string, string>? MentionedUserIds { get; set; }
 	}
 }

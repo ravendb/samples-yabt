@@ -9,7 +9,6 @@ using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Models.Users;
 using Raven.Yabt.Database.Models.Users.Indexes;
 using Raven.Yabt.Domain.Common;
-using Raven.Yabt.Domain.Helpers;
 
 namespace Raven.Yabt.Domain.UserServices.Query
 {
@@ -36,14 +35,14 @@ namespace Raven.Yabt.Domain.UserServices.Query
 			var userReferences = matches.Distinct().Select(m => m.Value).ToArray();
 			
 			// Resolve all the mentioned names with user's IDs from the DB
-			if (!userReferences.Any())
+			if (userReferences?.Any() != true)
 				return new Dictionary<string, string>();
 
 			var query = from user in DbSession.Query<MentionedUsersIndexed, Users_Mentions>()
 				where user.MentionedName.In(userReferences)
 				select user;
 			var users = (await query.As<User>().ToArrayAsync())
-			            .Select(u => u.ToReference().RemoveEntityPrefixFromId())
+			            .Select(u => u.ToReference())
 			            .ToList();
 			return users.ToDictionary(x=>x.MentionedName, x=>x.Id!);
 		}

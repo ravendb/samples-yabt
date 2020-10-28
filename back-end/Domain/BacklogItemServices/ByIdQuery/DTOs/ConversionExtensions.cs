@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using Raven.Yabt.Database.Models.BacklogItems;
+using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.Helpers;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
@@ -10,13 +11,12 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 	/// </summary>
 	internal static class ConversionExtensions
 	{
-		public static TResponse ConvertToDto<TEntity, TResponse>(this TEntity entity, List<BacklogItemCommentListGetResponse>? comments)
+		public static TResponse ConvertToDto<TEntity, TResponse>(this TEntity entity, ListResponse<BacklogItemCommentListGetResponse>? comments)
 			where TEntity : BacklogItem
 			where TResponse : BacklogItemGetResponseBase, new()
 		{
 			var response = new TResponse
 			{
-				Id = entity.Id,
 				Title = entity.Title,
 				Created = entity.Created,
 				LastUpdated = entity.LastUpdated,

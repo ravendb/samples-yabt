@@ -27,7 +27,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 		private readonly UserReference _currentUser = new UserReference { Id = "1", Name = "H. Simpson", FullName = "Homer Simpson" };
 
-		public BacklogItemCommentsCrudTests() : base()
+		public BacklogItemCommentsCrudTests()
 		{
 			_commandService = Container.GetService<IBacklogItemCommandService>();
 			_commentCommandService = Container.GetService<IBacklogItemCommentCommandService>();
@@ -58,13 +58,13 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			Assert.True(commentRefRes.IsSuccess);
 
 			// the ticket appears in the DB
-			var ticket = (await _queryService.GetById(ticketRef.Id!))?.Value;
+			var ticket = (await _queryService.GetById(ticketRef.Id!)).Value;
 			Assert.NotNull(ticket);
 			// it has 1 comment
-			Assert.Single(ticket!.Comments);
+			Assert.Equal(1, ticket!.Comments!.TotalRecords);
 			// all the comment properties are as expected
 			var commentRef = commentRefRes.Value;
-			var comment = ticket.Comments.Single();
+			var comment = ticket.Comments.Entries.Single();
 			Assert.Equal(commentRef.CommentId, comment.Id);
 			Assert.Equal("Test", comment.Message);
 			Assert.Equal(_currentUser.Id, comment.Author.Id);
@@ -92,9 +92,9 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			Assert.Equal(commentRef.CommentId, commentUpdatedRef.Value.CommentId);
 
 			// the comment has the right message
-			var ticket = (await _queryService.GetById(ticketRef.Id!))?.Value;
+			var ticket = (await _queryService.GetById(ticketRef.Id!)).Value;
 			Assert.NotNull(ticket);
-			var comment = ticket!.Comments.Single();
+			var comment = ticket!.Comments!.Entries.Single();
 			Assert.Equal("Test (Updated)", comment.Message);
 		}
 
@@ -115,9 +115,9 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			Assert.True(ticketDeletedRef.IsSuccess);
 
 			// the comment gets removed from the ticket
-			var ticket = (await _queryService.GetById(ticketRef.Id!))?.Value;
+			var ticket = (await _queryService.GetById(ticketRef.Id!)).Value;
 			Assert.NotNull(ticket);
-			Assert.False(ticket!.Comments.Any());
+			Assert.Null(ticket.Comments);
 		}
 
 		private async Task<BacklogItemReference> CreateSampleBug()
