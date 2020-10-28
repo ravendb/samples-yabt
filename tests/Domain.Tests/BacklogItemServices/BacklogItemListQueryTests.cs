@@ -34,7 +34,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			_queryService = Container.GetService<IBacklogItemListQueryService>();
 			_userCommandService = Container.GetService<IUserCommandService>();
 
-			_currentUserId = CreateSampleUser().Result.Id;
+			_currentUserId = CreateSampleUser().Result.Id!;
 		}
 
 		protected override void ConfigureIocContainer(IServiceCollection services)

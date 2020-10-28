@@ -71,12 +71,12 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 
 			if (dto.Tags?.Any() == true)
 				foreach (var tag in dto.Tags)
-					query = query.Where(e => e.Tags!.Contains(tag));	// Note: [Tags] is a nullable field, but when the LINQ gets converted to RQL the potential NULLs get handled 
+					query = query.Where(e => e.Tags!.Contains(tag));					// Note: [Tags] is a nullable field, but when the LINQ gets converted to RQL the potential NULLs get handled 
 
 			if (dto.MentionsOfTheCurrentUserOnly)
 			{
 				var userId = GetUserIdForDynamicField();
-				query = query.Where(t => t.MentionedUser[userId] > DateTime.MinValue);
+				query = query.Where(t => t.MentionedUser![userId] > DateTime.MinValue);	// Note: [MentionedUser] is a nullable field, but when the LINQ gets converted to RQL the potential NULLs get handled
 			}
 			else if (dto.ModifiedByTheCurrentUserOnly)
 			{
@@ -190,7 +190,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 				BacklogItemsOrderColumns.TimestampModifiedByCurrentUser =>
 																dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.ModifiedByUser[userKey]) : query.OrderByDescending(t => t.ModifiedByUser[userKey]),
 				BacklogItemsOrderColumns.TimestampMentionsOfCurrentUser =>
-																dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.MentionedUser[userKey]) : query.OrderByDescending(t => t.MentionedUser[userKey]),
+																dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.MentionedUser![userKey]) : query.OrderByDescending(t => t.MentionedUser![userKey]),
 				_ => throw new NotImplementedException()
 			};
 		}

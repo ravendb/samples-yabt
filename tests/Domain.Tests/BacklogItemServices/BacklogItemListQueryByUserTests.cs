@@ -27,7 +27,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 		private string _currentUserId;
 
-		public BacklogItemListQueryByUserTests() : base()
+		public BacklogItemListQueryByUserTests()
 		{
 			_commandService = Container.GetService<IBacklogItemCommandService>();
 			_queryService = Container.GetService<IBacklogItemListQueryService>();

@@ -23,7 +23,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 		/// <summary>
 		/// 	Mentioned users: { User ID, Timestamp of the corresponding comment }.
 		/// </summary>
-		public IDictionary<string, DateTime> MentionedUser { get; set; } = null!;
+		public IDictionary<string, DateTime>? MentionedUser { get; set; }
 		
 		/// <summary>
 		///		Ticket modifications: { User ID, Timestamp of a change }.
