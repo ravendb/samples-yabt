@@ -3,7 +3,6 @@ using System.Reflection;
 
 using Microsoft.Extensions.DependencyInjection;
 
-using Raven.Client.Documents;
 using Raven.Yabt.Domain.Common;
 
 namespace Raven.Yabt.Domain.Infrastructure
@@ -17,13 +16,18 @@ namespace Raven.Yabt.Domain.Infrastructure
 							.Where(t =>
 									!t.IsAbstract
 								&& (
-									t.IsClosedTypeOf(typeof(BaseService<>))													// All services
+									t.IsClosedTypeOf(typeof(BaseService<>))										// All services
 								 || t.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IPatchUpdateNotificationHandler)) // All notifications
 								 || t.GetTypeInfo().ImplementedInterfaces.Contains(typeof(IPatchOperationsExecuteAsync))	// Execute patch operations
 								)
 							).ToList();
 
 			services.RegisterAsImplementedInterfaces(types, ServiceLifetime.Scoped);
+			
+			// Register 1 implementation for 2 interfaces
+			services.AddScoped<PatchOperationsExecuteAsync>();
+			services.AddScoped(x => (IPatchOperationsAddDeferred)x.GetService<PatchOperationsExecuteAsync>());
+			services.AddScoped(x => (IPatchOperationsExecuteAsync)x.GetService<PatchOperationsExecuteAsync>());
 		}
 	}
 }

@@ -15,10 +15,10 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 {
 	internal class UpdateUserReferencesCommand : IUpdateUserReferencesCommand
 	{
-		private readonly IPatchOperationsExecuteAsync _patchOperations;
+		private readonly IPatchOperationsAddDeferred _patchOperations;
 		private readonly IAsyncDocumentSession _dbSession;
 
-		public UpdateUserReferencesCommand(IAsyncDocumentSession dbSession, IPatchOperationsExecuteAsync patchOperations)
+		public UpdateUserReferencesCommand(IAsyncDocumentSession dbSession, IPatchOperationsAddDeferred patchOperations)
 		{
 			_dbSession = dbSession;
 			_patchOperations = patchOperations;
