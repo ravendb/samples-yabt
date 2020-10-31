@@ -1,4 +1,5 @@
 ﻿using Raven.Yabt.Database.Configuration;
+// ReSharper disable UnusedAutoPropertyAccessor.Local
 
 namespace Raven.Yabt.WebApi.Configuration.Settings
 {

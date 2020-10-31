@@ -27,7 +27,7 @@ namespace Raven.Yabt.TicketImporter.Infrastructure.DTOs
 			return null;
 		}
 
-		public static LinkHeader? LinksFromHeader(string linkHeaderStr)
+		public static LinkHeader? LinksFromHeader(string? linkHeaderStr)
 		{
 			LinkHeader? linkHeader = null;
 
@@ -35,7 +35,7 @@ namespace Raven.Yabt.TicketImporter.Infrastructure.DTOs
 			{
 				string[] linkStrings = linkHeaderStr.Split(',');
 
-				if (linkStrings != null && linkStrings.Any())
+				if (linkStrings.Any())
 				{
 					linkHeader = new LinkHeader();
 

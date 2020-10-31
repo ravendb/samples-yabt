@@ -13,7 +13,7 @@ namespace Raven.Yabt.WebApi.Infrastructure.StartupTasks
 	/// </remarks>
 	public class StartupTaskContext
 	{
-		private int _outstandingTaskCount = 0;
+		private int _outstandingTaskCount;
 		private readonly ConcurrentBag<string> _errors = new ConcurrentBag<string>();
 
 		public void RegisterTask()
@@ -28,7 +28,7 @@ namespace Raven.Yabt.WebApi.Infrastructure.StartupTasks
 
 		public void MarkTaskAsFailed(IList<string> errors)
 		{
-			if (errors?.Any() == true)
+			if (errors.Any())
 				foreach (var error in errors)
 					_errors.Add(error);
 			else

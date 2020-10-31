@@ -28,7 +28,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 		private readonly string _currentUserId;
 
-		public BacklogItemListQueryServiceTests() : base() 
+		public BacklogItemListQueryServiceTests()
 		{
 			_commandService = Container.GetService<IBacklogItemCommandService>();
 			_queryService = Container.GetService<IBacklogItemListQueryService>();
@@ -77,7 +77,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			// GIVEN two backlog items, where only one is assigned to the user
 			await CreateBacklogItem<UserStoryAddUpdRequest>();
 			var assignedRef = await CreateBacklogItem<BugAddUpdRequest>();
-			await _commandService.AssignToUser(assignedRef.Id, _currentUserId);
+			await _commandService.AssignToUser(assignedRef.Id!, _currentUserId);
 			await SaveChanges();
 
 			// WHEN querying by assigned to the user

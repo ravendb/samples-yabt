@@ -39,7 +39,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				_ => null,
 			};
 			if (ticket == null)
-				return DomainResult.Error<BacklogItemReference>("Incorrect Backlog structure");
+				return DomainResult.Failed<BacklogItemReference>("Incorrect Backlog structure");
 
 			await DbSession.StoreAsync(ticket);
 
@@ -74,7 +74,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				_ => null
 			};
 			if (entity == null)
-				return DomainResult.Error<BacklogItemReference>("Incorrect Backlog structure");
+				return DomainResult.Failed<BacklogItemReference>("Incorrect Backlog structure");
 
 			return DomainResult.Success(
 									entity.ToReference().RemoveEntityPrefixFromId()
@@ -128,8 +128,10 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 			if (dto.CustomFields != null)
 			{
-				var verifiedCustomFieldIds = await _customFieldQueryService.GetFullIdsOfExistingItems(dto.CustomFields.Keys);
-				entity.CustomFields = verifiedCustomFieldIds.ToDictionary(x => x.Value, x => dto.CustomFields[x.Key]);
+				var verifiedCustomFieldIds = await _customFieldQueryService.GetFullIdsOfExistingItems(
+						dto.CustomFields.Where(pair => pair.Value != null).Select(pair => pair.Key)
+					);
+				entity.CustomFields = verifiedCustomFieldIds.ToDictionary(x => x.Value, x => dto.CustomFields[x.Key]!);
 			}
 			else
 				entity.CustomFields = null;

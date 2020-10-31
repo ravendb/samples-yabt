@@ -93,7 +93,7 @@ namespace Raven.Yabt.TicketImporter.Services
 			if (userReferences.Any())
 				dto.AssigneeId = userReferences.OrderBy(x => Guid.NewGuid()).First().Id;
 
-			settingExtraFields?.Invoke(dto);
+			settingExtraFields.Invoke(dto);
 
 			return dto;
 		}

@@ -57,7 +57,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 
 		public void UpdateReferences(UserReference newUserReference)
 		{
-			if (string.IsNullOrEmpty(newUserReference?.Id))
+			if (string.IsNullOrEmpty(newUserReference.Id))
 				return;
 
 			// Replace invalid characters with empty strings. Can't pass it as a parameter, as string parameters get wrapped in '\"' when inserted

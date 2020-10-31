@@ -6,6 +6,7 @@ using Raven.Client.Documents.Indexes;
 namespace Raven.Yabt.Database.Models.CustomFields.Indexes
 {
 	[SuppressMessage("Compiler", "CS8602")] // Suppress "Dereference of a possibly null reference", as Raven handles it on its own
+	// ReSharper disable once InconsistentNaming
 	public class CustomFields_ForList : AbstractIndexCreationTask<CustomField, CustomFieldIndexedForList>
 	{
 		public CustomFields_ForList()

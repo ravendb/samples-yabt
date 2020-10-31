@@ -11,7 +11,7 @@ namespace Raven.Yabt.Domain.Common
 {
 	public abstract class BaseQueryService<TEntity> : BaseService<TEntity> where TEntity : IEntity
 	{
-		protected bool isSearchResult = false;
+		protected bool IsSearchResult;
 
 		protected BaseQueryService(IAsyncDocumentSession dbSession) : base(dbSession) { }
 
@@ -31,7 +31,7 @@ namespace Raven.Yabt.Domain.Common
 			// E.g. "David Smith-Lowe" becomes "David* Smith-Lowe*"
 			string searchWildCards = Regex.Replace(search + " ", @"[\s,;:""{}[]|\\/`~!@#$%^&*()_=\+]+", "* ").Trim();
 
-			isSearchResult = true;
+			IsSearchResult = true;
 
 			// boost exact matches more so they are displayed first
 			return query

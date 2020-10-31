@@ -6,6 +6,7 @@ using Raven.Yabt.Database.Common;
 namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 {
 #pragma warning disable CS8602  // Suppress "Dereference of a possibly null reference", as Raven handles it on its own
+	// ReSharper disable once InconsistentNaming
 	public class BacklogItems_ForList : AbstractIndexCreationTask<BacklogItem, BacklogItemIndexedForList>
 	{
 		public BacklogItems_ForList()

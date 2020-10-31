@@ -4,6 +4,7 @@ using Raven.Client.Documents.Indexes;
 
 namespace Raven.Yabt.Database.Models.Users.Indexes
 {
+	// ReSharper disable once InconsistentNaming
 	public class Users_Mentions : AbstractIndexCreationTask<User, MentionedUsersIndexed>
 	{
 		public Users_Mentions()

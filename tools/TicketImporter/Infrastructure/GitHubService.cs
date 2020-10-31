@@ -30,7 +30,7 @@ namespace Raven.Yabt.TicketImporter.Infrastructure
 			var builder = new QueryBuilder(DtoConversion.ToDictionary(new IssuesRequest()));
 			var requestString = string.Concat($"repos/{repoName}/issues", builder.ToString());
 
-			async Task<IssueResponse[]> issueProcessing(IssueResponse[] issues)
+			async Task<IssueResponse[]> IssueProcessing(IssueResponse[] issues)
 				{
 					foreach (var issue in issues.Where(i => i.CommentsCount > 0))
 					{
@@ -43,7 +43,7 @@ namespace Raven.Yabt.TicketImporter.Infrastructure
 					return issues.Where(i => !i.Labels.Any(l => l.Name == "auto-merge")).ToArray();
 				}
 
-			return GetList<IssueResponse>(requestString, maxNumber, cancellationToken, issueProcessing);
+			return GetList<IssueResponse>(requestString, maxNumber, cancellationToken, IssueProcessing);
 		}
 
 		private async IAsyncEnumerable<T[]> GetList<T>(string? startUrl, int maxNumber, [EnumeratorCancellation] CancellationToken cancellationToken, Func<T[], Task<T[]>>? processing = null)
@@ -63,10 +63,10 @@ namespace Raven.Yabt.TicketImporter.Infrastructure
 					startUrl = null;
 					var links = LinkHeader.LinksFromHeader(httpResponse);
 					if (!string.IsNullOrEmpty(links?.NextLink))
-						startUrl = links?.NextLink;
+						startUrl = links.NextLink;
 
-					using var stream = await httpResponse.Content.ReadAsStreamAsync();
-					var responseArray = await JsonSerializer.DeserializeAsync<T[]>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+					await using var stream = await httpResponse.Content.ReadAsStreamAsync();
+					var responseArray = await JsonSerializer.DeserializeAsync<T[]>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
 
 					if (processing != null)
 						responseArray = await processing(responseArray);
@@ -82,7 +82,7 @@ namespace Raven.Yabt.TicketImporter.Infrastructure
 
 		private void LogResponseError(string err, HttpResponseMessage response)
 		{
-			_logger?.LogError(err, response.StatusCode, response.Content);
+			_logger.LogError(err, response.StatusCode, response.Content);
 		}
 	}
 }

@@ -5,6 +5,7 @@ using Raven.Client.Documents.Indexes;
 namespace Raven.Yabt.Database.Models.Users.Indexes
 {
 #pragma warning disable CS8602  // Suppress "Dereference of a possibly null reference", as Raven handles it on its own
+	// ReSharper disable once InconsistentNaming
 	public class Users_ForList : AbstractIndexCreationTask<User, UserIndexedForList>
 	{
 		public Users_ForList()

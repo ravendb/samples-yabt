@@ -21,7 +21,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 			if (await DbSession.Query<CustomFieldIndexedForList, CustomFields_ForList>()
 							   .Where(cf => cf.Name == dto.Name)
 							   .AnyAsync())
-				return DomainResult.Error<CustomFieldReferenceDto>($"Custom Field with name '{dto.Name}' already exist");
+				return DomainResult.Failed<CustomFieldReferenceDto>($"Custom Field with name '{dto.Name}' already exist");
 
 			var entity = new CustomField
 				{
@@ -48,9 +48,6 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 
 		public async Task<IDomainResult<CustomFieldReferenceDto>> Rename(string id, CustomFieldRenameRequest dto)
 		{
-			if (dto?.Name == null)
-				return DomainResult.Error<CustomFieldReferenceDto>($"New name can't be empty");
-
 			var entity = await DbSession.LoadAsync<CustomField>(GetFullId(id));
 			if (entity == null)
 				return DomainResult.NotFound<CustomFieldReferenceDto>();

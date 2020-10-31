@@ -26,7 +26,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 		private readonly UserReference _currentUser = new UserReference { Id = "1", Name = "H. Simpson", FullName = "Homer Simpson" };
 
-		public BacklogItemCrudTests() : base()
+		public BacklogItemCrudTests()
 		{
 			_commandService = Container.GetService<IBacklogItemCommandService>();
 			_queryService = Container.GetService<IBacklogItemByIdQueryService>();

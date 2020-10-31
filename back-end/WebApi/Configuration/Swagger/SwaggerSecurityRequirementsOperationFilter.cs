@@ -29,7 +29,7 @@ namespace Raven.Yabt.WebApi.Configuration.Swagger
 						Id = PredefinedUserApiKeyAuthOptions.DefaultScheme
 					},
 					Scheme = PredefinedUserApiKeyAuthOptions.DefaultScheme,
-					Name = PredefinedUserApiKeyAuthHandler.API_KEY_HEADER_NAME,
+					Name = PredefinedUserApiKeyAuthHandler.ApiKeyHeaderName,
 					Type = SecuritySchemeType.ApiKey,
 					In = ParameterLocation.Header
 				};

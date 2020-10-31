@@ -1,4 +1,5 @@
-﻿namespace Raven.Yabt.Database.Configuration
+﻿// ReSharper disable UnusedAutoPropertyAccessor.Local
+namespace Raven.Yabt.Database.Configuration
 {
 #nullable disable
 	/// <summary>

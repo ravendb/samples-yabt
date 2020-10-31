@@ -60,7 +60,6 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery
 
 		private List<BacklogItemCommentListGetResponse>? GetCommentsList(BacklogItem backlogEntity, BacklogItemCommentListGetRequest dto)
 		{
-			dto ??= new BacklogItemCommentListGetRequest();
 			if (dto.PageSize == 0)
 				return null;
 			
@@ -75,7 +74,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery
 					Author = comment.Author,
 					Created = comment.CreatedDate,
 					LastUpdated = comment.ModifiedDate,
-					MentionedUserIds = comment.MentionedUserIds?.ToDictionary(pair => pair.Key, pair => pair.Value.GetShortId())
+					MentionedUserIds = comment.MentionedUserIds?.ToDictionary(pair => pair.Key, pair => pair.Value.GetShortId()!)
 				}).ToList();
 			ret.RemoveEntityPrefixFromIds(r => r.Author);
 			return ret;

@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.References;
+// ReSharper disable RedundantCast
 
 namespace Raven.Yabt.Database.Models.BacklogItems
 {
@@ -35,9 +36,9 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		public IList<BacklogItemHistoryRecord> ModifiedBy { get; } = new List<BacklogItemHistoryRecord>();
 
 		[JsonIgnore]
-		public ChangedByUserReference Created		=> ModifiedBy.OrderBy(m => m.Timestamp).FirstOrDefault() as ChangedByUserReference;
+		public ChangedByUserReference Created		=> ModifiedBy.OrderBy(m => m.Timestamp).First() as ChangedByUserReference;
 		[JsonIgnore]
-		public ChangedByUserReference LastUpdated	=> ModifiedBy.OrderBy(m => m.Timestamp).LastOrDefault() as ChangedByUserReference;
+		public ChangedByUserReference LastUpdated	=> ModifiedBy.OrderBy(m => m.Timestamp).Last() as ChangedByUserReference;
 
 		/// <summary>
 		///		Tags/Labels on the ticket

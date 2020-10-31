@@ -22,11 +22,11 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		private readonly IBacklogItemCommandService _commandService;
 		private readonly IBacklogItemByIdQueryService _queryByIdService;
 		private readonly IUserCommandService _userCmdService;
-		private ICurrentUserResolver _currentUserResolver;
+		private ICurrentUserResolver _currentUserResolver = null!;
 
-		private string _currentUserId;
+		private string _currentUserId = null!;
 
-		public BacklogItemCreatedByLastUpdatedByTests() : base()
+		public BacklogItemCreatedByLastUpdatedByTests()
 		{
 			_commandService = Container.GetService<IBacklogItemCommandService>();
 			_queryByIdService = Container.GetService<IBacklogItemByIdQueryService>();
@@ -55,10 +55,10 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			// THEN both its properties 'Created By' and 'Modified By' show Homer Simpson
 			var item = (await _queryByIdService.GetById(itemRef.Id!)).Value;
 			Assert.NotNull(item);
-			Assert.NotNull(item.Created?.ActionedBy);
-			Assert.Equal(homerId, item.Created?.ActionedBy.Id);
-			Assert.NotNull(item.LastUpdated?.ActionedBy);
-			Assert.Equal(homerId, item.LastUpdated?.ActionedBy.Id);
+			Assert.NotNull(item.Created.ActionedBy);
+			Assert.Equal(homerId, item.Created.ActionedBy.Id);
+			Assert.NotNull(item.LastUpdated.ActionedBy);
+			Assert.Equal(homerId, item.LastUpdated.ActionedBy.Id);
 		}
 
 		[Fact]
@@ -96,10 +96,10 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		private async Task<(string, string)> SeedTwoUsers()
 		{
 			var dto = new UserAddUpdRequest { FirstName = "Homer", LastName = "Simpson" };
-			var homerId = (await _userCmdService.Create(dto)).Value.Id;
+			var homerId = (await _userCmdService.Create(dto)).Value.Id!;
 
 			dto.FirstName = "Marge";
-			var margeId = (await _userCmdService.Create(dto)).Value.Id;
+			var margeId = (await _userCmdService.Create(dto)).Value.Id!;
 
 			await SaveChanges();
 

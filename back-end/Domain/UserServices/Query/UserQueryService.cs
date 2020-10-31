@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 using DomainResults.Common;
@@ -59,9 +58,8 @@ namespace Raven.Yabt.Domain.UserServices.Query
 		{
 			if (dto.OrderBy == UsersOrderColumns.Default)
 			{
-				if (isSearchResult)
-					return query;   // Use default order by releavnce
-									// Otherwise descending sort by number
+				if (IsSearchResult)
+					return query;   // Use default order by relevance. Otherwise descending sort by number
 				dto.OrderBy = UsersOrderColumns.Name;
 				dto.OrderDirection = OrderDirections.Asc;
 			}

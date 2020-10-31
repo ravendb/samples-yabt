@@ -10,6 +10,7 @@ using Raven.Yabt.Domain.UserServices.Query;
 using Raven.Yabt.Domain.UserServices.Query.DTOs;
 
 using Xunit;
+// ReSharper disable UnusedMethodReturnValue.Local
 
 namespace Raven.Yabt.Domain.Tests.UserServices
 {

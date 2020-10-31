@@ -33,7 +33,7 @@ namespace Raven.Yabt.TicketImporter.Services
 
 		public async Task<IList<UserReference>> GetGeneratedUsers()
 		{
-			if (_userRefs?.Count > 0)
+			if (_userRefs.Count > 0)
 				return _userRefs;
 
 			for (var i=0; i < UserQuantity; i++)

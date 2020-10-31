@@ -16,6 +16,7 @@ using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.Domain.UserServices.Query;
 
 using Xunit;
+// ReSharper disable UnusedVariable
 
 namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 {

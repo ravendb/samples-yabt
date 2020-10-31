@@ -82,7 +82,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			var userAddedRef = await CreateSampleUser();
 
 			// WHEN deleting the user
-			var userDeleted = await _userCommandService.Delete(userAddedRef.Id);
+			var userDeleted = await _userCommandService.Delete(userAddedRef.Id!);
 			await SaveChanges();
 
 			// THEN 
@@ -92,7 +92,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			Assert.Equal(userAddedRef.Name, userDeleted.Value.Name);
 
 			// the user disappear from the DB
-			var user = await _userQueryService.GetById(userAddedRef.Id);
+			var user = await _userQueryService.GetById(userAddedRef.Id!);
 			Assert.Equal(DomainOperationStatus.NotFound, user.Status);
 		}
 

@@ -150,7 +150,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 		private static FieldOperators GetCustomFieldExpression(ref string val)
 		{
 			var supportedOperators = new[] { "lt", "lte", "gt", "gte", "eq" };
-			var regExMatch = new Regex(@$"^({string.Join("|", supportedOperators)})\|", RegexOptions.IgnoreCase).Match(val.ToString());
+			var regExMatch = new Regex(@$"^({string.Join("|", supportedOperators)})\|", RegexOptions.IgnoreCase).Match(val);
 			var op = string.Empty;
 			if (regExMatch.Success)
 			{
@@ -172,7 +172,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 		{
 			if (dto.OrderBy == BacklogItemsOrderColumns.Default)
 			{
-				if (isSearchResult)
+				if (IsSearchResult)
 					return query;   // Use default order by relevance
 				// Otherwise descending sort by number
 				dto.OrderBy = BacklogItemsOrderColumns.Number;

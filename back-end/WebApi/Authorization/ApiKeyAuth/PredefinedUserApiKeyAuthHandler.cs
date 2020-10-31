@@ -24,7 +24,7 @@ namespace Raven.Yabt.WebApi.Authorization.ApiKeyAuth
 		/// <remarks>
 		///		All checks for that header name are case insensitive (https://stackoverflow.com/a/36287662/968003)
 		/// </remarks>
-		public const string API_KEY_HEADER_NAME = "X-API-Key";
+		public const string ApiKeyHeaderName = "X-API-Key";
 
 		private readonly AppSettingsUserApiKey[] _apiKeySettings;
 
@@ -41,7 +41,7 @@ namespace Raven.Yabt.WebApi.Authorization.ApiKeyAuth
 		{
 			// If no X-Api-Key header, then return no result. Let other handlers (if present) handle the request
 
-			if (!Request.Headers.TryGetValue(API_KEY_HEADER_NAME, out var apiKeyHeaderValues))
+			if (!Request.Headers.TryGetValue(ApiKeyHeaderName, out var apiKeyHeaderValues))
 				return Task.FromResult(AuthenticateResult.NoResult());
 
 			var providedApiKey = apiKeyHeaderValues.FirstOrDefault();
@@ -50,8 +50,8 @@ namespace Raven.Yabt.WebApi.Authorization.ApiKeyAuth
 				return Task.FromResult(AuthenticateResult.NoResult());
 
 			// Explicitly fail if the expected API key hasn't been configured
-			if (_apiKeySettings?.Any() != true)
-				throw new ArgumentNullException("No API key specified in the 'appsettings.json'");
+			if (_apiKeySettings.Any() != true)
+				throw new NullReferenceException("No API key specified in the 'appsettings.json'");
 
 			// Validate the API key against the one in the settings
 			var apiKeyUser = _apiKeySettings.SingleOrDefault(a => a.ApiKey == providedApiKey);
@@ -67,7 +67,7 @@ namespace Raven.Yabt.WebApi.Authorization.ApiKeyAuth
 					new Claim(CurrentUserResolver.UserIdClaimType,  apiKeyUser.UserId)
 				};
 			var identity  = new ClaimsIdentity(claims, Options.AuthenticationType);
-			var principal = new ClaimsPrincipal(new ClaimsIdentity[] { identity });
+			var principal = new ClaimsPrincipal(new [] { identity });
 			var ticket = new AuthenticationTicket(principal, Options.Scheme);
 
 			return Task.FromResult(AuthenticateResult.Success(ticket));

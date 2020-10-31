@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="DomainResult" Version="1.0.2" />
+	  <PackageReference Include="DomainResult" Version="1.1.0" />
 	  <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
 	  <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
 	</ItemGroup>

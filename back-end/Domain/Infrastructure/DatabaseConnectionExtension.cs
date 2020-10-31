@@ -64,7 +64,7 @@ namespace Raven.Yabt.Domain.Infrastructure
 			}
 			catch
 			{
-				store?.Dispose();
+				store.Dispose();
 				throw;
 			}
 		}

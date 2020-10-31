@@ -25,6 +25,6 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs
 		/// <summary>
 		///		Extra custom properties of various data types configured by the user: { Custom Field ID, Value }.
 		/// </summary>
-		public IDictionary<string, object>? CustomFields { get; set; }
+		public IDictionary<string, object?>? CustomFields { get; set; }
 	}
 }

@@ -28,11 +28,10 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 
 		public async Task<IDomainResult<BacklogItemCommentReference>> Create(string backlogItemId, CommentAddUpdRequest dto)
 		{
-			var fullId = GetFullId(backlogItemId);
-
-			var ticket = await DbSession.LoadAsync<BacklogItem>(fullId);
-			if (ticket == null)
-				return DomainResult.NotFound<BacklogItemCommentReference>();
+			var ticketRes = await GetEntity(backlogItemId);
+			if (!ticketRes.IsSuccess)
+				return ticketRes.To<BacklogItemCommentReference>();
+			var ticket = ticketRes.Value;
 
 			var mentionedUsers = await _mentionedUserResolver.GetMentionedUsers(dto.Message);
 			
@@ -49,11 +48,10 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 
 		public async Task<IDomainResult<BacklogItemCommentReference>> Update(string backlogItemId, string commentId, CommentAddUpdRequest dto)
 		{
-			var fullId = GetFullId(backlogItemId);
-
-			var ticket = await DbSession.LoadAsync<BacklogItem>(fullId);
-			if (ticket == null)
-				return DomainResult.NotFound<BacklogItemCommentReference>();
+			var ticketRes = await GetEntity(backlogItemId);
+			if (!ticketRes.IsSuccess)
+				return ticketRes.To<BacklogItemCommentReference>();
+			var ticket = ticketRes.Value;
 
 			var comment = ticket.Comments.SingleOrDefault(c => c.Id == commentId);
 			if (comment == null)
@@ -61,7 +59,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 
 			var originalAuthor = await _userResolver.GetCurrentUserReference();
 			if (comment.Author.Id != originalAuthor.Id)
-				return DomainResult.Error<BacklogItemCommentReference>("Cannot edit comments of other users");
+				return DomainResult.Failed<BacklogItemCommentReference>("Cannot edit comments of other users");
 
 			var mentionedUsers = await _mentionedUserResolver.GetMentionedUsers(dto.Message);
 
@@ -74,11 +72,10 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 
 		public async Task<IDomainResult<BacklogItemCommentReference>> Delete(string backlogItemId, string commentId)
 		{
-			var fullId = GetFullId(backlogItemId);
-
-			var ticket = await DbSession.LoadAsync<BacklogItem>(fullId);
-			if (ticket == null)
-				return DomainResult.NotFound<BacklogItemCommentReference>();
+			var ticketRes = await GetEntity(backlogItemId);
+			if (!ticketRes.IsSuccess)
+				return ticketRes.To<BacklogItemCommentReference>();
+			var ticket = ticketRes.Value;
 
 			var comment = ticket.Comments.SingleOrDefault(c => c.Id == commentId);
 			if (comment == null)
@@ -96,33 +93,15 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 				Name = ticket.Title,
 				CommentId = nullCommentId ? null : ticket.Comments.LastOrDefault()?.Id,
 			};
-/*
-		public async Task<IDomainResult<BacklogItemCommentReference>> Create(string backlogItemId, CommentAddRequest dto)
-		{
-			var ticketRes = await GetEntity(backlogItemId);
-			if (!ticketRes.IsSuccess)
-				return IDomainResult<BacklogItemCommentReference>.ReturnFrom(ticketRes);
-
-			var comment = new Comment
-				{
-					Author = await _userResolver.GetCurrentUserReference(),
-					Message = dto.Message
-				};
-			ticket.Comments.Add(comment);
-
-			return DomainResult.Success(ToLastCommentReference(ticket));
-		}
 
 		private async Task<IDomainResult<BacklogItem>> GetEntity(string id)
 		{
 			var fullId = GetFullId(id);
 
 			var ticket = await DbSession.LoadAsync<BacklogItem>(fullId);
-			if (ticket == null)
-				return DomainResult.NotFound<BacklogItem>("Backlog item not found");
-			
-			return DomainResult.Success(ticket);
+			return ticket == null 
+				? DomainResult.NotFound<BacklogItem>("Backlog item not found") 
+				: DomainResult.Success(ticket);
 		}
-*/
 	}
 }

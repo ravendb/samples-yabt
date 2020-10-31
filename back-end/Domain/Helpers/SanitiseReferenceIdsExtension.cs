@@ -14,38 +14,35 @@ namespace Raven.Yabt.Domain.Helpers
 {
 	internal static class SanitiseReferenceIdsExtension
 	{
-		internal static void RemoveEntityPrefixFromIds<T, TReference>(this IEnumerable<T> targets, params Expression<Func<T, TReference>>[] referenceMemberLambdas) where TReference : IEntityReference
+		internal static void RemoveEntityPrefixFromIds<T, TReference>(this IEnumerable<T> targets, params Expression<Func<T, TReference?>>[] referenceMemberLambdas) where TReference : class, IEntityReference
 		{
 			foreach (var target in targets)
 				target.RemoveEntityPrefixFromIds(referenceMemberLambdas);
 		}
 
-		internal static void RemoveEntityPrefixFromIds<T, TReference>(this T target, params Expression<Func<T, TReference>>[] referenceMemberLambdas) where TReference : IEntityReference
+		internal static void RemoveEntityPrefixFromIds<T, TReference>(this T target, params Expression<Func<T, TReference?>>[] referenceMemberLambdas) where TReference : class, IEntityReference
 		{
 			foreach (var referenceMember in referenceMemberLambdas)
 				target.RemoveEntityPrefixFromIds(referenceMember);
 		}
 
-		internal static void RemoveEntityPrefixFromIds<T, TReference>(this T target, Expression<Func<T, TReference>> referenceMemberLambda) where TReference : IEntityReference
+		internal static void RemoveEntityPrefixFromIds<T, TReference>(this T target, Expression<Func<T, TReference?>> referenceMemberLambda) where TReference : class, IEntityReference
 		{
 			if (   !(referenceMemberLambda.Body is MemberExpression referenceMemberSelectorExpression)
-				|| !(referenceMemberSelectorExpression.Member is PropertyInfo referenceProperty))
+				|| !(referenceMemberSelectorExpression.Member is PropertyInfo))
 				return;
 			
 			// Read the current reference
 			var referenceFunc = referenceMemberLambda.Compile();
 			var reference = referenceFunc(target);
 
-			if (reference == null)
-				return;
-
-			reference.RemoveEntityPrefixFromId();
+			reference?.RemoveEntityPrefixFromId();
 		}
 
 		internal static T RemoveEntityPrefixFromId<T>(this T target) where T: IEntityReference
 		{
 			// The new ID value without the entity prefix
-			var newRefId = target?.Id?.GetShortId();
+			var newRefId = target.Id?.GetShortId();
 
 			if (newRefId == null)
 				return target;

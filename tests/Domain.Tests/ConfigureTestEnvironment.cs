@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -62,7 +61,7 @@ namespace Raven.Yabt.Domain.Tests
 		/// </summary>
 		protected virtual void ConfigureIocContainer(IServiceCollection services)
 		{
-			services.RegisterModules(Assembly.GetAssembly(typeof(BaseService<>)));
+			services.RegisterModules(Assembly.GetAssembly(typeof(BaseService<>))!);
 
 			// Register the document store & session
 			services.AddScoped(x =>

@@ -23,9 +23,9 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		private readonly IBacklogItemCommandService _commandService;
 		private readonly IBacklogItemListQueryService _queryService;
 		private readonly IUserCommandService _userCmdService;
-		private ICurrentUserResolver _currentUserResolver;
+		private ICurrentUserResolver _currentUserResolver = null!;
 
-		private string _currentUserId;
+		private string _currentUserId = null!;
 
 		public BacklogItemListQueryByUserTests()
 		{
@@ -87,7 +87,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			var modifRef = await CreateBacklogItem();
 			//	with 1 modified by 'another' user
 			_currentUserId = margeId;
-			await _commandService.AssignToUser(modifRef.Id, margeId);
+			await _commandService.AssignToUser(modifRef.Id!, margeId);
 			await SaveChanges();
 			_currentUserId = homerId;
 
@@ -148,7 +148,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			_currentUserId = margeId;
 			var createdRef = await CreateBacklogItem();
 			// and 1 modified by Msrge
-			 await _commandService.AssignToUser(modifRef.Id, margeId);
+			 await _commandService.AssignToUser(modifRef.Id!, margeId);
 			await SaveChanges();
 
 			// WHEN the current user is Marge 

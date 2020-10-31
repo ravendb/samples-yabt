@@ -1,4 +1,5 @@
-﻿namespace Raven.Yabt.WebApi.Configuration.Settings
+﻿// ReSharper disable UnusedAutoPropertyAccessor.Local
+namespace Raven.Yabt.WebApi.Configuration.Settings
 {
 #nullable disable
 	public class AppSettingsUserApiKey

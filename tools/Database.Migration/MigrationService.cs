@@ -57,9 +57,9 @@ namespace Raven.Yabt.Database.Migration
 		private async Task<string?> GetIndexErrors(int maxWaitingForStaleIndexes, CancellationToken cancellationToken)
 		{
 			// Check for errors in the indexes
-			async Task<string?> checkIndexErrors()
+			async Task<string?> CheckIndexErrors()
 			{
-				var indexErrors = await _store.Maintenance.SendAsync(new GetIndexErrorsOperation());
+				var indexErrors = await _store.Maintenance.SendAsync(new GetIndexErrorsOperation(), cancellationToken);
 				return indexErrors?.Any(x => x.Errors.Length > 0) == true
 					? string.Format(
 						"There are indexes with errors after migration: {0}",
@@ -69,7 +69,7 @@ namespace Raven.Yabt.Database.Migration
 					: null;
 			}
 
-			var indexErrorMsg = await checkIndexErrors();
+			var indexErrorMsg = await CheckIndexErrors();
 			if (!string.IsNullOrEmpty(indexErrorMsg))
 				return indexErrorMsg;
 
@@ -92,7 +92,7 @@ namespace Raven.Yabt.Database.Migration
 						return $"Timeout: After {maxWaitingForStaleIndexes} secs indexes are still stale...";
 					}
 
-					indexErrorMsg = await checkIndexErrors();
+					indexErrorMsg = await CheckIndexErrors();
 
 					if (!string.IsNullOrEmpty(indexErrorMsg))
 						return indexErrorMsg;

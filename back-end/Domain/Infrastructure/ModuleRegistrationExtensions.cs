@@ -21,7 +21,7 @@ namespace Raven.Yabt.Domain.Infrastructure
 		/// <summary>
 		///		Register a collection of types (<paramref name="types"/>) for their implemented interfaces
 		/// </summary>
-		public static IServiceCollection RegisterAsImplementedInterfaces(this IServiceCollection services, IEnumerable<Type> types, ServiceLifetime lifetime, IEnumerable<Type>? skipInterfaces = null)
+		public static IServiceCollection RegisterAsImplementedInterfaces(this IServiceCollection services, IEnumerable<Type> types, ServiceLifetime lifetime, ICollection<Type>? skipInterfaces = null)
 		{
 			foreach (Type type in types)
 				services.RegisterAsImplementedInterfaces(type, lifetime, skipInterfaces);
@@ -94,7 +94,7 @@ namespace Raven.Yabt.Domain.Infrastructure
 		/// <remarks>
 		///		The implementation was copied from Autofac - https://github.com/autofac/Autofac/blob/develop/src/Autofac/Util/Traverse.cs
 		/// </remarks>
-		private static IEnumerable<T> Across<T>(T first, Func<T, T> next) where T : class
+		private static IEnumerable<T> Across<T>(T first, Func<T, T?> next) where T : class
 		{
 			var item = first;
 			while (item != null)

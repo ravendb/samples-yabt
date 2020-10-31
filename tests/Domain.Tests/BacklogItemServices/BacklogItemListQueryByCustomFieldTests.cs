@@ -28,7 +28,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		private readonly ICustomFieldCommandService _customFieldCommandService;
 		private readonly IUserCommandService _userCmdService;
 
-		private string _currentUserId;
+		private string _currentUserId = null!;
 
 		public BacklogItemListQueryByCustomFieldTests()
 		{
@@ -71,11 +71,11 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		}
 		
 		[Theory]
-		[InlineData(new int[] { 1, 5 },		"eq|1", 0)]
-		[InlineData(new int[] { 1, 5 },		"lt|3", 0)]
-		[InlineData(new int[] { 1, 2, 5 },	"gt|3", 2)]
-		[InlineData(new int[] { 2, 5 },		"lte|2", 0)]
-		[InlineData(new int[] { 2, 5 },		"gte|5", 1)]
+		[InlineData(new [] { 1, 5 },	"eq|1", 0)]
+		[InlineData(new [] { 1, 5 },	"lt|3", 0)]
+		[InlineData(new [] { 1, 2, 5 },	"gt|3", 2)]
+		[InlineData(new [] { 2, 5 },	"lte|2", 0)]
+		[InlineData(new [] { 2, 5 },	"gte|5", 1)]
 		private async Task Querying_By_MoreLess_Condition_For_Numeric_CustomField_Works(int[] customValues, string filter, int indexOfValidTicket)
 		{
 			// GIVEN 2 custom fields
@@ -100,11 +100,10 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		}
 
 		[Theory]
-		[InlineData(new string[] { "2000-01-01", "2000-01-02" }, "eq|2000-01-02",  1)]
-		[InlineData(new string[] { "2000-01-01", "2000-01-02" }, "lt|2000-01-02",  0)]
-		[InlineData(new string[] { "2000-01-01", "2000-01-02" }, "lte|2000-01-01", 0)]
-		[InlineData(new string[] { "2000-01-01", "2000-01-02" }, "gt|2000-01-01",  1)]
-		[InlineData(new string[] { "2000-01-01", "2000-01-02" }, "gte|2000-01-02", 1)]
+		[InlineData(new [] { "2000-01-01", "2000-01-02" }, "eq|2000-01-02",  1)]
+		[InlineData(new [] { "2000-01-01", "2000-01-02" }, "lt|2000-01-02",  0)]
+		[InlineData(new [] { "2000-01-01", "2000-01-02" }, "gt|2000-01-01",  1)]
+		[InlineData(new [] { "2000-01-01", "2000-01-02" }, "gte|2000-01-02", 1)]
 		private async Task Querying_By_MoreLess_Condition_For_Date_CustomField_Works(string[] customValues, string filter, int indexOfValidTicket)
 		{
 			// GIVEN 2 custom fields
@@ -135,9 +134,9 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			_currentUserId = await SeedCurrentUsers();
 			var customFieldId = await CreateTextCustomField();
 			//	and 3 backlog items with different custom field values
-			var backlogItem1Id = await CreateBacklogItem(customFieldId, "val");
-			var backlogItem2Id = await CreateBacklogItem(customFieldId, "val1");
-			var backlogItem3Id = await CreateBacklogItem(customFieldId, "bla");
+			var backlogItem1Id =	await CreateBacklogItem(customFieldId, "val");
+			var backlogItem2Id =	await CreateBacklogItem(customFieldId, "val1");
+										await CreateBacklogItem(customFieldId, "bla");
 
 			// WHEN querying items by a the start value of the 2 our of 3 custom fields
 			var items = await _queryService.GetList(
@@ -192,7 +191,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			var dto = new BugAddUpdRequest 
 				{ 
 					Title = "Test_" + GetRandomString(), 
-					CustomFields = new Dictionary<string, object> { { customFieldId, customFieldValue } }
+					CustomFields = new Dictionary<string, object?> { { customFieldId, customFieldValue } }
 				};
 			var addedRef = await _commandService.Create(dto);
 			if (!addedRef.IsSuccess)

@@ -6,10 +6,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 using Raven.Migrations;
-using Raven.Yabt.Database.Migration;
 using Raven.Yabt.Database.Migration.Configuration;
 
-namespace Database.Migration
+namespace Raven.Yabt.Database.Migration
 {
 	class Program
 	{

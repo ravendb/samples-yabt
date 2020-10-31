@@ -2,6 +2,6 @@
 {
 	public class MentionedUsersIndexed : User
 	{
-		public string MentionedName { get; set; }
+		public string? MentionedName { get; set; }
 	}
 }

@@ -37,7 +37,7 @@ namespace Raven.Yabt.WebApi.Configuration
 													new OpenApiSecurityScheme
 													{
 														Description = "The API key corresponds to the user",
-														Name = PredefinedUserApiKeyAuthHandler.API_KEY_HEADER_NAME,
+														Name = PredefinedUserApiKeyAuthHandler.ApiKeyHeaderName,
 														In = ParameterLocation.Header,
 														Type = SecuritySchemeType.ApiKey,
 														Scheme = PredefinedUserApiKeyAuthOptions.DefaultScheme

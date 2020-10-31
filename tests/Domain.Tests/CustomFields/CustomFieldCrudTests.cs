@@ -17,7 +17,7 @@ namespace Raven.Yabt.Domain.Tests.CustomFields
 		private readonly ICustomFieldCommandService _commandService;
 		private readonly ICustomFieldQueryService _queryService;
 
-		public CustomFieldCrudTests() : base()
+		public CustomFieldCrudTests()
 		{
 			_commandService = Container.GetService<ICustomFieldCommandService>();
 			_queryService = Container.GetService<ICustomFieldQueryService>();

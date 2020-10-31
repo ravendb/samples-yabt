@@ -28,8 +28,8 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 		private readonly IBacklogItemCommentCommandService _commentCommandService;
 		private readonly IBacklogItemByIdQueryService _backlogQueryService;
 			
-		private ICurrentUserResolver _currentUserResolver;	// Initialised in 'ConfigureIocContainer()'
-		private string _currentUserId = null!;				// Must be initialised as the 1st step in each test
+		private ICurrentUserResolver _currentUserResolver = null!;	// Initialised in 'ConfigureIocContainer()'
+		private string _currentUserId = null!;						// Must be initialised as the 1st step in each test
 
 		public UpdateUserReferencesTests()
 		{
@@ -83,7 +83,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 
 			// THEN all the comments have been cleaned from references to the deleted user
 			var comments = await _backlogQueryService.GetBacklogItemComments(backlogItemRef.Id!, new BacklogItemCommentListGetRequest());
-			Assert.Empty(comments.Entries.Where(c => c.MentionedUserIds.Values.Contains(userRef.Id)));
+			Assert.Empty(comments.Entries.Where(c => c.MentionedUserIds?.Values.Contains(userRef.Id!) == true));
 		}
 
 		[Fact]
@@ -117,9 +117,9 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			// THEN all the references  
 			var comments = await _backlogQueryService.GetBacklogItemComments(backlogItemRef.Id!, new BacklogItemCommentListGetRequest());
 			// ...still exist
-			Assert.Equal(2, comments.Entries.Count(c => c.MentionedUserIds.Values.Contains(userRef.Id, StringComparer.InvariantCultureIgnoreCase)));
+			Assert.Equal(2, comments.Entries.Count(c => c.MentionedUserIds?.Values.Contains(userRef.Id, StringComparer.InvariantCultureIgnoreCase) == true));
 			// ...'MentionedUserIds' is updated to have the new name
-			Assert.Equal(new [] { updatedRef.MentionedName, updatedRef.MentionedName }, comments.Entries.SelectMany(c => c.MentionedUserIds.Keys));
+			Assert.Equal(new [] { updatedRef.MentionedName, updatedRef.MentionedName }, comments.Entries.SelectMany(c => c.MentionedUserIds?.Keys));
 			// ...text references are updated to the new name
 			Assert.Equal(0, comments.Entries.Count(c => c.Message.Contains(userRef.MentionedName)));
 			Assert.Equal(2, comments.Entries.Count(c => c.Message.Contains(updatedRef.MentionedName)));

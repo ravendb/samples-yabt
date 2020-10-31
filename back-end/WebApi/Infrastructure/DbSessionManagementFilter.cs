@@ -69,7 +69,7 @@ namespace Raven.Yabt.WebApi.Infrastructure
 
 		private bool HasSessionChanges()
 		{
-			if (_dbSession?.Advanced == null)
+			if (_dbSession.Advanced == null)
 				return false;
 			
 			// Check if a record was created/updated
