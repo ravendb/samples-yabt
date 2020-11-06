@@ -28,3 +28,9 @@ msbuild.wrn
 *.metaproj
 *.metaproj.tmp
 appsettings.Development.json
+
+bin
+obj
+deploy
+
+*.env
