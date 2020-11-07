@@ -48,8 +48,10 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			services.AddScoped(x => _currentUserResolver);
 		}
 
+		#region DELETE User -----------------------------------------
+		
 		[Fact]
-		private async Task Deleting_User_Clears_UserId_In_Backlog_Items()
+		private async Task Deleting_User_Clears_UserId_In_BacklogItem_Modified_Colection()
 		{
 			// GIVEN a user and a backlog item created by him
 			var userRef = await CreateSampleUser();
@@ -68,6 +70,24 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			Assert.Equal(userRef.Name, item.Created.ActionedBy.Name);
 			Assert.Equal(userRef.Name, item.LastUpdated.ActionedBy.Name);
 		}
+		
+		[Fact]
+		private async Task Deleting_Users_Clears_BacklogItem_Assignee()
+		{
+			// GIVEN a user and a backlog item assigned to the user
+			_currentUserId = (await CreateSampleUser()).Id!;
+			var userRef = await CreateSampleUser("Bart");
+			var backlogItemRef = await CreateBacklogItem();
+			await _backlogCommandService.AssignToUser(backlogItemRef.Id!, userRef.Id!);
+
+			// WHEN the user gets deleted
+			await _userCommandService.Delete(userRef.Id!);
+			await SaveChanges();
+			
+			// THEN the assignee of the Backlog Item is NULL
+			var item = (await _backlogQueryService.GetById(backlogItemRef.Id!)).Value;
+			Assert.Null(item.Assignee);
+		}
 
 		[Fact]
 		private async Task Deleting_User_Clears_UserIds_In_Backlog_Comments()
@@ -75,7 +95,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			// GIVEN a backlog item with 2 comments with references to a user
 			_currentUserId = (await CreateSampleUser("Marge")).Id!;
 			var userRef = await CreateSampleUser();
-			var backlogItemRef = await CreateBacklogItemWithAComment(userRef, userRef);
+			var backlogItemRef = await CreateBacklogItemWithACommentAndUserReference(userRef, userRef);
 
 			// WHEN the user gets deleted
 			await _userCommandService.Delete(userRef.Id!);
@@ -87,20 +107,42 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 		}
 
 		[Fact]
-		private async Task Updating_Users_Name_Updates_References_In_Backlog_Items()
+		private async Task Deleting_User_Clears_UserIds_In_Backlog_Comment_Authors()
 		{
-			// GIVEN a user and a backlog item created by him
+			// GIVEN a user and a backlog item assigned to the user
+			var initialUserId = (await CreateSampleUser("Marge")).Id!;
+			_currentUserId = initialUserId;
 			var userRef = await CreateSampleUser();
 			_currentUserId = userRef.Id!;
-			var backlogItemRef = await CreateBacklogItem();
+			var backlogItemRef = await CreateBacklogItemWithAComment();
+			_currentUserId = initialUserId;
+
+			// WHEN the user gets deleted
+			await _userCommandService.Delete(userRef.Id!);
+			await SaveChanges();
+WaitForUserToContinueTheTest(DbSession.Advanced.DocumentStore);
+			// THEN the Author of the comment remains the name, but the ID is NULL
+			var comment = (await _backlogQueryService.GetById(backlogItemRef.Id!)).Value.Comments!.Entries.First();
+			Assert.Null(comment.Author.Id);
+			Assert.Equal("Homer Simpson", comment.Author.FullName);
+		}
+		#endregion / DELETE User ------------------------------------
+
+		#region UPDATE User gets reflected in Comments --------------
+		
+		[Fact]
+		private async Task Updating_Users_Name_Updates_Backlog_Comment_Author()
+		{
+			// GIVEN a backlog item with a comment
+			_currentUserId = (await CreateSampleUser("Marge")).Id!;
+			var backlogItemRef = await CreateBacklogItemWithAComment();
 
 			// WHEN the user changes its name
-			var updatedRef = await UpdateUser(userRef.Id!, "Marge", "Simpson");
+			var updatedRef = await UpdateUser(_currentUserId, "Bart", "Simpson");
 
-			// THEN all the references to the updated user have the new name
+			// THEN the comment's author has the new name
 			var item = (await _backlogQueryService.GetById(backlogItemRef.Id!)).Value;
-			Assert.Equal(updatedRef.FullName, item.Created.ActionedBy.FullName);
-			Assert.Equal(updatedRef.FullName, item.LastUpdated.ActionedBy.FullName);
+			Assert.Equal(updatedRef.FullName, item.Comments!.Entries[0].Author.FullName);
 		}
 
 		[Fact]
@@ -109,7 +151,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			// GIVEN a backlog item with 2 comments with references to a user
 			_currentUserId = (await CreateSampleUser("Marge")).Id!;
 			var userRef = await CreateSampleUser();
-			var backlogItemRef = await CreateBacklogItemWithAComment(userRef, userRef);
+			var backlogItemRef = await CreateBacklogItemWithACommentAndUserReference(userRef, userRef);
 
 			// WHEN the user changes its name
 			var updatedRef = await UpdateUser(userRef.Id!, "Bart", "Simpson");
@@ -123,6 +165,44 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			// ...text references are updated to the new name
 			Assert.Equal(0, comments.Entries.Count(c => c.Message.Contains(userRef.MentionedName)));
 			Assert.Equal(2, comments.Entries.Count(c => c.Message.Contains(updatedRef.MentionedName)));
+		}
+		
+		#endregion / UPDATE User gets reflected in Comments ---------
+		
+		#region UPDATE User gets reflected in Backlog Item ----------
+		
+		[Fact]
+		private async Task Updating_Users_Name_Updates_BacklogItem_Assignee()
+		{
+			// GIVEN a user and a backlog item assigned to the user
+			_currentUserId = (await CreateSampleUser()).Id!;
+			var userRef = await CreateSampleUser("Bart");
+			var backlogItemRef = await CreateBacklogItem();
+			await _backlogCommandService.AssignToUser(backlogItemRef.Id!, userRef.Id!);
+
+			// WHEN the user changes its name
+			var updatedRef = await UpdateUser(userRef.Id!, "Marge", "Simpson");
+
+			// THEN the assignee of the Backlog Item has the new name
+			var item = (await _backlogQueryService.GetById(backlogItemRef.Id!)).Value;
+			Assert.Equal(updatedRef.FullName, item.Assignee!.FullName);
+		}
+		
+		[Fact]
+		private async Task Updating_Users_Name_Updates_References_In_BacklogItem_Modified_Collection()
+		{
+			// GIVEN a user and a backlog item created by him
+			var userRef = await CreateSampleUser();
+			_currentUserId = userRef.Id!;
+			var backlogItemRef = await CreateBacklogItem();
+
+			// WHEN the user changes its name
+			var updatedRef = await UpdateUser(userRef.Id!, "Marge", "Simpson");
+
+			// THEN all the references to the updated user have the new name
+			var item = (await _backlogQueryService.GetById(backlogItemRef.Id!)).Value;
+			Assert.Equal(updatedRef.FullName, item.Created.ActionedBy.FullName);
+			Assert.Equal(updatedRef.FullName, item.LastUpdated.ActionedBy.FullName);
 		}
 
 		[Fact]
@@ -145,7 +225,10 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			// and "LastUpdated" property hasn't changed
 			Assert.Equal(nedRef.FullName, item.LastUpdated.ActionedBy.FullName);
 		}
+		#endregion / UPDATE User gets reflected in Backlog Item -----
 
+		#region Auxiliary methods -----------------------------------
+		
 		private async Task<UserReference> CreateSampleUser(string firstName = "Homer", string lastName = "Simpson")
 		{
 			var dto = new UserAddUpdRequest
@@ -186,7 +269,22 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			return addedRef.Value;
 		}
 
-		private async Task<BacklogItemReference> CreateBacklogItemWithAComment(params UserReference[] referredUser)
+		private async Task<BacklogItemReference> CreateBacklogItemWithAComment()
+		{
+			var ticket = await CreateBacklogItem();
+
+			var createdComment = await _commentCommandService.Create(
+					ticket.Id!,
+					new CommentAddUpdRequest { Message = $"Test bla" }
+				);
+			if (!createdComment.IsSuccess)
+				throw new Exception("Failed to create a comment on a backlog item");
+			await SaveChanges();
+			
+			return ticket;
+		}
+
+		private async Task<BacklogItemReference> CreateBacklogItemWithACommentAndUserReference(params UserReference[] referredUser)
 		{
 			var ticket = await CreateBacklogItem();
 
@@ -203,5 +301,6 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			
 			return ticket;
 		}
+		#endregion / Auxiliary methods ------------------------------
 	}
 }

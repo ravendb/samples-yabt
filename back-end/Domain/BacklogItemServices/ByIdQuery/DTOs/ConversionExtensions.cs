@@ -16,6 +16,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 			var response = new TResponse
 			{
 				Title = entity.Title,
+				Assignee = entity.Assignee,
 				Created = entity.Created,
 				LastUpdated = entity.LastUpdated,
 				Tags = entity.Tags,
@@ -23,7 +24,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				CustomFields = entity.CustomFields,
 				Type = entity.Type
 			};
-			response.RemoveEntityPrefixFromIds(r => r.Created.ActionedBy, r => r.LastUpdated.ActionedBy);
+			response.RemoveEntityPrefixFromIds(r => r.Created.ActionedBy, r => r.LastUpdated.ActionedBy, r => r.Assignee);
 
 			if (entity is BacklogItemBug entityBug 
 				&& response is BugGetResponse responseBug)
