@@ -1,3 +1,4 @@
 param([string]$CertPath)
 
-Write-Output [Convert]::ToBase64String([IO.File]::ReadAllBytes($CertPath))
+$base64 = [Convert]::ToBase64String([IO.File]::ReadAllBytes($CertPath))
+Write-Output "$base64"
