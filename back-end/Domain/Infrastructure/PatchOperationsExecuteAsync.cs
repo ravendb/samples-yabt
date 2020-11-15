@@ -37,6 +37,7 @@ namespace Raven.Yabt.Domain.Infrastructure
             {
                 // The default timeout is not documented. Seems to be around  15 sec
                 queryIndex.WaitForNonStaleResultsTimeout = TimeSpan.MaxValue;
+                queryIndex.WaitForNonStaleResults = true;
                 var sentOperation = await _dbSession.Advanced.DocumentStore.Operations.SendAsync(new PatchByQueryOperation(queryIndex));
 
                 if (waitForCompletion)

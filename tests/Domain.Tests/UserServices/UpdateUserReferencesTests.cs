@@ -120,7 +120,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			// WHEN the user gets deleted
 			await _userCommandService.Delete(userRef.Id!);
 			await SaveChanges();
-WaitForUserToContinueTheTest(DbSession.Advanced.DocumentStore);
+
 			// THEN the Author of the comment remains the name, but the ID is NULL
 			var comment = (await _backlogQueryService.GetById(backlogItemRef.Id!)).Value.Comments!.Entries.First();
 			Assert.Null(comment.Author.Id);
