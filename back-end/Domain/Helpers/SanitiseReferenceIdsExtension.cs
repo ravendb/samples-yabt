@@ -50,7 +50,7 @@ namespace Raven.Yabt.Domain.Helpers
 			
 			var idProp = type.GetProperty(nameof(IEntity.Id));
 			if (idProp == null)
-				throw new NotImplementedException($"No public setter on '{nameof(IEntity.Id)}' property of '{type.Name}' type");
+				throw new NotImplementedException($"No '{nameof(IEntity.Id)}' property of '{type.Name}' type");
 
 			idProp.SetValue(target, newRefId);
 
@@ -77,9 +77,9 @@ namespace Raven.Yabt.Domain.Helpers
 			if (!new Regex(@"^\d{1,19}\-[a-z]{1}$", RegexOptions.IgnoreCase).IsMatch(shortId))
 				throw new ArgumentException("ID has incorrect format", nameof(shortId));
 
-			// E.g. for 'User' get 'Users', for 'Person' get 'people'
+			// Pluralise the collection name (e.g. 'User' becomes 'Users', 'Person' becomes 'People')
 			var pluralisedName = DocumentConventions.DefaultGetCollectionName(typeof(T));
-			// Fix the casing issue - for 'Users' get 'users', for 'BacklogItems' get 'BacklogItems'
+			// Fix the later case - converts 'Users' to 'users', 'BacklogItems' to 'backlogItems'
 			var prefix = session.Advanced.DocumentStore.Conventions.TransformTypeCollectionNameToDocumentIdPrefix(pluralisedName);
 
 			return $"{prefix}/{shortId}";
