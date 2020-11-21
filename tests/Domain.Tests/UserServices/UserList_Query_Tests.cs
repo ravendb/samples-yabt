@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -14,15 +15,16 @@ using Xunit;
 
 namespace Raven.Yabt.Domain.Tests.UserServices
 {
-	public class UserQueryServiceTests : ConfigureTestEnvironment
+	[SuppressMessage("ReSharper", "InconsistentNaming")]
+	public class UserList_Query_Tests : ConfigureTestEnvironment
 	{
 		private readonly IUserCommandService _userCommandService;
 		private readonly IUserQueryService _userQueryService;
 
-		public UserQueryServiceTests()
+		public UserList_Query_Tests()
 		{
-			_userCommandService = Container.GetService<IUserCommandService>();
-			_userQueryService = Container.GetService<IUserQueryService>();
+			_userCommandService = Container.GetService<IUserCommandService>()!;
+			_userQueryService = Container.GetService<IUserQueryService>()!;
 		}
 
 		[Fact]
@@ -47,7 +49,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 		[InlineData(UsersOrderColumns.Name,				Common.OrderDirections.Asc,  "N. Flanders",	"M. Szyslak")]
 		[InlineData(UsersOrderColumns.Email,			Common.OrderDirections.Desc, "N. Flanders", "H. Simpson")]
 		[InlineData(UsersOrderColumns.RegistrationDate, Common.OrderDirections.Desc, "M. Simpson",  "M. Szyslak")]
-		private async Task Users_Can_Be_Queried_With_Sorting_Order(UsersOrderColumns orderBy, Common.OrderDirections orderDirection, string firstShortName, string lastShortName)
+		private async Task Users_Can_Be_Queried_With_Sorting_Order(UsersOrderColumns orderBy, Common.OrderDirections orderDirection, string firstNameWithInitials, string lastNameWithInitials)
 		{
 			// GIVEN 4 users
 			await CreateUser("Moe",   "Szyslak",  "3@gmail.com");
@@ -60,8 +62,8 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 
 			// THEN 
 			// The returned result is in the correct sorting order
-			Assert.Equal(firstShortName, userList.Entries.First().ShortName);
-			Assert.Equal(lastShortName,  userList.Entries.Last().ShortName);
+			Assert.Equal(firstNameWithInitials, userList.Entries.First().NameWithInitials);
+			Assert.Equal(lastNameWithInitials,  userList.Entries.Last().NameWithInitials);
 		}
 
 		private async Task<UserReference> CreateUser(string firstName, string lastName, string email)

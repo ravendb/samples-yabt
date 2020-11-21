@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,7 +22,8 @@ using Xunit;
 
 namespace Raven.Yabt.Domain.Tests.UserServices
 {
-	public class UpdateUserReferencesTests : ConfigureTestEnvironment
+	[SuppressMessage("ReSharper", "InconsistentNaming")]
+	public class User_Update_Propagates_To_User_References_Tests : ConfigureTestEnvironment
 	{
 		private readonly IUserCommandService _userCommandService;
 		private readonly IBacklogItemCommandService _backlogCommandService;
@@ -31,12 +33,12 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 		private ICurrentUserResolver _currentUserResolver = null!;	// Initialised in 'ConfigureIocContainer()'
 		private string _currentUserId = null!;						// Must be initialised as the 1st step in each test
 
-		public UpdateUserReferencesTests()
+		public User_Update_Propagates_To_User_References_Tests()
 		{
-			_userCommandService = Container.GetService<IUserCommandService>();
-			_backlogCommandService = Container.GetService<IBacklogItemCommandService>();
-			_commentCommandService = Container.GetService<IBacklogItemCommentCommandService>();
-			_backlogQueryService = Container.GetService<IBacklogItemByIdQueryService>();
+			_userCommandService = Container.GetService<IUserCommandService>()!;
+			_backlogCommandService = Container.GetService<IBacklogItemCommandService>()!;
+			_commentCommandService = Container.GetService<IBacklogItemCommentCommandService>()!;
+			_backlogQueryService = Container.GetService<IBacklogItemByIdQueryService>()!;
 		}
 
 		protected override void ConfigureIocContainer(IServiceCollection services)
@@ -51,7 +53,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 		#region DELETE User -----------------------------------------
 		
 		[Fact]
-		private async Task Deleting_User_Clears_UserId_In_BacklogItem_Modified_Colection()
+		private async Task Deleting_User_Clears_UserId_In_BacklogItem_Modified_Collection()
 		{
 			// GIVEN a user and a backlog item created by him
 			var userRef = await CreateSampleUser();
@@ -96,7 +98,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			_currentUserId = (await CreateSampleUser("Marge")).Id!;
 			var userRef = await CreateSampleUser();
 			var backlogItemRef = await CreateBacklogItemWithACommentAndUserReference(userRef, userRef);
-
+			
 			// WHEN the user gets deleted
 			await _userCommandService.Delete(userRef.Id!);
 			await SaveChanges();
@@ -161,7 +163,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			// ...still exist
 			Assert.Equal(2, comments.Entries.Count(c => c.MentionedUserIds?.Values.Contains(userRef.Id, StringComparer.InvariantCultureIgnoreCase) == true));
 			// ...'MentionedUserIds' is updated to have the new name
-			Assert.Equal(new [] { updatedRef.MentionedName, updatedRef.MentionedName }, comments.Entries.SelectMany(c => c.MentionedUserIds?.Keys));
+			Assert.Equal(new [] { updatedRef.MentionedName, updatedRef.MentionedName }, comments.Entries.SelectMany(c => c.MentionedUserIds?.Keys ?? Array.Empty<string>()));
 			// ...text references are updated to the new name
 			Assert.Equal(0, comments.Entries.Count(c => c.Message.Contains(userRef.MentionedName)));
 			Assert.Equal(2, comments.Entries.Count(c => c.Message.Contains(updatedRef.MentionedName)));

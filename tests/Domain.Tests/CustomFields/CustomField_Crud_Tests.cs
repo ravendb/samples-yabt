@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -12,15 +13,16 @@ using Xunit;
 
 namespace Raven.Yabt.Domain.Tests.CustomFields
 {
-	public class CustomFieldCrudTests : ConfigureTestEnvironment
+	[SuppressMessage("ReSharper", "InconsistentNaming")]
+	public class CustomField_Crud_Tests : ConfigureTestEnvironment
 	{
 		private readonly ICustomFieldCommandService _commandService;
 		private readonly ICustomFieldQueryService _queryService;
 
-		public CustomFieldCrudTests()
+		public CustomField_Crud_Tests()
 		{
-			_commandService = Container.GetService<ICustomFieldCommandService>();
-			_queryService = Container.GetService<ICustomFieldQueryService>();
+			_commandService = Container.GetService<ICustomFieldCommandService>()!;
+			_queryService = Container.GetService<ICustomFieldQueryService>()!;
 		}
 
 		[Fact]

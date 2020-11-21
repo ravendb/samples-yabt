@@ -21,7 +21,7 @@ namespace Raven.Yabt.Domain.Tests
 	public abstract class ConfigureTestEnvironment : RavenTestDriver
 	{
 		protected IServiceProvider Container { get; }
-		protected IAsyncDocumentSession DbSession => Container.GetService<IAsyncDocumentSession>();
+		protected IAsyncDocumentSession DbSession => Container.GetService<IAsyncDocumentSession>()!;
 
 		/// <summary>
 		///		The default c-tor initialising all the IoC interfaces
@@ -48,12 +48,13 @@ namespace Raven.Yabt.Domain.Tests
 		protected async Task SaveChanges()
 		{
 			await DbSession.SaveChangesAsync();
-			DbSession.Advanced.Clear(); // Clear all cached entities
 
 			// Process all patch requests
 			var asyncPatchesHandlers = Container.GetServices<IPatchOperationsExecuteAsync>();
 			foreach (var handler in asyncPatchesHandlers)
 				await handler.SendAsyncDeferredPatchByQueryOperations(true);
+			
+			DbSession.Advanced.Clear(); // Clear all cached entities
 		}
 
 		/// <summary>
@@ -73,7 +74,7 @@ namespace Raven.Yabt.Domain.Tests
 				});
 			services.AddScoped(c =>
 				{
-					var session = c.GetService<IDocumentStore>().OpenAsyncSession();
+					var session = c.GetService<IDocumentStore>()!.OpenAsyncSession();
 						session.Advanced.WaitForIndexesAfterSaveChanges();  // Wait on each change to avoid adding WaitForIndexing() in each test
 					return session;
 				});

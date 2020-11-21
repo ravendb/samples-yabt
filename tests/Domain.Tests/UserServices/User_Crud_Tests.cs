@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 using DomainResults.Common;
@@ -13,7 +14,8 @@ using Xunit;
 
 namespace Raven.Yabt.Domain.Tests.UserServices
 {
-	public class UserCommandServiceTests : ConfigureTestEnvironment
+	[SuppressMessage("ReSharper", "InconsistentNaming")]
+	public class User_Crud_Tests : ConfigureTestEnvironment
 	{
 		private readonly IUserCommandService _userCommandService;
 		private readonly IUserQueryService _userQueryService;
@@ -22,10 +24,10 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 		private const string SampleLastName = "Smith";
 		private const string SampleEmail = "john.smith@gmail.com";
 
-		public UserCommandServiceTests()
+		public User_Crud_Tests()
 		{
-			_userCommandService = Container.GetService<IUserCommandService>();
-			_userQueryService = Container.GetService<IUserQueryService>();
+			_userCommandService = Container.GetService<IUserCommandService>()!;
+			_userQueryService = Container.GetService<IUserQueryService>()!;
 		}
 
 		[Fact]
