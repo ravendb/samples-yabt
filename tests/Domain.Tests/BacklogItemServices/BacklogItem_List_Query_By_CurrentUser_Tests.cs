@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -18,7 +19,8 @@ using Xunit;
 
 namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 {
-	public class BacklogItemListQueryByUserTests : ConfigureTestEnvironment
+	[SuppressMessage("ReSharper", "InconsistentNaming")]
+	public class BacklogItem_List_Query_By_CurrentUser_Tests : ConfigureTestEnvironment
 	{
 		private readonly IBacklogItemCommandService _commandService;
 		private readonly IBacklogItemListQueryService _queryService;
@@ -27,11 +29,11 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 		private string _currentUserId = null!;
 
-		public BacklogItemListQueryByUserTests()
+		public BacklogItem_List_Query_By_CurrentUser_Tests()
 		{
-			_commandService = Container.GetService<IBacklogItemCommandService>();
-			_queryService = Container.GetService<IBacklogItemListQueryService>();
-			_userCmdService = Container.GetService<IUserCommandService>();
+			_commandService = Container.GetService<IBacklogItemCommandService>()!;
+			_queryService = Container.GetService<IBacklogItemListQueryService>()!;
+			_userCmdService = Container.GetService<IUserCommandService>()!;
 		}
 
 		protected override void ConfigureIocContainer(IServiceCollection services)

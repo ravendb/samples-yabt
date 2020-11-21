@@ -20,7 +20,7 @@ namespace Raven.Yabt.Domain.Infrastructure
 			services.AddSingleton(x => GetDocumentStore(ravenDbUrls, base64EncodedCertificate, dbName));
 
 			// Register a session
-			services.AddScoped(c => c.GetService<IDocumentStore>().OpenAsyncSession());
+			services.AddScoped(c => c.GetService<IDocumentStore>()!.OpenAsyncSession());
 		}
 
 		/// <summary>

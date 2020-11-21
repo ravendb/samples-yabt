@@ -22,7 +22,7 @@ namespace Raven.Yabt.TicketImporter.Configuration
 					client.DefaultRequestHeaders.Add("Accept", "application/vnd.github.v3+json");
 					client.DefaultRequestHeaders.Add("User-Agent", "TicketImporter");
 
-					var authBytes = Encoding.ASCII.GetBytes($"{settings.GitHub.ClientId}:{settings.GitHub.ClientSecret}");
+					var authBytes = Encoding.ASCII.GetBytes($"{settings!.GitHub.ClientId}:{settings.GitHub.ClientSecret}");
 					client.DefaultRequestHeaders.Authorization =
 						new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", Convert.ToBase64String(authBytes));
 				});

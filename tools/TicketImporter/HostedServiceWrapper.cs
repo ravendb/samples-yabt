@@ -31,11 +31,11 @@ namespace Raven.Yabt.TicketImporter
 			using var scope = _serviceFactory.CreateScope();
 			
 			// Make sure that indexes are in place
-			var dbStore = scope.ServiceProvider.GetService<IDocumentStore>();
+			var dbStore = scope.ServiceProvider.GetService<IDocumentStore>()!;
 			await IndexCreation.CreateIndexesAsync(typeof(SetupDocumentStore).Assembly, dbStore, null, dbStore.Database, cancellationToken);
 			
 			// Kick off the import process
-			var worker = scope.ServiceProvider.GetService<TicketImportService>();
+			var worker = scope.ServiceProvider.GetService<TicketImportService>()!;
 			await worker.Run(cancellationToken);
 		}
 

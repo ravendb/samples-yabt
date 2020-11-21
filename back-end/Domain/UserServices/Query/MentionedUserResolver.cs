@@ -35,7 +35,7 @@ namespace Raven.Yabt.Domain.UserServices.Query
 			var userReferences = matches.Distinct().Select(m => m.Value).ToArray();
 			
 			// Resolve all the mentioned names with user's IDs from the DB
-			if (userReferences?.Any() != true)
+			if (userReferences.Any() != true)
 				return new Dictionary<string, string>();
 
 			var query = from user in DbSession.Query<MentionedUsersIndexed, Users_Mentions>()

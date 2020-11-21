@@ -14,7 +14,7 @@ namespace Raven.Yabt.Database.Migration.Configuration
 			services.AddSingleton(x =>
 				{
 					var config = x.GetService<DatabaseSettings>();
-					var store = SetupDocumentStore.GetDocumentStore(config.RavenDbUrls, config.Certificate, config.DbName);
+					var store = SetupDocumentStore.GetDocumentStore(config!.RavenDbUrls, config.Certificate, config.DbName);
 					store.PreInitializeDocumentStore();
 					return store.Initialize();
 				});

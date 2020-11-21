@@ -48,7 +48,7 @@ namespace Raven.Yabt.TicketImporter.Infrastructure
 
 		private async IAsyncEnumerable<T[]> GetList<T>(string? startUrl, int maxNumber, [EnumeratorCancellation] CancellationToken cancellationToken, Func<T[], Task<T[]>>? processing = null)
 		{
-			int counter = 0;
+			var counter = 0;
 			while (!string.IsNullOrEmpty(startUrl))
 			{
 				if (cancellationToken.IsCancellationRequested || counter > maxNumber)
@@ -57,7 +57,6 @@ namespace Raven.Yabt.TicketImporter.Infrastructure
 				using var request = new HttpRequestMessage(HttpMethod.Get, startUrl);
 				using var httpResponse = await _httpClient.SendAsync(request, cancellationToken /* throws exception on cancellation */);
 
-
 				if (httpResponse.IsSuccessStatusCode)
 				{
 					startUrl = null;
@@ -65,13 +64,19 @@ namespace Raven.Yabt.TicketImporter.Infrastructure
 					if (!string.IsNullOrEmpty(links?.NextLink))
 						startUrl = links.NextLink;
 
-					await using var stream = await httpResponse.Content.ReadAsStreamAsync();
+					await using var stream = await httpResponse.Content.ReadAsStreamAsync(cancellationToken);
 					var responseArray = await JsonSerializer.DeserializeAsync<T[]>(stream, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
+
+					if (responseArray == null)
+					{
+						LogResponseError("Failed to parse response", httpResponse);
+						yield break;
+					}
 
 					if (processing != null)
 						responseArray = await processing(responseArray);
 
-					counter += responseArray.Count();
+					counter += responseArray.Length;
 
 					yield return responseArray;
 				}

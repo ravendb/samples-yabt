@@ -26,8 +26,8 @@ namespace Raven.Yabt.Domain.Infrastructure
 			
 			// Register 1 implementation for 2 interfaces
 			services.AddScoped<PatchOperationsExecuteAsync>();
-			services.AddScoped(x => (IPatchOperationsAddDeferred)x.GetService<PatchOperationsExecuteAsync>());
-			services.AddScoped(x => (IPatchOperationsExecuteAsync)x.GetService<PatchOperationsExecuteAsync>());
+			services.AddScoped(x => (IPatchOperationsAddDeferred)x.GetService<PatchOperationsExecuteAsync>()!);
+			services.AddScoped(x => (IPatchOperationsExecuteAsync)x.GetService<PatchOperationsExecuteAsync>()!);
 		}
 	}
 }

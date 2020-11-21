@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,7 +22,8 @@ using Xunit;
 
 namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 {
-	public class BacklogItemUserMentionsTests : ConfigureTestEnvironment, ICurrentUserResolver, IUserReferenceResolver
+	[SuppressMessage("ReSharper", "InconsistentNaming")]
+	public class BacklogItem_List_Query_By_Mentioned_User_Tests : ConfigureTestEnvironment, ICurrentUserResolver, IUserReferenceResolver
 	{
 		private readonly IUserCommandService _userCommandService;
 		private readonly IBacklogItemCommandService _backlogItemCommandService;
@@ -36,12 +38,12 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			new TestUser("Ned", "Flanders", "ned@gmail.com")
 		};
 
-		public BacklogItemUserMentionsTests()
+		public BacklogItem_List_Query_By_Mentioned_User_Tests()
 		{
-			_userCommandService = Container.GetService<IUserCommandService>();
-			_backlogItemCommandService = Container.GetService<IBacklogItemCommandService>();
-			_commentCommandService = Container.GetService<IBacklogItemCommentCommandService>();
-			_queryBacklogItemService = Container.GetService<IBacklogItemListQueryService>();
+			_userCommandService = Container.GetService<IUserCommandService>()!;
+			_backlogItemCommandService = Container.GetService<IBacklogItemCommandService>()!;
+			_commentCommandService = Container.GetService<IBacklogItemCommentCommandService>()!;
+			_queryBacklogItemService = Container.GetService<IBacklogItemListQueryService>()!;
 		}
 
 		[Theory]

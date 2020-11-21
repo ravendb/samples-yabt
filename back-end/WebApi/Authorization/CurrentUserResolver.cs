@@ -20,7 +20,7 @@ namespace Raven.Yabt.WebApi.Authorization
 
 		public string GetCurrentUserId()
 		{
-			var userId = _httpContextAccessor.HttpContext.User.Claims.FirstOrDefault(c => c.Type == UserIdClaimType)?.Value;
+			var userId = _httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == UserIdClaimType)?.Value;
 			
 			if (string.IsNullOrEmpty(userId))
 				throw new UnauthorizedAccessException("Cannot resolve user ID");

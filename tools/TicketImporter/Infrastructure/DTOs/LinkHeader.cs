@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 
@@ -20,9 +19,9 @@ namespace Raven.Yabt.TicketImporter.Infrastructure.DTOs
 
 		public static LinkHeader? LinksFromHeader(HttpResponseMessage? httpResponse)
 		{
-			if (httpResponse != null && httpResponse.Headers.TryGetValues("link", out IEnumerable<string> vals))
+			if (httpResponse != null && httpResponse.Headers.TryGetValues("link", out var values))
 			{
-				return LinksFromHeader(vals.FirstOrDefault());
+				return LinksFromHeader(values.FirstOrDefault());
 			}
 			return null;
 		}
