@@ -5,8 +5,8 @@
 A sample solution to showcase [RavenDB](https://ravendb.net) features accompanied with a [series of articles](https://ravendb.net/articles/building-application-with-net-core-and-ravendb-nosql-database). It has minimum third-party dependencies and many examples of the best practices like the [Domain Driven Design](https://en.wikipedia.org/wiki/Domain-driven_design) (DDD), [Command Query Responsibility Segregation](https://martinfowler.com/bliki/CQRS.html) (CQRS) and the [Onion Architecture](https://jeffreypalermo.com/2008/07/the-onion-architecture-part-1/).
 
 ## Technologies
-* ASP .NET Core 3.1
-* RavenDB 5.0
+* ASP .NET Core 5.0
+* RavenDB 5.1
 * xUnit, NSubstitute
 
 ## Getting Started
