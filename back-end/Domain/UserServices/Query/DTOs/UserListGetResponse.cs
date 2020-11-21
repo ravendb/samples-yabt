@@ -27,7 +27,7 @@ namespace Raven.Yabt.Domain.UserServices.Query.DTOs
 		/// <summary>
 		///		Shorten name of the user, e.g. "Simpson H."
 		/// </summary>
-		public string ShortName { get; set; } = string.Empty;
+		public string NameWithInitials { get; set; } = string.Empty;
 
 		public string? Email { get; set; }
 

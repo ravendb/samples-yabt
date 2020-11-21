@@ -24,7 +24,7 @@ namespace Raven.Yabt.Database.Models.Users
 		/// <summary>
 		///		Shorten name of the user, e.g. "Simpson H."
 		/// </summary>
-		public string ShortName { get; set; } = string.Empty;
+		public string NameWithInitials { get; set; } = string.Empty;
 
 		public string? AvatarUrl { get; set; }
 		public string? Email { get; set; }
@@ -37,7 +37,7 @@ namespace Raven.Yabt.Database.Models.Users
 		public UserReference ToReference() => new UserReference
 		{
 			Id = Id,
-			Name = ShortName,
+			Name = NameWithInitials,
 			FullName = FullName,
 			AvatarUrl = AvatarUrl
 		};

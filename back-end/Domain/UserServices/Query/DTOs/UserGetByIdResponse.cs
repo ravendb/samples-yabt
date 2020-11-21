@@ -7,7 +7,7 @@ namespace Raven.Yabt.Domain.UserServices.Query.DTOs
 		public string FirstName { get; set; }
 		public string LastName { get; set; }
 		public string FullName { get; set; }
-		public string ShortName { get; set; }
+		public string NameWithInitials { get; set; }
 		public string Avatar { get; set; }
 		public string Email { get; set; }
 	}

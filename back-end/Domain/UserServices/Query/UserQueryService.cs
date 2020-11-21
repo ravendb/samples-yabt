@@ -45,7 +45,7 @@ namespace Raven.Yabt.Domain.UserServices.Query
 								 Id = u.Id,
 								 FirstName = u.FirstName,
 								 LastName = u.LastName,
-								 ShortName = u.ShortName,
+								 NameWithInitials = u.NameWithInitials,
 								 Email = u.Email,
 								 RegistrationDate = u.RegistrationDate
 							 }

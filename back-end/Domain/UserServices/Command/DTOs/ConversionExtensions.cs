@@ -13,7 +13,7 @@ namespace Raven.Yabt.Domain.UserServices.Command.DTOs
 
 			entity.FirstName = dto.FirstName;
 			entity.LastName = dto.LastName;
-			entity.ShortName = (!string.IsNullOrEmpty(dto.FirstName) ? $"{dto.FirstName.Substring(0, 1)}. " : "") + dto.LastName ?? "";
+			entity.NameWithInitials = (!string.IsNullOrEmpty(dto.FirstName) ? $"{dto.FirstName.Substring(0, 1)}. " : "") + dto.LastName ?? "";
 			entity.AvatarUrl = dto.AvatarUrl;
 			entity.Email = dto.Email;
 
