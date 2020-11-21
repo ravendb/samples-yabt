@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -123,7 +123,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			entity.ModifiedBy.Add(new BacklogItemHistoryRecord
 				{
 					ActionedBy = await _userResolver.GetCurrentUserReference(),
-					Summary = entity.ModifiedBy.Any() ? "Modified" : "Created"
+					Summary = entity.ModifiedBy.Any() ? "Modified" : "Created"	// TODO: Provide more informative description in case of modifications
 				});
 
 			if (dto.CustomFields != null)
