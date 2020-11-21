@@ -69,7 +69,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 
 			comment.Message = dto.Message;
 			comment.MentionedUserIds = mentionedUsers.Any() ? mentionedUsers : null;
-			comment.ModifiedDate = DateTime.UtcNow;
+			comment.LastModified = DateTime.UtcNow;
 
 			ticket.AddHistoryRecord(currentUser, "Updated a comment");
 

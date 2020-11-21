@@ -72,8 +72,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery
 					Id = comment.Id,
 					Message = comment.Message,
 					Author = comment.Author,
-					Created = comment.CreatedDate,
-					LastUpdated = comment.ModifiedDate,
+					Created = comment.Created,
+					LastUpdated = comment.LastModified,
 					MentionedUserIds = comment.MentionedUserIds?.ToDictionary(pair => pair.Key, pair => pair.Value.GetShortId()!)
 				}).ToList();
 			ret.RemoveEntityPrefixFromIds(r => r.Author);
@@ -92,8 +92,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery
 			{
 				BacklogItemCommentsOrderColumns.TimestampLastModified =>	
 					dto.OrderDirection == OrderDirections.Asc 
-						? comments.OrderBy(t => t.ModifiedDate) 
-						: comments.OrderByDescending(t => t.ModifiedDate),
+						? comments.OrderBy(t => t.LastModified) 
+						: comments.OrderByDescending(t => t.LastModified),
 				_ => throw new NotImplementedException()
 			};
 		}

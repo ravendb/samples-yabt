@@ -53,11 +53,11 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 					_1 = from um in 
 							(from comment in ticket.Comments 
 							 from user in comment.MentionedUserIds 
-							 select new { user, comment.ModifiedDate })
+							 select new { user, comment.LastModified })
 						 group um by um.user into g
 						 select CreateField(
 								$"{nameof(BacklogItemIndexedForList.MentionedUser)}_{g.Key.Value!.Replace("/","").ToLower()}",
-								g.Max(f => f.ModifiedDate)
+								g.Max(f => f.LastModified)
 								),
 					// Create a dictionary for Custom Fields
 					_2 = from x in ticket.CustomFields

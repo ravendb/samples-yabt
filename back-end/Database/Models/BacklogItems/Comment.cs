@@ -10,9 +10,9 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 	public class Comment
 	{
 		[JsonIgnore]
-		public string Id => $"{CreatedDate:O}";
-		public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
-		public DateTime ModifiedDate { get; set; } = DateTime.UtcNow;
+		public string Id => $"{Created:O}";
+		public DateTime Created { get; set; } = DateTime.UtcNow;
+		public DateTime LastModified { get; set; } = DateTime.UtcNow;
 
 		public UserReference Author { get; set; } = null!;	// Non-nullable
 		public string Message { get; set; } = null!;		// Non-nullable
