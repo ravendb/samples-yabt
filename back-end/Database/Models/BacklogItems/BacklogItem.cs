@@ -33,7 +33,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		///		List of all users who modified the ticket.
 		///		The first record is creation of the ticket
 		/// </summary>
-		public IList<BacklogItemHistoryRecord> ModifiedBy { get; } = new List<BacklogItemHistoryRecord>();
+		public List<BacklogItemHistoryRecord> ModifiedBy { get; } = new List<BacklogItemHistoryRecord>();
 
 		[JsonIgnore]
 		public ChangedByUserReference Created		=> ModifiedBy.OrderBy(m => m.Timestamp).First() as ChangedByUserReference;
@@ -60,6 +60,25 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		///		Stored as { custom field ID, value }
 		/// </summary>
 		public IDictionary<string, object>? CustomFields { get; set; }
+
+		/// <summary>
+		/// 	Add a record about modification of the entity
+		/// </summary>
+		public void AddHistoryRecord(UserReference actionedBy, string message)
+		{
+			ModifiedBy.Add(new BacklogItemHistoryRecord
+			{
+				ActionedBy = actionedBy,
+				Summary = message
+			});
+			// Cap the number of records in 200 most recent one. An arbitrary number to avoid the collection getting out of proportion 
+			const int maxCount = 200;
+			if (ModifiedBy.Count > maxCount)
+			{
+				var lastTimestamp = ModifiedBy.OrderByDescending(m => m.Timestamp).Skip(maxCount - 1).First().Timestamp;
+				ModifiedBy.RemoveAll(m => m.Timestamp > lastTimestamp);
+			}
+		}
 
 		public BacklogItemReference ToReference() => new BacklogItemReference
 		{

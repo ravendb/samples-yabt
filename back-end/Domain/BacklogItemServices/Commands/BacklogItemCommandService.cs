@@ -100,11 +100,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				backlogItem.Assignee = userRef;
 			}
 
-			backlogItem.ModifiedBy.Add(new BacklogItemHistoryRecord
-				{
-					ActionedBy = await _userResolver.GetCurrentUserReference(),
-					Summary = "Assigned user"
-				});
+			backlogItem.AddHistoryRecord(await _userResolver.GetCurrentUserReference(), "Assigned a user");
 
 			return DomainResult.Success(
 									backlogItem.ToReference().RemoveEntityPrefixFromId()
@@ -120,11 +116,11 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			entity.Title = dto.Title;
 			entity.Tags = dto.Tags;
 			entity.Assignee = dto.AssigneeId != null ? await _userResolver.GetReferenceById(dto.AssigneeId) : null;
-			entity.ModifiedBy.Add(new BacklogItemHistoryRecord
-				{
-					ActionedBy = await _userResolver.GetCurrentUserReference(),
-					Summary = entity.ModifiedBy.Any() ? "Modified" : "Created"	// TODO: Provide more informative description in case of modifications
-				});
+	
+			entity.AddHistoryRecord(
+				await _userResolver.GetCurrentUserReference(), 
+				entity.ModifiedBy.Any() ? "Modified" : "Created"	// TODO: Provide more informative description in case of modifications
+				);
 
 			if (dto.CustomFields != null)
 			{
