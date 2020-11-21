@@ -23,7 +23,7 @@ jobs:
         uses: docker/build-push-action@v2.1.0
         with:
           context: .
-          file: ./back-end/WebApi/Dockerfile
+          file: ./devops/Dockerfile
           platforms: linux/amd64
           push: true
           tags: ravendbsamples/yabt:latest
