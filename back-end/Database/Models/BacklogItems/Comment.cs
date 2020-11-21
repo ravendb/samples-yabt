@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Newtonsoft.Json;
+
 using Raven.Yabt.Database.Common.References;
 
 namespace Raven.Yabt.Database.Models.BacklogItems
 {
 	public class Comment
 	{
-		public string Id { get; set; } = Guid.NewGuid().ToString();
+		[JsonIgnore]
+		public string Id => $"{CreatedDate:O}";
 		public DateTime CreatedDate { get; set; } = DateTime.UtcNow;
 		public DateTime ModifiedDate { get; set; } = DateTime.UtcNow;
 
