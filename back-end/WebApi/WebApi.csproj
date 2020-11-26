@@ -4,6 +4,7 @@
 		<RootNamespace>Raven.Yabt.WebApi</RootNamespace>
 
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<UserSecretsId>a360accb-0b49-44f4-a921-faff5ca5c55d</UserSecretsId>
 	</PropertyGroup>
 
 	<ItemGroup>

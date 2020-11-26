@@ -20,16 +20,7 @@ namespace Raven.Yabt.TicketImporter
 		///  </remarks>
 		public static IHostBuilder CreateHostBuilder(string[] args)
 		{
-			return Host.CreateDefaultBuilder(args)
-			           .ConfigureAppConfiguration((builderContext, config) =>
-						{
-							// As I don't use 'DOTNET_ENVIRONMENT' reserved for console apps and rely on 'ASPNETCORE_ENVIRONMENT' instead, then
-							//  a) need to set the environment manually
-							builderContext.HostingEnvironment.EnvironmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-							//  b) add user secrets, as at the time 'CreateDefaultBuilder()' called it the environment was 'PROD'
-							if (builderContext.HostingEnvironment.IsDevelopment())
-								config.AddUserSecrets<Program>();
-						})
+			return Host.CreateDefaultBuilder(args)	//  Since .NET Core 3, the generic host uses the DOTNET_ prefix (not the old ASPNETCORE_). It also adds user secrets for dev environment (https://stackoverflow.com/a/60207531/968003)
 						.ConfigureServices((context, services) =>
 						{
 							services.AddAndConfigureAppSettings(context.Configuration)
