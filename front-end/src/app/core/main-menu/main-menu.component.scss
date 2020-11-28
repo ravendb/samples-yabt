@@ -1,8 +1,8 @@
 @import 'breakpoints';
-@import '~@angular/material/theming';
+@import 'theme';
 
 $toolbar-background-desktop: white !default;
-$sidenav-background: white; //$primary-color !default;
+$sidenav-background: mat-color(primary, 400); //$primary-color !default;
 $sidenav-active-background: grey; //$primary-dark-color !default;
 $popup-header-height: 36px !default;
 $text-major-size: 16px;
@@ -99,46 +99,6 @@ mat-sidenav-container.mat-drawer-container {
 		.menu-button {
 			margin-right: 8px;
 		}
-		.create-button {
-			margin-left: 8px;
-			margin-right: 8px;
-			line-height: 40px; // Create button (a raised button) defaults to 36px instead of 40 used by the other
-			// elements in the toolbar, for some reason that moves the plus icon lower. It's easiest/best to fix by
-			// making the same size as the other toolbar elements
-			@include breakpointMediumAndUp() {
-				margin-left: 32px;
-				margin-right: 32px;
-			}
-			@include breakpointSmallAndDown() {
-				padding-left: 8px;
-				padding-right: 8px;
-				min-width: 40px;
-				border-radius: 50%;
-				::ng-deep {
-					.mat-button-ripple,
-					.mat-button-focus-overlay {
-						border-radius: 50%;
-					}
-				}
-			}
-			span {
-				@include makeHiddenSmallAndDown();
-			}
-		}
-		.task-button {
-			margin-left: 8px;
-			margin-right: 8px;
-			mat-chip-list.mat-chip-list {
-				position: absolute;
-				mat-chip.mat-chip {
-					font-size: 10px;
-					line-height: 5px;
-					padding: 5px;
-					border-radius: 10px;
-					cursor: pointer;
-				}
-			}
-		}
 		button.account-button {
 			::ng-deep {
 				span.mat-button-wrapper {
@@ -149,46 +109,6 @@ mat-sidenav-container.mat-drawer-container {
 						width: 40px;
 						margin-right: 5px;
 					}
-				}
-			}
-		}
-	}
-}
-
-/*
-::ng-deep div.mat-menu-panel {
-	.mat-menu-content {
-		padding: 0;
-	}
-	&.task-menu,
-	&.recent-menu {
-		overflow: visible;
-		margin-top: 8px;
-		&::before {
-			content: ' ';
-			position: absolute;
-			top: 0px;
-			right: 12px;
-			border-bottom: 8px solid $popup-header-background;
-			border-left: 8px solid transparent;
-			border-right: 8px solid transparent;
-		}
-	}
-	@include breakpointPhoneTablet() {
-		&.create-menu {
-			overflow: visible;
-			margin-top: 8px;
-			&::before {
-				content: ' ';
-				position: absolute;
-				top: 0px;
-				left: 12px;
-				border-bottom: 8px solid $popup-header-background;
-				border-left: 8px solid transparent;
-				border-right: 8px solid transparent;
-				@include breakpointPhone() {
-					right: 12px;
-					left: unset;
 				}
 			}
 		}
@@ -211,15 +131,15 @@ mat-sidenav-container.mat-drawer-container {
 		}
 	}
 	&[disabled] {
-		color: $popup-header-color;
-		background-color: $popup-header-background;
+		//color: $popup-header-color;
+		//background-color: $popup-header-background;
 		height: $popup-header-height;
 		line-height: $popup-header-height;
 		span {
 			font-weight: 700;
 		}
 	}
-	&.additional-action {
+	/*&.additional-action {
 		color: $primary-color;
 		background-color: inherit;
 		height: $popup-header-height;
@@ -258,9 +178,9 @@ mat-sidenav-container.mat-drawer-container {
 				}
 			}
 		}
-	}
+	}*/
 }
-
+/*
 ::ng-deep .mat-tooltip {
 	background: $primary-color-hover;
 	font-size: 90%;

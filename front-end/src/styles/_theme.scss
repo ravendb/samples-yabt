@@ -1,0 +1,26 @@
+// Theme settings
+// Guidance - https://material.angular.io/guide/theming-your-components
+
+@import '~@angular/material/theming';
+
+// Include non-theme styles for core.
+@include mat-core();
+
+// Define your application's custom theme.
+$theme-primary: mat-palette($mat-indigo);
+$theme-accent: mat-palette($mat-pink, A200, A100, A400);
+$theme: mat-light-theme($theme-primary, $theme-accent);
+
+// Include theme styles for Angular Material components.
+@include angular-material-theme($theme);
+
+// Extracts the color configurations from the theme.
+$color-theme: mat-get-color-config($theme);
+
+// Extract the color configuration in case a theme has been passed.
+// This allows consumers to either pass a theme object or a color configuration.
+$config: mat-get-color-config($color-theme);
+
+// Extract the palettes you need from the theme definition.
+$primary: map-get($config, primary);
+$accent: map-get($config, accent);
