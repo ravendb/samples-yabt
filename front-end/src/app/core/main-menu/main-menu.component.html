@@ -1,0 +1,80 @@
+<mat-sidenav-container>
+	<mat-sidenav [disableClose]="!isMobile" [class.collapsed]="isCollapsed">
+		<mat-toolbar color="primary">
+			<span>YABT</span>
+		</mat-toolbar>
+
+		<mat-nav-list>
+			<mat-list-item *ngFor="let item of siteMap" [routerLink]="item.mainLink" [class.active]="isMenuButtonHighlighted(item)"
+				(click)="closeMenu()">
+				<mat-icon [matTooltipDisabled]="!isCollapsed" matTooltipPosition="right" [matTooltip]="item.title">{{ item.icon }}
+				</mat-icon>
+
+				<span>{{ item.title }}</span>
+			</mat-list-item>
+			<mat-divider class="separator" *ngIf="!isMobile"></mat-divider>
+			<mat-list-item [routerLink]="['/system']" routerLinkActive="active" (click)="closeMenu()">
+				<mat-icon [matTooltipDisabled]="!isCollapsed" matTooltipPosition="right" matTooltip="System">settings</mat-icon>
+				<span>System</span>
+			</mat-list-item>
+			<mat-list-item *ngIf="!isMobile" (click)="expandCollapseSideMenu()">
+				<mat-icon>{{ isCollapsed ? 'arrow_forward' : 'arrow_backward' }}</mat-icon>
+			</mat-list-item>
+			<ng-template [ngIf]="isMobile">
+				<mat-divider class="separator"></mat-divider>
+				<mat-list-item routerLink="./system/users/{{ userId }}" (click)="closeMenu()">
+					<mat-icon>person_outline</mat-icon>
+					<span>User Profile</span>
+				</mat-list-item>
+			</ng-template>
+		</mat-nav-list>
+	</mat-sidenav>
+
+	<mat-sidenav-content>
+		<ng-container *ngIf="isMobile; then mobileMenu; else desktopMenu"></ng-container>
+
+		<ng-content></ng-content>
+	</mat-sidenav-content>
+</mat-sidenav-container>
+
+<ng-template #desktopMenu>
+	<mat-toolbar>
+
+		<button mat-icon-button class="recent-item-button" [matMenuTriggerFor]="recentItemMenu" (menuOpened)="openedRecentItemsMenu()">
+			<mat-icon color="primary">history</mat-icon>
+		</button>
+
+		<button mat-button class="account-button" [matMenuTriggerFor]="accountMenu">
+			<img class="avatar" src="//www.gravatar.com/avatar/00000000000000000000000000000000?r=g&d=mm&s=40" />
+			<mat-icon color="primary">keyboard_arrow_down</mat-icon>
+		</button>
+	</mat-toolbar>
+</ng-template>
+
+<ng-template #mobileMenu>
+	<mat-toolbar color="primary">
+		<button mat-icon-button class="menu-button" (click)="openMenu()">
+			<mat-icon>menu</mat-icon>
+		</button>
+
+		<span>{{ mobileTitle }}</span>
+
+		<!-- <button mat-icon-button (click)="openSearchDialog()" (menuOpened)="openedSearchMenu()">
+			<mat-icon>search</mat-icon>
+		</button> -->
+	</mat-toolbar>
+</ng-template>
+
+<mat-menu #accountMenu="matMenu" [overlapTrigger]="false" xPosition="before">
+	<a mat-menu-item routerLink="./users/{{ userId }}">
+		<mat-icon color="accent">person_outline</mat-icon>
+		<span>User Profile</span>
+	</a>
+</mat-menu>
+
+<mat-menu class="recent-menu" #recentItemMenu="matMenu" [overlapTrigger]="false" xPosition="before">
+	<button mat-menu-item disabled>
+		<span>Recent Items</span>
+	</button>
+	<button mat-menu-item disabled class="additional-action">No recent items</button>
+</mat-menu>

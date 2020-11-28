@@ -1,0 +1,11 @@
+@import 'variables';
+
+footer {
+	border-top: $border-style;
+	overflow: hidden;
+	line-height: $footer-height - 1px;
+	font-size: 14px;
+	padding-right: 15px;
+	color: $dark-grey;
+	text-align: right;
+}

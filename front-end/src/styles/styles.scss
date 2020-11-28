@@ -1,0 +1,12 @@
+@import url('//fonts.googleapis.com/icon?family=Material+Icons');
+@import url('//fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap');
+
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
+
+html,
+body {
+	height: 100%;
+	margin: 0px;
+	min-width: 360px;
+	font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
