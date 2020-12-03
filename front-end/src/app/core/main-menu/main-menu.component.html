@@ -1,7 +1,8 @@
 <mat-sidenav-container>
 	<mat-sidenav [disableClose]="!isMobile" [class.collapsed]="!isCollapsed">
 		<mat-toolbar color="primary">
-			<span>YABT</span>
+			<img class="logo" src="/assets/img/logo.png" alt="YABT" />
+			<span>YABT {{isMobile ? 'mob' : 'desk'}}</span>
 		</mat-toolbar>
 
 		<mat-nav-list>
@@ -18,7 +19,7 @@
 				<span>System</span>
 			</mat-list-item>
 			<mat-list-item *ngIf="!isMobile" (click)="expandCollapseSideMenu()">
-				<mat-icon>{{ isCollapsed ? 'arrow_forward' : 'arrow_backward' }}</mat-icon>
+				<mat-icon>{{ !isCollapsed ? 'arrow_forward' : 'arrow_backward' }}</mat-icon>
 			</mat-list-item>
 			<ng-template [ngIf]="isMobile">
 				<mat-divider class="separator"></mat-divider>

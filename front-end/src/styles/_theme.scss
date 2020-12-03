@@ -1,8 +1,91 @@
 // Theme settings
 // Guidance - https://material.angular.io/guide/theming-your-components
+// Palettes created by http://mcg.mbitson.com/#!/?mcgpalette1=%23fafafb&themename=yabt
 
 @import '~@angular/material/theming';
 
+$primary-palette: (
+	50: #e7e8e9,
+	100: #c4c6c7,
+	200: #9da0a2,
+	300: #76797d,
+	400: #585d61,
+	500: #3b4045,
+	600: #353a3e,
+	700: #2d3236,
+	800: #262a2e,
+	900: #191c1f,
+	A100: #f96d6d,
+	A200: #e14838,
+	A400: #b82e2a,
+	A700: #992634,
+	contrast: (
+		50: #000000,
+		100: #000000,
+		200: #000000,
+		300: #ffffff,
+		400: #ffffff,
+		500: #ffffff,
+		600: #ffffff,
+		700: #ffffff,
+		800: #ffffff,
+		900: #ffffff,
+		A100: #000000,
+		A200: #000000,
+		A400: #000000,
+		A700: #000000,
+	),
+);
+$accent-palette: (
+	50: #fefeff,
+	100: #fefefe,
+	200: #fdfdfd,
+	300: #fcfcfc,
+	400: #fbfbfc,
+	500: #fafafb,
+	600: #f9f9fa,
+	700: #f9f9fa,
+	800: #f8f8f9,
+	900: #f6f6f8,
+	A100: #ffffff,
+	A200: #ffffff,
+	A400: #ffffff,
+	A700: #ffffff,
+	contrast: (
+		50: #000000,
+		100: #000000,
+		200: #000000,
+		300: #000000,
+		400: #000000,
+		500: #000000,
+		600: #000000,
+		700: #000000,
+		800: #000000,
+		900: #000000,
+		A100: #000000,
+		A200: #000000,
+		A400: #000000,
+		A700: #000000,
+	),
+);
+$primary-color: map-get($primary-palette, 500);
+$primary-light-color: map-get($primary-palette, 100);
+$primary-dark-color: map-get($primary-palette, 700);
+$accent-color: map-get($accent-palette, 500);
+$accent-light-color: map-get($accent-palette, 100);
+$accent-dark-color: map-get($accent-palette, 700);
+
+@include mat-core();
+
+$theme-primary: mat-palette($primary-palette);
+$theme-accent: mat-palette($accent-palette);
+$theme: mat-light-theme($theme-primary, $theme-accent);
+
+@include angular-material-theme($theme);
+
+//$primary-color: mat-color($theme-primary, 400);
+
+/*
 // Include non-theme styles for core.
 @include mat-core();
 
@@ -24,3 +107,6 @@ $config: mat-get-color-config($color-theme);
 // Extract the palettes you need from the theme definition.
 $primary: map-get($config, primary);
 $accent: map-get($config, accent);
+
+$primary-color: mat-color(primary, 400);
+*/

@@ -4,7 +4,7 @@ import { NoContentComponent } from './no-content';
 
 const routes: Routes = [
 	{ path: '', redirectTo: 'backlog', pathMatch: 'full' },
-	{ path: 'backlog', loadChildren: './backlog#BacklogModule', data: { title: 'Backlog Items | YABT' } },
+	{ path: 'backlog', loadChildren: () => import('./backlog').then(m => m.BacklogModule), data: { title: 'Backlog Items | YABT' } },
 	{ path: '**', component: NoContentComponent },
 ];
 

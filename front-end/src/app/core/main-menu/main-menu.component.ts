@@ -23,7 +23,6 @@ export class MainMenuComponent implements OnInit, AfterViewInit, OnDestroy {
 	];
 
 	isMobile: boolean = false;
-	isTablet: boolean = false;
 
 	userId = 0;
 	userName = 'Test User';
@@ -52,12 +51,6 @@ export class MainMenuComponent implements OnInit, AfterViewInit, OnDestroy {
 					this.sidenav.open();
 				}
 
-				this.cdr.detectChanges();
-			})
-		);
-		this.subscriptions.add(
-			this.breakpoint.observe([Breakpoints.Tablet]).subscribe(result => {
-				this.isTablet = result.matches;
 				this.cdr.detectChanges();
 			})
 		);
