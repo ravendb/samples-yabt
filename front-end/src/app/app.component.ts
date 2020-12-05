@@ -9,14 +9,9 @@ import { filter } from 'rxjs/operators';
 	styleUrls: ['./app.component.scss'],
 	template: `
 		<main-menu>
-			<mat-sidenav-container>
-				<mat-sidenav position="end" mode="side" [opened]="showPreview">
-					<router-outlet name="preview"></router-outlet>
-				</mat-sidenav>
-				<mat-sidenav-content>
-					<router-outlet></router-outlet>
-				</mat-sidenav-content>
-			</mat-sidenav-container>
+			<div class="main-outlet">
+				<router-outlet></router-outlet>
+			</div>
 			<app-footer></app-footer>
 		</main-menu>
 	`,
@@ -24,9 +19,6 @@ import { filter } from 'rxjs/operators';
 export class AppComponent implements OnInit, OnDestroy {
 	private subscriptions: Subscription = new Subscription();
 
-	get showPreview(): boolean {
-		return this.activatedRoute.snapshot.children.find(child => child.outlet === 'preview') != null;
-	}
 	constructor(private router: Router, private activatedRoute: ActivatedRoute, @Inject(DOCUMENT) private document: Document) {}
 
 	ngOnInit() {

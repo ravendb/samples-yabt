@@ -1,21 +1,11 @@
 @import 'variables';
 @import 'breakpoints';
 
-mat-sidenav-container.mat-sidenav-container {
+div.main-outlet {
 	height: calc(100% - #{$footer-height} - #{$mat-toolbar-height-desktop});
 	background-color: inherit;
 
 	@include breakpointXSmall() {
 		height: calc(100% - #{$footer-height} - #{$mat-toolbar-height-mobile-portrait});
-	}
-
-	mat-sidenav.mat-sidenav {
-		max-width: 50%;
-		width: 700px;
-
-		@include breakpointSmallAndDown() {
-			width: 100%;
-			max-width: 100%;
-		}
 	}
 }
