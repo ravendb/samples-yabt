@@ -6,6 +6,11 @@ import { get, some } from 'lodash-es';
 import { Subscription } from 'rxjs';
 import { MainMenuMapItem } from './main-menu-map-item';
 
+/*
+	It's the Main Menu. 
+	Most of the logic here is to workaround for an infamous Material problem - lacking of a mini/narrow version of the Drawer/SideNav
+	(the Wailing Wall - https://github.com/angular/components/issues/1728).
+ */
 @Component({
 	selector: 'main-menu',
 	styleUrls: ['./main-menu.component.scss'],
@@ -81,13 +86,12 @@ export class MainMenuComponent implements OnInit, AfterViewInit, OnDestroy {
 		return some(item.highlightedLinks, r => this.router.url.split('?')[0] === r);
 	}
 
-	openMenu(): void {
+	expandMenu(): void {
 		this._isNarrowMenu = false;
 		this.sidenav.open();
 	}
 
-	closeMenu(): void {
-		this._isNarrowMenu = true;
+	collapseMenu(): void {
 		if (this.isMobile) {
 			this.sidenav.close();
 		}

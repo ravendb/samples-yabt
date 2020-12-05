@@ -1,4 +1,4 @@
-<mat-sidenav-container>
+<mat-sidenav-container autosize>
 	<mat-sidenav [disableClose]="!isMobile" [class.narrow-menu]="isNarrowMenu">
 		<mat-toolbar color="primary">
 			<img class="logo" src="/assets/img/logo.png" alt="YABT" />
@@ -7,26 +7,23 @@
 
 		<mat-nav-list>
 			<mat-list-item *ngFor="let item of siteMap" [routerLink]="item.mainLink" [class.active]="isMenuButtonHighlighted(item)"
-				(click)="closeMenu()">
+				(click)="collapseMenu()">
 				<mat-icon [matTooltipDisabled]="!isNarrowMenu" matTooltipPosition="right" [matTooltip]="item.title">{{ item.icon }}
 				</mat-icon>
 				<span>{{ item.title }}</span>
 			</mat-list-item>
 			<mat-divider class="separator"></mat-divider>
-			<mat-list-item [routerLink]="['/system']" routerLinkActive="active" (click)="closeMenu()">
+			<mat-list-item [routerLink]="['/system']" routerLinkActive="active" (click)="collapseMenu()">
 				<mat-icon [matTooltipDisabled]="!isNarrowMenu" matTooltipPosition="right" matTooltip="System">settings</mat-icon>
 				<span>System</span>
 			</mat-list-item>
 			<ng-template [ngIf]="!isMobile">
-				<mat-list-item *ngIf="!isNarrowMenu" (click)="closeMenu()">
-					<mat-icon>arrow_backward</mat-icon>
-				</mat-list-item>
-				<mat-list-item *ngIf="isNarrowMenu" (click)="openMenu()">
-					<mat-icon>arrow_forward</mat-icon>
+				<mat-list-item (click)="expandCollapseSideMenu()">
+					<mat-icon>{{ isNarrowMenu ? 'arrow_forward' : 'arrow_backward' }}</mat-icon>
 				</mat-list-item>
 			</ng-template>
 			<ng-template [ngIf]="isMobile">
-				<mat-list-item routerLink="./system/users/{{ userId }}" (click)="closeMenu()">
+				<mat-list-item routerLink="./system/users/{{ userId }}" (click)="collapseMenu()">
 					<mat-icon>person_outline</mat-icon>
 					<span>User Profile</span>
 				</mat-list-item>
@@ -56,7 +53,7 @@
 
 <ng-template #mobileMenu>
 	<mat-toolbar color="primary">
-		<button mat-icon-button class="menu-button" (click)="openMenu()">
+		<button mat-icon-button class="menu-button" (click)="expandMenu()">
 			<mat-icon>menu</mat-icon>
 		</button>
 
