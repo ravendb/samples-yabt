@@ -6,7 +6,6 @@ import { get, some } from 'lodash-es';
 import { Subscription } from 'rxjs';
 import { MainMenuMapItem } from './main-menu-map-item';
 
-/* Side menu (aka 'Main menu') */
 @Component({
 	selector: 'main-menu',
 	styleUrls: ['./main-menu.component.scss'],
@@ -14,21 +13,37 @@ import { MainMenuMapItem } from './main-menu-map-item';
 })
 export class MainMenuComponent implements OnInit, AfterViewInit, OnDestroy {
 	@ViewChild(MatSidenav)
-	sidenav!: MatSidenav;
+	private sidenav!: MatSidenav;
 
-	// Items of the side menu
-	siteMap: MainMenuMapItem[] = [
-		new MainMenuMapItem('Backlog Items', '/backlog', ['/backlog'], 'subject'),
-		new MainMenuMapItem('Users', '/users', ['/users'], 'supervisor_account'),
-	];
-
-	isMobile: boolean = false;
+	public get siteMap() {
+		return this._siteMap;
+	}
+	public get isMobile() {
+		return this._isMobile;
+	}
+	public get isNarrowMenu() {
+		return !this._isMobile && this._isNarrowMenu;
+	}
+	get mobileTitle(): string {
+		return get(
+			this.siteMap.find(item => this.router.url.startsWith(item.uriStartsWith)),
+			'title',
+			'System'
+		);
+	}
 
 	userId = 0;
 	userName = 'Test User';
 
+	// Items of the side menu
+	private _siteMap: MainMenuMapItem[] = [
+		new MainMenuMapItem('Backlog Items', '/backlog', ['/backlog'], 'subject'),
+		new MainMenuMapItem('Users', '/users', ['/users'], 'supervisor_account'),
+	];
+
+	private _isMobile: boolean = false;
 	// Flag: whether the side menu is collapsed
-	private toggleCollapsed: boolean = true;
+	private _isNarrowMenu: boolean = true;
 	private subscriptions: Subscription = new Subscription();
 
 	constructor(private breakpoint: BreakpointObserver, private router: Router, private cdr: ChangeDetectorRef) {}
@@ -37,14 +52,11 @@ export class MainMenuComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	ngAfterViewInit(): void {
 		this.subscriptions.add(
+			// It's very frustrating that this properties can't be controlled from CSS
 			this.breakpoint.observe([Breakpoints.Handset]).subscribe(result => {
-				this.isMobile = result.matches;
+				this._isMobile = result.matches;
 				this.sidenav.mode = this.isMobile ? 'over' : 'side';
-				// When the sidenav is closed it's not visible at all. 'open' means displayed down the left hand edge,
-				// regardless of whether it's expanded to show the text labels. Thus:
-				// When switching to mobile view make sure the panel is closed (will open on clicking the menu)
-				// When switching into desktop view make sure the panel is open and visible (although not necessarily
-				// expanded.) If we didn't do this there'd be no way to open/view it in desktop layout.
+
 				if (this.isMobile && this.sidenav.opened) {
 					this.sidenav.close();
 				} else if (!this.isMobile && !this.sidenav.opened) {
@@ -62,7 +74,7 @@ export class MainMenuComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	// Collapse/expand the menu
 	expandCollapseSideMenu(): void {
-		this.toggleCollapsed = !this.toggleCollapsed;
+		this._isNarrowMenu = !this._isNarrowMenu;
 	}
 
 	isMenuButtonHighlighted(item: MainMenuMapItem): boolean {
@@ -70,31 +82,16 @@ export class MainMenuComponent implements OnInit, AfterViewInit, OnDestroy {
 	}
 
 	openMenu(): void {
+		this._isNarrowMenu = false;
 		this.sidenav.open();
 	}
 
 	closeMenu(): void {
-		this.toggleCollapsed = true;
+		this._isNarrowMenu = true;
 		if (this.isMobile) {
 			this.sidenav.close();
 		}
 	}
 
 	openedRecentItemsMenu(): void {}
-
-	get isCollapsed(): boolean {
-		return !this.isExpanded;
-	}
-
-	get isExpanded(): boolean {
-		return !this.toggleCollapsed || this.isMobile;
-	}
-
-	get mobileTitle(): string {
-		return get(
-			this.siteMap.find(item => this.router.url.startsWith(item.uriStartsWith)),
-			'title',
-			'System'
-		);
-	}
 }

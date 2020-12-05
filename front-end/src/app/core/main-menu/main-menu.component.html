@@ -1,28 +1,31 @@
 <mat-sidenav-container>
-	<mat-sidenav [disableClose]="!isMobile" [class.collapsed]="!isCollapsed">
+	<mat-sidenav [disableClose]="!isMobile" [class.narrow-menu]="isNarrowMenu">
 		<mat-toolbar color="primary">
 			<img class="logo" src="/assets/img/logo.png" alt="YABT" />
-			<span>YABT {{isMobile ? 'mob' : 'desk'}}</span>
+			<span>YABT</span>
 		</mat-toolbar>
 
 		<mat-nav-list>
 			<mat-list-item *ngFor="let item of siteMap" [routerLink]="item.mainLink" [class.active]="isMenuButtonHighlighted(item)"
 				(click)="closeMenu()">
-				<mat-icon [matTooltipDisabled]="!isCollapsed" matTooltipPosition="right" [matTooltip]="item.title">{{ item.icon }}
+				<mat-icon [matTooltipDisabled]="!isNarrowMenu" matTooltipPosition="right" [matTooltip]="item.title">{{ item.icon }}
 				</mat-icon>
-
 				<span>{{ item.title }}</span>
 			</mat-list-item>
-			<mat-divider class="separator" *ngIf="!isMobile"></mat-divider>
+			<mat-divider class="separator"></mat-divider>
 			<mat-list-item [routerLink]="['/system']" routerLinkActive="active" (click)="closeMenu()">
-				<mat-icon [matTooltipDisabled]="!isCollapsed" matTooltipPosition="right" matTooltip="System">settings</mat-icon>
+				<mat-icon [matTooltipDisabled]="!isNarrowMenu" matTooltipPosition="right" matTooltip="System">settings</mat-icon>
 				<span>System</span>
 			</mat-list-item>
-			<mat-list-item *ngIf="!isMobile" (click)="expandCollapseSideMenu()">
-				<mat-icon>{{ !isCollapsed ? 'arrow_forward' : 'arrow_backward' }}</mat-icon>
-			</mat-list-item>
+			<ng-template [ngIf]="!isMobile">
+				<mat-list-item *ngIf="!isNarrowMenu" (click)="closeMenu()">
+					<mat-icon>arrow_backward</mat-icon>
+				</mat-list-item>
+				<mat-list-item *ngIf="isNarrowMenu" (click)="openMenu()">
+					<mat-icon>arrow_forward</mat-icon>
+				</mat-list-item>
+			</ng-template>
 			<ng-template [ngIf]="isMobile">
-				<mat-divider class="separator"></mat-divider>
 				<mat-list-item routerLink="./system/users/{{ userId }}" (click)="closeMenu()">
 					<mat-icon>person_outline</mat-icon>
 					<span>User Profile</span>
@@ -40,7 +43,6 @@
 
 <ng-template #desktopMenu>
 	<mat-toolbar>
-
 		<button mat-icon-button class="recent-item-button" [matMenuTriggerFor]="recentItemMenu" (menuOpened)="openedRecentItemsMenu()">
 			<mat-icon color="primary">history</mat-icon>
 		</button>

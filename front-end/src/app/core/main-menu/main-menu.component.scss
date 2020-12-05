@@ -1,15 +1,13 @@
 @import 'breakpoints';
 @import 'theme';
 
-$toolbar-background-desktop: white !default;
-$sidenav-background: $primary-color; //$primary-color !default;
-$sidenav-active-background: grey; //$primary-dark-color !default;
+$sidenav-background: $primary-color;
+$sidenav-active-background: $primary-lightish-color;
+$sidenav-text-color: $accent-light-color;
+
 $popup-header-height: 36px !default;
 $text-major-size: 16px;
 $text-minor-size: 12px;
-
-$mat-grey: grey;
-$light-primary-text: white;
 
 :host {
 	height: 100%;
@@ -32,7 +30,20 @@ mat-sidenav-container.mat-drawer-container {
 		}
 		background-color: $sidenav-background;
 
-		&.collapsed {
+		mat-toolbar.mat-toolbar {
+			img.logo {
+				height: 36px;
+				width: 36px;
+				margin: -6px;
+			}
+			span {
+				margin-left: 16px;
+				margin-right: 32px;
+				font-weight: 400;
+			}
+		}
+
+		&.narrow-menu {
 			mat-toolbar.mat-toolbar,
 			mat-list-item.mat-list-item {
 				span {
@@ -46,7 +57,7 @@ mat-sidenav-container.mat-drawer-container {
 			display: flex !important;
 			flex-direction: column;
 			mat-list-item.mat-list-item {
-				color: $light-primary-text;
+				color: $sidenav-text-color;
 				span {
 					margin-left: 16px;
 					margin-right: 32px;
