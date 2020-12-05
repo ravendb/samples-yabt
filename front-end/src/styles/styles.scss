@@ -10,3 +10,11 @@ body {
 	min-width: 360px;
 	font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
+
+a {
+	color: $primary-color;
+	text-decoration: none;
+	&:hover {
+		text-decoration: underline;
+	}
+}
