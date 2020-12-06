@@ -5,6 +5,7 @@ $sidenav-background: $primary-color;
 $sidenav-active-background: $primary-lightish-color;
 $sidenav-text-color: $accent-light-color;
 
+$toolbar-height: 56px;
 $popup-header-height: 36px !default;
 $text-major-size: 16px;
 $text-minor-size: 12px;
@@ -31,6 +32,7 @@ mat-sidenav-container.mat-drawer-container {
 		background-color: $sidenav-background;
 
 		mat-toolbar.mat-toolbar {
+			height: $toolbar-height;
 			img.logo {
 				height: 36px;
 				width: 36px;
@@ -56,7 +58,7 @@ mat-sidenav-container.mat-drawer-container {
 			flex: 1;
 			display: flex !important;
 			flex-direction: column;
-			mat-list-item.mat-list-item {
+			.mat-list-item {
 				color: $sidenav-text-color;
 				span {
 					margin-left: 16px;
@@ -72,69 +74,44 @@ mat-sidenav-container.mat-drawer-container {
 			}
 		}
 	}
-	/*	
-	@include breakpointMediumAndUp() {
-		mat-sidenav-content.mat-sidenav-content {
-			// Sometimes the margin screws up (eg when emulating ipad in chrome and adjust the zoom in the emulation bar)
-			// which leaves the gap for the expanded menu, this prevents that from happening
-			margin-left: 56px !important;
-			background-color: $mat-grey; //map-get($mat-grey, 200);
-		}
-	}
-	mat-sidenav.mat-sidenav {
-		display: flex;
-		flex-direction: column;
-		mat-toolbar.mat-toolbar {
-			img.logo {
-				height: 36px;
-				width: 36px;
-				margin: -6px;
-			}
-			span {
-				margin-left: 16px;
-				margin-right: 32px;
-				font-weight: 400;
-			}
-		}
-	}
+
 	mat-sidenav-content.mat-sidenav-content {
 		mat-toolbar.mat-toolbar {
-			position: relative;
-			z-index: 2;
-			padding-left: 8px;
-			padding-right: 8px;
-			@include mat-elevation(1);
+			height: $toolbar-height;
+			box-shadow: rgba(0, 0, 0, 0.08) 0 1px 0;
+
 			@include breakpointSmallAndDown() {
-				background-color: $toolbar-background-desktop;
 				padding-left: 16px;
 				padding-right: 16px;
 			}
 			@include breakpointMediumAndUp() {
-				background-color: $toolbar-background-desktop;
 				padding-left: 24px;
-				padding-right: 24px;
+				padding-right: 0px;
 			}
-			span {
-				flex: 1;
+
+			.spacer {
+				flex: 1 1 auto;
 			}
-		}
-		.menu-button {
-			margin-right: 8px;
-		}
-		button.account-button {
-			::ng-deep {
-				span.mat-button-wrapper {
-					display: flex;
-					align-items: center;
-					user-avatar {
-						height: 40px;
-						width: 40px;
-						margin-right: 5px;
-					}
+			.divider {
+				height: 100%;
+				width: 1px;
+				box-shadow: rgba(0, 0, 0, 0.08) 1px 0 0;
+			}
+			.menu-button {
+				margin-right: 8px;
+			}
+			.mat-button {
+				line-height: $toolbar-height;
+				img {
+					width: 32px;
+					height: 32px;
+				}
+				span {
+					margin-left: 8px;
 				}
 			}
 		}
-	}*/
+	}
 }
 
 .mat-menu-item {
@@ -161,51 +138,4 @@ mat-sidenav-container.mat-drawer-container {
 			font-weight: 700;
 		}
 	}
-	/*&.additional-action {
-		color: $primary-color;
-		background-color: inherit;
-		height: $popup-header-height;
-		line-height: $popup-header-height;
-		span {
-			font-weight: 700;
-		}
-	}
-	&.mat-menu-text {
-		.mat-menu-major-text {
-			line-height: $text-major-size + 2px;
-			font-size: $text-major-size;
-			display: flex;
-			align-items: center;
-			span {
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-		}
-		.mat-menu-minor-text {
-			line-height: $text-minor-size + 2px;
-			font-size: $text-minor-size;
-			display: flex;
-			align-items: center;
-			span {
-				overflow: hidden;
-				text-overflow: ellipsis;
-			}
-			mat-icon.mat-icon {
-				font-size: $text-minor-size;
-				height: $text-minor-size;
-				width: $text-minor-size;
-				margin-right: $text-minor-size / 2;
-				::ng-deep g {
-					transform: scale($text-minor-size / 24px);
-				}
-			}
-		}
-	}*/
 }
-/*
-::ng-deep .mat-tooltip {
-	background: $primary-color-hover;
-	font-size: 90%;
-	padding: 10px 0;
-}
-*/

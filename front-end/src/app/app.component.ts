@@ -1,6 +1,6 @@
 import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, RoutesRecognized } from '@angular/router';
+import { Router, RoutesRecognized } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
@@ -19,7 +19,7 @@ import { filter } from 'rxjs/operators';
 export class AppComponent implements OnInit, OnDestroy {
 	private subscriptions: Subscription = new Subscription();
 
-	constructor(private router: Router, private activatedRoute: ActivatedRoute, @Inject(DOCUMENT) private document: Document) {}
+	constructor(private router: Router, @Inject(DOCUMENT) private document: Document) {}
 
 	ngOnInit() {
 		this.subscriptions.add(
