@@ -27,7 +27,6 @@ msbuild.wrn
 /packages
 *.metaproj
 *.metaproj.tmp
-appsettings.Development.json
 
 bin
 obj
