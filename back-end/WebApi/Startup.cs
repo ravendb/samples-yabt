@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,6 +20,7 @@ namespace Raven.Yabt.WebApi
 	{
 		private readonly IConfiguration _configuration;
 		private readonly IWebHostEnvironment _hostingEnvironment;
+		private const string CorsPolicyName = nameof(CorsPolicy);
 
 		public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
 		{
@@ -30,7 +32,7 @@ namespace Raven.Yabt.WebApi
 		public void ConfigureServices(IServiceCollection services)
 		{
 			// Register Global Settings.
-			services.AddAndConfigureAppSettings(_configuration);
+			var settings = services.AddAndConfigureAppSettings(_configuration);
 
 			services.AddControllers(o =>
 						{
@@ -46,10 +48,19 @@ namespace Raven.Yabt.WebApi
 							o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
 							o.JsonSerializerOptions.IgnoreNullValues = true;
 						});
+			
+			services.AddCors(c =>
+						{
+							c.AddPolicy(CorsPolicyName, options => options
+	                           .WithOrigins(settings.CorsOrigins.Split(';'))
+	                           .AllowAnyMethod()
+	                           .AllowAnyHeader()
+			                   .AllowCredentials());
+						});
 
 			services.AddApplicationInsightsTelemetry();
 
-			// Rigister all domain dependencies
+			// Register all domain dependencies
 			services.RegisterModules(assembly: Assembly.GetAssembly(typeof(ModuleRegistrationBase))!);
 
 			// Register the database and DB session
@@ -67,6 +78,7 @@ namespace Raven.Yabt.WebApi
 			app.UseHttpsRedirection();
 
 			app.UseRouting();
+			app.UseCors(CorsPolicyName);
 
 			app.UseAuthentication();
 

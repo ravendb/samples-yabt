@@ -9,5 +9,7 @@ namespace Raven.Yabt.WebApi.Configuration.Settings
 		public DatabaseSettings Database { get; private set; }
 
 		public AppSettingsUserApiKey[] UserApiKey { get; private set; }
+		
+		public string CorsOrigins { get; private set; }
 	}
 }
