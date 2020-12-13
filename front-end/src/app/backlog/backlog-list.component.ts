@@ -1,19 +1,27 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ListBaseComponent } from '@core/base-list/list-base.component';
+import { BacklogItemListGetRequest } from '@core/models/backlog-item/list/BacklogItemListGetRequest';
+import { BacklogItemListGetResponse } from '@core/models/backlog-item/list/BacklogItemListGetResponse';
+import { BacklogItemsService } from '@core/services/backlogItems.service';
 
 @Component({
 	selector: 'backlog-list',
 	styleUrls: ['./backlog-list.component.scss'],
 	templateUrl: './backlog-list.component.html',
 })
-export class BacklogListComponent implements OnInit, OnDestroy {
-	private subscriptions: Subscription = new Subscription();
+export class BacklogListComponent
+	extends ListBaseComponent<BacklogItemListGetResponse, BacklogItemListGetRequest>
+	implements OnInit, OnDestroy {
+	//	private subscriptions: Subscription = new Subscription();
 
-	constructor() {}
+	constructor(router: Router, activatedRoute: ActivatedRoute, apiService: BacklogItemsService) {
+		super(router, activatedRoute, apiService, ['id', 'title', 'assignee', 'state', 'tags', 'created', 'updated']);
+	}
 
 	ngOnInit() {}
 
 	ngOnDestroy() {
-		this.subscriptions.unsubscribe();
+		//	this.subscriptions.unsubscribe();
 	}
 }
