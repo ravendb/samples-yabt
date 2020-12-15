@@ -1,55 +1,70 @@
-<table mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc">
+<mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc">
 
 	<ng-container matColumnDef="id">
-		<th mat-header-cell *matHeaderCellDef mat-sort-header> # </th>
-		<td mat-cell *matCellDef="let row"> {{row.id}} </td>
+		<mat-header-cell *matHeaderCellDef mat-sort-header> No. </mat-header-cell>
+		<mat-cell *matCellDef="let row"> {{row.id}} </mat-cell>
 	</ng-container>
 
 	<ng-container matColumnDef="title">
-		<th mat-header-cell *matHeaderCellDef mat-sort-header> Title </th>
-		<td mat-cell *matCellDef="let row">
-			<ng-container [ngSwitch]="row.type">
-				<i class="material-icons" *ngSwitchCase="'bug'">bug_report</i>
-				<i class="material-icons" *ngSwitchCase="'userStory'">card_travel</i>
-				<span *ngSwitchDefault>{{row.type}}</span>
-			</ng-container>
-			<a [routerLink]="['/backlogItem', row?.id]">
-				{{row.title}}
-			</a>
-		</td>
+		<mat-header-cell *matHeaderCellDef mat-sort-header> Title </mat-header-cell>
+		<mat-cell *matCellDef="let row">
+			<div class="embedded-number-dates-block">
+				<span class="narrow-column" title="Backlog Item Number">#{{ row.id }}</span>
+				<span class="wide-column" title="Last Updated">{{ row.lastUpdated.timestamp | date: 'shortDate' }}</span>
+			</div>
+			<div class="title-block">
+				<ng-container [ngSwitch]="row.type">
+					<mat-icon class="mat-icon" *ngSwitchCase="'bug'">bug_report</mat-icon>
+					<mat-icon class="mat-icon" *ngSwitchCase="'userStory'">card_travel</mat-icon>
+					<span *ngSwitchDefault>{{row.type}}</span>
+				</ng-container>
+				<a [routerLink]="['/backlogItem', row.id]">
+					{{row.title}}
+				</a>
+			</div>
+			<div class="embedded-assignee-state-block">
+				<span *ngIf="row.state" class="narrow-column">
+					{{row.state}}
+				</span>
+				<span *ngIf="row.assignee" class="wide-column">
+					<a *ngIf="row.assignee?.id" [routerLink]="['/users/' + row.assignee?.id]">{{row.assignee.name}}</a>
+					<span *ngIf="!row.assignee?.id && !!row.assignee?.name">{{row.assignee.name}}</span>
+				</span>
+			</div>
+		</mat-cell>
 	</ng-container>
 
 	<ng-container matColumnDef="assignee">
-		<th mat-header-cell *matHeaderCellDef mat-sort-header> Assignee </th>
-		<td mat-cell *matCellDef="let row">
+		<mat-header-cell *matHeaderCellDef mat-sort-header> Assignee </mat-header-cell>
+		<mat-cell *matCellDef="let row">
 			<a *ngIf="row.assignee?.id" [routerLink]="['/users/' + row.assignee?.id]">{{row.assignee.name}}</a>
 			<span *ngIf="!row.assignee?.id && !!row.assignee?.name">{{row.assignee.name}}</span>
-		</td>
+		</mat-cell>
 	</ng-container>
 
 	<ng-container matColumnDef="state">
-		<th mat-header-cell *matHeaderCellDef mat-sort-header> State </th>
-		<td mat-cell *matCellDef="let row"> {{row.state}} </td>
+		<mat-header-cell *matHeaderCellDef mat-sort-header> State </mat-header-cell>
+		<mat-cell *matCellDef="let row"> {{row.state}} </mat-cell>
 	</ng-container>
 
 	<ng-container matColumnDef="tags">
-		<th mat-header-cell *matHeaderCellDef mat-sort-header> Tags </th>
-		<td mat-cell *matCellDef="let row"> {{row.tags}} </td>
+		<mat-header-cell *matHeaderCellDef> Tags </mat-header-cell>
+		<mat-cell *matCellDef="let row"> {{row.tags}} </mat-cell>
 	</ng-container>
 
 	<ng-container matColumnDef="created">
-		<th mat-header-cell *matHeaderCellDef mat-sort-header> Created </th>
-		<td mat-cell *matCellDef="let row"> {{row.created.timestamp | date: 'shortDate'}} </td>
+		<mat-header-cell *matHeaderCellDef mat-sort-header> Created </mat-header-cell>
+		<mat-cell *matCellDef="let row"> {{row.created.timestamp | date: 'shortDate'}} </mat-cell>
 	</ng-container>
 
 	<ng-container matColumnDef="updated">
-		<th mat-header-cell *matHeaderCellDef mat-sort-header> Updated </th>
-		<td mat-cell *matCellDef="let row"> {{row.lastUpdated.timestamp | date: 'shortDate'}} </td>
+		<mat-header-cell *matHeaderCellDef mat-sort-header> Updated </mat-header-cell>
+		<mat-cell *matCellDef="let row"> {{row.lastUpdated.timestamp | date: 'shortDate'}} </mat-cell>
 	</ng-container>
 
-	<tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-	<tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-</table>
+	<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+	<mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
 
 <mat-paginator [length]="dataSource?.totalRecords$ | async" [pageIndex]="dataSource?.pageIndex$ | async" [pageSize]="pageSize"
-	[pageSizeOptions]="pageSizeOptions"></mat-paginator>
+	[pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>

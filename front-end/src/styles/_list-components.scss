@@ -1,0 +1,86 @@
+@import 'theme';
+@import 'breakpoints';
+
+$list-component-icon-size: 16px !default;
+
+mat-header-row.mat-header-row {
+	@include breakpointSmallAndDown();
+}
+
+mat-header-row.mat-header-row,
+mat-row.mat-row {
+	padding: 0 24px;
+	@include breakpointSmallToMedium() {
+		padding-left: 8px;
+		padding-right: 8px;
+	}
+}
+
+mat-row.mat-row {
+	padding-top: 4px;
+	padding-bottom: 4px;
+	&.selected {
+		background-color: fade-out($primary-color, 0.9);
+	}
+}
+
+mat-header-cell.mat-header-cell,
+mat-cell.mat-cell {
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+.narrow-column {
+	flex: 4;
+}
+.wide-column {
+	flex: 6;
+}
+
+.highlight {
+	background: $light-grey-background !important;
+}
+
+@mixin mainColumn() {
+	&.mat-cell {
+		flex-direction: column;
+		align-items: stretch;
+		justify-content: center;
+	}
+	div mat-icon.mat-icon {
+		font-size: $list-component-icon-size;
+		height: $list-component-icon-size;
+		width: $list-component-icon-size;
+		margin-right: 4px;
+		::ng-deep {
+			g {
+				transform: scale($list-component-icon-size / 24px);
+			}
+		}
+	}
+	> div + div {
+		margin-top: 4px;
+	}
+}
+
+@mixin primaryTitle() {
+	@include breakpointXSmall() {
+		color: $primary-light-color;
+		font-size: 120%;
+	}
+}
+
+@mixin secondaryTitle() {
+	font-size: 90%;
+	font-weight: 300;
+	display: flex;
+	align-items: center;
+}
+
+@mixin tertiaryTitle() {
+	font-size: 80%;
+	font-weight: 300;
+	color: rgba(0, 0, 0, 0.54);
+	display: flex;
+	align-items: center;
+}

@@ -86,6 +86,14 @@ $theme: mat-light-theme($theme-primary, $theme-accent);
 
 @include angular-material-theme($theme);
 
+$light-grey-background: #555555;
+$dark-grey-background: #f9f9f9;
+
+$light-grey: #d7d7d7;
+$dark-grey: #555555;
+
+$border-style: 1px solid $light-grey;
+
 //$primary-color: mat-color($theme-primary, 400);
 
 /*

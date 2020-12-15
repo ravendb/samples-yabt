@@ -1,3 +1,50 @@
-table {
-	width: 100%;
+@import 'breakpoints';
+@import 'list-components';
+
+.mat-column-id {
+	flex-grow: 1;
+	@include makeHiddenMediumAndDown();
+}
+mat-cell.mat-column-id {
+	font-family: Courier New, Courier, monospace;
+	font-size: 90%;
+}
+.mat-column-title {
+	@include mainColumn();
+
+	flex-grow: 8;
+
+	.title-block {
+		@include primaryTitle();
+	}
+
+	.embedded-number-dates-block {
+		@include tertiaryTitle();
+		@include makeHiddenLargeAndUp();
+	}
+
+	.embedded-assignee-state-block {
+		@include secondaryTitle();
+		@include makeHiddenMediumAndUp();
+	}
+}
+.mat-column-assignee {
+	flex-grow: 2;
+	@include makeHiddenSmallAndDown();
+}
+.mat-column-state {
+	flex-grow: 1;
+	@include makeHiddenSmallAndDown();
+}
+.mat-column-tags {
+	flex-grow: 1;
+	@include makeHiddenSmallAndDown();
+}
+.mat-column-created {
+	flex-grow: 1;
+	@include makeHiddenLargeAndDown();
+}
+.mat-column-updated {
+	flex-grow: 1;
+	@include makeHiddenMediumAndDown();
 }

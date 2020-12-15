@@ -8,17 +8,17 @@ $breakpointLg: 1280px;
 $breakpointXl: 1920px;
 
 @mixin breakpointXSmall() {
-	@media (max-width: calc($breakpointSm - 0.01px)) {
+	@media (max-width: calc(#{$breakpointSm} - 0.01px)) {
 		@content;
 	}
 }
 @mixin breakpointSmallAndDown() {
-	@media (max-width: calc($breakpointMd - 0.01px)) {
+	@media (max-width: calc(#{$breakpointMd} - 0.01px)) {
 		@content;
 	}
 }
 @mixin breakpointSmall() {
-	@media (min-width: $breakpointSm) and (max-width: calc($breakpointMd - 0.01px)) {
+	@media (min-width: $breakpointSm) and (max-width: calc(#{$breakpointMd} - 0.01px)) {
 		@content;
 	}
 }
@@ -28,17 +28,17 @@ $breakpointXl: 1920px;
 	}
 }
 @mixin breakpointSmallToMedium() {
-	@media (min-width: $breakpointSm) and (max-width: calc($breakpointLg - 0.01px)) {
+	@media (min-width: $breakpointSm) and (max-width: calc(#{$breakpointLg} - 0.01px)) {
 		@content;
 	}
 }
 @mixin breakpointMediumAndDown() {
-	@media (max-width: calc($breakpointLg - 0.01px)) {
+	@media (max-width: calc(#{$breakpointLg} - 0.01px)) {
 		@content;
 	}
 }
 @mixin breakpointMedium() {
-	@media (min-width: $breakpointMd) and (max-width: calc($breakpointLg - 0.01px)) {
+	@media (min-width: $breakpointMd) and (max-width: calc(#{$breakpointLg} - 0.01px)) {
 		@content;
 	}
 }
@@ -52,7 +52,19 @@ $breakpointXl: 1920px;
 		@content;
 	}
 }
-
+@mixin breakpointLargeAndDown() {
+	@media (max-width: calc(#{$breakpointXl} - 0.01px)) {
+		@content;
+	}
+}
+@mixin breakpointXLarge() {
+	@media (min-width: $breakpointXl) {
+		@content;
+	}
+}
+//---------------------------------------------------------
+// 'display: none' mixins
+//---------------------------------------------------------
 @mixin makeHiddenXSmall() {
 	@include breakpointXSmall() {
 		display: none;
@@ -94,7 +106,13 @@ $breakpointXl: 1920px;
 	}
 }
 @mixin makeHiddenLargeAndUp() {
-	@include breakpointLargeAndXLarge() {
+	@include breakpointLargeAndUp() {
+		display: none;
+	}
+}
+
+@mixin makeHiddenLargeAndDown() {
+	@include breakpointLargeAndDown() {
 		display: none;
 	}
 }
