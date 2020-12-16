@@ -3,6 +3,10 @@
 
 $list-component-icon-size: 16px !default;
 
+mat-table.mat-table {
+	padding: 0 16px;
+}
+
 mat-header-row.mat-header-row {
 	@include breakpointSmallAndDown();
 }

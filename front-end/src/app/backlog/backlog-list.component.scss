@@ -12,7 +12,7 @@ mat-cell.mat-column-id {
 .mat-column-title {
 	@include mainColumn();
 
-	flex-grow: 8;
+	flex-grow: 12;
 
 	.title-block {
 		@include primaryTitle();
