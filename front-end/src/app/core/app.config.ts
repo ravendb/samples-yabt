@@ -1,6 +1,6 @@
 export const AppConfig = {
 	get PageSizeOptions(): number[] {
-		return [10, 25, 50, 100];
+		return [10, 15, 20, 30, 50, 100];
 	},
 
 	get PageSize(): number {
