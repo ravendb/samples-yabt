@@ -6,14 +6,14 @@ import { AppConfig } from '@core/app.config';
 import { ListRequest } from '@core/models/common/ListRequest';
 import { BaseApiService } from '@core/services/base-api.service';
 import { nameOf } from '@utils/nameof';
-import { filter as arrFilter, isNil, isPlainObject, omitBy } from 'lodash-es';
+import { filter as arrFilter } from 'lodash-es';
 import { BehaviorSubject, merge, Subscription } from 'rxjs';
 import { debounceTime, delay, distinctUntilChanged, filter, tap } from 'rxjs/operators';
 import { PaginatedDataSource } from './paginated-datasource';
 
 // Basic version of generic list.
 @Directive()
-export abstract class ListBaseComponent<TListItemDto, TFilter> implements AfterViewInit, OnDestroy {
+export abstract class ListBaseComponent<TListItemDto, TFilter extends ListRequest> implements AfterViewInit, OnDestroy {
 	@ViewChild(MatPaginator)
 	paginator!: MatPaginator;
 	@ViewChild(MatSort, { static: false })
@@ -52,6 +52,9 @@ export abstract class ListBaseComponent<TListItemDto, TFilter> implements AfterV
 	// If we were using 'BehaviorSubject' for 'triggers', then the current value'd have been emitted in the subscriber,
 	// but we're using 'EventEmitter', so we expect that 'DataSource.connect()' is called and have subscribed for events
 	ngAfterViewInit() {
+		// Disable the 3rd state of sorting (the unsorted state)
+		this.sort.disableClear = true;
+
 		// Initialise the Page Index/Size and Sorting from the QueryString
 		this.subscriptions.add(
 			this.activatedRoute.queryParamMap
@@ -82,17 +85,15 @@ export abstract class ListBaseComponent<TListItemDto, TFilter> implements AfterV
 		// List of all triggers, which can cause refreshing data in the grid
 		// Reset back to the first page if we change filters (anything, except the page number)
 		const triggers = [
-			this.paginator
-				? this.paginator.page.pipe(
-						tap((page: PageEvent) => {
-							if (!!page) {
-								this.pageIndex = page.pageSize !== this.pageSize ? 0 : page.pageIndex;
-								this.pageSize = page.pageSize;
-								this.paginationHandler(page);
-							}
-						})
-				  ) // tslint:disable-line:indent
-				: undefined,
+			this.paginator.page.pipe(
+				tap((page: PageEvent) => {
+					if (!!page) {
+						this.pageIndex = page.pageSize !== this.pageSize ? 0 : page.pageIndex;
+						this.pageSize = page.pageSize;
+						this.paginationHandler(page);
+					}
+				})
+			),
 			this.sort.sortChange.pipe(
 				tap(() => {
 					this.pageIndex = 0;
@@ -109,19 +110,12 @@ export abstract class ListBaseComponent<TListItemDto, TFilter> implements AfterV
 				this.subscriptions.add(
 					searchControl.valueChanges.pipe(distinctUntilChanged(), filter(Boolean)).subscribe(() => (this.clearSort = true))
 				);
-			}
-
-			if (this.paginator) {
-				this.subscriptions.add(
-					this.paginator.page.subscribe(() => {
-						this.pageIndexForId = null;
-					})
-				);
+			});
 			}
 		}*/
 
 		this.subscriptions.add(
-			merge<any>(arrFilter(triggers, Boolean))
+			merge(...arrFilter(triggers, Boolean))
 				.pipe(
 					distinctUntilChanged(),
 					// A nasty way to wait for all of the components to finish updating the filter before refreshing the page
@@ -172,24 +166,25 @@ export abstract class ListBaseComponent<TListItemDto, TFilter> implements AfterV
 
 	// Add filtering for the list
 	protected mergeFilters(includeFilterBase: boolean): TFilter {
-		const accruedFilter: any = Object.assign(
-			{},
+		const accruedFilter: TFilter = Object.assign(
+			{} as TFilter,
 			//includeFilterBase ? this.FilterBase : {},
 			//this.filterComponent ? this.filterComponent.filter : {},
 			{
 				pageIndex: this.pageIndex,
 				pageSize: this.pageSize,
 			},
-			this.sort && this.sort.active ? { sortBy: this.sort.active, sortDirection: this.sort.direction } : {}
-		);
-
+			this.sort && this.sort.active ? { orderBy: this.sort.active, orderDirection: this.sort.direction } : {}
+		) as TFilter;
+		return accruedFilter;
+		/*
 		return Object.keys(accruedFilter).reduce<TFilter>((prev, curr) => {
 			let value = { [curr]: accruedFilter[curr] };
 			// Convert 'Custom Filters' to a dictionary (flatten out filters, so they can go to the query string)
 			if (isPlainObject(accruedFilter[curr])) {
 				value = Object.keys(
 					omitBy(accruedFilter[curr], isNil)
-				) /*.reduce(
+				) .reduce(
 					(p, c) =>
 						Object.assign(p, {
 							[`${curr}[${c}]`]: moment.isMoment(accruedFilter[curr][c])
@@ -197,9 +192,9 @@ export abstract class ListBaseComponent<TListItemDto, TFilter> implements AfterV
 								: accruedFilter[curr][c],
 						}),
 					{}
-				)*/;
+				);
 			}
 			return Object.assign(prev, value);
-		}, {} as TFilter);
+		}, {} as TFilter);*/
 	}
 }
