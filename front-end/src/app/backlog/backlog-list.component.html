@@ -1,6 +1,6 @@
-<mat-table [dataSource]="dataSource" matSort matSortActive="id" matSortDirection="asc">
+<mat-table [dataSource]="dataSource" matSort matSortActive="number" matSortDirection="desc">
 
-	<ng-container matColumnDef="id">
+	<ng-container matColumnDef="number">
 		<mat-header-cell *matHeaderCellDef mat-sort-header> No. </mat-header-cell>
 		<mat-cell *matCellDef="let row"> {{row.id}} </mat-cell>
 	</ng-container>
