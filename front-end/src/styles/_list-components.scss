@@ -1,8 +1,6 @@
 @import 'theme';
 @import 'breakpoints';
 
-$list-component-icon-size: 16px !default;
-
 mat-table.mat-table {
 	padding: 0 16px;
 }
@@ -50,17 +48,6 @@ mat-cell.mat-cell {
 		flex-direction: column;
 		align-items: stretch;
 		justify-content: center;
-	}
-	div mat-icon.mat-icon {
-		font-size: $list-component-icon-size;
-		height: $list-component-icon-size;
-		width: $list-component-icon-size;
-		margin-right: 4px;
-		::ng-deep {
-			g {
-				transform: scale($list-component-icon-size / 24px);
-			}
-		}
 	}
 	> div + div {
 		margin-top: 4px;

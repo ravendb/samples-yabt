@@ -6,7 +6,7 @@ export class BacklogItemListGetResponse {
 	id!: string;
 	title!: string;
 	assignee: UserReference | null = null;
-	type: BacklogItemType = BacklogItemType.Unknown;
+	type: BacklogItemType = BacklogItemType.unknown;
 	created!: ChangedByUserReference;
 	lastUpdated!: ChangedByUserReference;
 }

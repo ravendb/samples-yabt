@@ -1,0 +1,22 @@
+@import 'variables';
+
+mat-icon.mat-icon {
+	font-size: $list-component-icon-size;
+	height: $list-component-icon-size;
+	width: $list-component-icon-size;
+	margin-right: 4px;
+	::ng-deep {
+		g {
+			transform: scale($list-component-icon-size / 24px);
+		}
+	}
+	&.bug {
+		color: #cc293d;
+	}
+	&.user-story {
+		color: #019ccc;
+	}
+	&.task {
+		color: #f2cb1d;
+	}
+}

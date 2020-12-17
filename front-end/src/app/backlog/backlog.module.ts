@@ -4,11 +4,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
+import { SharedModule } from '@shared';
 import { BacklogListComponent } from './backlog-list.component';
 import { BacklogRouting } from './backlog.routing';
 
 @NgModule({
 	declarations: [BacklogListComponent],
-	imports: [CommonModule, BacklogRouting, MatIconModule, MatPaginatorModule, MatSortModule, MatTableModule],
+	imports: [CommonModule, BacklogRouting, MatIconModule, MatPaginatorModule, MatSortModule, MatTableModule, SharedModule],
 })
 export class BacklogModule {}

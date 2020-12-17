@@ -13,11 +13,7 @@
 				<span class="wide-column" title="Last Updated">{{ row.lastUpdated.timestamp | date: 'shortDate' }}</span>
 			</div>
 			<div class="title-block">
-				<ng-container [ngSwitch]="row.type">
-					<mat-icon class="mat-icon" *ngSwitchCase="'bug'">bug_report</mat-icon>
-					<mat-icon class="mat-icon" *ngSwitchCase="'userStory'">card_travel</mat-icon>
-					<span *ngSwitchDefault>{{row.type}}</span>
-				</ng-container>
+				<backlog-item-icon [type]="row.type"></backlog-item-icon>
 				<a [routerLink]="['/backlogItem', row.id]">
 					{{row.title}}
 				</a>
