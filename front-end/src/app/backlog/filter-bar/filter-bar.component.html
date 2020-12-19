@@ -1,0 +1,11 @@
+<div class="filter">
+	<button mat-button [matMenuTriggerFor]="mainFiltersMenu">
+		<span [innerText]="selectedOption" class="options-filter"></span>
+		<mat-icon color="primary">keyboard_arrow_down</mat-icon>
+	</button>
+	<div class="divider"></div>
+
+	<mat-menu #mainFiltersMenu="matMenu" [overlapTrigger]="false" xPosition="before">
+		<button *ngFor="let option of dropdownOptions; index as i;" mat-menu-item (click)="setCurrentOption(i)">{{option}}</button>
+	</mat-menu>
+</div>

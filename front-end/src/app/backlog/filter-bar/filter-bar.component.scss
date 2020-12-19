@@ -1,0 +1,28 @@
+@import 'variables';
+
+:host {
+	background-color: white;
+}
+
+div.filter {
+	margin: 0 16px;
+	line-height: $mat-toolbar-height-mobile-portrait;
+	border-bottom: thin solid;
+	border-bottom-color: rgba(200, 200, 200, 1);
+	display: flex;
+	flex: 1 1 100%;
+}
+.divider {
+	flex: 0 1 auto;
+	align-self: center;
+	width: 1px;
+	min-width: 1px;
+	height: 24px;
+	background-color: rgba(200, 200, 200, 1);
+	margin: 0 8px 0 8px;
+}
+span.options-filter {
+	line-height: $mat-toolbar-height-mobile-portrait;
+	display: inline-block;
+	min-width: 120px !important;
+}

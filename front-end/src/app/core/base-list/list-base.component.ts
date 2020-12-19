@@ -19,6 +19,14 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 	@ViewChild(MatSort, { static: false })
 	sort!: MatSort;
 
+	// The set of filters for the list
+	get filter(): Partial<TFilter> {
+		return this._filter.getValue();
+	}
+	set filter(val: Partial<TFilter>) {
+		this._filter.next(val); // Don't check if 'val' is different, because the consumers use it by reference meaning they change the original object
+	}
+
 	// Displayed columns. Override this property if you need conditional hiding of some columns
 	get displayedColumns(): string[] {
 		return this.defaultDisplayedColumns;
@@ -28,23 +36,28 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 	}
 	pageSize: number = AppConfig.PageSize;
 
-	dataSource: PaginatedDataSource<TListItemDto, TFilter>;
+	get dataSource(): PaginatedDataSource<TListItemDto, TFilter> {
+		return this._dataSource;
+	}
+	private _dataSource: PaginatedDataSource<TListItemDto, TFilter>;
 
 	protected subscriptions = new Subscription();
 
-	private filterBase = new BehaviorSubject<TFilter | null>(null);
-	private clearSort: boolean = false;
+	private _filter: BehaviorSubject<Partial<TFilter>>;
+	private _clearSort: boolean = false;
 	// This is used for requested page (from URL) only, bind to the value from the response in the UI
-	private pageIndex: number = 0;
-	private requests = new EventEmitter<TFilter>();
+	private _pageIndex: number = 0;
+	private _requests = new EventEmitter<TFilter>();
 
 	constructor(
 		protected router: Router,
 		protected activatedRoute: ActivatedRoute,
 		protected service: BaseApiService,
-		protected defaultDisplayedColumns: string[]
+		protected defaultDisplayedColumns: string[],
+		defaultFilter: Partial<TFilter>
 	) {
-		this.dataSource = new PaginatedDataSource<TListItemDto, TFilter>(this.service, this.requests);
+		this._filter = new BehaviorSubject<Partial<TFilter>>(defaultFilter);
+		this._dataSource = new PaginatedDataSource<TListItemDto, TFilter>(this.service, this._requests);
 	}
 
 	// Subscribe for filter triggers after the nested components get initialised.
@@ -67,7 +80,7 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 					delay(0)
 				)
 				.subscribe(params => {
-					this.pageIndex = +(params.get(nameOf<ListRequest>('pageIndex')) || 0);
+					this._pageIndex = +(params.get(nameOf<ListRequest>('pageIndex')) || 0);
 					this.pageSize = +(params.get(nameOf<ListRequest>('pageSize')) || AppConfig.PageSize);
 
 					// Set grid Sorting
@@ -88,7 +101,7 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 			this.paginator.page.pipe(
 				tap((page: PageEvent) => {
 					if (!!page) {
-						this.pageIndex = page.pageSize !== this.pageSize ? 0 : page.pageIndex;
+						this._pageIndex = page.pageSize !== this.pageSize ? 0 : page.pageIndex;
 						this.pageSize = page.pageSize;
 						this.paginationHandler(page);
 					}
@@ -96,10 +109,13 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 			),
 			this.sort.sortChange.pipe(
 				tap(() => {
-					this.pageIndex = 0;
+					this._pageIndex = 0;
 				})
 			),
-			this.filterBase.pipe(filter(Boolean)),
+			this._filter.pipe(
+				filter(Boolean),
+				tap(() => (this._pageIndex = 0))
+			),
 			//this.filterComponent ? this.filterComponent.filterChange.pipe(tap(() => (this.pageIndex = 0))) : undefined,
 		];
 		/*
@@ -123,12 +139,12 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 				)
 				.subscribe(() => {
 					// If we have changed the search filter then clear the sorting on the next request
-					if (this.clearSort) {
-						this.clearSort = false;
+					if (this._clearSort) {
+						this._clearSort = false;
 						this.clearSorting();
 					}
 					// Get merged filter from all the Query Parameters
-					const accruedFilter = this.mergeFilters(false);
+					const accruedFilter = this.mergeFilters();
 					// Update the QueryString
 					this.router.navigate([], {
 						queryParams: accruedFilter,
@@ -151,9 +167,9 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 	}
 
 	refreshList(): void {
-		const userFilter = this.mergeFilters(true);
+		const userFilter = this.mergeFilters();
 		// Update the Data Source
-		this.requests.emit(userFilter);
+		this._requests.emit(userFilter);
 	}
 
 	protected subscribeToEntityCreationNotificationEvent(event: EventEmitter<void>): void {
@@ -164,14 +180,14 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 		// Implementation in 'document-list.component.ts'
 	}
 
-	// Add filtering for the list
-	protected mergeFilters(includeFilterBase: boolean): TFilter {
+	// Build filtering for the list
+	protected mergeFilters(): TFilter {
 		const accruedFilter: TFilter = Object.assign(
 			{} as TFilter,
-			//includeFilterBase ? this.FilterBase : {},
+			this.filter,
 			//this.filterComponent ? this.filterComponent.filter : {},
 			{
-				pageIndex: this.pageIndex,
+				pageIndex: this._pageIndex,
 				pageSize: this.pageSize,
 			},
 			this.sort && this.sort.active ? { orderBy: this.sort.active, orderDirection: this.sort.direction } : {}
