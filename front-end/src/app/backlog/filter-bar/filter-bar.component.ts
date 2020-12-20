@@ -1,3 +1,4 @@
+import { KeyValue } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BacklogItemListGetRequest } from '@core/models/backlog-item/list/BacklogItemListGetRequest';
 import { BacklogItemType } from '@core/models/common/BacklogItemType';
@@ -48,5 +49,7 @@ export class FilterBarComponent extends FilterBarComponentBase<BacklogItemListGe
 	get backlogItemType(): typeof BacklogItemType {
 		return BacklogItemType;
 	}
-	originalEnumOrder(): void {}
+	originalEnumOrder(a: KeyValue<string, BacklogItemType>, b: KeyValue<string, BacklogItemType>): number {
+		return 0;
+	}
 }
