@@ -3,9 +3,24 @@
 		<span [innerText]="selectedOption" class="options-filter"></span>
 		<mat-icon color="primary">keyboard_arrow_down</mat-icon>
 	</button>
-	<div class="divider"></div>
-
 	<mat-menu #mainFiltersMenu="matMenu" [overlapTrigger]="false" xPosition="before">
 		<button *ngFor="let option of dropdownOptions; index as i;" mat-menu-item (click)="setCurrentOption(i)">{{option}}</button>
 	</mat-menu>
+
+	<div class="divider"></div>
+
+	<mat-icon class="filter-icon">filter_alt</mat-icon>
+	<mat-form-field class="search">
+		<input matInput [value]="filter?.search" placeholder="Filter by keyword">
+	</mat-form-field>
+
+	<button mat-button [matMenuTriggerFor]="filterTypesMenu">
+		<span [innerText]="type" class="options-filter"></span>
+		<mat-icon color="primary">keyboard_arrow_down</mat-icon>
+	</button>
+	<mat-menu #filterTypesMenu="matMenu" [overlapTrigger]="false" xPosition="before">
+		<button *ngFor="let item of backlogItemType | keyvalue: originalEnumOrder" mat-menu-item
+			(click)="setType(item.value)">{{item.value}}</button>
+	</mat-menu>
+
 </div>

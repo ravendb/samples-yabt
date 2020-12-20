@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { BacklogItemListGetRequest } from '@core/models/backlog-item/list/BacklogItemListGetRequest';
+import { BacklogItemType } from '@core/models/common/BacklogItemType';
 import { isNil } from 'lodash-es';
 import { FilterBarComponentBase } from './filter-bar-base.component';
 
@@ -36,4 +37,16 @@ export class FilterBarComponent extends FilterBarComponentBase<BacklogItemListGe
 		}
 		this.filterChange.emit(this._filter);
 	}
+
+	get type(): string {
+		return isNil(this._filter?.type) || this._filter.type == BacklogItemType.unknown ? 'Type' : this._filter.type;
+	}
+	setType(value: BacklogItemType | unknown): void {
+		this._filter = !!value ? { type: value as BacklogItemType } : {};
+		this.filterChange.emit(this._filter);
+	}
+	get backlogItemType(): typeof BacklogItemType {
+		return BacklogItemType;
+	}
+	originalEnumOrder(): void {}
 }

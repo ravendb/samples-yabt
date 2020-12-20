@@ -1,4 +1,5 @@
 @import 'variables';
+@import 'theme';
 
 :host {
 	background-color: white;
@@ -23,6 +24,22 @@ div.filter {
 }
 span.options-filter {
 	line-height: $mat-toolbar-height-mobile-portrait;
-	display: inline-block;
-	min-width: 120px !important;
+	//	display: inline-block;
+	//	min-width: 120px !important;
+}
+mat-icon.filter-icon {
+	color: $primary-light-color;
+	align-self: center;
+	padding-right: 8px;
+}
+mat-form-field.search {
+	padding-top: 8px;
+	flex: 1 1 auto;
+	::ng-deep {
+		div.mat-form-field-wrapper {
+			div.mat-form-field-underline {
+				display: none;
+			}
+		}
+	}
 }
