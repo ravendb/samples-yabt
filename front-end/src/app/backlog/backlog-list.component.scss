@@ -1,7 +1,7 @@
 @import 'breakpoints';
 @import 'list-components';
 
-.mat-column-id {
+.mat-column-number {
 	flex-grow: 1;
 	@include makeHiddenMediumAndDown();
 }
