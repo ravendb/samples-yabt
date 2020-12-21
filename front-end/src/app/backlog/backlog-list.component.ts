@@ -16,13 +16,12 @@ export class BacklogListComponent
 	//	private subscriptions: Subscription = new Subscription();
 
 	constructor(router: Router, activatedRoute: ActivatedRoute, apiService: BacklogItemsService) {
-		super(
-			router,
-			activatedRoute,
-			apiService,
-			['number', 'title', 'assignee', 'state', 'tags', 'created', 'updated'],
-			{} as Partial<BacklogItemListGetRequest>
-		);
+		super(router, activatedRoute, apiService, ['number', 'title', 'assignee', 'state', 'tags', 'created', 'updated'], {
+			type: undefined,
+			tags: [],
+			search: undefined,
+			assignedUserId: undefined,
+		} as Partial<BacklogItemListGetRequest>);
 	}
 
 	ngOnInit() {}

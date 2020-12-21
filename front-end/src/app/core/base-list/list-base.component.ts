@@ -1,7 +1,7 @@
 import { AfterViewInit, Directive, EventEmitter, OnDestroy, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortable, SortDirection } from '@angular/material/sort';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { AppConfig } from '@core/app.config';
 import { ListRequest } from '@core/models/common/ListRequest';
 import { BaseApiService } from '@core/services/base-api.service';
@@ -19,7 +19,7 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 	@ViewChild(MatSort, { static: false })
 	sort!: MatSort;
 
-	// The set of filters for the list
+	// The set of filters for the list (not including `ListRequest` properties)
 	get filter(): Partial<TFilter> {
 		return this._filter.getValue();
 	}
@@ -52,16 +52,18 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 	constructor(
 		protected router: Router,
 		protected activatedRoute: ActivatedRoute,
+		/* The service for requesting the list from API */
 		protected service: BaseApiService,
+		/* Default visible columns */
 		protected defaultDisplayedColumns: string[],
+		/* Instance of the class for parsing filters from the Query String (doesn't need to include properties from `ListRequest`) */
 		defaultFilter: Partial<TFilter>
 	) {
 		this._filter = new BehaviorSubject<Partial<TFilter>>(defaultFilter);
 		this._dataSource = new PaginatedDataSource<TListItemDto, TFilter>(this.service, this._requests);
 	}
 
-	// Subscribe for filter triggers after the nested components get initialised.
-	// Hence, do it in AfterViewInit, instead of ngOnInit.
+	// Subscribe for filter triggers after the nested components get initialised (must be AfterViewInit, instead of ngOnInit).
 	// If we were using 'BehaviorSubject' for 'triggers', then the current value'd have been emitted in the subscriber,
 	// but we're using 'EventEmitter', so we expect that 'DataSource.connect()' is called and have subscribed for events
 	ngAfterViewInit() {
@@ -83,6 +85,9 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 					this._pageIndex = +(params.get(nameOf<ListRequest>('pageIndex')) || 0);
 					this.pageSize = +(params.get(nameOf<ListRequest>('pageSize')) || AppConfig.PageSize);
 
+					// If the list shows results of a search, then no sorting order must be applied
+					if (!!params.get('search')) this._clearSort = true;
+
 					// Set grid Sorting
 					if (!!this.sort) {
 						if (params.has(nameOf<ListRequest>('orderBy'))) {
@@ -90,6 +95,9 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 							this.sort.direction = (params.get(nameOf<ListRequest>('orderDirection')) || '') as SortDirection;
 						}
 					}
+
+					// Apply Query String parameters to the filter
+					this.filter = this.getFilterFromQueryString(params);
 
 					this.refreshList();
 				})
@@ -116,19 +124,7 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 				filter(Boolean),
 				tap(() => (this._pageIndex = 0))
 			),
-			//this.filterComponent ? this.filterComponent.filterChange.pipe(tap(() => (this.pageIndex = 0))) : undefined,
 		];
-		/*
-		if (this.filterComponent) {
-			// Clear out the sorting whenever we change the 'search' field so that results are displayed based on relevance
-			const searchControl: AbstractControl = this.filterComponent.form.get('search');
-			if (searchControl) {
-				this.subscriptions.add(
-					searchControl.valueChanges.pipe(distinctUntilChanged(), filter(Boolean)).subscribe(() => (this.clearSort = true))
-				);
-			});
-			}
-		}*/
 
 		this.subscriptions.add(
 			merge(...arrFilter(triggers, Boolean))
@@ -193,24 +189,24 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 			this.sort && this.sort.active ? { orderBy: this.sort.active, orderDirection: this.sort.direction } : {}
 		) as TFilter;
 		return accruedFilter;
-		/*
-		return Object.keys(accruedFilter).reduce<TFilter>((prev, curr) => {
-			let value = { [curr]: accruedFilter[curr] };
-			// Convert 'Custom Filters' to a dictionary (flatten out filters, so they can go to the query string)
-			if (isPlainObject(accruedFilter[curr])) {
-				value = Object.keys(
-					omitBy(accruedFilter[curr], isNil)
-				) .reduce(
-					(p, c) =>
-						Object.assign(p, {
-							[`${curr}[${c}]`]: moment.isMoment(accruedFilter[curr][c])
-								? accruedFilter[curr][c].format('YYYY-MM-DD')
-								: accruedFilter[curr][c],
-						}),
-					{}
-				);
+	}
+
+	// Get an instance of the filter class from Query String parameters
+	private getFilterFromQueryString(params: ParamMap): TFilter {
+		// convert the ParamMap to an object
+		const paramsObj = params.keys.reduce((obj, key) => {
+			// 'params.getAll(key)' returns an array, when 'params.get(key)' - only the first value
+			let value: string | string[] | null = this.filter[key as keyof TFilter] instanceof Array ? params.getAll(key) : params.get(key);
+			if (key.indexOf('[') >= 0) {
+				// convert dictionaries to objects
+				const [parent, child] = key.split(/\[|\]/);
+				value = Object.assign(obj[parent as keyof {}] || {}, { [child]: params.get(key) });
+				key = parent;
 			}
-			return Object.assign(prev, value);
-		}, {} as TFilter);*/
+			return Object.assign(obj, {
+				[key]: value,
+			});
+		}, {});
+		return paramsObj as TFilter;
 	}
 }
