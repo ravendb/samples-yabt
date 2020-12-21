@@ -14,13 +14,13 @@
 		<input matInput [value]="filter?.search" placeholder="Filter by keyword">
 	</mat-form-field>
 
-	<button mat-button [matMenuTriggerFor]="filterTypesMenu">
-		<span [innerText]="type" class="options-filter"></span>
+	<button mat-button [matMenuTriggerFor]="filterTypesMenu" title="Backlog item type">
+		<span [innerText]="typeText" class="options-filter"></span>
 		<mat-icon color="primary">keyboard_arrow_down</mat-icon>
 	</button>
 	<mat-menu #filterTypesMenu="matMenu" [overlapTrigger]="false" xPosition="before">
 		<button *ngFor="let item of backlogItemType | keyvalue: originalEnumOrder" mat-menu-item
-			(click)="setType(item.value)">{{item.value}}</button>
+			(click)="setType(item.key)">{{item.value}}</button>
 	</mat-menu>
 
 </div>

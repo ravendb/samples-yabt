@@ -39,16 +39,19 @@ export class FilterBarComponent extends FilterBarComponentBase<BacklogItemListGe
 		this.filterChange.emit(this._filter);
 	}
 
-	get type(): string {
-		return isNil(this._filter?.type) || this._filter.type == BacklogItemType.unknown ? 'Type' : this._filter.type;
+	get typeText(): BacklogItemType | 'Type' {
+		return isNil(this._filter?.type) || this._filter.type == 'unknown' ? 'Type' : BacklogItemType[this._filter.type];
 	}
-	setType(value: BacklogItemType | unknown): void {
-		this._filter = !!value ? { type: value as BacklogItemType } : {};
+	setType(value: keyof typeof BacklogItemType | unknown): void {
+		let typedValue: keyof typeof BacklogItemType = !!value ? (value as keyof typeof BacklogItemType) : 'unknown';
+		this._filter = typedValue !== 'unknown' ? { type: typedValue } : {};
 		this.filterChange.emit(this._filter);
 	}
+	// A workaround to iterate through the enum values in HTML template
 	get backlogItemType(): typeof BacklogItemType {
 		return BacklogItemType;
 	}
+	// A workaround ro preserve the original sorting order of the enum. By default, it's sorted alphabetically
 	originalEnumOrder(a: KeyValue<string, BacklogItemType>, b: KeyValue<string, BacklogItemType>): number {
 		return 0;
 	}

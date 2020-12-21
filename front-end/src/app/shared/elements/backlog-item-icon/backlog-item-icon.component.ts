@@ -9,7 +9,7 @@ import { BacklogItemType } from '@core/models/common/BacklogItemType';
 })
 export class BacklogItemIconComponent {
 	@Input()
-	type = BacklogItemType.unknown;
+	type: keyof typeof BacklogItemType = 'unknown';
 
 	public get backlogItemType(): typeof BacklogItemType {
 		return BacklogItemType;

@@ -1,7 +1,7 @@
 export enum BacklogItemType {
-	unknown = 'unknown',
-	feature = 'feature',
-	bug = 'bug',
-	userStory = 'userStory',
-	task = 'task',
+	unknown = 'Any',
+	feature = 'Feature',
+	bug = 'Bug',
+	userStory = 'User Story',
+	task = 'Task',
 }
