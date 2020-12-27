@@ -1,8 +1,10 @@
 import { KeyValue } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { BacklogItemListGetRequest } from '@core/models/backlog-item/list/BacklogItemListGetRequest';
+import { CurrentUserRelations } from '@core/models/backlog-item/list/CurrentUserRelations';
 import { BacklogItemType } from '@core/models/common/BacklogItemType';
 import { isNil } from 'lodash-es';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FilterBarComponentBase } from './filter-bar-base.component';
 
 @Component({
@@ -11,41 +13,42 @@ import { FilterBarComponentBase } from './filter-bar-base.component';
 	templateUrl: './filter-bar.component.html',
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class FilterBarComponent extends FilterBarComponentBase<BacklogItemListGetRequest> {
-	dropdownOptions = ['All', 'Modified by me', 'Mention me'];
+export class FilterBarComponent extends FilterBarComponentBase<BacklogItemListGetRequest> implements OnInit, OnDestroy {
+	ngOnInit(): void {
+		super.ngOnInit();
 
-	get selectedOption(): string {
-		return this._filter?.modifiedByTheCurrentUserOnly == true
-			? this.dropdownOptions[1]
-			: this._filter?.mentionsOfTheCurrentUserOnly == true
-			? this.dropdownOptions[2]
-			: this.dropdownOptions[0];
+		this.subscription.add(
+			this.formGroup.controls.search.valueChanges.pipe(debounceTime(400), distinctUntilChanged()).subscribe(_ => this.applyFilter())
+		);
 	}
 
-	setCurrentOption(optionIndex: number): void {
-		if (isNil(this._filter)) return;
+	ngOnDestroy() {
+		this.subscription.unsubscribe();
+	}
 
-		switch (optionIndex) {
-			case 1:
-				this._filter = { modifiedByTheCurrentUserOnly: true };
-				break;
-			case 2:
-				this._filter = { mentionsOfTheCurrentUserOnly: true };
-				break;
-			default:
-				this._filter = {};
-				break;
-		}
-		this.filterChange.emit(this._filter);
+	// A workaround to iterate through the enum values in HTML template
+	get currentUserRelations(): typeof CurrentUserRelations {
+		return CurrentUserRelations;
+	}
+	get currentUserRelation(): CurrentUserRelations {
+		let key: keyof typeof CurrentUserRelations = !isNil(this.formGroup.controls.currentUserRelation?.value)
+			? this.formGroup.controls.currentUserRelation.value
+			: 'none';
+		return CurrentUserRelations[key];
+	}
+	setModeOption(value: string): void {
+		let key: keyof typeof CurrentUserRelations = !isNil(value) ? (value as keyof typeof CurrentUserRelations) : 'none';
+		this.formGroup.patchValue({ currentUserRelation: key });
+		this.applyFilter();
 	}
 
 	get typeText(): BacklogItemType | 'Type' {
 		return isNil(this._filter?.type) || this._filter.type == 'unknown' ? 'Type' : BacklogItemType[this._filter.type];
 	}
 	setType(value: keyof typeof BacklogItemType | unknown): void {
-		let typedValue: keyof typeof BacklogItemType = !!value ? (value as keyof typeof BacklogItemType) : 'unknown';
-		this._filter = typedValue !== 'unknown' ? { type: typedValue } : {};
-		this.filterChange.emit(this._filter);
+		let key: keyof typeof BacklogItemType = !isNil(value) ? (value as keyof typeof BacklogItemType) : 'unknown';
+		this.formGroup.patchValue({ type: key });
+		this.applyFilter();
 	}
 	// A workaround to iterate through the enum values in HTML template
 	get backlogItemType(): typeof BacklogItemType {

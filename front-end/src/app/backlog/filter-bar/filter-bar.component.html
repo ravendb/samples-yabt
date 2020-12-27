@@ -1,17 +1,18 @@
-<div class="filter">
+<form [formGroup]="formGroup" class="filter">
 	<button mat-button [matMenuTriggerFor]="mainFiltersMenu">
-		<span [innerText]="selectedOption" class="options-filter"></span>
+		<span class="options-filter"> {{currentUserRelation}}</span>
 		<mat-icon color="primary">keyboard_arrow_down</mat-icon>
 	</button>
 	<mat-menu #mainFiltersMenu="matMenu" [overlapTrigger]="false" xPosition="before">
-		<button *ngFor="let option of dropdownOptions; index as i;" mat-menu-item (click)="setCurrentOption(i)">{{option}}</button>
+		<button *ngFor="let item of currentUserRelations | keyvalue: originalEnumOrder" mat-menu-item
+			(click)="setModeOption(item.key)">{{item.value}}</button>
 	</mat-menu>
 
 	<div class="divider"></div>
 
 	<mat-icon class="filter-icon">filter_alt</mat-icon>
 	<mat-form-field class="search">
-		<input matInput [value]="filter?.search" placeholder="Filter by keyword">
+		<input matInput formControlName="search" placeholder="Filter by keyword">
 	</mat-form-field>
 
 	<button mat-button [matMenuTriggerFor]="filterTypesMenu" title="Backlog item type">
@@ -19,8 +20,13 @@
 		<mat-icon color="primary">keyboard_arrow_down</mat-icon>
 	</button>
 	<mat-menu #filterTypesMenu="matMenu" [overlapTrigger]="false" xPosition="before">
-		<button *ngFor="let item of backlogItemType | keyvalue: originalEnumOrder" mat-menu-item
-			(click)="setType(item.key)">{{item.value}}</button>
+		<button *ngFor="let item of backlogItemType | keyvalue: originalEnumOrder" mat-menu-item (click)="setType(item.key)">
+			{{item.value}}
+		</button>
 	</mat-menu>
 
-</div>
+	<button mat-button title="Clear filters" class="clear-button" (click)="clearFilters()">
+		<mat-icon color="primary">clear</mat-icon>
+	</button>
+
+</form>
