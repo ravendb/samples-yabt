@@ -41,8 +41,8 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			base.ConfigureIocContainer(services);
 
 			_currentUserResolver = Substitute.For<ICurrentUserResolver>();
-			_currentUserResolver.GetCurrentUserId().Returns(c => _currentUserId);
-			services.AddScoped(x => _currentUserResolver);
+			_currentUserResolver.GetCurrentUserId().Returns(_ => _currentUserId);
+			services.AddScoped(_ => _currentUserResolver);
 		}
 
 		[Fact]
@@ -128,7 +128,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			// WHEN the current user is Homer 
 			//		and querying items created/modified by him
 			_currentUserId = homerId;
-			var homersItems = await _queryService.GetList( new BacklogItemListGetRequest { ModifiedByTheCurrentUserOnly = true } );
+			var homersItems = await _queryService.GetList( new BacklogItemListGetRequest { CurrentUserRelation = CurrentUserRelations.ModifiedBy } );
 
 			// THEN 
 			//  only 2 record created by Homer are returned
@@ -155,7 +155,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			// WHEN the current user is Marge 
 			//		and querying items created/modified by him
-			var margesItems = await _queryService.GetList(new BacklogItemListGetRequest { ModifiedByTheCurrentUserOnly = true });
+			var margesItems = await _queryService.GetList(new BacklogItemListGetRequest { CurrentUserRelation = CurrentUserRelations.ModifiedBy });
 
 			// THEN 
 			// only 2 record created/modified by Marge are returned

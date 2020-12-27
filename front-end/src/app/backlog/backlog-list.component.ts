@@ -17,6 +17,7 @@ export class BacklogListComponent
 
 	constructor(router: Router, activatedRoute: ActivatedRoute, apiService: BacklogItemsService) {
 		super(router, activatedRoute, apiService, ['number', 'title', 'assignee', 'state', 'tags', 'created', 'updated'], {
+			currentUserRelation: undefined,
 			type: undefined,
 			tags: [],
 			search: undefined,

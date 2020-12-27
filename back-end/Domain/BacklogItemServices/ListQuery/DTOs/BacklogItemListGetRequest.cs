@@ -15,8 +15,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs
 
 		public string? AssignedUserId { get; set; }
 
-		public bool ModifiedByTheCurrentUserOnly { get; set; }
-		public bool MentionsOfTheCurrentUserOnly { get; set; }
+		public CurrentUserRelations CurrentUserRelation { get; set; } = CurrentUserRelations.None;
 
 		public BacklogItemModification? UserModification { get; set; }
 

@@ -71,7 +71,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 				var user = refUsers.Single(u => u.FullName == referencedUser);
 				_currentUser = user;
 				
-				var tickets = await _queryBacklogItemService.GetList(new BacklogItemListGetRequest { MentionsOfTheCurrentUserOnly = true });
+				var tickets = await _queryBacklogItemService.GetList(new BacklogItemListGetRequest { CurrentUserRelation = CurrentUserRelations.MentionsOf });
 				Assert.Equal(1, tickets.TotalRecords);
 			}
 		}
@@ -80,8 +80,8 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		{
 			base.ConfigureIocContainer(services);
 
-			services.AddScoped<IUserReferenceResolver>(s => this);
-			services.AddScoped<ICurrentUserResolver>(s => this);
+			services.AddScoped<IUserReferenceResolver>(_ => this);
+			services.AddScoped<ICurrentUserResolver>(_ => this);
 		}
 
 		public Task<UserReference> GetCurrentUserReference() => Task.FromResult(_currentUser);
