@@ -10,6 +10,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 		public override BacklogItemType Type { get; set; }
 
 		public string? AssignedUserId { get; set; }
+		public string AssignedUserName { get; set; } = string.Empty;
 
 		public string? CreatedByUserId { get; set; }
 		public DateTime CreatedTimestamp { get; set; }

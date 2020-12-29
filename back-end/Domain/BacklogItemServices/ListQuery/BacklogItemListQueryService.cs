@@ -186,8 +186,9 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			{
 				BacklogItemsOrderColumns.Number =>				dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.Id) : query.OrderByDescending(t => t.Id),
 				BacklogItemsOrderColumns.Title =>				dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.Title) : query.OrderByDescending(t => t.Title),
-				BacklogItemsOrderColumns.TimestampCreated =>	dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.CreatedTimestamp) : query.OrderByDescending(t => t.CreatedTimestamp),
-				BacklogItemsOrderColumns.TimestampLastModified=>dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.LastUpdatedTimestamp) : query.OrderByDescending(t => t.LastUpdatedTimestamp),
+				BacklogItemsOrderColumns.Assignee =>			dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.AssignedUserName) : query.OrderByDescending(t => t.AssignedUserName),
+				BacklogItemsOrderColumns.Created =>	dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.CreatedTimestamp) : query.OrderByDescending(t => t.CreatedTimestamp),
+				BacklogItemsOrderColumns.Updated=>dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.LastUpdatedTimestamp) : query.OrderByDescending(t => t.LastUpdatedTimestamp),
 				BacklogItemsOrderColumns.TimestampModifiedByCurrentUser =>
 																dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.ModifiedByUser[userKey]) : query.OrderByDescending(t => t.ModifiedByUser[userKey]),
 				BacklogItemsOrderColumns.TimestampMentionsOfCurrentUser =>
