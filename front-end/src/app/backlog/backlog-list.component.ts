@@ -13,16 +13,23 @@ import { BacklogItemsService } from '@core/services/backlogItems.service';
 export class BacklogListComponent
 	extends ListBaseComponent<BacklogItemListGetResponse, BacklogItemListGetRequest>
 	implements OnInit, OnDestroy {
+	private static readonly defaultFilter: Partial<BacklogItemListGetRequest> = {
+		currentUserRelation: undefined,
+		type: undefined,
+		tags: undefined,
+		search: undefined,
+		assignedUserId: undefined,
+	};
 	//	private subscriptions: Subscription = new Subscription();
 
 	constructor(router: Router, activatedRoute: ActivatedRoute, apiService: BacklogItemsService) {
-		super(router, activatedRoute, apiService, ['number', 'title', 'assignee', 'state', 'tags', 'created', 'updated'], {
-			currentUserRelation: undefined,
-			type: undefined,
-			tags: [],
-			search: undefined,
-			assignedUserId: undefined,
-		} as Partial<BacklogItemListGetRequest>);
+		super(
+			router,
+			activatedRoute,
+			apiService,
+			['number', 'title', 'assignee', 'state', 'tags', 'created', 'updated'],
+			BacklogListComponent.defaultFilter
+		);
 	}
 
 	ngOnInit() {}
