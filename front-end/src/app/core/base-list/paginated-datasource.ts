@@ -28,18 +28,21 @@ export class PaginatedDataSource<TListItemDto, TFilter> extends DataSource<TList
 			// Turn on 'loading'
 			tap(() => this._loading.next(true)),
 			// Send request to the server
-			switchMap((request: TFilter) => this.service.getList<any, TListItemDto>('', omitBy(request, isNil))),
-			// In case of an error show an empty list
-			catchError(() => of(new ListResponse<TListItemDto>())),
-			// Turn off 'loading'
-			finalize(() => this._loading.next(false)),
+			switchMap((request: TFilter) =>
+				this.service.getList<any, TListItemDto>('', omitBy(request, isNil)).pipe(
+					// In case of an error show an empty list
+					catchError(() => of(new ListResponse<TListItemDto>())),
+					// Turn off 'loading' (important to use a nested pipe as the parent one doesn't complete)
+					finalize(() => this._loading.next(false))
+				)
+			),
 			// workaround for 'ExpressionChangedAfterItHasBeenCheckedError' in tests
 			delay(0),
 			// Return new entries
 			map((response: ListResponse<TListItemDto>) => {
-				this._totalRecords.next(response.totalRecords);
-				this._pageIndex.next(response.pageIndex);
-				return response.entries;
+				this._totalRecords.next(response?.totalRecords || 0);
+				this._pageIndex.next(response?.pageIndex || 0);
+				return response?.entries || [];
 			})
 		);
 	}

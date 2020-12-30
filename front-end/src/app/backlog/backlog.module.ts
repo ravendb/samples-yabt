@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { SharedModule } from '@shared';
@@ -23,6 +24,7 @@ import { FilterBarComponent } from './filter-bar/filter-bar.component';
 		MatInputModule,
 		MatMenuModule,
 		MatPaginatorModule,
+		MatProgressSpinnerModule,
 		MatSortModule,
 		MatTableModule,
 		ReactiveFormsModule,
