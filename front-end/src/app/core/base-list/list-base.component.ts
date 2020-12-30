@@ -1,4 +1,4 @@
-import { AfterViewInit, Directive, EventEmitter, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Directive, EventEmitter, OnDestroy, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortable, MatSortHeader } from '@angular/material/sort';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
@@ -6,7 +6,7 @@ import { AppConfig } from '@core/app.config';
 import { ListRequest } from '@core/models/common/ListRequest';
 import { BaseApiService } from '@core/services/base-api.service';
 import { nameOf } from '@utils/nameof';
-import { filter as arrFilter, isEqual, isNil, omitBy } from 'lodash-es';
+import { filter as arrFilter, get, isEqual, isNil, omitBy } from 'lodash-es';
 import { merge, Subject, Subscription } from 'rxjs';
 import { delay, distinctUntilChanged, tap } from 'rxjs/operators';
 import { PaginatedDataSource } from './paginated-datasource';
@@ -28,7 +28,7 @@ import { PaginatedDataSource } from './paginated-datasource';
 			- The browser's backward/forward button
  */
 @Directive()
-export abstract class ListBaseComponent<TListItemDto, TFilter extends ListRequest> implements AfterViewInit, OnInit, OnDestroy {
+export abstract class ListBaseComponent<TListItemDto, TFilter extends ListRequest> implements AfterViewInit, OnDestroy {
 	@ViewChild(MatPaginator)
 	paginator!: MatPaginator;
 	@ViewChild(MatSort)
@@ -63,7 +63,6 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 	protected subscriptions = new Subscription();
 
 	private _filter$: Subject<Partial<TFilter>>;
-	private _clearSort: boolean = false;
 	// This is used for requested page (from URL) only, bind to the value from the response in the UI
 	private _pageIndex: number = 0;
 	private _requests = new EventEmitter<TFilter>();
@@ -81,8 +80,6 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 		this._filter$ = new Subject<Partial<TFilter>>();
 		this._dataSource = new PaginatedDataSource<TListItemDto, TFilter>(this.service, this._requests);
 	}
-
-	ngOnInit(): void {}
 
 	// Subscribe for filter triggers after the nested components get initialised (must be AfterViewInit, instead of ngOnInit).
 	// If we were using 'BehaviorSubject' for 'triggers', then the current value'd have been emitted in the subscriber,
@@ -108,15 +105,12 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 					this._pageIndex = +(queryFilter?.pageIndex || 0); // +(params.get(nameOf<ListRequest>('pageIndex')) || 0);
 					this.pageSize = +(queryFilter?.pageSize || AppConfig.PageSize); //+(params.get(nameOf<ListRequest>('pageSize')) || AppConfig.PageSize);
 
-					// If the list shows results of a search, then no sorting order must be applied
-					if (!!params.get('search')) this._clearSort = true;
-
 					// Set grid Sorting
-					if (!!this.sort && !!queryFilter?.orderBy && !params.get('search')) {
+					if (!!this.sort && !!queryFilter?.orderBy) {
 						// A workaround for a mat-table bug on showing sorting indication. See more https://stackoverflow.com/a/65501143/968003
+
 						this.sort.sort({ id: '', start: 'asc', disableClear: true });
 						this.sort.sort({ id: queryFilter.orderBy, start: queryFilter.orderDirection || 'asc', disableClear: true });
-
 						(this.sort.sortables.get(this.sort.active) as MatSortHeader)._setAnimationTransitionState({
 							toState: 'active',
 						});
@@ -157,8 +151,14 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 				})
 			),
 			this._filter$.pipe(
-				tap(f => console.debug('TRIGGER: filter. ' + JSON.stringify(f))),
-				tap(() => (this._pageIndex = 0))
+				tap(f => {
+					console.debug('TRIGGER: filter. ' + JSON.stringify(f));
+					this._pageIndex = 0;
+					if (!!get(f, 'search', null)) {
+						// If we have changed the search filter then clear the sorting on the next request
+						this.sort.sort({ id: '', start: 'asc', disableClear: false } as MatSortable);
+					}
+				})
 			),
 		];
 
@@ -166,11 +166,6 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 			merge(...arrFilter(triggers, Boolean))
 				.pipe(distinctUntilChanged(isEqual))
 				.subscribe(() => {
-					// If we have changed the search filter then clear the sorting on the next request
-					if (this._clearSort) {
-						this._clearSort = false;
-						this.clearSorting();
-					}
 					// Get merged filter from all the Query Parameters
 					const accruedFilter = this.mergeFilters();
 					console.debug('NAVIGATE: ' + JSON.stringify(accruedFilter));
@@ -185,10 +180,6 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 
 	ngOnDestroy() {
 		this.subscriptions.unsubscribe();
-	}
-
-	clearSorting(): void {
-		this.sort.sort({ id: '', start: 'asc', disableClear: false } as MatSortable);
 	}
 
 	isColumnVisible(columnName: string): boolean {

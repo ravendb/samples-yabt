@@ -13,6 +13,7 @@ export class FilterBarComponentBase<TFilter extends ListRequest> implements OnIn
 	@Input()
 	set filter(value: Partial<TFilter>) {
 		this._filter = value;
+		this.resetFilter(value);
 	}
 	@Output() filterChange = new EventEmitter<Partial<TFilter>>();
 
@@ -33,17 +34,12 @@ export class FilterBarComponentBase<TFilter extends ListRequest> implements OnIn
 		this.resetFilter({} as TFilter);
 	}
 
-	protected setFilter(newValues: TFilter) {
-		if (this._filter) {
-			newValues = Object.assign({}, this._filter, newValues);
-		}
-		this.formGroup.setValue(newValues);
-		this.applyFilter();
+	protected setFilter(newValues: Partial<TFilter>) {
+		if (!!this.formGroup) this.formGroup.setValue({ ...this._filter, ...newValues } as TFilter);
 	}
 
-	protected resetFilter(newValues: TFilter) {
-		if (!!this.formGroup) this.formGroup.reset(newValues);
-		this.applyFilter();
+	protected resetFilter(newValues: Partial<TFilter>) {
+		if (!!this.formGroup) this.formGroup.reset(newValues as TFilter);
 	}
 
 	protected applyFilter(): void {

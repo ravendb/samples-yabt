@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ListBaseComponent } from '@core/base-list/list-base.component';
 import { BacklogItemListGetRequest } from '@core/models/backlog-item/list/BacklogItemListGetRequest';
@@ -10,9 +10,7 @@ import { BacklogItemsService } from '@core/services/backlogItems.service';
 	styleUrls: ['./backlog-list.component.scss'],
 	templateUrl: './backlog-list.component.html',
 })
-export class BacklogListComponent
-	extends ListBaseComponent<BacklogItemListGetResponse, BacklogItemListGetRequest>
-	implements OnInit, OnDestroy {
+export class BacklogListComponent extends ListBaseComponent<BacklogItemListGetResponse, BacklogItemListGetRequest> {
 	private static readonly defaultFilter: Partial<BacklogItemListGetRequest> = {
 		currentUserRelation: undefined,
 		type: undefined,
@@ -30,11 +28,5 @@ export class BacklogListComponent
 			['number', 'title', 'assignee', 'state', 'tags', 'created', 'updated'],
 			BacklogListComponent.defaultFilter
 		);
-	}
-
-	ngOnInit() {}
-
-	ngOnDestroy() {
-		//	this.subscriptions.unsubscribe();
 	}
 }
