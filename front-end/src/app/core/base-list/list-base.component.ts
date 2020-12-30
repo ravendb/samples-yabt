@@ -8,7 +8,7 @@ import { BaseApiService } from '@core/services/base-api.service';
 import { nameOf } from '@utils/nameof';
 import { filter as arrFilter, get, isEqual, isNil, omitBy } from 'lodash-es';
 import { merge, Subject, Subscription } from 'rxjs';
-import { delay, distinctUntilChanged, tap } from 'rxjs/operators';
+import { delay, distinctUntilChanged, filter, tap } from 'rxjs/operators';
 import { PaginatedDataSource } from './paginated-datasource';
 
 // Basic version of generic list.
@@ -66,6 +66,7 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 	// This is used for requested page (from URL) only, bind to the value from the response in the UI
 	private _pageIndex: number = 0;
 	private _requests = new EventEmitter<TFilter>();
+	private flagSortingWorkaround = false;
 
 	constructor(
 		protected router: Router,
@@ -108,12 +109,13 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 					// Set grid Sorting
 					if (!!this.sort && !!queryFilter?.orderBy) {
 						// A workaround for a mat-table bug on showing sorting indication. See more https://stackoverflow.com/a/65501143/968003
-
+						this.flagSortingWorkaround = true;
 						this.sort.sort({ id: '', start: 'asc', disableClear: true });
 						this.sort.sort({ id: queryFilter.orderBy, start: queryFilter.orderDirection || 'asc', disableClear: true });
 						(this.sort.sortables.get(this.sort.active) as MatSortHeader)._setAnimationTransitionState({
 							toState: 'active',
 						});
+						this.flagSortingWorkaround = false;
 					}
 
 					// Remove the common list properties from the rest of the filters
@@ -145,6 +147,7 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 				})
 			),
 			this.sort.sortChange.pipe(
+				filter(() => !this.flagSortingWorkaround),
 				tap(() => {
 					console.debug('TRIGGER: sorting');
 					this._pageIndex = 0;
