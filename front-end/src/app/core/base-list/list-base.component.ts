@@ -1,6 +1,6 @@
 import { AfterViewInit, Directive, EventEmitter, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { MatSort, MatSortable, SortDirection } from '@angular/material/sort';
+import { MatSort, MatSortable, MatSortHeader } from '@angular/material/sort';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { AppConfig } from '@core/app.config';
 import { ListRequest } from '@core/models/common/ListRequest';
@@ -112,11 +112,14 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 					if (!!params.get('search')) this._clearSort = true;
 
 					// Set grid Sorting
-					if (!!this.sort) {
-						if (!!queryFilter?.orderBy) {
-							this.sort.active = queryFilter.orderBy;
-							this.sort.direction = (queryFilter.orderDirection || '') as SortDirection;
-						}
+					if (!!this.sort && !!queryFilter?.orderBy && !params.get('search')) {
+						// A workaround for a mat-table bug on showing sorting indication. See more https://stackoverflow.com/a/65501143/968003
+						this.sort.sort({ id: '', start: 'asc', disableClear: true });
+						this.sort.sort({ id: queryFilter.orderBy, start: queryFilter.orderDirection || 'asc', disableClear: true });
+
+						(this.sort.sortables.get(this.sort.active) as MatSortHeader)._setAnimationTransitionState({
+							toState: 'active',
+						});
 					}
 
 					// Remove the common list properties from the rest of the filters
