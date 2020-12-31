@@ -53,7 +53,9 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 								Id = b.Id,
 								Title = b.Title,
 								Type = b.Type,
+								State = b.State,
 								Assignee = b.Assignee,
+								Tags = b.Tags,
 								// Have to re-calculate 'Created' and 'LastUpdated' server-side, as the entity model's fields get calculated client-side only 
 								Created		= b.ModifiedBy.OrderBy(m => m.Timestamp).FirstOrDefault() as ChangedByUserReference,
 								LastUpdated = b.ModifiedBy.OrderBy(m => m.Timestamp).LastOrDefault() as ChangedByUserReference
@@ -68,6 +70,9 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 		{
 			if (dto.Type != BacklogItemType.Unknown)
 				query = query.Where(t => t.Type == dto.Type);
+
+			if (dto.State != null)
+				query = query.Where(t => t.State == dto.State);
 
 			if (dto.Tags?.Any() == true)
 				foreach (var tag in dto.Tags)

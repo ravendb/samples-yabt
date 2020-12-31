@@ -18,9 +18,13 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs
 		}
 		public string Title { get; set; }
 
-		public UserReference Assignee { get; set; }
-
 		public BacklogItemType Type { get; set; }
+		
+		public BacklogItemState State { get; set; }
+		
+		public string[] Tags { get; set; }
+
+		public UserReference Assignee { get; set; }
 
 		public ChangedByUserReference Created { get; set; }
 		public ChangedByUserReference LastUpdated { get; set; }

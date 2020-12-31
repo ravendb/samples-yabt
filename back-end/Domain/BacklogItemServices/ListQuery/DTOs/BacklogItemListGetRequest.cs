@@ -9,6 +9,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs
 	{
 		public BacklogItemType Type { get; set; } = BacklogItemType.Unknown;
 
+		public BacklogItemState? State { get; set; }
 		public string[]? Tags { get; set; }
 
 		public string? Search { get; set; }

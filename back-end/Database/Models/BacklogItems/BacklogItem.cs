@@ -25,6 +25,11 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		public virtual BacklogItemType Type { get; set; }    // Can't make it 'abstract'
 
 		/// <summary>
+		///		Current state of the backlog item
+		/// </summary>
+		public BacklogItemState State { get; set; } = BacklogItemState.New;
+		
+		/// <summary>
 		///		The assigned user to the ticket
 		/// </summary>
 		public UserReference? Assignee { get; set; }

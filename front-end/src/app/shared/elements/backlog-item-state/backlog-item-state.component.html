@@ -1,0 +1,5 @@
+<ng-container>
+	<span class="workitem-state-circle" [class.new]="state === 'new'" [class.in-progress]="state === 'inProgress'"
+		[class.testing]="state === 'testing'" [class.closed]="state === 'closed'"></span>
+	<span>{{ backlogItemState[state] }}</span>
+</ng-container>

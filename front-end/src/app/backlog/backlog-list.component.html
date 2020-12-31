@@ -46,7 +46,9 @@
 
 	<ng-container matColumnDef="state">
 		<mat-header-cell *matHeaderCellDef mat-sort-header> State </mat-header-cell>
-		<mat-cell *matCellDef="let row"> {{row.state}} </mat-cell>
+		<mat-cell *matCellDef="let row">
+			<backlog-item-state [state]="row.state"></backlog-item-state>
+		</mat-cell>
 	</ng-container>
 
 	<ng-container matColumnDef="tags">
