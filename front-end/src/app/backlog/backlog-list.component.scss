@@ -36,10 +36,6 @@ mat-cell.mat-column-id {
 	flex-grow: 1;
 	@include makeHiddenSmallAndDown();
 }
-.mat-column-tags {
-	flex-grow: 1;
-	@include makeHiddenSmallAndDown();
-}
 .mat-column-created {
 	flex-grow: 1;
 	@include makeHiddenLargeAndDown();

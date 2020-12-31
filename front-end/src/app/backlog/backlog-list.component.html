@@ -24,6 +24,9 @@
 					{{row.title}}
 				</a>
 			</div>
+			<div>
+				<backlog-item-tags [tags]="row.tags"></backlog-item-tags>
+			</div>
 			<div class="embedded-assignee-state-block">
 				<span *ngIf="row.state" class="narrow-column">
 					{{row.state}}
@@ -49,11 +52,6 @@
 		<mat-cell *matCellDef="let row">
 			<backlog-item-state [state]="row.state"></backlog-item-state>
 		</mat-cell>
-	</ng-container>
-
-	<ng-container matColumnDef="tags">
-		<mat-header-cell *matHeaderCellDef> Tags </mat-header-cell>
-		<mat-cell *matCellDef="let row"> {{row.tags}} </mat-cell>
 	</ng-container>
 
 	<ng-container matColumnDef="created">

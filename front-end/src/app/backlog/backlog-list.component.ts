@@ -25,7 +25,7 @@ export class BacklogListComponent extends ListBaseComponent<BacklogItemListGetRe
 			router,
 			activatedRoute,
 			apiService,
-			['number', 'title', 'assignee', 'state', 'tags', 'created', 'updated'],
+			['number', 'title', 'assignee', 'state', 'created', 'updated'],
 			BacklogListComponent.defaultFilter
 		);
 	}
