@@ -6,15 +6,17 @@ mat-table.mat-table {
 }
 
 mat-header-row.mat-header-row {
-	@include breakpointSmallAndDown();
+	@include makeHiddenSmallAndDown();
 }
 
 mat-header-row.mat-header-row,
 mat-row.mat-row {
 	padding: 0 24px;
+	@include breakpointXSmall() {
+		padding: 0px;
+	}
 	@include breakpointSmallToMedium() {
-		padding-left: 8px;
-		padding-right: 8px;
+		padding: 0 8px;
 	}
 }
 
