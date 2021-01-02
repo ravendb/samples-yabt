@@ -38,6 +38,9 @@ mat-form-field.search {
 	flex: 1 1 auto;
 	::ng-deep {
 		div.mat-form-field-wrapper {
+			div.mat-form-field-infix {
+				width: unset;
+			}
 			div.mat-form-field-underline {
 				display: none;
 			}
