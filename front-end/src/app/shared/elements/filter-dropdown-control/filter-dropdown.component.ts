@@ -1,17 +1,21 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { delay } from 'rxjs/operators';
 import { IKeyValuePair } from './ikey-value-pair';
 
 @Component({
 	selector: 'filter-dropdown',
 	styleUrls: ['./filter-dropdown.component.scss'],
 	templateUrl: './filter-dropdown.component.html',
-	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterDropdownComponent implements OnInit, OnDestroy {
 	@Input()
-	label: string = 'Unspecified'; // Label needs to be provided
+	get label(): string {
+		return this._label;
+	}
+	set label(value: string) {
+		this._label = value;
+		this.updateLabel(this.control?.value);
+	}
 	@Input()
 	buttonAltText: string = '';
 	@Input()
@@ -23,7 +27,8 @@ export class FilterDropdownComponent implements OnInit, OnDestroy {
 
 	buttonText: string = this.label;
 
-	private subscriptions: Subscription = new Subscription();
+	private _label: string = 'Unspecified';
+	private _subscriptions: Subscription = new Subscription();
 
 	setType(value: string | null): void {
 		const el = !!value ? this.options.find(v => v.key == value) : undefined;
@@ -32,17 +37,11 @@ export class FilterDropdownComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		this.subscriptions.add(
-			this.control.valueChanges
-				.pipe(
-					delay(0) // avoid getting an error on changing the state after it's been checked
-				)
-				.subscribe((key: string) => this.updateLabel(key))
-		);
+		this._subscriptions.add(this.control.valueChanges.subscribe((key: string) => this.updateLabel(key)));
 	}
 
 	ngOnDestroy() {
-		this.subscriptions.unsubscribe();
+		this._subscriptions.unsubscribe();
 	}
 
 	private updateLabel(key: string): void {

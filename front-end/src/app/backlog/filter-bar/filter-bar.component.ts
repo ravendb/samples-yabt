@@ -6,7 +6,7 @@ import { BacklogItemType } from '@core/models/common/BacklogItemType';
 import { IKeyValuePair } from '@shared/elements/filter-dropdown-control';
 import { isNil } from 'lodash-es';
 import { merge } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, delay, distinctUntilChanged } from 'rxjs/operators';
 import { FilterBarComponentBase } from './filter-bar-base.component';
 
 @Component({
@@ -23,11 +23,14 @@ export class FilterBarComponent extends FilterBarComponentBase<BacklogItemListGe
 	ngOnInit(): void {
 		super.ngOnInit();
 
-		const triggers = [this.formGroup.controls.search.valueChanges.pipe(debounceTime(400)), this.formGroup.controls.type.valueChanges];
+		const triggers = [
+			this.formGroup.controls.search.valueChanges.pipe(distinctUntilChanged(), debounceTime(400)),
+			this.formGroup.controls.type.valueChanges.pipe(distinctUntilChanged()),
+		];
 
 		this.subscription.add(
 			merge(...triggers)
-				.pipe(distinctUntilChanged())
+				.pipe(delay(0))
 				.subscribe(_ => this.applyFilter())
 		);
 	}
