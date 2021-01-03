@@ -5,8 +5,8 @@ import { UserReference } from '@core/models/common/references/UserReference';
 export class BacklogItemListGetResponse {
 	id!: string;
 	title!: string;
-	assignee: UserReference | null = null;
-	type: BacklogItemType = BacklogItemType.unknown;
+	assignee: UserReference | undefined;
+	type: BacklogItemType | undefined;
 	created!: ChangedByUserReference;
 	lastUpdated!: ChangedByUserReference;
 }

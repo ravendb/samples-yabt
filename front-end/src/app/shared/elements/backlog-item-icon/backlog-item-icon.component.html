@@ -1,5 +1,7 @@
-<ng-container [ngSwitch]="type">
-	<mat-icon class="mat-icon bug" *ngSwitchCase="'bug'" [title]="backlogItemType[type]">bug_report</mat-icon>
-	<mat-icon class="mat-icon user-story" *ngSwitchCase="'userStory'" [title]="backlogItemType[type]">card_travel</mat-icon>
-	<span *ngSwitchDefault>{{ type }}</span>
-</ng-container>
+<ng-template [ngIf]="!!type">
+	<ng-container [ngSwitch]="type">
+		<mat-icon class="mat-icon bug" *ngSwitchCase="'bug'" [title]="backlogItemType[type!]">bug_report</mat-icon>
+		<mat-icon class="mat-icon user-story" *ngSwitchCase="'userStory'" [title]="backlogItemType[type!]">card_travel</mat-icon>
+		<span *ngSwitchDefault>{{ type }}</span>
+	</ng-container>
+</ng-template>
