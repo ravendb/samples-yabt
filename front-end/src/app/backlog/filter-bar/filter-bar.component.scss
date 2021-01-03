@@ -34,10 +34,11 @@ mat-icon.filter-icon {
 	padding-right: 8px;
 }
 mat-form-field.search {
-	padding-top: 8px;
+	padding-top: 4px;
 	flex: 1 1 auto;
 	::ng-deep {
 		div.mat-form-field-wrapper {
+			padding-bottom: 0px;
 			div.mat-form-field-infix {
 				width: unset;
 			}
