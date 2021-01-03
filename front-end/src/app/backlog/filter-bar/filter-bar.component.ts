@@ -3,7 +3,9 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/
 import { BacklogItemListGetRequest } from '@core/models/backlog-item/list/BacklogItemListGetRequest';
 import { CurrentUserRelations } from '@core/models/backlog-item/list/CurrentUserRelations';
 import { BacklogItemType } from '@core/models/common/BacklogItemType';
+import { IKeyValuePair } from '@shared/elements/filter-dropdown-control';
 import { isNil } from 'lodash-es';
+import { merge } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { FilterBarComponentBase } from './filter-bar-base.component';
 
@@ -14,11 +16,19 @@ import { FilterBarComponentBase } from './filter-bar-base.component';
 	changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FilterBarComponent extends FilterBarComponentBase<BacklogItemListGetRequest> implements OnInit, OnDestroy {
+	types: IKeyValuePair[] = Object.keys(BacklogItemType).map(key => {
+		return { key, value: BacklogItemType[key as keyof typeof BacklogItemType] };
+	});
+
 	ngOnInit(): void {
 		super.ngOnInit();
 
+		const triggers = [this.formGroup.controls.search.valueChanges.pipe(debounceTime(400)), this.formGroup.controls.type.valueChanges];
+
 		this.subscription.add(
-			this.formGroup.controls.search.valueChanges.pipe(debounceTime(400), distinctUntilChanged()).subscribe(_ => this.applyFilter())
+			merge(...triggers)
+				.pipe(distinctUntilChanged())
+				.subscribe(_ => this.applyFilter())
 		);
 	}
 
@@ -43,10 +53,10 @@ export class FilterBarComponent extends FilterBarComponentBase<BacklogItemListGe
 	}
 
 	get typeText(): BacklogItemType | 'Type' {
-		return isNil(this._filter?.type) || this._filter.type == 'unknown' ? 'Type' : BacklogItemType[this._filter.type];
+		return isNil(this._filter?.type) ? 'Type' : BacklogItemType[this._filter.type];
 	}
 	setType(value: keyof typeof BacklogItemType | unknown): void {
-		let key: keyof typeof BacklogItemType = !isNil(value) ? (value as keyof typeof BacklogItemType) : 'unknown';
+		let key: keyof typeof BacklogItemType | undefined = !isNil(value) ? (value as keyof typeof BacklogItemType) : undefined;
 		this.formGroup.patchValue({ type: key });
 		this.applyFilter();
 	}

@@ -1,0 +1,10 @@
+<button mat-button [matMenuTriggerFor]="filterMenu" [title]="buttonAltText">
+	<span [innerText]="buttonText" class="options-filter"></span>
+	<mat-icon color="primary">keyboard_arrow_down</mat-icon>
+</button>
+<mat-menu #filterMenu="matMenu" [overlapTrigger]="false" xPosition="before">
+	<button *ngIf="firstUndefinedOption" mat-menu-item (click)="setType(null)">{{firstUndefinedOption}}</button>
+	<button *ngFor="let option of options" mat-menu-item (click)="setType(option.key)">
+		{{option.value}}
+	</button>
+</mat-menu>
