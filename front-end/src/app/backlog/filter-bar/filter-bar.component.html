@@ -15,8 +15,8 @@
 		<input matInput formControlName="search" placeholder="Filter by keyword">
 	</mat-form-field>
 
-	<filter-dropdown label="Type" buttonAltText="Backlog item type" [options]="types" firstUndefinedOption="Any"
-		[control]="formGroup.controls.type"></filter-dropdown>
+	<filter-dropdown-button label="Type" buttonAltText="Backlog item type" [options]="types" firstUndefinedOption="Any"
+		[control]="formGroup.controls.type"></filter-dropdown-button>
 
 	<button mat-button title="Clear filters" class="clear-button" (click)="clearFilters()">
 		<mat-icon color="primary">clear</mat-icon>

@@ -7,11 +7,11 @@ import { MatTableModule } from '@angular/material/table';
 import { BacklogItemIconComponent } from './elements/backlog-item-icon';
 import { BacklogItemStateComponent } from './elements/backlog-item-state';
 import { BacklogItemTagsComponent } from './elements/backlog-item-tags';
-import { FilterDropdownComponent } from './elements/filter-dropdown-control';
+import { FilterDropdownButtonComponent } from './elements/filter-dropdown-button';
 
 @NgModule({
-	declarations: [BacklogItemIconComponent, BacklogItemStateComponent, BacklogItemTagsComponent, FilterDropdownComponent],
-	exports: [CommonModule, BacklogItemIconComponent, BacklogItemStateComponent, BacklogItemTagsComponent, FilterDropdownComponent],
+	declarations: [BacklogItemIconComponent, BacklogItemStateComponent, BacklogItemTagsComponent, FilterDropdownButtonComponent],
+	exports: [CommonModule, BacklogItemIconComponent, BacklogItemStateComponent, BacklogItemTagsComponent, FilterDropdownButtonComponent],
 	imports: [CommonModule, MatButtonModule, MatIconModule, MatTableModule, MatMenuModule],
 })
 export class SharedModule {}

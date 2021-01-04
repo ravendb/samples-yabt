@@ -3,11 +3,11 @@ import { Subscription } from 'rxjs';
 import { IKeyValuePair } from './ikey-value-pair';
 
 @Component({
-	selector: 'filter-dropdown',
-	styleUrls: ['./filter-dropdown.component.scss'],
-	templateUrl: './filter-dropdown.component.html',
+	selector: 'filter-dropdown-button',
+	styleUrls: ['./filter-dropdown-button.component.scss'],
+	templateUrl: './filter-dropdown-button.component.html',
 })
-export class FilterDropdownComponent implements OnInit, OnDestroy {
+export class FilterDropdownButtonComponent implements OnInit, OnDestroy {
 	@Input()
 	get label(): string {
 		return this._label;

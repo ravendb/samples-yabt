@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/
 import { BacklogItemListGetRequest } from '@core/models/backlog-item/list/BacklogItemListGetRequest';
 import { CurrentUserRelations } from '@core/models/backlog-item/list/CurrentUserRelations';
 import { BacklogItemType } from '@core/models/common/BacklogItemType';
-import { IKeyValuePair } from '@shared/elements/filter-dropdown-control';
+import { IKeyValuePair } from '@shared/elements/filter-dropdown-button';
 import { isNil } from 'lodash-es';
 import { merge } from 'rxjs';
 import { debounceTime, delay, distinctUntilChanged } from 'rxjs/operators';
