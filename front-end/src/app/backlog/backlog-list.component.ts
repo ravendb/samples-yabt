@@ -14,11 +14,11 @@ export class BacklogListComponent extends ListBaseComponent<BacklogItemListGetRe
 	private static readonly defaultFilter: Partial<BacklogItemListGetRequest> = {
 		currentUserRelation: undefined,
 		type: undefined,
+		states: undefined,
 		tags: undefined,
 		search: undefined,
 		assignedUserId: undefined,
 	};
-	//	private subscriptions: Subscription = new Subscription();
 
 	constructor(router: Router, activatedRoute: ActivatedRoute, apiService: BacklogItemsService) {
 		super(

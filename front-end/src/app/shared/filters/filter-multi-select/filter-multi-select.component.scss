@@ -1,0 +1,29 @@
+@import 'variables';
+@import 'theme';
+
+button.mat-button {
+	line-height: $mat-toolbar-height-mobile-portrait;
+}
+mat-list-option.mat-list-option {
+	::ng-deep {
+		mat-pseudo-checkbox.mat-pseudo-checkbox-checked {
+			background-color: $primary-lighter-color !important;
+		}
+	}
+}
+.action-buttons {
+	margin: 8px 16px;
+	font-size: 14px;
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: space-between;
+
+	span {
+		color: rgba(0, 0, 0, 0.87);
+		cursor: pointer;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}
