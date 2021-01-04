@@ -14,6 +14,7 @@ export class BacklogListComponent extends ListBaseComponent<BacklogItemListGetRe
 	private static readonly defaultFilter: Partial<BacklogItemListGetRequest> = {
 		currentUserRelation: undefined,
 		type: undefined,
+		states: undefined,
 		tags: undefined,
 		search: undefined,
 		assignedUserId: undefined,

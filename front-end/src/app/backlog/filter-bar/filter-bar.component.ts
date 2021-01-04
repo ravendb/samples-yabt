@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { BacklogItemListGetRequest } from '@core/models/backlog-item/list/BacklogItemListGetRequest';
 import { CurrentUserRelations } from '@core/models/backlog-item/list/CurrentUserRelations';
+import { BacklogItemState } from '@core/models/common/BacklogItemState';
 import { BacklogItemType } from '@core/models/common/BacklogItemType';
 import { IKeyValuePair } from '@shared/filters';
 import { merge } from 'rxjs';
@@ -20,6 +21,9 @@ export class FilterBarComponent extends FilterBarComponentBase<BacklogItemListGe
 	types: IKeyValuePair[] = Object.keys(BacklogItemType).map(key => {
 		return { key, value: BacklogItemType[key as keyof typeof BacklogItemType] };
 	});
+	states: IKeyValuePair[] = Object.keys(BacklogItemState).map(key => {
+		return { key, value: BacklogItemState[key as keyof typeof BacklogItemState] };
+	});
 
 	ngOnInit(): void {
 		super.ngOnInit();
@@ -28,6 +32,7 @@ export class FilterBarComponent extends FilterBarComponentBase<BacklogItemListGe
 			this.formGroup.controls.currentUserRelation.valueChanges.pipe(distinctUntilChanged()),
 			this.formGroup.controls.search.valueChanges.pipe(distinctUntilChanged(), debounceTime(400)),
 			this.formGroup.controls.type.valueChanges.pipe(distinctUntilChanged()),
+			this.formGroup.controls.states.valueChanges.pipe(distinctUntilChanged()),
 		];
 
 		this.subscription.add(

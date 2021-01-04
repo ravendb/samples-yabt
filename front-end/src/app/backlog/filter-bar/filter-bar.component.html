@@ -13,6 +13,9 @@
 	<filter-single-select label="Type" buttonAltText="Backlog item type" [options]="types" firstUndefinedOption="Any"
 		[control]="formGroup.controls.type"></filter-single-select>
 
+	<filter-multi-select label="State" buttonAltText="Item states" [options]="states" [control]="formGroup.controls.states">
+	</filter-multi-select>
+
 	<button mat-button title="Clear filters" class="clear-button" (click)="clearFilters()">
 		<mat-icon color="primary">clear</mat-icon>
 	</button>
