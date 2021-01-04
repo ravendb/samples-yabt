@@ -30,18 +30,22 @@ export class FilterSingleSelectComponent implements OnInit, OnDestroy {
 	private _label: string = 'Unspecified';
 	private _subscriptions: Subscription = new Subscription();
 
-	setType(value: string | null): void {
-		const el = !!value ? this.options.find(v => v.key == value) : undefined;
-		this.buttonText = el?.value || this.label;
-		this.control.setValue(el?.key || undefined);
-	}
-
 	ngOnInit() {
 		this._subscriptions.add(this.control.valueChanges.subscribe((key: string) => this.updateLabel(key)));
 	}
 
 	ngOnDestroy() {
 		this._subscriptions.unsubscribe();
+	}
+
+	setType(value: string | null): void {
+		const el = !!value ? this.options.find(v => v.key == value) : undefined;
+		this.buttonText = el?.value || this.label;
+		this.control.setValue(el?.key || undefined);
+	}
+
+	public isSelected(key: string): boolean {
+		return this.control.value == key;
 	}
 
 	private updateLabel(key: string): void {

@@ -4,7 +4,7 @@
 </button>
 <mat-menu #filterMenu="matMenu" [overlapTrigger]="false" xPosition="before">
 	<button *ngIf="firstUndefinedOption" mat-menu-item (click)="setType(null)">{{firstUndefinedOption}}</button>
-	<button *ngFor="let option of options" mat-menu-item (click)="setType(option.key)">
+	<button *ngFor="let option of options" mat-menu-item (click)="setType(option.key)" [class.selected]="isSelected(option.key)">
 		{{option.value}}
 	</button>
 </mat-menu>
