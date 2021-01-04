@@ -1,13 +1,13 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { IKeyValuePair } from './ikey-value-pair';
+import { IKeyValuePair } from '../ikey-value-pair';
 
 @Component({
-	selector: 'filter-dropdown-button',
-	styleUrls: ['./filter-dropdown-button.component.scss'],
-	templateUrl: './filter-dropdown-button.component.html',
+	selector: 'filter-single-select',
+	styleUrls: ['./filter-single-select.component.scss'],
+	templateUrl: './filter-single-select.component.html',
 })
-export class FilterDropdownButtonComponent implements OnInit, OnDestroy {
+export class FilterSingleSelectComponent implements OnInit, OnDestroy {
 	@Input()
 	get label(): string {
 		return this._label;

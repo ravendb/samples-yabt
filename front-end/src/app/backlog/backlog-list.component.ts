@@ -18,7 +18,6 @@ export class BacklogListComponent extends ListBaseComponent<BacklogItemListGetRe
 		search: undefined,
 		assignedUserId: undefined,
 	};
-	//	private subscriptions: Subscription = new Subscription();
 
 	constructor(router: Router, activatedRoute: ActivatedRoute, apiService: BacklogItemsService) {
 		super(
