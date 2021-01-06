@@ -6,7 +6,7 @@ import { AppConfig } from '@core/app.config';
 import { ListRequest } from '@core/models/common/ListRequest';
 import { BaseApiService } from '@core/services/base-api.service';
 import { nameOf } from '@utils/nameof';
-import { filter as arrFilter, get, isEqual, isNil, omitBy } from 'lodash-es';
+import { filter as arrFilter, get, isEqual, isNil, omitBy, orderBy } from 'lodash-es';
 import { merge, Subject, Subscription } from 'rxjs';
 import { delay, distinctUntilChanged, filter, tap } from 'rxjs/operators';
 import { PaginatedDataSource } from './paginated-datasource';
@@ -221,9 +221,10 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 	// Get an instance of the filter class from Query String parameters
 	private getFilterFromQueryString(params: ParamMap): TFilter {
 		// convert the ParamMap to an object
-		const paramsObj = params.keys.reduce((obj, key) => {
+		const paramsObj = orderBy(params.keys).reduce((obj, key) => {
 			// 'params.getAll(key)' returns an array, when 'params.get(key)' - only the first value
-			let value: string | string[] | null = this.filter[key as keyof TFilter] instanceof Array ? params.getAll(key) : params.get(key);
+			let value: string | string[] | { [x: string]: string } | null =
+				this.filter[key as keyof TFilter] instanceof Array ? params.getAll(key) : params.get(key);
 			if (key.indexOf('[') >= 0) {
 				// convert dictionaries to objects
 				const [parent, child] = key.split(/\[|\]/);

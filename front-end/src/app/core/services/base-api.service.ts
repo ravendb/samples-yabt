@@ -78,12 +78,12 @@ export abstract class BaseApiService {
 	}
 
 	protected toHttpParams(input: { [key: string]: any } | undefined): HttpParams {
-		return !input
-			? new HttpParams()
-			: Object.getOwnPropertyNames(input).reduce(
-					(p, key) => p.set(key, input[key]),
-					new HttpParams({ encoder: new HttpParamForcedUriCodec() })
-			  );
+		// Convert object to HttpParams (see https://stackoverflow.com/a/47928379/968003).
+		// Use custom encoding to work around problems with encoding of '+'.
+		return new HttpParams({
+			encoder: new HttpParamForcedUriCodec(),
+			fromObject: input,
+		});
 	}
 
 	private handleErrorObservable(response: HttpErrorResponse) {

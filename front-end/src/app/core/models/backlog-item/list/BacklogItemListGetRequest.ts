@@ -5,7 +5,7 @@ import { CurrentUserRelations } from './CurrentUserRelations';
 
 export class BacklogItemListGetRequest extends ListRequest {
 	type: keyof typeof BacklogItemType | undefined;
-	states: keyof typeof BacklogItemState[] | undefined;
+	states: Array<keyof typeof BacklogItemState> | undefined;
 	tags: string[] | undefined;
 	search: string | undefined;
 	assignedUserId: string | undefined;
