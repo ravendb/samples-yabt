@@ -68,14 +68,17 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 
 		private async Task<IRavenQueryable<BacklogItemIndexedForList>> ApplyFilters(IRavenQueryable<BacklogItemIndexedForList> query, BacklogItemListGetRequest dto)
 		{
-			if (dto.Type != BacklogItemType.Unknown)
+			if (dto.Type != null)
 				query = query.Where(t => t.Type == dto.Type);
 
-			if (dto.State != null)
-				query = query.Where(t => t.State == dto.State);
+			if (dto.States?.Where(v => v.HasValue).Select(v => v.Value).ToList() is var states 
+				&& states?.Any() == true)
+			{
+				query = query.Where(t => t.State.In(states));
+			}
 
 			if (dto.Tags?.Any() == true)
-				foreach (var tag in dto.Tags)
+				foreach (var tag in dto.Tags.Where(t => !string.IsNullOrEmpty(t)))
 					query = query.Where(e => e.Tags!.Contains(tag));					// Note: [Tags] is a nullable field, but when the LINQ gets converted to RQL the potential NULLs get handled 
 
 			if (dto.CurrentUserRelation != CurrentUserRelations.None)

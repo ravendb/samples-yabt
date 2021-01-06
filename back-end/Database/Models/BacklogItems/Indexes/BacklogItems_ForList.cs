@@ -38,7 +38,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 							.Concat(ticket.Comments.Select(c => c.Message)),
 
 					Tags = ticket.Tags.Distinct().ToList(),		// filter
-					Steate = ticket.State,						// filter
+					ticket.State,								// filter
 
 					// Dynamic fields
 					// Notes:
