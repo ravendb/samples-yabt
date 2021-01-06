@@ -1,8 +1,7 @@
 import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSelectionList } from '@angular/material/list';
-import { compact, isArray, isEmpty, isEqual, isString } from 'lodash-es';
+import { compact, isArray, isEmpty, isString } from 'lodash-es';
 import { Subscription } from 'rxjs';
-import { distinctUntilChanged } from 'rxjs/operators';
 import { IKeyValuePair } from '../ikey-value-pair';
 
 @Component({
@@ -38,15 +37,17 @@ export class FilterMultiSelectComponent implements OnInit, AfterViewInit, OnDest
 		this._subscriptions.add(this.control.valueChanges.subscribe((keys: string[]) => this.updateLabel(keys)));
 	}
 	ngAfterViewInit() {
-		this._subscriptions.add(this.list.selectionChange.pipe(distinctUntilChanged(isEqual)).subscribe(() => this.applyFilter()));
+		this._subscriptions.add(this.list.selectionChange.subscribe(() => this.applyFilter()));
 	}
 	ngOnDestroy() {
 		this._subscriptions.unsubscribe();
 	}
+
 	applyFilter(): void {
 		const keys: string[] = compact(
 			this.list.selectedOptions.selected.map(option => this.options.find(item => option.value === item.key)?.key)
 		);
+
 		this.control.setValue(keys || undefined);
 	}
 

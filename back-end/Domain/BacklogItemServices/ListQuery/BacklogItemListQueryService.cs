@@ -71,7 +71,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			if (dto.Type != null)
 				query = query.Where(t => t.Type == dto.Type);
 
-			if (dto.States?.Where(v => v.HasValue).Select(v => v.Value).ToList() is var states 
+			if (dto.States?.Where(v => v.HasValue).Select(v => v!.Value).ToList() is var states 
 				&& states?.Any() == true)
 			{
 				query = query.Where(t => t.State.In(states));
