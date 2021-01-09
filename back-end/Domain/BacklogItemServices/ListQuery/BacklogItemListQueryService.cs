@@ -68,8 +68,9 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 
 		private async Task<IRavenQueryable<BacklogItemIndexedForList>> ApplyFilters(IRavenQueryable<BacklogItemIndexedForList> query, BacklogItemListGetRequest dto)
 		{
-			if (dto.Type != null)
-				query = query.Where(t => t.Type == dto.Type);
+			if (dto.Types?.Where(v => v.HasValue).Select(v => v!.Value).ToList() is var types 
+				&& types?.Any() == true)
+				query = query.Where(t => t.Type.In(types));
 
 			if (dto.States?.Where(v => v.HasValue).Select(v => v!.Value).ToList() is var states 
 				&& states?.Any() == true)

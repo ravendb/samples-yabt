@@ -13,7 +13,7 @@ import { BacklogItemsService } from '@core/services/backlogItems.service';
 export class BacklogListComponent extends ListBaseComponent<BacklogItemListGetResponse, BacklogItemListGetRequest> {
 	private static readonly defaultFilter: Partial<BacklogItemListGetRequest> = {
 		currentUserRelation: undefined,
-		type: undefined,
+		types: [],
 		states: [],
 		tags: undefined,
 		search: undefined,

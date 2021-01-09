@@ -7,10 +7,17 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs
 {
 	public class BacklogItemListGetRequest : ListRequest<BacklogItemsOrderColumns>
 	{
-		public BacklogItemType? Type { get; set; }
+		/// <summary>
+		///		Request items with specified types (user story, task, etc.)		
+		/// </summary>
+		/// <remarks>
+		///		The (enum | null)[] type helps to prevent  "The value '' is invalid." validation error.
+		///		See the problem description at https://stackoverflow.com/q/55868883/968003
+		/// </remarks>
+		public BacklogItemType?[]? Types { get; set; }
 
 		/// <summary>
-		///		Request items with specified states		
+		///		Request items with specified states (new, closed, etc.)		
 		/// </summary>
 		/// <remarks>
 		///		The (enum | null)[] type helps to prevent  "The value '' is invalid." validation error.

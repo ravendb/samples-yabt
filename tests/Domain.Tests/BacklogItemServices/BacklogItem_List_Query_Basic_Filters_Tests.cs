@@ -44,22 +44,22 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			base.ConfigureIocContainer(services);
 
 			var currentUserResolver = Substitute.For<ICurrentUserResolver>();
-				currentUserResolver.GetCurrentUserId().Returns(c => _currentUserId);
-			services.AddScoped(x => currentUserResolver);
+				currentUserResolver.GetCurrentUserId().Returns(_ => _currentUserId);
+			services.AddScoped(_ => currentUserResolver);
 		}
 
 		[Theory]
 		[InlineData(BacklogItemType.Bug, 1)]
 		[InlineData(BacklogItemType.UserStory, 1)]
-		[InlineData(BacklogItemType.Unknown, 2)]
-		private async Task Querying_By_Type_Works(BacklogItemType type, int expectedRecordCount)
+		[InlineData(null, 2)]
+		private async Task Querying_By_Type_Works(BacklogItemType? type, int expectedRecordCount)
 		{
 			// GIVEN two backlog items: a bug and a user story
 			var bugRef = await CreateBacklogItem<BugAddUpdRequest>();
 			var usRef = await CreateBacklogItem<UserStoryAddUpdRequest>();
 
 			// WHEN querying by type
-			var items = await _queryService.GetList(new BacklogItemListGetRequest { Type = type } );
+			var items = await _queryService.GetList(new BacklogItemListGetRequest { Types = new []{type} } );
 
 			// THEN 
 			// the returned number of records is correct
