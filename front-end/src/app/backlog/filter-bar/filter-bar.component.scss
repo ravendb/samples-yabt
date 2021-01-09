@@ -28,6 +28,13 @@ span.options-filter {
 	//	display: inline-block;
 	//	min-width: 120px !important;
 }
+span.item-text {
+	align-items: center;
+	display: flex;
+	:first-child {
+		display: flex;
+	}
+}
 mat-icon.filter-icon {
 	color: $primary-light-color;
 	align-self: center;

@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ContentChild, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatSelectionList } from '@angular/material/list';
 import { compact, isArray, isEmpty, isString } from 'lodash-es';
 import { Subscription } from 'rxjs';
@@ -12,6 +12,8 @@ import { IKeyValuePair } from '../ikey-value-pair';
 export class FilterMultiSelectComponent implements OnInit, AfterViewInit, OnDestroy {
 	@ViewChild(MatSelectionList)
 	list!: MatSelectionList;
+	@ContentChild(TemplateRef)
+	templateRef: TemplateRef<any> | undefined;
 
 	@Input()
 	get label(): string {

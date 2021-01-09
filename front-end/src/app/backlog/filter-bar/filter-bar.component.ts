@@ -31,7 +31,7 @@ export class FilterBarComponent extends FilterBarComponentBase<BacklogItemListGe
 		const triggers = [
 			this.formGroup.controls.currentUserRelation.valueChanges.pipe(distinctUntilChanged()),
 			this.formGroup.controls.search.valueChanges.pipe(distinctUntilChanged(), debounceTime(400)),
-			this.formGroup.controls.type.valueChanges.pipe(distinctUntilChanged()),
+			this.formGroup.controls.types.valueChanges.pipe(distinctUntilChanged()),
 			this.formGroup.controls.states.valueChanges.pipe(distinctUntilChanged()),
 		];
 

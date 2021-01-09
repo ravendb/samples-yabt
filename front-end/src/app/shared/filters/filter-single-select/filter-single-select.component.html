@@ -5,6 +5,8 @@
 <mat-menu #filterMenu="matMenu" [overlapTrigger]="false" xPosition="before">
 	<button *ngIf="firstUndefinedOption" mat-menu-item (click)="setType(null)">{{firstUndefinedOption}}</button>
 	<button *ngFor="let option of options" mat-menu-item (click)="setType(option.key)" [class.selected]="isSelected(option.key)">
-		{{option.value}}
+		<ng-container *ngIf="templateRef" [ngTemplateOutlet]="templateRef" [ngTemplateOutletContext]="{$implicit:option.key}">
+		</ng-container>
+		<ng-template [ngIf]="!templateRef">{{ option.value }}</ng-template>
 	</button>
 </mat-menu>

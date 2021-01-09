@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, ContentChild, Input, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { IKeyValuePair } from '../ikey-value-pair';
 
@@ -8,6 +8,9 @@ import { IKeyValuePair } from '../ikey-value-pair';
 	templateUrl: './filter-single-select.component.html',
 })
 export class FilterSingleSelectComponent implements OnInit, OnDestroy {
+	@ContentChild(TemplateRef)
+	templateRef: TemplateRef<any> | undefined;
+
 	@Input()
 	get label(): string {
 		return this._label;
