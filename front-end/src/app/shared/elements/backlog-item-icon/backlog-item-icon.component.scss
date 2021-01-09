@@ -12,6 +12,9 @@ mat-icon.mat-icon {
 			transform: scale($list-component-icon-size / 24px);
 		}
 	}
+	&.feature {
+		color: #773b93;
+	}
 	&.bug {
 		color: #cc293d;
 	}
