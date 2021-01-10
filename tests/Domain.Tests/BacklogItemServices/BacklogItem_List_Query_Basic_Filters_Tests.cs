@@ -49,28 +49,26 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		}
 
 		[Theory]
-		[InlineData(BacklogItemType.Bug, 1)]
-		[InlineData(BacklogItemType.UserStory, 1)]
-		[InlineData(null, 2)]
-		private async Task Querying_By_Type_Works(BacklogItemType? type, int expectedRecordCount)
+		[InlineData(new []{ BacklogItemType.Bug }, 1)]
+		[InlineData(new []{ BacklogItemType.UserStory }, 1)]
+		[InlineData(new []{ BacklogItemType.Feature }, 0)]
+		[InlineData(new []{ BacklogItemType.Bug, BacklogItemType.Feature }, 1)]
+		[InlineData(new []{ BacklogItemType.Bug, BacklogItemType.UserStory }, 2)]
+		[InlineData(null, 3)]
+		private async Task Querying_By_Type_Works(BacklogItemType[]? type, int expectedRecordCount)
 		{
-			// GIVEN two backlog items: a bug and a user story
+			// GIVEN 3 backlog items of a different type
 			var bugRef = await CreateBacklogItem<BugAddUpdRequest>();
 			var usRef = await CreateBacklogItem<UserStoryAddUpdRequest>();
+			var taskRef = await CreateBacklogItem<TaskAddUpdRequest>();
 
 			// WHEN querying by type
-			var items = await _queryService.GetList(new BacklogItemListGetRequest { Types = new []{type} } );
+			var requiredType = type?.Select(t => t as BacklogItemType?).ToArray();
+			var items = await _queryService.GetList(new BacklogItemListGetRequest { Types = requiredType } );
 
 			// THEN 
 			// the returned number of records is correct
 			Assert.Equal(expectedRecordCount, items.TotalRecords);
-			if (expectedRecordCount == 1)
-			{
-				// with correct type
-				Assert.Equal(type, items.Entries.First().Type);
-				// and with correct ID
-				Assert.Equal((type == BacklogItemType.Bug) ? bugRef.Id : usRef.Id, items.Entries.First().Id);
-			}
 		}
 
 		[Fact]
