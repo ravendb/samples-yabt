@@ -15,7 +15,7 @@ export class BacklogListComponent extends ListBaseComponent<BacklogItemListGetRe
 		currentUserRelation: undefined,
 		types: [],
 		states: [],
-		tags: undefined,
+		tags: [],
 		search: undefined,
 		assignedUserId: undefined,
 	};
