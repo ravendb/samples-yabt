@@ -36,6 +36,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			{
 				BugAddUpdRequest bug		 => await ConvertDtoToEntity<BacklogItemBug, BugAddUpdRequest>(bug),
 				UserStoryAddUpdRequest story => await ConvertDtoToEntity<BacklogItemUserStory, UserStoryAddUpdRequest>(story),
+				TaskAddUpdRequest task		 => await ConvertDtoToEntity<BacklogItemTask, TaskAddUpdRequest>(task),
 				_ => null,
 			};
 			if (ticket == null)
@@ -71,6 +72,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			{
 				BugAddUpdRequest bug			=> await ConvertDtoToEntity (bug,	entity as BacklogItemBug),
 				UserStoryAddUpdRequest story	=> await ConvertDtoToEntity (story,	entity as BacklogItemUserStory),
+				TaskAddUpdRequest task			=> await ConvertDtoToEntity (task,  entity as BacklogItemTask),
 				_ => null
 			};
 			if (entity == null)
