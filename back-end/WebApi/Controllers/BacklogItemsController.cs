@@ -42,6 +42,15 @@ namespace Raven.Yabt.WebApi.Controllers
 		                                                              [FromQuery] BacklogItemCommentListGetRequest @params)
 			=> service.GetById(id, @params).ToActionResultOfT();
 
+		/// <summary>
+		///		Get a list of Backlog Items tags
+		/// </summary>
+		[HttpGet("tags")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public Task<BacklogItemTagListGetResponse[]> GetTags([FromServices] IBacklogItemListQueryService service,
+		                                                              [FromQuery] BacklogItemTagListGetRequest dto)
+			=> service.GetTags(dto);
+
 		#endregion / GET requests ---------------
 
 		#region POST requests -------------------

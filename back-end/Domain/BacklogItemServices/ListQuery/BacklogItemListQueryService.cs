@@ -66,6 +66,24 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			return new ListResponse<BacklogItemListGetResponse>(ret, totalRecords, dto.PageIndex, dto.PageSize);
 		}
 
+		public async Task<BacklogItemTagListGetResponse[]> GetTags(BacklogItemTagListGetRequest dto)
+		{
+			var query = DbSession.Query<BacklogItemTagsIndexed, BacklogItems_Tags>();
+			if (!string.IsNullOrWhiteSpace(dto.Search))
+				query = ApplySearch(query, i => i.Name, dto.Search);
+			else
+				query = query.OrderByDescending(b => b.Count);
+			
+			var ret = await (from b in query
+					select new BacklogItemTagListGetResponse
+					{ 
+						Name = b.Name,
+						Count = b.Count
+					}
+				).ToArrayAsync();
+			return ret;
+		}
+
 		private async Task<IRavenQueryable<BacklogItemIndexedForList>> ApplyFilters(IRavenQueryable<BacklogItemIndexedForList> query, BacklogItemListGetRequest dto)
 		{
 			if (dto.Types?.Where(v => v.HasValue).Select(v => v!.Value).ToList() is var types 
