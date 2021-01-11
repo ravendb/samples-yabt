@@ -37,31 +37,31 @@ $primary-palette: (
 	),
 );
 $accent-palette: (
-	50: #fefeff,
-	100: #fefefe,
-	200: #fdfdfd,
-	300: #fcfcfc,
-	400: #fbfbfc,
-	500: #fafafb,
-	600: #f9f9fa,
-	700: #f9f9fa,
-	800: #f8f8f9,
-	900: #f6f6f8,
-	A100: #ffffff,
-	A200: #ffffff,
-	A400: #ffffff,
-	A700: #ffffff,
+	50: #f9e4eb,
+	100: #efbbcd,
+	200: #e58eac,
+	300: #da608b,
+	400: #d23e72,
+	500: #ca1c59,
+	600: #c51951,
+	700: #bd1448,
+	800: #b7113e,
+	900: #ab092e,
+	A100: #ffd7de,
+	A200: #ffa4b4,
+	A400: #ff718a,
+	A700: #ff5875,
 	contrast: (
 		50: #000000,
 		100: #000000,
 		200: #000000,
 		300: #000000,
-		400: #000000,
-		500: #000000,
-		600: #000000,
-		700: #000000,
-		800: #000000,
-		900: #000000,
+		400: #ffffff,
+		500: #ffffff,
+		600: #ffffff,
+		700: #ffffff,
+		800: #ffffff,
+		900: #ffffff,
 		A100: #000000,
 		A200: #000000,
 		A400: #000000,
@@ -86,6 +86,7 @@ $theme: mat-light-theme($theme-primary, $theme-accent);
 
 @include angular-material-theme($theme);
 
+$white-background: #fdfdfd;
 $light-grey-background: #555555;
 $dark-grey-background: #f9f9f9;
 
