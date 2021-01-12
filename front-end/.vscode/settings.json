@@ -1,30 +1,35 @@
 {
 	"editor.formatOnSave": true,
 	"editor.codeActionsOnSave": {
-	  "source.fixAll.tslint": true
+		"source.fixAll.tslint": true
 	},
 	"editor.tabSize": 4,
 	"beautify.language": {
-	  "html": ["htm", "html"]
+		"html": [
+			"htm",
+			"html"
+		]
 	},
 	"scss.validate": true,
 	"scss.lint.duplicateProperties": "error",
 	"scss.lint.hexColorLength": "error",
 	"scss.lint.unknownProperties": "warning",
 	"scss.completion.completePropertyWithSemicolon": true,
-	"beautify.ignore": ["!**/*.html"],
+	"beautify.ignore": [
+		"!**/*.html"
+	],
 	"json.format.enable": true,
 	"[json]": {
-	  "editor.defaultFormatter": "vscode.css-language-features"
+		"editor.defaultFormatter": "vscode.css-language-features"
 	},
 	"[jsonc]": {
-	  "editor.defaultFormatter": "vscode.css-language-features"
+		"editor.defaultFormatter": "vscode.css-language-features"
 	},
 	"[scss]": {
-	  "editor.defaultFormatter": "esbenp.prettier-vscode"
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
 	},
 	"[html]": {
-	  "editor.defaultFormatter": "HookyQR.beautify"
+		"editor.defaultFormatter": "HookyQR.beautify"
 	},
 	"[typescript]": {
 		"editor.codeActionsOnSave": {
@@ -33,7 +38,6 @@
 	},
 	"typescript.tsdk": "node_modules/typescript/lib",
 	"peacock.color": "#444444",
-
 	"cSpell.words": [
 		"Sidenav",
 		"YABT",
@@ -63,5 +67,32 @@
 		"titleBar.activeForeground": "#e7e7e7",
 		"titleBar.inactiveBackground": "#44444499",
 		"titleBar.inactiveForeground": "#e7e7e799"
+	},
+	// Configure glob patterns for excluding files and folders. 
+	// For example, the files explorer decides which files and folders to show 
+	// or hide based on this setting. 
+	// Read more about glob patterns [here](https://code.visualstudio.com/docs/editor/codebasics#_advanced-search-options).
+	"files.exclude": {
+		"**/.git": true,
+		"**/.DS_Store": true,
+		"**/node_modules": true,
+	},
+	// Configure glob patterns for excluding files and folders in searches. 
+	// Inherits all glob patterns from the `files.exclude` setting.   
+	// Read more about glob patterns [here](https://code.visualstudio.com/docs/editor/codebasics#_advanced-search-options).
+	"search.exclude": {
+		"**/node_modules": true,
+		"**/dist": true
+	},
+	// Configure glob patterns of file paths to exclude from file watching. 
+	// Patterns must match on absolute paths 
+	// (i.e. prefix with ** or the full path to match properly). 
+	// Changing this setting requires a restart. 
+	// When you experience Code consuming lots of cpu time on startup, 
+	// you can exclude large folders to reduce the initial load.
+	"files.watcherExclude": {
+		"**/.git/objects/**": true,
+		"**/.git/subtree-cache/**": true,
+		"**/node_modules/*/**": true
 	}
 }
