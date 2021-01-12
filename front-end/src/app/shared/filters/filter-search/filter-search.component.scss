@@ -1,0 +1,29 @@
+@import 'theme';
+
+mat-form-field.stretched {
+	padding-top: 4px;
+	display: flex;
+
+	::ng-deep {
+		div.mat-form-field-wrapper {
+			padding-bottom: 0px;
+			flex: 1 1 auto;
+			div.mat-form-field-flex {
+				align-items: center !important;
+
+				div.mat-form-field-infix {
+					width: unset;
+				}
+			}
+			div.mat-form-field-underline {
+				display: none;
+			}
+		}
+	}
+}
+
+mat-icon {
+	align-self: center;
+	padding: 8px 8px 0 0;
+	color: $primary-light-color;
+}

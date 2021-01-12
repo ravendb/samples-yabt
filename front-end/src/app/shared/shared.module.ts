@@ -11,6 +11,7 @@ import { BacklogItemIconComponent } from './elements/backlog-item-icon';
 import { BacklogItemStateComponent } from './elements/backlog-item-state';
 import { BacklogItemTagsComponent } from './elements/backlog-item-tags';
 import { FilterMultiSelectComponent } from './filters/filter-multi-select';
+import { FilterSearchComponent } from './filters/filter-search';
 import { FilterSingleSelectComponent } from './filters/filter-single-select';
 import { FilterTagSelectComponent } from './filters/filter-tag-select';
 
@@ -19,8 +20,9 @@ import { FilterTagSelectComponent } from './filters/filter-tag-select';
 		BacklogItemIconComponent,
 		BacklogItemStateComponent,
 		BacklogItemTagsComponent,
-		FilterSingleSelectComponent,
 		FilterMultiSelectComponent,
+		FilterSingleSelectComponent,
+		FilterSearchComponent,
 		FilterTagSelectComponent,
 	],
 	exports: [
@@ -28,8 +30,9 @@ import { FilterTagSelectComponent } from './filters/filter-tag-select';
 		BacklogItemIconComponent,
 		BacklogItemStateComponent,
 		BacklogItemTagsComponent,
-		FilterSingleSelectComponent,
 		FilterMultiSelectComponent,
+		FilterSingleSelectComponent,
+		FilterSearchComponent,
 		FilterTagSelectComponent,
 	],
 	imports: [

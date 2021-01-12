@@ -1,14 +1,11 @@
-<form [formGroup]="formGroup" class="filter">
+<div class="filter">
 
 	<filter-single-select label="All" buttonAltText="Quick filter" [options]="modes" firstUndefinedOption="All"
 		[control]="formGroup.controls.currentUserRelation"></filter-single-select>
 
 	<div class="divider"></div>
 
-	<mat-icon class="filter-icon">filter_alt</mat-icon>
-	<mat-form-field class="search">
-		<input matInput formControlName="search" placeholder="Filter by keyword">
-	</mat-form-field>
+	<filter-search [control]="formGroup.controls.search"></filter-search>
 
 	<filter-multi-select label="Type" buttonAltText="Backlog item type" [options]="types" [control]="formGroup.controls.types"
 		class="hide-on-mobile">
@@ -26,8 +23,9 @@
 	</filter-multi-select>
 	<filter-tag-select [control]="formGroup.controls.tags"></filter-tag-select>
 
-	<button mat-button title="Clear filters" class="clear-button" (click)="clearFilters()">
+
+	<button mat-button title="Clear filters" class="clear-button" (click)="clearFilters()" class="hide-on-mobile">
 		<mat-icon color="primary">clear</mat-icon>
 	</button>
 
-</form>
+</div>
