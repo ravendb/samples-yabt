@@ -1,8 +1,7 @@
-import { AfterViewInit, Component, ContentChild, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ContentChild, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { MatSelectionList } from '@angular/material/list';
 import { compact, isArray, isEmpty, isString } from 'lodash-es';
-import { Subscription } from 'rxjs';
-import { delay } from 'rxjs/operators';
+import { BaseFilterButtonComponent } from '../base-filter-button';
 import { IKeyValuePair } from '../ikey-value-pair';
 
 @Component({
@@ -10,43 +9,18 @@ import { IKeyValuePair } from '../ikey-value-pair';
 	styleUrls: ['./filter-multi-select.component.scss'],
 	templateUrl: './filter-multi-select.component.html',
 })
-export class FilterMultiSelectComponent implements OnInit, AfterViewInit, OnDestroy {
+export class FilterMultiSelectComponent
+	extends BaseFilterButtonComponent<string[], IKeyValuePair>
+	implements OnInit, AfterViewInit, OnDestroy {
 	@ViewChild(MatSelectionList)
 	list!: MatSelectionList;
 	@ContentChild(TemplateRef)
 	templateRef: TemplateRef<any> | undefined;
 
-	@Input()
-	get label(): string {
-		return this._label;
-	}
-	set label(value: string) {
-		this._label = value;
-		this.updateLabel(this.control?.value);
-	}
-	@Input()
-	buttonAltText: string = '';
-	@Input()
-	options: IKeyValuePair[] = [];
-	@Input()
-	control!: AbstractControl;
-	@Input()
-	stretchedAndStroked: boolean = false;
-
-	buttonText: string = this.label;
 	rectangleText: string = '';
 
-	private _label: string = 'Unspecified';
-	private _subscriptions: Subscription = new Subscription();
-
-	ngOnInit() {
-		this._subscriptions.add(this.control.valueChanges.pipe(delay(0)).subscribe((keys: string[]) => this.updateLabel(keys)));
-	}
 	ngAfterViewInit() {
 		this._subscriptions.add(this.list.selectionChange.subscribe(() => this.applyFilter()));
-	}
-	ngOnDestroy() {
-		this._subscriptions.unsubscribe();
 	}
 
 	applyFilter(): void {
@@ -62,7 +36,7 @@ export class FilterMultiSelectComponent implements OnInit, AfterViewInit, OnDest
 		this.applyFilter();
 	}
 
-	private updateLabel(keys: string[]): void {
+	protected updateLabel(keys: string[]): void {
 		if (isEmpty(keys)) this.buttonText = this.label;
 		else {
 			if (!isArray(keys)) keys = [keys];

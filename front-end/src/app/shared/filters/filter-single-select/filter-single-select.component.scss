@@ -1,9 +1,5 @@
-@import 'variables';
+@import 'filter-button';
 @import 'theme';
-
-button.mat-button {
-	line-height: $mat-toolbar-height-mobile-portrait;
-}
 
 .selected {
 	background-color: $primary-light-color;
@@ -17,8 +13,4 @@ button.mat-button {
 		color: unset;
 		background-color: unset;
 	}
-}
-
-span.lighter-font {
-	font-weight: 400;
 }

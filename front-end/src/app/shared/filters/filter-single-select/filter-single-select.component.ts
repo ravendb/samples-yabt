@@ -1,5 +1,5 @@
 import { Component, ContentChild, Input, OnDestroy, OnInit, TemplateRef } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { BaseFilterButtonComponent } from '../base-filter-button';
 import { IKeyValuePair } from '../ikey-value-pair';
 
 @Component({
@@ -7,39 +7,12 @@ import { IKeyValuePair } from '../ikey-value-pair';
 	styleUrls: ['./filter-single-select.component.scss'],
 	templateUrl: './filter-single-select.component.html',
 })
-export class FilterSingleSelectComponent implements OnInit, OnDestroy {
+export class FilterSingleSelectComponent extends BaseFilterButtonComponent<string, IKeyValuePair> implements OnInit, OnDestroy {
 	@ContentChild(TemplateRef)
 	templateRef: TemplateRef<any> | undefined;
 
 	@Input()
-	get label(): string {
-		return this._label;
-	}
-	set label(value: string) {
-		this._label = value;
-		this.updateLabel(this.control?.value);
-	}
-	@Input()
-	buttonAltText: string = '';
-	@Input()
-	options: IKeyValuePair[] = [];
-	@Input()
 	firstUndefinedOption: string = '';
-	@Input()
-	control!: AbstractControl;
-
-	buttonText: string = this.label;
-
-	private _label: string = 'Unspecified';
-	private _subscriptions: Subscription = new Subscription();
-
-	ngOnInit() {
-		this._subscriptions.add(this.control.valueChanges.subscribe((key: string) => this.updateLabel(key)));
-	}
-
-	ngOnDestroy() {
-		this._subscriptions.unsubscribe();
-	}
 
 	setType(value: string | null): void {
 		const el = !!value ? this.options.find(v => v.key == value) : undefined;
@@ -51,7 +24,7 @@ export class FilterSingleSelectComponent implements OnInit, OnDestroy {
 		return this.control.value == key;
 	}
 
-	private updateLabel(key: string): void {
+	protected updateLabel(key: string): void {
 		const el = !!key ? this.options.find(v => v.key == key) : undefined;
 		this.buttonText = el?.value || this.label;
 	}
