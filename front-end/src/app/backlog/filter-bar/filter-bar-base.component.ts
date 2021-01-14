@@ -1,6 +1,7 @@
 import { Directive, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ListRequest } from '@core/models/common/ListRequest';
+import { generateFormGroupFromObject } from '@utils/abstract-control';
 import { isArray, isEmpty, isNil } from 'lodash-es';
 import { Subscription } from 'rxjs';
 
@@ -22,12 +23,7 @@ export class FilterBarComponentBase<TFilter extends ListRequest> implements OnIn
 	constructor(private fb: FormBuilder) {}
 
 	ngOnInit(): void {
-		this.formGroup = this.fb.group(
-			Object.keys(this._filter).reduce(
-				(prev, curr) => Object.assign(prev, { [curr]: this._filter[curr as keyof TFilter] instanceof Array ? [] : null }),
-				{}
-			)
-		) as FormGroupTyped<TFilter>;
+		this.formGroup = generateFormGroupFromObject(this.fb, this._filter);
 	}
 
 	clearFilters(): void {
