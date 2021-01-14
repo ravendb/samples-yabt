@@ -3,6 +3,9 @@
 
 mat-table.mat-table {
 	padding: 0 16px;
+	@include breakpointXSmall() {
+		padding: 0px 4px;
+	}
 }
 
 mat-header-row.mat-header-row {

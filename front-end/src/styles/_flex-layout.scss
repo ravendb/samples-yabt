@@ -1,0 +1,71 @@
+/* 
+ * Layout leverage the flex-box for aligning controls in rows and columns
+*/
+@import 'breakpoints';
+
+// The gap between items when using .flex-row and .flex-column in _layout.scss
+$flex-gap: 16px;
+
+@mixin flex-base() {
+	display: flex;
+	align-content: space-between;
+	> * {
+		flex: 1;
+	}
+}
+
+.flex-column {
+	@include flex-base();
+	flex-direction: column;
+
+	&__no-gap > *:not(:first-child) {
+		margin-top: 0;
+	}
+
+	> *:not(:first-child) {
+		margin-top: $flex-gap;
+	}
+}
+
+.flex-row {
+	@include flex-base();
+	flex-direction: row;
+
+	@include breakpointXSmall() {
+		&:not(.always-row) {
+			flex-direction: column;
+
+			> *:not(:first-child) {
+				margin-top: $flex-gap;
+			}
+		}
+	}
+
+	&__no-gap > *:not(:first-child) {
+		margin-left: 0;
+	}
+
+	&.always-row {
+		> *:not(:first-child) {
+			margin-left: $flex-gap;
+			@include breakpointXSmall() {
+				margin-left: $flex-gap / 2;
+			}
+		}
+	}
+
+	@include breakpointMediumAndUp() {
+		> *:not(:first-child) {
+			margin-left: $flex-gap;
+		}
+	}
+}
+
+.flex-wrap {
+	flex-wrap: wrap;
+}
+
+.flex-align {
+	display: flex !important;
+	align-items: center;
+}
