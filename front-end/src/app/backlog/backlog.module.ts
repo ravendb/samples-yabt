@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
@@ -12,14 +13,17 @@ import { MatTableModule } from '@angular/material/table';
 import { SharedModule } from '@shared';
 import { BacklogListComponent } from './backlog-list.component';
 import { BacklogRouting } from './backlog.routing';
-import { FilterBarComponent } from './filter-bar/filter-bar.component';
+import { FilterBarComponent } from './filter-bar';
+import { BacklogFilterDialogComponent } from './filter-dialog';
+import { BacklogFiltersComponent } from './filters';
 
 @NgModule({
-	declarations: [BacklogListComponent, FilterBarComponent],
+	declarations: [BacklogListComponent, BacklogFiltersComponent, FilterBarComponent, BacklogFilterDialogComponent],
 	imports: [
 		CommonModule,
 		BacklogRouting,
 		MatButtonModule,
+		MatDialogModule,
 		MatIconModule,
 		MatInputModule,
 		MatMenuModule,

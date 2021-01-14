@@ -1,42 +1,30 @@
 @import 'breakpoints';
-@import 'variables';
 @import 'theme';
-
-:host {
-	background-color: white;
-}
 
 div.filter {
 	margin: 0 16px;
-	line-height: $mat-toolbar-height-mobile-portrait;
+	@include breakpointXSmall() {
+		margin: 0px;
+	}
 	border-bottom: thin solid;
 	border-bottom-color: rgba(200, 200, 200, 1);
 	display: flex;
-	flex: 1 1 100%;
 
-	filter-search {
+	backlog-filters {
+		margin: 0 8px;
 		flex: 1 1 auto;
 	}
-}
-.divider {
-	flex: 0 1 auto;
-	align-self: center;
-	width: 1px;
-	min-width: 1px;
-	height: 24px;
-	background-color: rgba(200, 200, 200, 1);
-	margin: 0 8px 0 8px;
-}
-span.options-filter {
-	line-height: $mat-toolbar-height-mobile-portrait;
-}
-span.item-text {
-	align-items: center;
-	display: flex;
-	:first-child {
-		display: flex;
+	.divider {
+		flex: 0 1 auto;
+		align-self: center;
+		width: 1px;
+		min-width: 1px;
+		height: 24px;
+		background-color: rgba(200, 200, 200, 1);
+		margin: 0 8px 0 8px;
 	}
 }
+
 mat-icon {
 	align-self: center;
 	padding-right: 8px;
@@ -44,15 +32,12 @@ mat-icon {
 		color: $accent-dark-color;
 	}
 }
-
-filter-tag-select {
-	@include makeHiddenSmallAndDown();
-}
 .hide-on-mobile {
-	@include makeHiddenSmall();
+	@include makeHiddenSmallAndDown();
 }
 
 button.clear-button {
+	@include makeHiddenSmallAndDown();
 	min-width: auto;
 	mat-icon {
 		color: $primary-light-color;

@@ -1,0 +1,21 @@
+<div [class.stretched-filter-bar]="!isDialog" [class.two-column-grid]="isDialog">
+	<filter-search [control]="formGroup.controls.search"></filter-search>
+
+	<filter-multi-select label="Type" buttonAltText="Backlog item type" [options]="types" [control]="formGroup.controls.types"
+		[stretchedAndStroked]="isDialog">
+		<ng-template let-type>
+			<span class="item-text">
+				<backlog-item-icon [type]="type.key"></backlog-item-icon>&nbsp;{{ type.value }}
+			</span>
+		</ng-template>
+	</filter-multi-select>
+
+	<filter-multi-select label="State" buttonAltText="Item states" [options]="states" [control]="formGroup.controls.states"
+		[stretchedAndStroked]="isDialog">
+		<ng-template let-state>
+			<backlog-item-state [state]="state.key"></backlog-item-state>
+		</ng-template>
+	</filter-multi-select>
+
+	<filter-tag-select [control]="formGroup.controls.tags" [stretchedAndStroked]="isDialog"></filter-tag-select>
+</div>

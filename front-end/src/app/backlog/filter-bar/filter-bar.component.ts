@@ -1,11 +1,13 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { BacklogItemListGetRequest } from '@core/models/backlog-item/list/BacklogItemListGetRequest';
 import { CurrentUserRelations } from '@core/models/backlog-item/list/CurrentUserRelations';
-import { BacklogItemState } from '@core/models/common/BacklogItemState';
-import { BacklogItemType } from '@core/models/common/BacklogItemType';
 import { IKeyValuePair } from '@shared/filters';
+import { map } from 'lodash-es';
 import { merge } from 'rxjs';
-import { debounceTime, delay, distinctUntilChanged } from 'rxjs/operators';
+import { delay, distinctUntilChanged, filter, take } from 'rxjs/operators';
+import { BacklogFilterDialogComponent } from '../filter-dialog';
 import { FilterBarComponentBase } from './filter-bar-base.component';
 
 @Component({
@@ -17,23 +19,15 @@ export class FilterBarComponent extends FilterBarComponentBase<BacklogItemListGe
 	modes: IKeyValuePair[] = Object.keys(CurrentUserRelations).map(key => {
 		return { key, value: CurrentUserRelations[key as keyof typeof CurrentUserRelations] };
 	});
-	types: IKeyValuePair[] = Object.keys(BacklogItemType).map(key => {
-		return { key, value: BacklogItemType[key as keyof typeof BacklogItemType] };
-	});
-	states: IKeyValuePair[] = Object.keys(BacklogItemState).map(key => {
-		return { key, value: BacklogItemState[key as keyof typeof BacklogItemState] };
-	});
+
+	constructor(private dialog: MatDialog, fb: FormBuilder) {
+		super(fb);
+	}
 
 	ngOnInit(): void {
 		super.ngOnInit();
 
-		const triggers = [
-			this.formGroup.controls.currentUserRelation.valueChanges.pipe(distinctUntilChanged()),
-			this.formGroup.controls.search.valueChanges.pipe(distinctUntilChanged(), debounceTime(400)),
-			this.formGroup.controls.types.valueChanges.pipe(distinctUntilChanged()),
-			this.formGroup.controls.states.valueChanges.pipe(distinctUntilChanged()),
-			this.formGroup.controls.tags.valueChanges.pipe(distinctUntilChanged()),
-		];
+		const triggers = map(this.formGroup.controls, (c: AbstractControl) => c.valueChanges.pipe(distinctUntilChanged()));
 
 		this.subscription.add(
 			merge(...triggers)
@@ -42,7 +36,20 @@ export class FilterBarComponent extends FilterBarComponentBase<BacklogItemListGe
 		);
 	}
 
-	ngOnDestroy() {
+	ngOnDestroy(): void {
 		this.subscription.unsubscribe();
+	}
+
+	openFilterDialog(): void {
+		this.dialog
+			.open(BacklogFilterDialogComponent, { data: this.formGroup.value, minWidth: '350px' })
+			.afterClosed()
+			.pipe(
+				take(1),
+				filter(d => !!d)
+			)
+			.subscribe(result => {
+				this.filterChange.emit(result);
+			});
 	}
 }
