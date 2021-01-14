@@ -2,6 +2,7 @@ import { AfterViewInit, Component, ContentChild, Input, OnDestroy, OnInit, Templ
 import { MatSelectionList } from '@angular/material/list';
 import { compact, isArray, isEmpty, isString } from 'lodash-es';
 import { Subscription } from 'rxjs';
+import { delay } from 'rxjs/operators';
 import { IKeyValuePair } from '../ikey-value-pair';
 
 @Component({
@@ -29,14 +30,17 @@ export class FilterMultiSelectComponent implements OnInit, AfterViewInit, OnDest
 	options: IKeyValuePair[] = [];
 	@Input()
 	control!: AbstractControl;
+	@Input()
+	stretchedAndStroked: boolean = false;
 
 	buttonText: string = this.label;
+	rectangleText: string = '';
 
 	private _label: string = 'Unspecified';
 	private _subscriptions: Subscription = new Subscription();
 
 	ngOnInit() {
-		this._subscriptions.add(this.control.valueChanges.subscribe((keys: string[]) => this.updateLabel(keys)));
+		this._subscriptions.add(this.control.valueChanges.pipe(delay(0)).subscribe((keys: string[]) => this.updateLabel(keys)));
 	}
 	ngAfterViewInit() {
 		this._subscriptions.add(this.list.selectionChange.subscribe(() => this.applyFilter()));
@@ -61,10 +65,14 @@ export class FilterMultiSelectComponent implements OnInit, AfterViewInit, OnDest
 	private updateLabel(keys: string[]): void {
 		if (isEmpty(keys)) this.buttonText = this.label;
 		else {
-			const firstKey = isArray(keys) ? keys[0] : keys;
-			let newLabel = this.options.find(o => o.key === firstKey)?.value || '';
-			if (isArray(keys) && keys.length > 1) newLabel += ' +1';
-			this.buttonText = newLabel;
+			if (!isArray(keys)) keys = [keys];
+			const values = this.options.filter(o => keys.includes(o.key)).map(o => o.value);
+
+			let newButtonText = values.find(Boolean) || '';
+			if (values.length > 1) newButtonText += ' +1';
+			this.buttonText = newButtonText;
+
+			this.rectangleText = values.join(', ');
 		}
 		if (!isEmpty(this.options) && !isEmpty(this.list.options)) {
 			const selectedKeys = this.getSetValues();

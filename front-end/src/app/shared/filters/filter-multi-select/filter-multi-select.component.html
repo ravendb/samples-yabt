@@ -1,5 +1,5 @@
-<button mat-button [matMenuTriggerFor]="filterMenu" [title]="buttonAltText">
-	<span [innerText]="buttonText"></span>
+<button mat-button [matMenuTriggerFor]="filterMenu" [title]="buttonAltText" [class.mat-stroked-button]="stretchedAndStroked">
+	<span [innerText]="buttonText" [class.lighter-font]="buttonText == label"></span>
 	<mat-icon color="primary">keyboard_arrow_down</mat-icon>
 </button>
 <mat-menu #filterMenu="matMenu" [overlapTrigger]="false" xPosition="before">
