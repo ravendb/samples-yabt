@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { debounceTime, delay, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
 	selector: 'filter-search',
@@ -17,8 +17,11 @@ export class FilterSearchComponent implements OnInit, OnDestroy {
 	private _subscriptions: Subscription = new Subscription();
 
 	ngOnInit() {
+		if (!!this.control.value) this.searchControl.setValue(this.control.value);
 		this._subscriptions.add(
-			this.control.valueChanges.subscribe((val: string) => this.searchControl.setValue(val, { emitEvent: false }))
+			this.control.valueChanges
+				.pipe(delay(0) /* Workaround for https://github.com/angular/components/issues/12070 */)
+				.subscribe((val: string) => this.searchControl.setValue(val, { emitEvent: false }))
 		);
 		this._subscriptions.add(
 			this.searchControl.valueChanges
