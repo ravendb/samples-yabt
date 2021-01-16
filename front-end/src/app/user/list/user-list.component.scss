@@ -12,10 +12,10 @@
 
 	.embedded-dates-block {
 		@include secondaryTitle();
-		@include makeHiddenSmallAndDown();
+		@include makeHiddenMediumAndUp();
 	}
 }
 .mat-column-created {
 	flex-grow: 1;
-	@include makeHiddenMediumAndUp();
+	@include makeHiddenSmallAndDown();
 }
