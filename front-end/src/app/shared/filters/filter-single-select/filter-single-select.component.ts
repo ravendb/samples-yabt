@@ -17,7 +17,7 @@ export class FilterSingleSelectComponent extends BaseFilterButtonComponent<strin
 	setType(value: string | null): void {
 		const el = !!value ? this.options.find(v => v.key == value) : undefined;
 		this.buttonText = el?.value || this.label;
-		this.control.setValue(el?.key || undefined);
+		this.control.setValue(el?.key || '');
 	}
 
 	public isSelected(key: string): boolean {

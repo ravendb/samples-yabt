@@ -17,5 +17,7 @@
 		</ng-template>
 	</filter-multi-select>
 
-	<filter-tag-select label="Tags" [control]="formGroup.controls.tags" [stretchedAndStroked]="isDialog"></filter-tag-select>
+	<filter-multi-select label="Tags" buttonAltText="Item tags" [control]="formGroup.controls.tags" [stretchedAndStroked]="isDialog"
+		[search]="searchTagsByName">
+	</filter-multi-select>
 </div>

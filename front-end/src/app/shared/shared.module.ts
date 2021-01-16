@@ -13,7 +13,6 @@ import { BacklogItemTagsComponent } from './elements/backlog-item-tags';
 import { FilterMultiSelectComponent } from './filters/filter-multi-select';
 import { FilterSearchComponent } from './filters/filter-search';
 import { FilterSingleSelectComponent } from './filters/filter-single-select';
-import { FilterTagSelectComponent } from './filters/filter-tag-select';
 
 @NgModule({
 	declarations: [
@@ -23,7 +22,6 @@ import { FilterTagSelectComponent } from './filters/filter-tag-select';
 		FilterMultiSelectComponent,
 		FilterSingleSelectComponent,
 		FilterSearchComponent,
-		FilterTagSelectComponent,
 	],
 	exports: [
 		CommonModule,
@@ -33,7 +31,6 @@ import { FilterTagSelectComponent } from './filters/filter-tag-select';
 		FilterMultiSelectComponent,
 		FilterSingleSelectComponent,
 		FilterSearchComponent,
-		FilterTagSelectComponent,
 	],
 	imports: [
 		CommonModule,
