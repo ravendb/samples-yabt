@@ -1,12 +1,13 @@
-import { Directive, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Directive, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ListRequest } from '@core/models/common/ListRequest';
 import { generateFormGroupFromObject } from '@utils/abstract-control';
-import { isArray, isEmpty, isNil } from 'lodash-es';
-import { Subscription } from 'rxjs';
+import { isArray, isEmpty, isNil, map } from 'lodash-es';
+import { merge, Subscription } from 'rxjs';
+import { delay, distinctUntilChanged } from 'rxjs/operators';
 
 @Directive()
-export class FilterBarComponentBase<TFilter extends ListRequest> implements OnInit {
+export class FilterBarComponentBase<TFilter extends ListRequest> implements OnInit, OnDestroy {
 	protected subscription = new Subscription();
 	protected _filter: Partial<TFilter> = {};
 
@@ -24,6 +25,18 @@ export class FilterBarComponentBase<TFilter extends ListRequest> implements OnIn
 
 	ngOnInit(): void {
 		this.formGroup = generateFormGroupFromObject(this.fb, this._filter);
+
+		const triggers = map(this.formGroup.controls, (c: AbstractControl) => c.valueChanges.pipe(distinctUntilChanged()));
+
+		this.subscription.add(
+			merge(...triggers)
+				.pipe(delay(0))
+				.subscribe(() => this.applyFilter())
+		);
+	}
+
+	ngOnDestroy(): void {
+		this.subscription.unsubscribe();
 	}
 
 	clearFilters(): void {

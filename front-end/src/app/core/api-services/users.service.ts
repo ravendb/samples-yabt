@@ -12,7 +12,7 @@ import { BaseApiService } from './base-api.service';
 })
 export class UsersService extends BaseApiService {
 	constructor(httpClient: HttpClient) {
-		super(httpClient, AppConfig.AppServerUrl, 'api/BacklogItems');
+		super(httpClient, AppConfig.AppServerUrl, 'api/Users');
 	}
 
 	getUserList(request?: Partial<UserListGetRequest>): Observable<ListResponse<UserListGetResponse>> {

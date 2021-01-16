@@ -1,0 +1,21 @@
+@import 'breakpoints';
+@import 'list-components';
+
+.mat-column-name {
+	@include mainColumn();
+
+	flex-grow: 4;
+
+	.title-block {
+		@include primaryTitle();
+	}
+
+	.embedded-dates-block {
+		@include secondaryTitle();
+		@include makeHiddenSmallAndDown();
+	}
+}
+.mat-column-created {
+	flex-grow: 1;
+	@include makeHiddenMediumAndUp();
+}

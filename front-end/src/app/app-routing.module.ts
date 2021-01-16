@@ -1,10 +1,13 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { Data, RouterModule, Routes } from '@angular/router';
 import { NoContentComponent } from './no-content';
+
+const fullTitle = (pageName: string): Data => <Data>{ title: `${pageName} | YABT` };
 
 const routes: Routes = [
 	{ path: '', redirectTo: 'backlog', pathMatch: 'full' },
-	{ path: 'backlog', loadChildren: () => import('./backlog').then(m => m.BacklogModule), data: { title: 'Backlog Items | YABT' } },
+	{ path: 'backlog', loadChildren: () => import('./backlog').then(m => m.BacklogModule), data: fullTitle('Backlog Items') },
+	{ path: 'user', loadChildren: () => import('./user').then(m => m.UserModule), data: fullTitle('Users') },
 	{ path: '**', component: NoContentComponent },
 ];
 

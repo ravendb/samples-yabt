@@ -6,7 +6,6 @@ import { BacklogItemListGetRequest } from '@core/models/backlog-item/list/Backlo
 import { BacklogItemListGetResponse } from '@core/models/backlog-item/list/BacklogItemListGetResponse';
 
 @Component({
-	selector: 'backlog-list',
 	styleUrls: ['./backlog-list.component.scss'],
 	templateUrl: './backlog-list.component.html',
 })
