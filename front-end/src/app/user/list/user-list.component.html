@@ -11,11 +11,11 @@
 		<mat-cell *matCellDef="let row">
 			<div class="title-block">
 				<a [routerLink]="['/user', row.id]" [title]="row.fullName">
-					{{row.nameWithInitials}}
+					{{row.lastName}}, {{row.firstName}}
 				</a>
 			</div>
 			<div class="embedded-dates-block">
-				{{row.registrationDate || '' | date:'shortDate'}}
+				reg: {{row.registrationDate || '' | date:'shortDate'}}
 			</div>
 		</mat-cell>
 	</ng-container>
