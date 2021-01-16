@@ -12,7 +12,7 @@ export abstract class BaseApiService {
 		this.url = this.getBaseUrl(controllerUrl);
 	}
 
-	// Note: This method is public as it is used by generic.data.source but it should not be used anywhere else
+	// Note: This method is public as it is used by 'paginated-datasource' but it should not be used anywhere else
 	getList<TRequestDto, TListItemDto>(urlExtension?: string, dto?: Partial<TRequestDto>): Observable<ListResponse<TListItemDto>> {
 		return this.httpClient
 			.get<ListResponse<TListItemDto>>(this.getFullUrl(urlExtension), {
@@ -22,7 +22,7 @@ export abstract class BaseApiService {
 	}
 
 	// This method gets all the records without paging and filtering
-	getAll<TListItemDto>(urlExtension?: string): Observable<TListItemDto[]> {
+	protected getAll<TListItemDto>(urlExtension?: string): Observable<TListItemDto[]> {
 		return this.httpClient.get<TListItemDto[]>(this.getFullUrl(urlExtension)).pipe(catchError(e => this.handleErrorObservable(e)));
 	}
 
