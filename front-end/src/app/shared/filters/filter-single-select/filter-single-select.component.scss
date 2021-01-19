@@ -1,16 +1,31 @@
 @import 'filter-button';
 @import 'theme';
 
-.selected {
-	background-color: $primary-light-color;
-	border: none;
+.search-form-field {
+	margin: 8px 16px 0;
+}
 
-	mat-icon.mat-icon {
-		color: white;
-	}
+mat-nav-list.mat-nav-list {
+	max-height: 350px;
+	overflow-y: auto;
+}
+
+.selected {
+	background-color: $primary-lighter-color;
+	border: none;
 
 	&:hover {
 		color: unset;
 		background-color: unset;
 	}
+}
+
+.no-matches {
+	font-style: italic;
+	background-color: #e5e5e5;
+	padding: 10px;
+}
+.searching {
+	font-style: italic;
+	padding: 10px;
 }

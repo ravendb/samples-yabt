@@ -1,63 +1,21 @@
-import { AfterViewInit, Component, ContentChild, Input, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { AfterViewInit, Component, ContentChild, OnDestroy, TemplateRef, ViewChild } from '@angular/core';
 import { MatSelectionList } from '@angular/material/list';
 import { compact, isArray, isEmpty, isString } from 'lodash-es';
-import { debounceTime, delay, distinctUntilChanged, switchMap, tap } from 'rxjs/operators';
-import { BaseFilterButtonComponent } from '../base-filter-button';
-import { IKeyValuePair } from '../ikey-value-pair';
+import { BaseSearchableFilterButtonComponent } from '../base-filter-button';
 
 @Component({
 	selector: 'filter-multi-select',
 	styleUrls: ['./filter-multi-select.component.scss'],
 	templateUrl: './filter-multi-select.component.html',
 })
-export class FilterMultiSelectComponent
-	extends BaseFilterButtonComponent<string[], IKeyValuePair>
-	implements OnInit, AfterViewInit, OnDestroy {
-	// Set the API methods for searchable lists
-	// For simplicity sake, here I favoured a single method vs an event+property bundle
-	@Input('search')
-	search: ((term: string) => Observable<IKeyValuePair[]>) | undefined;
-
+export class FilterMultiSelectComponent extends BaseSearchableFilterButtonComponent<string[]> implements AfterViewInit, OnDestroy {
 	@ViewChild(MatSelectionList)
 	list!: MatSelectionList;
 	@ContentChild(TemplateRef)
 	templateRef: TemplateRef<any> | undefined;
 
-	loading = false;
-	searchCtrl: FormControlTyped<string> = new FormControl('undefined');
-
 	rectangleText: string = '';
 
-	ngOnInit(): void {
-		super.ngOnInit();
-
-		if (!!this.search) {
-			// Only for searchable lists
-			this._subscriptions.add(
-				this.searchCtrl.valueChanges
-					.pipe(
-						distinctUntilChanged(),
-						debounceTime(300),
-						tap(() => {
-							this.loading = true;
-							this.updateLabel([]);
-							this.options = [];
-						}),
-						switchMap(term => this.search!(term)),
-						tap(o => {
-							this.loading = false;
-							this.options = o;
-						}),
-						delay(0) // Need to update the list
-					)
-					.subscribe(() => this.updateLabel(this.control.value))
-			);
-
-			// Trigger request for tags
-			this.searchCtrl.setValue('');
-		}
-	}
 	ngAfterViewInit(): void {
 		this._subscriptions.add(this.list.selectionChange.subscribe(() => this.applyFilter()));
 	}

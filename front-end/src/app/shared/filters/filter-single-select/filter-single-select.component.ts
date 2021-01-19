@@ -1,13 +1,12 @@
 import { Component, ContentChild, Input, OnDestroy, OnInit, TemplateRef } from '@angular/core';
-import { BaseFilterButtonComponent } from '../base-filter-button';
-import { IKeyValuePair } from '../ikey-value-pair';
+import { BaseSearchableFilterButtonComponent } from '../base-filter-button';
 
 @Component({
 	selector: 'filter-single-select',
 	styleUrls: ['./filter-single-select.component.scss'],
 	templateUrl: './filter-single-select.component.html',
 })
-export class FilterSingleSelectComponent extends BaseFilterButtonComponent<string, IKeyValuePair> implements OnInit, OnDestroy {
+export class FilterSingleSelectComponent extends BaseSearchableFilterButtonComponent<string> implements OnInit, OnDestroy {
 	@ContentChild(TemplateRef)
 	templateRef: TemplateRef<any> | undefined;
 
@@ -20,8 +19,8 @@ export class FilterSingleSelectComponent extends BaseFilterButtonComponent<strin
 		this.control.setValue(el?.key || '');
 	}
 
-	public isSelected(key: string): boolean {
-		return this.control.value == key;
+	clear(): void {
+		this.control.setValue(undefined);
 	}
 
 	protected updateLabel(key: string): void {

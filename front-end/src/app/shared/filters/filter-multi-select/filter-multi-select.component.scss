@@ -7,7 +7,7 @@
 
 mat-selection-list.selection-list {
 	max-height: 350px;
-	overflow-y: scroll;
+	overflow-y: auto;
 }
 
 .no-matches {

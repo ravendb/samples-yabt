@@ -5,6 +5,7 @@ import { BacklogItemListGetRequest } from '@core/models/backlog-item/list/Backlo
 import { CurrentUserRelations } from '@core/models/backlog-item/list/CurrentUserRelations';
 import { BacklogItemState } from '@core/models/common/BacklogItemState';
 import { BacklogItemType } from '@core/models/common/BacklogItemType';
+import { UserListGetRequest } from '@core/models/user/list';
 import { IKeyValuePair } from '@shared/filters';
 import { map } from 'rxjs/operators';
 
@@ -35,9 +36,9 @@ export class BacklogFiltersComponent {
 			.getBacklogItemTagList({ search })
 			.pipe(map(tags => tags.map(t => <IKeyValuePair>{ key: t.name, value: t.name })));
 
-	searchUsersName = (search: string): Observable<IKeyValuePair[]> =>
+	searchByAssignee = (search: string): Observable<IKeyValuePair[]> =>
 		this.userService
-			.getUserList({ search })
+			.getUserList(<Partial<UserListGetRequest>>{ search, pageSize: 1000 })
 			.pipe(map(r => r.entries?.map(t => <IKeyValuePair>{ key: t.id, value: t.nameWithInitials })));
 
 	constructor(private backlogService: BacklogItemsService, private userService: UsersService) {}

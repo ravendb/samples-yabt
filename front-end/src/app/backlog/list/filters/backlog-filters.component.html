@@ -17,6 +17,10 @@
 		</ng-template>
 	</filter-multi-select>
 
+	<filter-single-select label="Assignee" buttonAltText="Assigned to" [control]="formGroup.controls.assignedUserId"
+		[stretchedAndStroked]="isDialog" [search]="searchByAssignee">
+	</filter-single-select>
+
 	<filter-multi-select label="Tags" buttonAltText="Item tags" [control]="formGroup.controls.tags" [stretchedAndStroked]="isDialog"
 		[search]="searchTagsByName">
 	</filter-multi-select>

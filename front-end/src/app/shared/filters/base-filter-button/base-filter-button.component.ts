@@ -1,9 +1,10 @@
 import { Directive, Input, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { delay } from 'rxjs/operators';
+import { IKeyValuePair } from '../ikey-value-pair';
 
 @Directive()
-export abstract class BaseFilterButtonComponent<TKey, TOption> implements OnInit, OnDestroy {
+export abstract class BaseFilterButtonComponent<TKey> implements OnInit, OnDestroy {
 	@Input()
 	get label(): string {
 		return this._label;
@@ -15,7 +16,7 @@ export abstract class BaseFilterButtonComponent<TKey, TOption> implements OnInit
 	@Input()
 	buttonAltText: string = '';
 	@Input()
-	options: TOption[] = [];
+	options: IKeyValuePair[] = [];
 	@Input()
 	control!: AbstractControl;
 	@Input()
