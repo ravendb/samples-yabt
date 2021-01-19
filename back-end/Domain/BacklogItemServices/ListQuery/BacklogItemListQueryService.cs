@@ -100,10 +100,10 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 				foreach (var tag in dto.Tags.Where(t => !string.IsNullOrEmpty(t)))
 					query = query.Where(e => e.Tags!.Contains(tag));					// Note: [Tags] is a nullable field, but when the LINQ gets converted to RQL the potential NULLs get handled 
 
-			if (dto.CurrentUserRelation != CurrentUserRelations.None)
+			if (dto.CurrentUserRelation.HasValue)
 			{
 				var userId = GetUserIdForDynamicField();
-				query = dto.CurrentUserRelation switch
+				query = dto.CurrentUserRelation.Value switch
 				{
 					// Note: [MentionedUser] & [ModifiedByUser] are nullable fields, but when the LINQ gets converted to RQL the potential NULLs get handled
 					CurrentUserRelations.MentionsOf => query.Where(t => t.MentionedUser![userId] > DateTime.MinValue),
