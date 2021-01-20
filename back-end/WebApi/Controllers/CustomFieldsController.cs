@@ -5,6 +5,7 @@ using DomainResults.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
+using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.CustomFieldServices.Command;
 using Raven.Yabt.Domain.CustomFieldServices.Command.DTOs;
 using Raven.Yabt.Domain.CustomFieldServices.Query;
@@ -21,10 +22,10 @@ namespace Raven.Yabt.WebApi.Controllers
 		/// </summary>
 		[HttpGet]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public Task<CustomFieldListGetResponse[]> GetList([FromServices] ICustomFieldQueryService service,
-														  [FromQuery] CustomFieldListGetRequest dto
+		public Task<ListResponse<CustomFieldListGetResponse>> GetList([FromServices] ICustomFieldQueryService service,
+		                                                              [FromQuery] CustomFieldListGetRequest dto
 														)
-			=> service.GetArray(dto);
+			=> service.GetList(dto);
 
 		/// <summary>
 		///		Create a new 'Custom Fields'

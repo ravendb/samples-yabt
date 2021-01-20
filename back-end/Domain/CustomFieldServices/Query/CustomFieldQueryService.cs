@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,12 +11,50 @@ using Raven.Yabt.Database.Models.CustomFields.Indexes;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.CustomFieldServices.Query.DTOs;
 using Raven.Yabt.Domain.Helpers;
+using Raven.Yabt.Domain.UserServices.Query.DTOs;
 
 namespace Raven.Yabt.Domain.CustomFieldServices.Query
 {
 	public class CustomFieldQueryService : BaseService<CustomField>, ICustomFieldQueryService
 	{
 		public CustomFieldQueryService(IAsyncDocumentSession dbSession) : base(dbSession) { }
+
+		public async Task<ListResponse<CustomFieldListGetResponse>> GetList(CustomFieldListGetRequest dto)
+		{
+			var query = DbSession.Query<CustomFieldIndexedForList, CustomFields_ForList>();
+
+			var totalRecords = await query.CountAsync();
+
+			query = ApplySorting(query, dto);
+			query = query.Skip(dto.PageIndex * dto.PageSize).Take(dto.PageSize);
+
+			var ret = await (from cf in query
+					select new CustomFieldListGetResponse
+					{
+						Id = cf.Id,
+						Name = cf.Name,
+						FieldType = cf.FieldType,
+					}
+				).ToListAsync();
+
+			return new ListResponse<CustomFieldListGetResponse>(ret, totalRecords, dto.PageIndex, dto.PageSize);
+		}
+
+		private IRavenQueryable<CustomFieldIndexedForList> ApplySorting(IRavenQueryable<CustomFieldIndexedForList> query, CustomFieldListGetRequest dto)
+		{
+			if (dto.OrderBy == CustomFieldOrderColumns.Default)
+			{
+				dto.OrderBy = CustomFieldOrderColumns.Name;
+				dto.OrderDirection = OrderDirections.Asc;
+			}
+
+			return dto.OrderBy switch
+			{
+				CustomFieldOrderColumns.Name				=> dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.Name)		: query.OrderByDescending(t => t.Name),
+				CustomFieldOrderColumns.Type				=> dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.FieldType)	: query.OrderByDescending(t => t.FieldType),
+				_ => throw new NotImplementedException()
+			};
+		}
 
 		public Task<CustomFieldListGetResponse[]> GetArray(CustomFieldListGetRequest dto)
 		{
