@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { BacklogItemListGetRequest } from '@core/api-models/backlog-item/list/BacklogItemListGetRequest';
+import { BacklogItemListGetResponse } from '@core/api-models/backlog-item/list/BacklogItemListGetResponse';
 import { BacklogItemsService } from '@core/api-services/backlogItems.service';
 import { ListBaseComponent } from '@core/base-list/list-base.component';
-import { BacklogItemListGetRequest } from '@core/models/backlog-item/list/BacklogItemListGetRequest';
-import { BacklogItemListGetResponse } from '@core/models/backlog-item/list/BacklogItemListGetResponse';
 
 @Component({
 	styleUrls: ['./backlog-list.component.scss'],

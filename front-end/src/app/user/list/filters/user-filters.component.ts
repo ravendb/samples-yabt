@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { UserListGetRequest } from '@core/models/user/list';
+import { UserListGetRequest } from '@core/api-models/user/list';
 import { FilterBarComponentBase } from '@shared/filters/filter-bar-base.component';
 
 @Component({

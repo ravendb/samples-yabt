@@ -1,9 +1,9 @@
 ﻿import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { ListResponse } from '@core/api-models/common/ListResponse';
+import { UserGetByIdResponse } from '@core/api-models/user/item';
+import { UserListGetRequest, UserListGetResponse } from '@core/api-models/user/list';
 import { AppConfig } from '@core/app.config';
-import { ListResponse } from '@core/models/common/ListResponse';
-import { UserGetByIdResponse } from '@core/models/user/item';
-import { UserListGetRequest, UserListGetResponse } from '@core/models/user/list';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 

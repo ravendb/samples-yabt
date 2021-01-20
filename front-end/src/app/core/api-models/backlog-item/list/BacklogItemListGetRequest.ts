@@ -1,6 +1,6 @@
-import { BacklogItemState } from '@core/models/common/BacklogItemState';
-import { BacklogItemType } from '@core/models/common/BacklogItemType';
-import { ListRequest } from '@core/models/common/ListRequest';
+import { BacklogItemState } from '@core/api-models/common/BacklogItemState';
+import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
+import { ListRequest } from '@core/api-models/common/ListRequest';
 import { CurrentUserRelations } from './CurrentUserRelations';
 
 export class BacklogItemListGetRequest extends ListRequest {

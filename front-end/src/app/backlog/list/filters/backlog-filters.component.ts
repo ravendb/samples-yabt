@@ -1,11 +1,11 @@
 import { Component, Input } from '@angular/core';
+import { BacklogItemListGetRequest } from '@core/api-models/backlog-item/list/BacklogItemListGetRequest';
+import { CurrentUserRelations } from '@core/api-models/backlog-item/list/CurrentUserRelations';
+import { BacklogItemState } from '@core/api-models/common/BacklogItemState';
+import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
+import { UserListGetRequest } from '@core/api-models/user/list';
 import { BacklogItemsService } from '@core/api-services/backlogItems.service';
 import { UsersService } from '@core/api-services/users.service';
-import { BacklogItemListGetRequest } from '@core/models/backlog-item/list/BacklogItemListGetRequest';
-import { CurrentUserRelations } from '@core/models/backlog-item/list/CurrentUserRelations';
-import { BacklogItemState } from '@core/models/common/BacklogItemState';
-import { BacklogItemType } from '@core/models/common/BacklogItemType';
-import { UserListGetRequest } from '@core/models/user/list';
 import { IKeyValuePair } from '@shared/filters';
 import { map } from 'rxjs/operators';
 

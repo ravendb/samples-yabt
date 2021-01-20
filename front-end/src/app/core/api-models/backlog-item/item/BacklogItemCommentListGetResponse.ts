@@ -1,4 +1,4 @@
-import { UserReference } from '@core/models/common/references/UserReference';
+import { UserReference } from '@core/api-models/common/references/UserReference';
 
 export class BacklogItemCommentListGetResponse {
 	id!: string;

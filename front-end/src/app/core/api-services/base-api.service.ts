@@ -1,5 +1,5 @@
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { ListResponse } from '@core/models/common/ListResponse';
+import { ListResponse } from '@core/api-models/common/ListResponse';
 import { get, isEmpty, trim, trimEnd } from 'lodash-es';
 import { Observable, throwError as observableThrowError } from 'rxjs';
 import { catchError } from 'rxjs/operators';

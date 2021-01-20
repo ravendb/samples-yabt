@@ -29,7 +29,7 @@ namespace Raven.Yabt.WebApi.Controllers
 		/// <summary>
 		///		Create a new 'Custom Fields'
 		/// </summary>
-		[HttpPost()]
+		[HttpPost]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public Task<ActionResult<CustomFieldReferenceDto>> Create(	[FromServices] ICustomFieldCommandService service, 

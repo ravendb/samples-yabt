@@ -1,6 +1,6 @@
-import { BacklogItemType } from '@core/models/common/BacklogItemType';
-import { ChangedByUserReference } from '@core/models/common/references/ChangedByUserReference';
-import { UserReference } from '@core/models/common/references/UserReference';
+import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
+import { ChangedByUserReference } from '@core/api-models/common/references/ChangedByUserReference';
+import { UserReference } from '@core/api-models/common/references/UserReference';
 import { BacklogItemCommentListGetResponse } from './BacklogItemCommentListGetResponse';
 
 export class BacklogItemGetResponseBase {

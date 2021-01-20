@@ -1,6 +1,6 @@
 import { Directive, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ListRequest } from '@core/models/common/ListRequest';
+import { ListRequest } from '@core/api-models/common/ListRequest';
 import { generateFormGroupFromObject } from '@utils/abstract-control';
 import { isArray, isEmpty, isNil, map } from 'lodash-es';
 import { merge, Subscription } from 'rxjs';

@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { BacklogItemListGetRequest } from '@core/models/backlog-item/list/BacklogItemListGetRequest';
-import { CurrentUserRelations } from '@core/models/backlog-item/list/CurrentUserRelations';
+import { BacklogItemListGetRequest } from '@core/api-models/backlog-item/list/BacklogItemListGetRequest';
+import { CurrentUserRelations } from '@core/api-models/backlog-item/list/CurrentUserRelations';
 import { IKeyValuePair } from '@shared/filters';
 import { FilterBarComponentBase } from '@shared/filters/filter-bar-base.component';
 import { filter, take } from 'rxjs/operators';

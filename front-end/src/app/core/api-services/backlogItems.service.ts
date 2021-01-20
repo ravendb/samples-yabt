@@ -1,14 +1,14 @@
 ﻿import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { AppConfig } from '@core/app.config';
-import { BacklogItemGetResponseBase } from '@core/models/backlog-item/item/BacklogItemGetResponseBase';
+import { BacklogItemGetResponseBase } from '@core/api-models/backlog-item/item/BacklogItemGetResponseBase';
 import {
 	BacklogItemListGetRequest,
 	BacklogItemListGetResponse,
 	BacklogItemTagListGetRequest,
 	BacklogItemTagListGetResponse,
-} from '@core/models/backlog-item/list';
-import { ListResponse } from '@core/models/common/ListResponse';
+} from '@core/api-models/backlog-item/list';
+import { ListResponse } from '@core/api-models/common/ListResponse';
+import { AppConfig } from '@core/app.config';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 

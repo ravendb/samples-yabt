@@ -2,9 +2,9 @@ import { AfterViewInit, Directive, EventEmitter, OnDestroy, ViewChild } from '@a
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, MatSortable, MatSortHeader } from '@angular/material/sort';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { ListRequest } from '@core/api-models/common/ListRequest';
 import { BaseApiService } from '@core/api-services/base-api.service';
 import { AppConfig } from '@core/app.config';
-import { ListRequest } from '@core/models/common/ListRequest';
 import { nameOf } from '@utils/nameof';
 import { filter as arrFilter, get, isEqual, isNil, omitBy, orderBy } from 'lodash-es';
 import { merge, Subject, Subscription } from 'rxjs';

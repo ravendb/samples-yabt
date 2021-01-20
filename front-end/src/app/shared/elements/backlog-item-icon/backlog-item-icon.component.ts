@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { BacklogItemType } from '@core/models/common/BacklogItemType';
+import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
 
 @Component({
 	selector: 'backlog-item-icon',

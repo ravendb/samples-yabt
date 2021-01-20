@@ -1,7 +1,7 @@
 import { AfterViewInit, Component, Inject } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { BacklogItemListGetRequest } from '@core/models/backlog-item/list/BacklogItemListGetRequest';
+import { BacklogItemListGetRequest } from '@core/api-models/backlog-item/list/BacklogItemListGetRequest';
 import { generateFormGroupFromObject } from '@utils/abstract-control';
 
 @Component({
