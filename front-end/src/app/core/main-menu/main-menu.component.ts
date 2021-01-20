@@ -37,6 +37,7 @@ export class MainMenuComponent implements OnInit, AfterViewInit, OnDestroy {
 		);
 	}
 
+	// TODO: Request user;s details from the back-end
 	userId = 0;
 	userName = 'Test User';
 
