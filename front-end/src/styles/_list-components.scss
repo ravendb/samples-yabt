@@ -61,7 +61,7 @@ mat-cell.mat-cell {
 
 @mixin primaryTitle() {
 	@include breakpointXSmall() {
-		color: $primary-light-color;
+		//color: $primary-light-color;
 		font-size: 120%;
 	}
 }
