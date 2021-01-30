@@ -1,5 +1,14 @@
-<h2>Custom Fields</h2>
-<h3 class="mat-h3">Manage additional fields for Backlog items</h3>
+<div class="header">
+	<div>
+		<h2>Custom Fields</h2>
+		<h3 class="mat-h3">Manage additional fields for Backlog items</h3>
+	</div>
+	<div class="action-buttons">
+		<button mat-stroked-button color="primary" (click)="openItemDialog()">
+			<mat-icon>add_circle</mat-icon> Create
+		</button>
+	</div>
+</div>
 
 <div *ngIf="dataSource?.loading$ | async" class="spinner-container">
 	<mat-spinner></mat-spinner>
@@ -11,17 +20,28 @@
 		<mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
 		<mat-cell *matCellDef="let row">
 			<div class="title-block">
-				{{row.name}}
+				<a (click)="openItemDialog(row.id)">{{row.name}}<sup *ngIf="row.isMandatory">*</sup></a>
 			</div>
-			<div class="embedded-type-block">
-				{{row.fieldType}}
+			<div class="embedded-title-type-block">
+				<span class="wide-column">
+					<a (click)="openItemDialog(row.id)">{{row.name}}<sup *ngIf="row.isMandatory">*</sup></a>
+				</span>
+				<span class="narrow-column" title="Field Type">{{ row.fieldType }}</span>
+			</div>
+			<div class="embedded-backlogItemTypes-block">
+				{{row.backlogItemTypes}}
 			</div>
 		</mat-cell>
 	</ng-container>
 
 	<ng-container matColumnDef="fieldType">
-		<mat-header-cell *matHeaderCellDef mat-sort-header> Type </mat-header-cell>
+		<mat-header-cell *matHeaderCellDef mat-sort-header> Field Type </mat-header-cell>
 		<mat-cell *matCellDef="let row"> {{row.fieldType}} </mat-cell>
+	</ng-container>
+
+	<ng-container matColumnDef="backlogItemTypes">
+		<mat-header-cell *matHeaderCellDef mat-sort-header> Ticket Types </mat-header-cell>
+		<mat-cell *matCellDef="let row"> {{row.backlogItemTypes}} </mat-cell>
 	</ng-container>
 
 	<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>

@@ -13,12 +13,14 @@ import { BacklogItemTagsComponent } from './elements/backlog-item-tags';
 import { FilterMultiSelectComponent } from './filters/filter-multi-select';
 import { FilterSearchComponent } from './filters/filter-search';
 import { FilterSingleSelectComponent } from './filters/filter-single-select';
+import { ErrorMessagesComponent } from './forms';
 
 @NgModule({
 	declarations: [
 		BacklogItemIconComponent,
 		BacklogItemStateComponent,
 		BacklogItemTagsComponent,
+		ErrorMessagesComponent,
 		FilterMultiSelectComponent,
 		FilterSingleSelectComponent,
 		FilterSearchComponent,
@@ -28,6 +30,7 @@ import { FilterSingleSelectComponent } from './filters/filter-single-select';
 		BacklogItemIconComponent,
 		BacklogItemStateComponent,
 		BacklogItemTagsComponent,
+		ErrorMessagesComponent,
 		FilterMultiSelectComponent,
 		FilterSingleSelectComponent,
 		FilterSearchComponent,

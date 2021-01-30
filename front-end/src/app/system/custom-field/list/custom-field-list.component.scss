@@ -1,26 +1,47 @@
 @import 'breakpoints';
 @import 'list-components';
 
-h2,
-h3.mat-h3 {
-	margin: 0 0 0 16px;
-	color: #737373;
+.header {
+	display: flex;
+	background-color: white;
+	h2,
+	h3.mat-h3 {
+		margin: 0 0 0 16px;
+		color: #737373;
+	}
+	.action-buttons {
+		flex: auto;
+		text-align: end;
+		align-self: center;
+		padding: 16px;
+	}
 }
+
 .mat-column-name {
 	@include mainColumn();
 
-	flex-grow: 4;
+	flex-grow: 3;
 
 	.title-block {
 		@include primaryTitle();
+		@include makeHiddenSmallAndDown();
 	}
-
-	.embedded-type-block {
+	.embedded-title-type-block {
+		@include primaryTitle();
+		@include makeHiddenMediumAndUp();
+		display: flex;
+		align-items: center;
+	}
+	.embedded-backlogItemTypes-block {
 		@include secondaryTitle();
 		@include makeHiddenMediumAndUp();
 	}
 }
-.mat-column-created {
+.mat-column-fieldType {
 	flex-grow: 1;
+	@include makeHiddenSmallAndDown();
+}
+.mat-column-backlogItemTypes {
+	flex-grow: 2;
 	@include makeHiddenSmallAndDown();
 }
