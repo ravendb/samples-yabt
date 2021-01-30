@@ -1,17 +1,11 @@
 ﻿using System;
-using System.Linq;
+
+using Raven.Yabt.Domain.Common;
 
 namespace Raven.Yabt.Domain.UserServices.Query.DTOs
 {
-	public class UserListGetResponse
+	public class UserListGetResponse: ListResponseWithSanitisedIds
 	{
-		private string? _id;
-		public string? Id
-		{
-			get => _id;
-			set => _id = value?.Split('/').Last();
-		}
-
 		/// <summary>
 		///		First name. One of the first/last names should be mandatory
 		/// </summary>

@@ -8,16 +8,16 @@ using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Models.CustomFields;
 using Raven.Yabt.Database.Models.CustomFields.Indexes;
+using Raven.Yabt.Domain.BacklogItemServices.ByCustomFieldQuery;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.CustomFieldServices.Query.DTOs;
 using Raven.Yabt.Domain.Helpers;
-using Raven.Yabt.Domain.UserServices.Query.DTOs;
 
 namespace Raven.Yabt.Domain.CustomFieldServices.Query
 {
-	public class CustomFieldQueryService : BaseService<CustomField>, ICustomFieldQueryService
+	public class CustomFieldListQueryService : BaseService<CustomField>, ICustomFieldListQueryService
 	{
-		public CustomFieldQueryService(IAsyncDocumentSession dbSession) : base(dbSession) { }
+		public CustomFieldListQueryService(IAsyncDocumentSession dbSession) : base(dbSession) {}
 
 		public async Task<ListResponse<CustomFieldListGetResponse>> GetList(CustomFieldListGetRequest dto)
 		{
@@ -34,6 +34,8 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query
 						Id = cf.Id,
 						Name = cf.Name,
 						FieldType = cf.FieldType,
+						IsMandatory = cf.IsMandatory,
+						BacklogItemTypes = cf.BacklogItemTypes
 					}
 				).ToListAsync();
 

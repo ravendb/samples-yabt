@@ -38,7 +38,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		///		List of all users who modified the ticket.
 		///		The first record is creation of the ticket
 		/// </summary>
-		public List<BacklogItemHistoryRecord> ModifiedBy { get; } = new List<BacklogItemHistoryRecord>();
+		public List<BacklogItemHistoryRecord> ModifiedBy { get; } = new();
 
 		[JsonIgnore]
 		public ChangedByUserReference Created		=> ModifiedBy.OrderBy(m => m.Timestamp).First() as ChangedByUserReference;

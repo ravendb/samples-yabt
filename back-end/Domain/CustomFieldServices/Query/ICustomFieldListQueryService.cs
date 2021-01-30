@@ -6,7 +6,7 @@ using Raven.Yabt.Domain.CustomFieldServices.Query.DTOs;
 
 namespace Raven.Yabt.Domain.CustomFieldServices.Query
 {
-	public interface ICustomFieldQueryService
+	public interface ICustomFieldListQueryService
 	{
 		Task<ListResponse<CustomFieldListGetResponse>> GetList(CustomFieldListGetRequest dto);
 		

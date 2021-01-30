@@ -1,11 +1,8 @@
-﻿using Raven.Yabt.Database.Common;
-using Raven.Yabt.Domain.Common;
-
-#nullable disable // Disable nullable check for a response DTO file
+using Raven.Yabt.Database.Common;
 
 namespace Raven.Yabt.Domain.CustomFieldServices.Query.DTOs
 {
-	public class CustomFieldListGetResponse: ListResponseWithSanitisedIds
+	public class CustomFieldItemResponse
 	{
 		public string Name { get; set; }
 
@@ -17,5 +14,10 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query.DTOs
 		///		Types of tickets the field is going to be used for (bugs, user stories or any type)
 		/// </summary>
 		public BacklogItemType?[]? BacklogItemTypes { get; set; }
+		
+		/// <summary>
+		///		Number of backlog items the field is used
+		/// </summary>
+		public int UsedInBacklogItemsCount { get; set; }
 	}
 }

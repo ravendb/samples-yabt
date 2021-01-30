@@ -23,11 +23,11 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 {
 	public class BacklogItemListQueryService : BaseQueryService<BacklogItem>, IBacklogItemListQueryService
 	{
-		private readonly ICustomFieldQueryService _customFieldService;
+		private readonly ICustomFieldListQueryService _customFieldService;
 		private readonly ICurrentUserResolver _userResolver;
 
 		public BacklogItemListQueryService (IAsyncDocumentSession dbSession,
-											ICustomFieldQueryService customFieldService, 
+											ICustomFieldListQueryService customFieldService, 
 											ICurrentUserResolver userResolver) : base(dbSession)
 		{
 			_customFieldService = customFieldService;

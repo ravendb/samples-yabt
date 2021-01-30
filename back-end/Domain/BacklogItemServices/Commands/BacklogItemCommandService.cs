@@ -22,9 +22,9 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 	public class BacklogItemCommandService : BaseService<BacklogItem>, IBacklogItemCommandService
 	{
 		private readonly IUserReferenceResolver _userResolver;
-		private readonly ICustomFieldQueryService _customFieldQueryService;
+		private readonly ICustomFieldListQueryService _customFieldQueryService;
 
-		public BacklogItemCommandService(IAsyncDocumentSession dbSession, IUserReferenceResolver userResolver, ICustomFieldQueryService customFieldQueryService) : base(dbSession)
+		public BacklogItemCommandService(IAsyncDocumentSession dbSession, IUserReferenceResolver userResolver, ICustomFieldListQueryService customFieldQueryService) : base(dbSession)
 		{
 			_userResolver = userResolver;
 			_customFieldQueryService = customFieldQueryService;

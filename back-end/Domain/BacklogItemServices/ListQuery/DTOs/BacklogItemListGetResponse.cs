@@ -1,21 +1,13 @@
-﻿using System.Linq;
-
-using Raven.Yabt.Database.Common;
+﻿using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Domain.Common;
 
 #nullable disable	// Disable nullable check for a response DTO file
 
 namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs
 {
-	public class BacklogItemListGetResponse
+	public class BacklogItemListGetResponse: ListResponseWithSanitisedIds
 	{
-		private string _id;
-
-		public string Id 
-		{
-			get { return _id;  }
-			set { _id = value?.Split('/').Last(); } 
-		}
 		public string Title { get; set; }
 
 		public BacklogItemType Type { get; set; }
