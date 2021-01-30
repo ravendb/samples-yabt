@@ -1,14 +1,10 @@
 <mat-card>
-	<h1>System</h1>
-
-	<mat-nav-list>
-		<mat-card>
-			<h3 mat-subheader>Custom Fields</h3>
-			<a mat-list-item routerLink="./custom-fields">
-				<mat-icon color="accent" matListIcon>view_list</mat-icon>
-				<p matLine>Create or modify Custom Fields</p>
-			</a>
-		</mat-card>
-
-	</mat-nav-list>
+	<mat-card-header>
+		<mat-icon mat-card-avatar color="accent">view_list</mat-icon>
+		<mat-card-title><a routerLink="./custom-fields">Custom Fields</a></mat-card-title>
+	</mat-card-header>
+	<mat-card-content>
+		<p matLine>Manage additional fields for Backlog items. Create extra text, date, numeric fields that aren't supplied out-of-the-box.
+		</p>
+	</mat-card-content>
 </mat-card>
