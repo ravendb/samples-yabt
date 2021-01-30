@@ -1,6 +1,11 @@
 @import 'breakpoints';
 @import 'list-components';
 
+h2,
+h3.mat-h3 {
+	margin: 0 0 0 16px;
+	color: #737373;
+}
 .mat-column-name {
 	@include mainColumn();
 
