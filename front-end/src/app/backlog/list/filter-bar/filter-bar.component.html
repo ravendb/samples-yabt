@@ -1,7 +1,7 @@
-<div class="filter">
+<form [formGroup]="formGroup" class="filter">
 
 	<filter-single-select label="All" buttonAltText="Quick filter" [options]="modes" firstUndefinedOption="All"
-		[control]="formGroup.controls.currentUserRelation"></filter-single-select>
+		formControlName="currentUserRelation"></filter-single-select>
 
 	<div class="divider"></div>
 
@@ -16,4 +16,4 @@
 		<mat-icon color="primary">clear</mat-icon>
 	</button>
 
-</div>
+</form>

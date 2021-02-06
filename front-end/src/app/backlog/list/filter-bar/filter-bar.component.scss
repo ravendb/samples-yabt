@@ -1,7 +1,7 @@
 @import 'breakpoints';
 @import 'theme';
 
-div.filter {
+form.filter {
 	margin: 0 16px;
 	@include breakpointXSmall() {
 		margin: 0px;

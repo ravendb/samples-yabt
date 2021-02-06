@@ -1,4 +1,5 @@
-<button mat-button [matMenuTriggerFor]="filterMenu" [title]="buttonAltText" [class.mat-stroked-button]="stretchedAndStroked">
+<button mat-button [matMenuTriggerFor]="filterMenu" [title]="buttonAltText" [class.mat-stroked-button]="stretchedAndStroked"
+	[disabled]="isDisabled">
 	<span [innerText]="buttonText" [class.lighter-font]="buttonText == label"></span>
 	<mat-icon color="primary">keyboard_arrow_down</mat-icon>
 </button>

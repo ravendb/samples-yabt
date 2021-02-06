@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, Optional } from '@angular/core';
+import { FormGroupDirective, FormGroupName } from '@angular/forms';
 import { BacklogItemListGetRequest } from '@core/api-models/backlog-item/list/BacklogItemListGetRequest';
 import { CurrentUserRelations } from '@core/api-models/backlog-item/list/CurrentUserRelations';
 import { BacklogItemState } from '@core/api-models/common/BacklogItemState';
@@ -14,7 +15,7 @@ import { map } from 'rxjs/operators';
 	styleUrls: ['./backlog-filters.component.scss'],
 	templateUrl: './backlog-filters.component.html',
 })
-export class BacklogFiltersComponent {
+export class BacklogFiltersComponent implements OnInit {
 	modes: IKeyValuePair[] = Object.keys(CurrentUserRelations).map(key => {
 		return { key, value: CurrentUserRelations[key as keyof typeof CurrentUserRelations] };
 	});
@@ -25,7 +26,6 @@ export class BacklogFiltersComponent {
 		return { key, value: BacklogItemState[key as keyof typeof BacklogItemState] };
 	});
 
-	@Input()
 	formGroup!: FormGroupTyped<BacklogItemListGetRequest>;
 
 	@Input()
@@ -41,5 +41,16 @@ export class BacklogFiltersComponent {
 			.getUserList(<Partial<UserListGetRequest>>{ search, pageSize: 1000 })
 			.pipe(map(r => r.entries?.map(t => <IKeyValuePair>{ key: t.id, value: t.nameWithInitials })));
 
-	constructor(private backlogService: BacklogItemsService, private userService: UsersService) {}
+	constructor(
+		private formGroupDir: FormGroupDirective,
+		@Optional() private formGroupName: FormGroupName,
+		private backlogService: BacklogItemsService,
+		private userService: UsersService
+	) {}
+
+	ngOnInit(): void {
+		this.formGroup = (!!this.formGroupName?.name && this.formGroupName.name in this.formGroupDir.form.controls
+			? this.formGroupDir.form.controls[this.formGroupName.name]
+			: this.formGroupDir.form) as FormGroupTyped<BacklogItemListGetRequest>;
+	}
 }

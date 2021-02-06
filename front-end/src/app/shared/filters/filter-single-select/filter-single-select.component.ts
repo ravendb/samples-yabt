@@ -13,15 +13,18 @@ export class FilterSingleSelectComponent extends BaseSearchableFilterButtonCompo
 	@Input()
 	firstUndefinedOption: string = '';
 
-	setType(value: string | null): void {
+	setValue(value?: string): void {
 		const el = !!value ? this.options.find(v => v.key == value) : undefined;
-		this.buttonText = el?.value || this.label;
-		this.control.setValue(el?.key || '');
+		this.writeValue(el?.key);
+		this._onChange(el?.key);
 	}
 
 	clear(): void {
-		this.control.setValue(undefined);
+		this.writeValue();
+		this._onChange();
 	}
+
+	protected initiateList(): void {}
 
 	protected updateLabel(key: string): void {
 		const el = !!key ? this.options.find(v => v.key == key) : undefined;

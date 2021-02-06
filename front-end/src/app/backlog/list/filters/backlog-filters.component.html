@@ -1,7 +1,7 @@
-<div [class.stretched-filter-bar]="!isDialog" [class.two-column-grid]="isDialog">
-	<filter-search [control]="formGroup.controls.search"></filter-search>
+<form [formGroup]="formGroup" [class.stretched-filter-bar]="!isDialog" [class.two-column-grid]="isDialog">
+	<filter-search formControlName="search"></filter-search>
 
-	<filter-multi-select label="Type" buttonAltText="Backlog item type" [options]="types" [control]="formGroup.controls.types"
+	<filter-multi-select label="Type" buttonAltText="Backlog item type" [options]="types" formControlName="types"
 		[stretchedAndStroked]="isDialog">
 		<ng-template let-type>
 			<span class="item-text">
@@ -10,18 +10,18 @@
 		</ng-template>
 	</filter-multi-select>
 
-	<filter-multi-select label="State" buttonAltText="Item states" [options]="states" [control]="formGroup.controls.states"
+	<filter-multi-select label="State" buttonAltText="Item states" [options]="states" formControlName="states"
 		[stretchedAndStroked]="isDialog">
 		<ng-template let-state>
 			<backlog-item-state [state]="state.key"></backlog-item-state>
 		</ng-template>
 	</filter-multi-select>
 
-	<filter-single-select label="Assignee" buttonAltText="Assigned to" [control]="formGroup.controls.assignedUserId"
-		[stretchedAndStroked]="isDialog" [search]="searchByAssignee">
+	<filter-single-select label="Assignee" buttonAltText="Assigned to" formControlName="assignedUserId" [stretchedAndStroked]="isDialog"
+		[search]="searchByAssignee">
 	</filter-single-select>
 
-	<filter-multi-select label="Tags" buttonAltText="Item tags" [control]="formGroup.controls.tags" [stretchedAndStroked]="isDialog"
+	<filter-multi-select label="Tags" buttonAltText="Item tags" formControlName="tags" [stretchedAndStroked]="isDialog"
 		[search]="searchTagsByName">
 	</filter-multi-select>
-</div>
+</form>

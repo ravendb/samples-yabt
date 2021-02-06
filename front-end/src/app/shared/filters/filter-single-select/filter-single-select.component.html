@@ -1,4 +1,5 @@
-<button mat-button [matMenuTriggerFor]="filterMenu" [title]="buttonAltText" [class.mat-stroked-button]="stretchedAndStroked">
+<button mat-button [matMenuTriggerFor]="filterMenu" [title]="buttonAltText" [class.mat-stroked-button]="stretchedAndStroked"
+	[disabled]="isDisabled">
 	<span [innerText]="buttonText" [class.lighter-font]="buttonText == label"></span>
 	<mat-icon color="primary">keyboard_arrow_down</mat-icon>
 </button>
@@ -11,8 +12,8 @@
 	</mat-form-field>
 
 	<mat-nav-list>
-		<mat-list-item *ngIf="!!firstUndefinedOption" (click)="setType(null)">{{firstUndefinedOption}}</mat-list-item>
-		<mat-list-item *ngFor="let option of options" [class.selected]="control.value == option.key" (click)="setType(option.key)">
+		<mat-list-item *ngIf="!!firstUndefinedOption" (click)="setValue()">{{firstUndefinedOption}}</mat-list-item>
+		<mat-list-item *ngFor="let option of options" [class.selected]="value == option.key" (click)="setValue(option.key)">
 			<ng-container *ngIf="templateRef" [ngTemplateOutlet]="templateRef" [ngTemplateOutletContext]="{$implicit:option.key}">
 			</ng-container>
 			<ng-template [ngIf]="!templateRef">{{ option.value }}</ng-template>
