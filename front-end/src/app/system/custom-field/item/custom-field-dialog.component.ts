@@ -35,16 +35,17 @@ export class CustomFieldDialogComponent implements OnInit {
 	ngOnInit() {
 		this.form = this.fb.group({
 			name: [null, [CustomValidators.required('Name'), CustomValidators.pattern(new RegExp('^[a-zA-Z][a-zA-Z0-9- ]*$'))]],
-			type: [null, CustomValidators.required('Field Type')],
+			fieldType: [null, CustomValidators.required('Field Type')],
 			isMandatory: [false],
 			backlogItemTypes: null,
+			usedInBacklogItemsCount: [{ value: '', disabled: true }],
 		}) as FormGroupTyped<CustomFieldAddRequest & CustomFieldUpdateRequest>;
 
 		if (!!this.data?.id) {
 			this.apiService.getCustomField(this.data.id).subscribe(item => {
 				this.form.reset(item);
 				// Disable changing the 'Type'
-				this.form.controls.type.disable();
+				this.form.controls.fieldType.disable();
 			});
 		}
 	}
@@ -57,5 +58,15 @@ export class CustomFieldDialogComponent implements OnInit {
 			ref => this.dialogRef.close(true),
 			err => {}
 		);
+	}
+	delete(): void {
+		if (!!this.data?.id)
+			this.apiService
+				.deleteCustomField(this.data.id)
+				.pipe(take(1))
+				.subscribe(
+					ref => this.dialogRef.close(true),
+					err => {}
+				);
 	}
 }

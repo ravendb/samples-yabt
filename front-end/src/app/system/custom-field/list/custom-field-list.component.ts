@@ -5,7 +5,7 @@ import { CustomFieldListGetRequest, CustomFieldListGetResponse } from '@core/api
 import { CustomFieldsService } from '@core/api-services/customfields.service';
 import { ListBaseComponent } from '@core/base-list/list-base.component';
 import { filter } from 'rxjs/operators';
-import { CustomFieldDialogComponent } from '../item';
+import { CustomFieldDialogComponent, IDialogData } from '../item';
 
 @Component({
 	styleUrls: ['./custom-field-list.component.scss'],
@@ -20,7 +20,7 @@ export class CustomFieldListComponent extends ListBaseComponent<CustomFieldListG
 		let params: MatDialogConfig = { minWidth: '350px' };
 		this.subscriptions.add(
 			this.dialog
-				.open(CustomFieldDialogComponent, !!id ? { ...params, data: id } : params)
+				.open(CustomFieldDialogComponent, !!id ? { ...params, data: { id } as IDialogData } : params)
 				.afterClosed()
 				.pipe(filter(Boolean))
 				.subscribe(() => this.refreshList())

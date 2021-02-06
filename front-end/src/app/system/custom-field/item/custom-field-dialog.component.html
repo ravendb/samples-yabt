@@ -16,14 +16,14 @@
 	</div>
 	<div class="flex-row">
 		<mat-form-field>
-			<mat-select formControlName="type">
+			<mat-select formControlName="fieldType">
 				<mat-option *ngFor="let type of fieldTypes" [value]="type.key">{{ type.value }}</mat-option>
 			</mat-select>
 			<mat-placeholder>Field Type
 				<sup class="color-warn">*</sup>
 			</mat-placeholder>
 			<mat-error>
-				<error-messages formControlName="type"></error-messages>
+				<error-messages formControlName="fieldType"></error-messages>
 			</mat-error>
 		</mat-form-field>
 	</div>
@@ -45,7 +45,7 @@
 
 </mat-dialog-content>
 <mat-dialog-actions>
-	<button mat-stroked-button color="warn">Delete</button>
+	<button mat-stroked-button color="warn" (click)="delete()" [disabled]="!data?.id">Delete</button>
 	<div>
 		<button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">SAVE</button>
 		<button mat-raised-button mat-dialog-close>Cancel</button>

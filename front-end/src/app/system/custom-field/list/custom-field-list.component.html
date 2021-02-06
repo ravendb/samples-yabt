@@ -26,22 +26,22 @@
 				<span class="wide-column">
 					<a (click)="openItemDialog(row.id)">{{row.name}}<sup *ngIf="row.isMandatory">*</sup></a>
 				</span>
-				<span class="narrow-column" title="Field Type">{{ row.fieldType }}</span>
+				<span class="narrow-column" title="Field Type">{{ row.fieldType|join }}</span>
 			</div>
 			<div class="embedded-backlogItemTypes-block">
-				{{row.backlogItemTypes}}
+				{{row.backlogItemTypes|join}}
 			</div>
 		</mat-cell>
 	</ng-container>
 
 	<ng-container matColumnDef="fieldType">
 		<mat-header-cell *matHeaderCellDef mat-sort-header> Field Type </mat-header-cell>
-		<mat-cell *matCellDef="let row"> {{row.fieldType}} </mat-cell>
+		<mat-cell *matCellDef="let row"> {{row.fieldType|join}} </mat-cell>
 	</ng-container>
 
 	<ng-container matColumnDef="backlogItemTypes">
 		<mat-header-cell *matHeaderCellDef mat-sort-header> Ticket Types </mat-header-cell>
-		<mat-cell *matCellDef="let row"> {{row.backlogItemTypes}} </mat-cell>
+		<mat-cell *matCellDef="let row"> {{row.backlogItemTypes|join}} </mat-cell>
 	</ng-container>
 
 	<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
