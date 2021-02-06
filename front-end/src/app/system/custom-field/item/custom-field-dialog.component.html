@@ -10,7 +10,7 @@
 				<sup class="color-warn">*</sup>
 			</mat-placeholder>
 			<mat-error>
-				<error-messages [for]="form.get('name')"></error-messages>
+				<error-messages formControlName="name"></error-messages>
 			</mat-error>
 		</mat-form-field>
 	</div>
@@ -23,7 +23,7 @@
 				<sup class="color-warn">*</sup>
 			</mat-placeholder>
 			<mat-error>
-				<error-messages [for]="form.controls.type"></error-messages>
+				<error-messages formControlName="type"></error-messages>
 			</mat-error>
 		</mat-form-field>
 	</div>
@@ -34,16 +34,20 @@
 			</mat-select>
 			<mat-placeholder>Backlog Item Types</mat-placeholder>
 			<mat-error>
-				<error-messages [for]="form.controls.backlogItemTypes"></error-messages>
+				<error-messages formControlName="backlogItemTypes"></error-messages>
 			</mat-error>
 		</mat-form-field>
 	</div>
 	<div class="flex-row">
 		<mat-checkbox formControlName="isMandatory">Mandatory</mat-checkbox>
 	</div>
+	&nbsp;
 
 </mat-dialog-content>
 <mat-dialog-actions>
-	<button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">SAVE</button>
-	<button mat-raised-button mat-dialog-close>Cancel</button>
+	<button mat-stroked-button color="warn">Delete</button>
+	<div>
+		<button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">SAVE</button>
+		<button mat-raised-button mat-dialog-close>Cancel</button>
+	</div>
 </mat-dialog-actions>

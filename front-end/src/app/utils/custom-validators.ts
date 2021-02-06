@@ -67,7 +67,7 @@ export class CustomValidators {
 
 	static pattern(regex: RegExp): ValidatorFn {
 		return (control: AbstractControl): ValidationErrors | null => {
-			return this.isEmptyInputValue(control.value) || regex.test(control.value) ? null : { customPattern: 'Invalid input' };
+			return this.isEmptyInputValue(control.value) || regex.test(control.value) ? null : { customPattern: 'Invalid format' };
 		};
 	}
 
