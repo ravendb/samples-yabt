@@ -14,6 +14,7 @@ import { FilterMultiSelectComponent } from './filters/filter-multi-select';
 import { FilterSearchComponent } from './filters/filter-search';
 import { FilterSingleSelectComponent } from './filters/filter-single-select';
 import { ErrorMessagesComponent } from './forms';
+import { JoinPipe } from './pipes/join.pipe';
 
 @NgModule({
 	declarations: [
@@ -24,6 +25,7 @@ import { ErrorMessagesComponent } from './forms';
 		FilterMultiSelectComponent,
 		FilterSingleSelectComponent,
 		FilterSearchComponent,
+		JoinPipe,
 	],
 	exports: [
 		CommonModule,
@@ -34,6 +36,7 @@ import { ErrorMessagesComponent } from './forms';
 		FilterMultiSelectComponent,
 		FilterSingleSelectComponent,
 		FilterSearchComponent,
+		JoinPipe,
 	],
 	imports: [
 		CommonModule,
