@@ -4,6 +4,6 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command.DTOs
 {
 	public class CustomFieldAddRequest : CustomFieldUpdateRequest
 	{
-		public CustomFieldType Type { get; set; }
+		public CustomFieldType FieldType { get; set; }
 	}
 }

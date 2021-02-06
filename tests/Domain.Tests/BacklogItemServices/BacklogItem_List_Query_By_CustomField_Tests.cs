@@ -211,7 +211,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			var dto = new CustomFieldAddRequest
 			{
 				Name = "Test Custom Field 1",
-				Type = type
+				FieldType = type
 			};
 			var customField = (await _customFieldCommandService.Create(dto)).Value;
 			await SaveChanges();

@@ -84,7 +84,7 @@ namespace Raven.Yabt.Domain.Tests.CustomFields
 			var dto = new CustomFieldAddRequest
 			{
 				Name = "Test Custom Field",
-				Type = Database.Common.CustomFieldType.Text
+				FieldType = Database.Common.CustomFieldType.Text
 			};
 			var fieldRef = (await _commandService.Create(dto)).Value;
 			await SaveChanges();

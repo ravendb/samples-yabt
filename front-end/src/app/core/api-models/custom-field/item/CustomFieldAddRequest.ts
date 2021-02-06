@@ -3,7 +3,7 @@ import { CustomFieldType } from '@core/api-models/common/CustomFieldType';
 
 export class CustomFieldAddRequest {
 	name!: string;
-	type!: CustomFieldType;
+	fieldType!: CustomFieldType;
 	isMandatory: boolean = false;
 	backlogItemTypes: Array<BacklogItemType> | undefined;
 }

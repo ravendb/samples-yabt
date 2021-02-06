@@ -31,7 +31,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 			var entity = new CustomField
 				{
 					Name = dto.Name,
-					FieldType = dto.Type,
+					FieldType = dto.FieldType,
 					BacklogItemTypes = dto.BacklogItemTypes,
 					IsMandatory = dto.IsMandatory
 				};
@@ -77,7 +77,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 			var query =  DbSession.Query<CustomFieldIndexedForList, CustomFields_ForList>()
 			                      .Where(cf => cf.Name == name);
 			if (!string.IsNullOrEmpty(id))
-				query = query.Where(cf => cf.Id != id);
+				query = query.Where(cf => cf.Id != GetFullId(id));
 			
 			if (await query.AnyAsync()) 
 				return DomainResult.Failed($"Custom Field with name '{name}' already exist");
