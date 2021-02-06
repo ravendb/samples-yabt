@@ -12,6 +12,7 @@ body {
 }
 
 a {
+	cursor: pointer;
 	color: $primary-color;
 	text-decoration: none;
 	&:hover {
