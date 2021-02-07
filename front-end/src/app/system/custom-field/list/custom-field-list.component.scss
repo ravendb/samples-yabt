@@ -1,13 +1,17 @@
 @import 'breakpoints';
+@import 'theme';
 @import 'list-components';
 
 .header {
 	display: flex;
-	background-color: white;
+	background-color: $white-background;
 	h2,
 	h3.mat-h3 {
 		margin: 0 0 0 16px;
-		color: #737373;
+		color: $primary-lightish-color;
+	}
+	h3.mat-h3 {
+		@include makeHiddenSmallAndDown();
 	}
 	.action-buttons {
 		flex: auto;
