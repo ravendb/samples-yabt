@@ -1,33 +1,51 @@
 import { Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter } from 'rxjs/operators';
+import { ActivatedRoute } from '@angular/router';
+import { isEmpty, last } from 'lodash-es';
+import { AppConfig } from './app.config';
 
+export interface IBreadcrumbItem {
+	label: string;
+	url: string;
+}
 @Injectable({
 	providedIn: 'root',
 })
 export class PageTitleService {
-	title: string = '';
+	get fullPageTitle(): string {
+		return (!isEmpty(this._title) ? this._title + ' | ' : '') + AppConfig.PageTitleSuffix;
+	}
+	private _title = '';
 
-	constructor(private router: Router, private titleService: Title, private activatedRoute: ActivatedRoute) {}
+	get breadcrumbs(): IBreadcrumbItem[] {
+		return this._breadcrumbs;
+	}
+	private _breadcrumbs: IBreadcrumbItem[] = [];
 
-	initializePageTitles() {
-		this.getTitleFromRoute();
-		this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((): void => {
-			this.getTitleFromRoute();
-		});
+	constructor(private titleService: Title, private activatedRoute: ActivatedRoute) {}
+
+	initializePageTitles(): void {
+		this._breadcrumbs = this.getNestedRoutes(this.activatedRoute.root);
+		this._title = last(this._breadcrumbs)?.label || '';
+
+		this.titleService.setTitle(this.fullPageTitle);
 	}
 
-	private getTitleFromRoute() {
-		let root = this.activatedRoute.snapshot.root;
+	private getNestedRoutes(route: ActivatedRoute, url: string = '', menuItems: IBreadcrumbItem[] = []): IBreadcrumbItem[] {
+		if (!isEmpty(route.children))
+			route.children.forEach(child => {
+				const routeURL: string = child.snapshot.url.map(segment => segment.path).join('/');
+				if (isEmpty(routeURL)) return menuItems;
+				else {
+					url += `/${routeURL}`;
+					const label = child.snapshot?.data?.title;
+					if (!!label) {
+						menuItems.push({ label, url });
+					}
 
-		while (root.children && root.children.length) {
-			root.children.forEach(childRoute => {
-				root = childRoute;
-				this.title = childRoute?.data?.title || this.title;
+					return this.getNestedRoutes(child, url, menuItems);
+				}
 			});
-		}
-
-		if (this.title && this.title.indexOf('{{') === -1) this.titleService.setTitle(this.title);
+		return menuItems;
 	}
 }

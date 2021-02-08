@@ -1,0 +1,9 @@
+<ul>
+	<li *ngFor="let item of breadcrumbs; last as last; count as count" [class.nested]="count > 1">
+		<ng-template [ngIf]="!last">
+			<a [routerLink]="item.url">{{item.label}}</a>&nbsp;/&nbsp;
+		</ng-template>
+
+		<ng-template [ngIf]="last">{{item.label}}</ng-template>
+	</li>
+</ul>

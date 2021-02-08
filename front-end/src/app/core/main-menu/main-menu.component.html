@@ -51,7 +51,9 @@
 
 <ng-template #desktopMenu>
 	<mat-toolbar>
-		<span>{{ mobileTitle }}</span>
+		<span>
+			<app-breadcrumbs></app-breadcrumbs>
+		</span>
 		<span class="spacer"></span>
 		<button mat-button [matMenuTriggerFor]="accountMenu">
 			<img class="avatar" src="//www.gravatar.com/avatar/00000000000000000000000000000000?r=g&d=mm&s=40" />
@@ -78,7 +80,9 @@
 			<mat-icon>menu</mat-icon>
 		</button>
 
-		<span>{{ mobileTitle }}</span>
+		<span>
+			<app-breadcrumbs></app-breadcrumbs>
+		</span>
 
 		<span class="spacer"></span>
 

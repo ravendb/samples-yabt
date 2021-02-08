@@ -1,0 +1,18 @@
+@import 'breakpoints';
+
+ul {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+}
+.nested {
+	font-size: 16px;
+}
+a {
+	@include breakpointXSmall() {
+		color: white; // it's better to fetch from the theme
+	}
+}
