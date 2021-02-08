@@ -16,4 +16,8 @@ export const AppConfig = {
 		const injectedVar: string = '#{ApiKey}';
 		return injectedVar.lastIndexOf('#', 0) === 0 ? '4D84AE02-C989-4DC5-9518-8D0CB2FB5F61' : injectedVar;
 	},
+
+	get PageTitleSuffix(): string {
+		return 'YABT';
+	},
 };

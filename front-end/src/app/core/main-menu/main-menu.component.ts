@@ -12,7 +12,7 @@ import { MainMenuMapItem } from './main-menu-map-item';
 	(the Wailing Wall - https://github.com/angular/components/issues/1728).
  */
 @Component({
-	selector: 'main-menu',
+	selector: 'app-main-menu',
 	styleUrls: ['./main-menu.component.scss'],
 	templateUrl: 'main-menu.component.html',
 })
