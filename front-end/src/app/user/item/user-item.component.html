@@ -1,0 +1,37 @@
+<form [formGroup]="form">
+	<mat-form-field>
+		<input type="text" matInput formControlName="firstName">
+		<mat-placeholder>First name
+			<sup class="color-warn">*</sup>
+		</mat-placeholder>
+		<mat-error>
+			<error-messages formControlName="firstName"></error-messages>
+		</mat-error>
+	</mat-form-field>
+	<mat-form-field>
+		<input type="text" matInput formControlName="lastName">
+		<mat-placeholder>Last name
+			<sup class="color-warn">*</sup>
+		</mat-placeholder>
+		<mat-error>
+			<error-messages formControlName="lastName"></error-messages>
+		</mat-error>
+	</mat-form-field>
+
+	<mat-form-field>
+		<input type="email" matInput formControlName="email">
+		<mat-placeholder>Email
+			<sup class="color-warn">*</sup>
+		</mat-placeholder>
+		<mat-error>
+			<error-messages formControlName="email"></error-messages>
+		</mat-error>
+	</mat-form-field>
+	<mat-form-field>
+		<input type="text" matInput formControlName="avatarUrl">
+		<mat-placeholder>URL to the user's avatar</mat-placeholder>
+		<mat-error>
+			<error-messages formControlName="avatarUrl"></error-messages>
+		</mat-error>
+	</mat-form-field>
+</form>

@@ -1,8 +1,6 @@
-export class UserGetByIdResponse {
-	firstName: string | undefined;
-	lastName: string | undefined;
+import { UserItemBaseDto } from './UserItemBaseDto';
+
+export class UserGetByIdResponse extends UserItemBaseDto {
 	fullName: string | undefined;
 	nameWithInitials: string | undefined;
-	avatar: string | undefined;
-	email: string | undefined;
 }

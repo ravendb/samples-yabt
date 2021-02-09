@@ -8,12 +8,13 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { SharedModule } from '@shared';
+import { UserItemComponent } from './item';
+import { UserListComponent } from './list';
 import { UserFiltersComponent } from './list/filters';
-import { UserListComponent } from './list/user-list.component';
 import { UserRouting } from './user.routing';
 
 @NgModule({
-	declarations: [UserListComponent, UserFiltersComponent],
+	declarations: [UserListComponent, UserFiltersComponent, UserItemComponent],
 	imports: [
 		CommonModule,
 		UserRouting,

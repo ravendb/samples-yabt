@@ -1,7 +1,8 @@
 ﻿import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { ListResponse } from '@core/api-models/common/ListResponse';
-import { UserGetByIdResponse } from '@core/api-models/user/item';
+import { UserReference } from '@core/api-models/common/references';
+import { UserAddUpdRequest, UserGetByIdResponse } from '@core/api-models/user/item';
 import { UserListGetRequest, UserListGetResponse } from '@core/api-models/user/list';
 import { AppConfig } from '@core/app.config';
 import { Observable } from 'rxjs';
@@ -16,9 +17,19 @@ export class UsersService extends BaseApiService {
 	}
 
 	getUserList(request?: Partial<UserListGetRequest>): Observable<ListResponse<UserListGetResponse>> {
-		return this.getList<UserListGetRequest, UserListGetResponse>('', request);
+		return this.getList('', request);
 	}
-	getBacklogItem(id: string): Observable<UserGetByIdResponse> {
-		return this.getItem<void, UserGetByIdResponse>(`${id}`);
+	getUser(id: string): Observable<UserGetByIdResponse> {
+		return this.getItem(id);
+	}
+
+	createUser(request?: UserAddUpdRequest): Observable<UserReference> {
+		return this.post('', request);
+	}
+	updateUser(id: string, request?: UserAddUpdRequest): Observable<UserReference> {
+		return this.put(id, request);
+	}
+	deleteUser(id: string): Observable<UserReference> {
+		return this.delete(id);
 	}
 }
