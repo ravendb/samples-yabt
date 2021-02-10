@@ -10,7 +10,7 @@
 		<mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
 		<mat-cell *matCellDef="let row">
 			<div class="title-block">
-				<a [routerLink]="['/user', row.id]" [title]="row.fullName">
+				<a [routerLink]="['/users', row.id]" [title]="row.fullName">
 					{{row.lastName}}, {{row.firstName}}
 				</a>
 			</div>
