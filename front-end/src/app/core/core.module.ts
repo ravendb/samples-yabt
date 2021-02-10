@@ -15,12 +15,20 @@ import { AuthInterceptor } from './auth.interceptor';
 import { FooterComponent } from './footer';
 import { MainMenuComponent } from './main-menu';
 import { BreadcrumbsComponent } from './main-menu/breadcrumbs/breadcrumbs.component';
+import { ConfirmationDialogComponent } from './notification';
 import { AlertDialogComponent } from './notification/alert-dialog.component';
 import { NotificationComponent } from './notification/notification.component';
 import { NotificationService } from './notification/notification.service';
 
 @NgModule({
-	declarations: [AlertDialogComponent, FooterComponent, MainMenuComponent, NotificationComponent, BreadcrumbsComponent],
+	declarations: [
+		AlertDialogComponent,
+		FooterComponent,
+		MainMenuComponent,
+		NotificationComponent,
+		ConfirmationDialogComponent,
+		BreadcrumbsComponent,
+	],
 	exports: [FooterComponent, MainMenuComponent],
 	imports: [
 		CommonModule,

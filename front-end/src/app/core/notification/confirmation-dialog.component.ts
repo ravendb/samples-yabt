@@ -6,7 +6,7 @@ import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 		<h2 mat-dialog-title>{{ data.title }}</h2>
 		<div mat-dialog-content [innerHTML]="data.html"></div>
 		<div mat-dialog-actions>
-			<button mat-raised-button color="primary" mat-dialog-close>
+			<button mat-raised-button color="primary" [mat-dialog-close]="true" cdkFocusInitial>
 				{{ data.confirmationText || 'Yes' }}
 			</button>
 			<button mat-raised-button mat-dialog-close>{{ data.cancellationText || 'No' }}</button>
