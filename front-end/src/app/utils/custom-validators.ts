@@ -1,5 +1,5 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { isNil, uniq } from 'lodash';
+import { isNil, uniq } from 'lodash-es';
 
 // Extension of https://github.com/angular/angular/blob/master/packages/forms/src/validators.ts
 // tslint:disable-next-line:max-line-length
