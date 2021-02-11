@@ -1,5 +1,23 @@
 @import 'breakpoints';
+@import 'theme';
 @import 'list-components';
+
+.header {
+	display: flex;
+	background-color: $white-background;
+
+	user-filters {
+		flex-grow: 3;
+		padding-left: 8px;
+	}
+
+	.action-buttons {
+		flex: auto;
+		text-align: end;
+		align-self: center;
+		padding: 16px;
+	}
+}
 
 .mat-column-name {
 	@include mainColumn();

@@ -1,4 +1,11 @@
-<user-filters [(filter)]="filter"></user-filters>
+<div class="header">
+	<user-filters [(filter)]="filter"></user-filters>
+	<div class="action-buttons">
+		<a mat-stroked-button color="primary" [routerLink]="['create']">
+			<mat-icon>add_circle</mat-icon> Create
+		</a>
+	</div>
+</div>
 
 <div *ngIf="dataSource?.loading$ | async" class="spinner-container">
 	<mat-spinner></mat-spinner>
