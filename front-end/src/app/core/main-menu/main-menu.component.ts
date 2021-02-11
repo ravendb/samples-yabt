@@ -43,7 +43,7 @@ export class MainMenuComponent implements OnInit, AfterViewInit, OnDestroy {
 
 	// Items of the side menu
 	private _siteMap: MainMenuMapItem[] = [
-		new MainMenuMapItem('Backlog Items', '/backlogs', ['/backlogs'], 'bug_report'),
+		new MainMenuMapItem('Backlog Items', '/backlog-items', ['/backlog-items'], 'bug_report'),
 		new MainMenuMapItem('Users', '/users', ['/users'], 'supervisor_account'),
 	];
 

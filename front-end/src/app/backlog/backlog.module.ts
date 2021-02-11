@@ -12,13 +12,14 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { SharedModule } from '@shared';
 import { BacklogRouting } from './backlog.routing';
+import { BacklogItemComponent } from './item';
 import { BacklogListComponent } from './list/backlog-list.component';
 import { FilterBarComponent } from './list/filter-bar';
 import { BacklogFilterDialogComponent } from './list/filter-dialog';
 import { BacklogFiltersComponent } from './list/filters';
 
 @NgModule({
-	declarations: [BacklogListComponent, BacklogFiltersComponent, FilterBarComponent, BacklogFilterDialogComponent],
+	declarations: [BacklogListComponent, BacklogFiltersComponent, FilterBarComponent, BacklogFilterDialogComponent, BacklogItemComponent],
 	imports: [
 		CommonModule,
 		BacklogRouting,
