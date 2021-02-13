@@ -5,8 +5,10 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { BacklogItemGetResponseBase } from '@core/api-models/backlog-item/item/BacklogItemGetResponseBase';
 import { BugAddUpdRequest } from '@core/api-models/backlog-item/item/BugAddUpdRequest';
 import { UserStoryAddUpdRequest } from '@core/api-models/backlog-item/item/UserStoryAddUpdRequest';
+import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
 import { BacklogItemsService } from '@core/api-services/backlogItems.service';
 import { NotificationService } from '@core/notification/notification.service';
+import { IBreadcrumbItem, PageTitleService } from '@core/page-title.service';
 import { CustomValidators } from '@utils/custom-validators';
 import { of, Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -20,9 +22,13 @@ type BacklogAddUpdDto = BugAddUpdRequest & UserStoryAddUpdRequest;
 export class BacklogItemComponent implements OnInit {
 	editId: string | null = null;
 	form!: FormGroupTyped<BacklogAddUpdDto>;
+	dtoBeforeUpdate: BacklogItemGetResponseBase | undefined;
+
+	get typeTitle(): BacklogItemType | undefined {
+		return !!this.dtoBeforeUpdate ? BacklogItemType[this.dtoBeforeUpdate.type] : undefined;
+	}
 
 	private subscriptions = new Subscription();
-	private _dtoBeforeUpdate: BacklogItemGetResponseBase | undefined;
 	private _listRoute = '/backlog-items';
 
 	constructor(
@@ -31,6 +37,7 @@ export class BacklogItemComponent implements OnInit {
 		private fb: FormBuilder,
 		private apiService: BacklogItemsService,
 		private notifyService: NotificationService,
+		private pageTitle: PageTitleService,
 		private location: Location
 	) {}
 
@@ -53,8 +60,13 @@ export class BacklogItemComponent implements OnInit {
 					})
 				)
 				.subscribe(item => {
-					this._dtoBeforeUpdate = item;
+					this.dtoBeforeUpdate = item;
 					this.form.reset(item);
+					const lastBreadcrumbs: IBreadcrumbItem = {
+						label: !!this.editId ? `#${this.editId}` : 'Create',
+						url: '',
+					};
+					this.pageTitle.addLastBreadcrumbs(lastBreadcrumbs);
 				})
 		);
 	}

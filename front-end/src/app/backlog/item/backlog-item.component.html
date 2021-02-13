@@ -1,22 +1,24 @@
-<div class="header-title">
-	<a (click)="goBack()">
-		<mat-icon>arrow_back</mat-icon>
-	</a>
-	<h2>{{ editId ? 'Edit' : 'Create' }} Backlog item</h2>
-</div>
-
 <form [formGroup]="form" class="form">
-	<div class="flex-row">
-		<mat-form-field>
-			<input type="text" matInput formControlName="title">
-			<mat-placeholder>Title
-				<sup class="color-warn">*</sup>
-			</mat-placeholder>
-			<mat-error>
-				<error-messages formControlName="title"></error-messages>
-			</mat-error>
-		</mat-form-field>
+
+	<div class="header-bar" [class.feature]="dtoBeforeUpdate?.type == 'feature'" [class.bug]="dtoBeforeUpdate?.type == 'bug'"
+		[class.user-story]="dtoBeforeUpdate?.type == 'userStory'" [class.task]="dtoBeforeUpdate?.type == 'task'">
+		<div *ngIf="!!dtoBeforeUpdate">
+			<backlog-item-icon [type]="dtoBeforeUpdate.type"></backlog-item-icon>
+			{{typeTitle}}
+		</div>
+		<div class="flex-row">
+			<mat-form-field>
+				<input type="text" matInput formControlName="title">
+				<mat-placeholder>Title
+					<sup class="color-warn">*</sup>
+				</mat-placeholder>
+				<mat-error>
+					<error-messages formControlName="title"></error-messages>
+				</mat-error>
+			</mat-form-field>
+		</div>
 	</div>
+
 	<div class="flex-row">
 		<mat-form-field>
 			<input type="text" matInput formControlName="assigneeId">

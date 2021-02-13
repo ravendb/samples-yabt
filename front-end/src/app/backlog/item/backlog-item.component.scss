@@ -1,12 +1,27 @@
 @import 'flex-layout';
+@import 'variables';
 
-.header-title {
-	display: flex;
-	padding: 16px 16px 0 24px;
+.header-bar {
+	//display: flex;
+	flex-direction: column;
+	//padding: 16px 16px 0 24px;
 
-	mat-icon.mat-icon {
-		margin-right: 16px;
-		padding-top: 4px;
+	border-left-style: solid;
+	border-left-width: 10px;
+	border-left-color: white;
+	padding: 4px 0 5px 10px;
+
+	&.feature {
+		border-left-color: $backlog-item-type-feature;
+	}
+	&.bug {
+		border-left-color: $backlog-item-type-bug;
+	}
+	&.user-story {
+		border-left-color: $backlog-item-type-user-story;
+	}
+	&.task {
+		border-left-color: $backlog-item-type-task;
 	}
 }
 
