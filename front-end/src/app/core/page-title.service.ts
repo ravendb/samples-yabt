@@ -30,6 +30,13 @@ export class PageTitleService {
 
 		this.titleService.setTitle(this.fullPageTitle);
 	}
+	addLastBreadcrumbs(item: IBreadcrumbItem): void {
+		this._breadcrumbs.push(item);
+	}
+	setLastBreadcrumbs(item: IBreadcrumbItem): void {
+		if (!this._breadcrumbs || this._breadcrumbs.length < 1) return;
+		this._breadcrumbs[this._breadcrumbs.length - 1] = item;
+	}
 
 	private getNestedRoutes(route: ActivatedRoute, url: string = '', menuItems: IBreadcrumbItem[] = []): IBreadcrumbItem[] {
 		if (!isEmpty(route.children))
