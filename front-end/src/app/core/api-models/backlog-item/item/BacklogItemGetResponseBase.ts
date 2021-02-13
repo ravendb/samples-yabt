@@ -5,7 +5,7 @@ import { BacklogItemCommentListGetResponse } from './BacklogItemCommentListGetRe
 
 export class BacklogItemGetResponseBase {
 	title!: string;
-	type: BacklogItemType | undefined;
+	type!: keyof typeof BacklogItemType;
 	assignee: UserReference | undefined;
 	created!: ChangedByUserReference;
 	lastUpdated!: ChangedByUserReference;
