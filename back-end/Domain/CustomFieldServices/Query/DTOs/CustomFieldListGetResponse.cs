@@ -1,13 +1,11 @@
 ﻿using Raven.Yabt.Database.Common;
 using Raven.Yabt.Domain.Common;
 
-#nullable disable // Disable nullable check for a response DTO file
-
 namespace Raven.Yabt.Domain.CustomFieldServices.Query.DTOs
 {
 	public class CustomFieldListGetResponse: ListResponseWithSanitisedIds
 	{
-		public string Name { get; set; }
+		public string Name { get; set; } = null!;
 
 		public CustomFieldType FieldType { get; set; }
 		

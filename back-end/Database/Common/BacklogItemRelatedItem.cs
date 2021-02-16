@@ -1,7 +1,6 @@
-﻿using Raven.Yabt.Database.Common;
-using Raven.Yabt.Database.Common.References;
+﻿using Raven.Yabt.Database.Common.References;
 
-namespace Raven.Yabt.Database.Models.BacklogItems
+namespace Raven.Yabt.Database.Common
 {
 	public class BacklogItemRelatedItem
 	{

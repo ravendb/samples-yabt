@@ -1,6 +1,6 @@
 export class UserReference {
-	id: string | null = null;
+	id?: string;
 	name: string = '';
 	fullName: string = '';
-	avatarUrl: string | null = null;
+	avatarUrl?: string;
 }
