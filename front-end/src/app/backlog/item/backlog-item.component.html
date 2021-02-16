@@ -2,11 +2,11 @@
 
 	<div class="header-bar" [class.feature]="dtoBeforeUpdate?.type == 'feature'" [class.bug]="dtoBeforeUpdate?.type == 'bug'"
 		[class.user-story]="dtoBeforeUpdate?.type == 'userStory'" [class.task]="dtoBeforeUpdate?.type == 'task'">
-		<div *ngIf="!!dtoBeforeUpdate">
+		<div *ngIf="!!dtoBeforeUpdate" class="monospace">
 			<backlog-item-icon [type]="dtoBeforeUpdate.type"></backlog-item-icon>
-			{{typeTitle}}
+			<span>{{typeTitle | uppercase}}</span>
 		</div>
-		<div class="flex-row">
+		<div class="flex-row title">
 			<mat-form-field>
 				<input type="text" matInput formControlName="title">
 				<mat-placeholder>Title
@@ -17,16 +17,10 @@
 				</mat-error>
 			</mat-form-field>
 		</div>
-	</div>
-
-	<div class="flex-row">
-		<mat-form-field>
-			<input type="text" matInput formControlName="assigneeId">
-			<mat-placeholder>Assignee</mat-placeholder>
-			<mat-error>
-				<error-messages formControlName="assigneeId"></error-messages>
-			</mat-error>
-		</mat-form-field>
+		<div>
+			<filter-single-select label="Not assigned" buttonAltText="Assigned to" formControlName="assigneeId"
+				[stretchedAndStroked]="false" [search]="searchByAssignee"></filter-single-select>
+		</div>
 	</div>
 
 	<div class="flex-row">

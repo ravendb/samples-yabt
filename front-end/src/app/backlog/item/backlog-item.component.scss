@@ -23,11 +23,27 @@
 	&.task {
 		border-left-color: $backlog-item-type-task;
 	}
+
+	.monospace {
+		font-size: 12px;
+		font-family: 'Segoe UI', '-apple-system', BlinkMacSystemFont, Roboto, 'Helvetica Neue', Helvetica, Ubuntu, Arial, sans-serif,
+			'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+		font-weight: 300;
+	}
+	.title {
+		margin-top: 8px;
+		::ng-deep {
+			div.mat-form-field-wrapper {
+				div.mat-form-field-underline {
+					background-color: rgba(0, 0, 0, 0.2);
+				}
+			}
+		}
+	}
 }
 
 form.form {
-	max-width: 600px;
-	margin: 16px 32px;
+	margin-right: 16px;
 }
 
 div.stretch {

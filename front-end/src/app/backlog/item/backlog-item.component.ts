@@ -7,9 +7,12 @@ import { BugAddUpdRequest } from '@core/api-models/backlog-item/item/BugAddUpdRe
 import { UserStoryAddUpdRequest } from '@core/api-models/backlog-item/item/UserStoryAddUpdRequest';
 import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
 import { BacklogRelationshipType } from '@core/api-models/common/BacklogRelationshipType';
+import { UserListGetRequest } from '@core/api-models/user/list';
 import { BacklogItemsService } from '@core/api-services/backlogItems.service';
+import { UsersService } from '@core/api-services/users.service';
 import { NotificationService } from '@core/notification/notification.service';
 import { IBreadcrumbItem, PageTitleService } from '@core/page-title.service';
+import { IKeyValuePair } from '@shared/filters';
 import { CustomValidators } from '@utils/custom-validators';
 import { of, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -30,6 +33,11 @@ export class BacklogItemComponent implements OnInit {
 		return !!this.dtoBeforeUpdate ? BacklogItemType[this.dtoBeforeUpdate.type] : undefined;
 	}
 
+	searchByAssignee = (search: string): Observable<IKeyValuePair[]> =>
+		this.userService
+			.getUserList(<Partial<UserListGetRequest>>{ search, pageSize: 1000 })
+			.pipe(map(r => r.entries?.map(t => <IKeyValuePair>{ key: t.id, value: t.nameWithInitials })));
+
 	private subscriptions = new Subscription();
 	private _listRoute = '/backlog-items';
 
@@ -37,7 +45,8 @@ export class BacklogItemComponent implements OnInit {
 		private activatedRoute: ActivatedRoute,
 		private router: Router,
 		private fb: FormBuilder,
-		private apiService: BacklogItemsService,
+		private backlogService: BacklogItemsService,
+		private userService: UsersService,
 		private notifyService: NotificationService,
 		private pageTitle: PageTitleService,
 		private location: Location
@@ -58,7 +67,7 @@ export class BacklogItemComponent implements OnInit {
 					switchMap((p: ParamMap) => {
 						const id = p.get('id');
 						this.editId = !!id && id !== 'create' ? id : null;
-						return !!this.editId ? this.apiService.getBacklogItem(this.editId) : of({} as BacklogItemGetResponseBase);
+						return !!this.editId ? this.backlogService.getBacklogItem(this.editId) : of({} as BacklogItemGetResponseBase);
 					}),
 					map(item => {
 						// Save readonly fields
