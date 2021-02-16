@@ -116,6 +116,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			entity ??= new TModel();
 
 			entity.Title = dto.Title;
+			entity.State = dto.State;
 			entity.Tags = dto.Tags;
 			entity.Assignee = dto.AssigneeId != null ? await _userResolver.GetReferenceById(dto.AssigneeId) : null;
 	

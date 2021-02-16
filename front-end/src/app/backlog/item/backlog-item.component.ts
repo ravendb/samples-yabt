@@ -6,12 +6,14 @@ import { BacklogItemGetResponseBase } from '@core/api-models/backlog-item/item/B
 import { BugAddUpdRequest } from '@core/api-models/backlog-item/item/BugAddUpdRequest';
 import { UserStoryAddUpdRequest } from '@core/api-models/backlog-item/item/UserStoryAddUpdRequest';
 import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
+import { BacklogRelationshipType } from '@core/api-models/common/BacklogRelationshipType';
 import { BacklogItemsService } from '@core/api-services/backlogItems.service';
 import { NotificationService } from '@core/notification/notification.service';
 import { IBreadcrumbItem, PageTitleService } from '@core/page-title.service';
 import { CustomValidators } from '@utils/custom-validators';
 import { of, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { map, switchMap } from 'rxjs/operators';
+import { BacklogItemReadonlyProperties } from './backlog-item-readonly-properties';
 
 type BacklogAddUpdDto = BugAddUpdRequest & UserStoryAddUpdRequest;
 
@@ -22,7 +24,7 @@ type BacklogAddUpdDto = BugAddUpdRequest & UserStoryAddUpdRequest;
 export class BacklogItemComponent implements OnInit {
 	editId: string | null = null;
 	form!: FormGroupTyped<BacklogAddUpdDto>;
-	dtoBeforeUpdate: BacklogItemGetResponseBase | undefined;
+	dtoBeforeUpdate: BacklogItemReadonlyProperties | undefined;
 
 	get typeTitle(): BacklogItemType | undefined {
 		return !!this.dtoBeforeUpdate ? BacklogItemType[this.dtoBeforeUpdate.type] : undefined;
@@ -57,10 +59,15 @@ export class BacklogItemComponent implements OnInit {
 						const id = p.get('id');
 						this.editId = !!id && id !== 'create' ? id : null;
 						return !!this.editId ? this.apiService.getBacklogItem(this.editId) : of({} as BacklogItemGetResponseBase);
+					}),
+					map(item => {
+						// Save readonly fields
+						this.dtoBeforeUpdate = item;
+						// Convert to DTO for creating/editing
+						return this.convertGetDtoToAddUpdDto(item);
 					})
 				)
 				.subscribe(item => {
-					this.dtoBeforeUpdate = item;
 					this.form.reset(item);
 					const lastBreadcrumbs: IBreadcrumbItem = {
 						label: !!this.editId ? `#${this.editId}` : 'Create',
@@ -118,5 +125,23 @@ export class BacklogItemComponent implements OnInit {
 	goBack(): void {
 		if (window.history.length > 1) this.location.back();
 		else this.router.navigate([this._listRoute]);
+	}
+
+	private convertGetDtoToAddUpdDto(getDto: BacklogItemGetResponseBase): BacklogAddUpdDto {
+		if (!getDto) return {} as BacklogAddUpdDto;
+
+		const related = getDto.relatedItems?.reduce((result, i) => {
+			if (!!i.relatedTo?.id) result[i.relatedTo!.id!] = i.linkType;
+			return result;
+		}, {} as { [key: string]: BacklogRelationshipType });
+
+		return {
+			title: getDto.title,
+			state: getDto.state,
+			assigneeId: getDto.assignee?.id,
+			tags: getDto.tags,
+			relatedItems: related,
+			customFields: getDto.customFields,
+		} as BacklogAddUpdDto;
 	}
 }

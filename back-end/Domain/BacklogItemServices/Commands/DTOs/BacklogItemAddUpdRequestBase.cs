@@ -13,6 +13,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs
 		[Required]
 		public string Title { get; set; } = null!;
 
+		public BacklogItemState State { get; set; }
+
 		public string? AssigneeId { get; set; }
 
 		public string[]? Tags { get; set; }

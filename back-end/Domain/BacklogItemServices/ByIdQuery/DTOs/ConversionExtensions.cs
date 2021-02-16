@@ -16,11 +16,13 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 			var response = new TResponse
 			{
 				Title = entity.Title,
+				State = entity.State,
 				Assignee = entity.Assignee,
 				Created = entity.Created,
 				LastUpdated = entity.LastUpdated,
 				Tags = entity.Tags,
 				Comments = comments,
+				RelatedItems = entity.RelatedItems,
 				CustomFields = entity.CustomFields,
 				Type = entity.Type
 			};

@@ -2,6 +2,7 @@
 
 using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Domain.Common;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
@@ -10,6 +11,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 	{
 		public string Title { get; set; } = null!;
 		public BacklogItemType Type { get; set; }
+		public BacklogItemState State { get; set; }
 		
 		public UserReference? Assignee { get; set; }
 
@@ -19,6 +21,14 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 		public string[]? Tags { get; set; }
 		public ListResponse<BacklogItemCommentListGetResponse>? Comments { get; set; }
 
+		/// <summary>
+		///		Extra custom properties of various data types configured by the user: { Custom Field ID, Value }.
+		/// </summary>
 		public IDictionary<string, object>? CustomFields { get; set; }
+		
+		/// <summary>
+		///		Related tickets
+		/// </summary>
+		public IList<BacklogItemRelatedItem>?  RelatedItems { get; set; }
 	}
 }
