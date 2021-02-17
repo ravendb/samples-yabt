@@ -1,6 +1,12 @@
 @import 'filter-button';
 @import 'theme';
 
+button.narrow-underscored-button.mat-button {
+	line-height: 36px;
+	border-radius: unset;
+	border-bottom: thin rgba(0, 0, 0, 0.2) solid;
+}
+
 .search-form-field {
 	margin: 8px 16px 0;
 }

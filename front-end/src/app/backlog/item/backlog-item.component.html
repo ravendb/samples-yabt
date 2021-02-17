@@ -17,21 +17,48 @@
 				</mat-error>
 			</mat-form-field>
 		</div>
-		<div>
-			<filter-single-select label="Not assigned" buttonAltText="Assigned to" formControlName="assigneeId"
-				[stretchedAndStroked]="false" [search]="searchByAssignee"></filter-single-select>
+		<div class="title-secondary-block monospace">
+			<div class="table narrow">
+				<div class="row">
+					<div class="label">Assignee:</div>
+					<div class="control">
+						<filter-single-select label="Not assigned" buttonAltText="Assigned to" formControlName="assigneeId"
+							[narrowUnderscored]="true" [search]="searchByAssignee"></filter-single-select>
+					</div>
+				</div>
+				<div class="row">
+					<div class="label">State:</div>
+					<div class="control">
+						<filter-single-select label="State" buttonAltText="State" [options]="states" formControlName="state"
+							[narrowUnderscored]="true" [hideClearButton]="true">
+							<ng-template let-state>
+								<backlog-item-state [state]="state"></backlog-item-state>
+							</ng-template>
+						</filter-single-select>
+					</div>
+				</div>
+			</div>
+			<div class="table wide">
+				<div class="row">
+					<div class="label">Tags:</div>
+					<div class="control">
+						<mat-form-field>
+							<input type="email" matInput formControlName="tags">
+							<mat-placeholder>Tags</mat-placeholder>
+							<mat-error>
+								<error-messages formControlName="tags"></error-messages>
+							</mat-error>
+						</mat-form-field>
+					</div>
+				</div>
+				<div class="row">
+					<div class="label">{{dtoBeforeUpdate?.comments?.length || 0}} comments</div>
+				</div>
+			</div>
 		</div>
 	</div>
 
-	<div class="flex-row">
-		<mat-form-field>
-			<input type="email" matInput formControlName="tags">
-			<mat-placeholder>Tags</mat-placeholder>
-			<mat-error>
-				<error-messages formControlName="tags"></error-messages>
-			</mat-error>
-		</mat-form-field>
-	</div>
+
 	<div class="stretch">
 		<button mat-stroked-button color="warn" (click)="delete()" *ngIf="!!editId">Delete</button>
 		<div *ngIf="!editId"></div>

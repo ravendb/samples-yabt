@@ -5,6 +5,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { BacklogItemGetResponseBase } from '@core/api-models/backlog-item/item/BacklogItemGetResponseBase';
 import { BugAddUpdRequest } from '@core/api-models/backlog-item/item/BugAddUpdRequest';
 import { UserStoryAddUpdRequest } from '@core/api-models/backlog-item/item/UserStoryAddUpdRequest';
+import { BacklogItemState } from '@core/api-models/common/BacklogItemState';
 import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
 import { BacklogRelationshipType } from '@core/api-models/common/BacklogRelationshipType';
 import { UserListGetRequest } from '@core/api-models/user/list';
@@ -28,6 +29,10 @@ export class BacklogItemComponent implements OnInit {
 	editId: string | null = null;
 	form!: FormGroupTyped<BacklogAddUpdDto>;
 	dtoBeforeUpdate: BacklogItemReadonlyProperties | undefined;
+
+	states: IKeyValuePair[] = Object.keys(BacklogItemState).map(key => {
+		return { key, value: BacklogItemState[key as keyof typeof BacklogItemState] };
+	});
 
 	get typeTitle(): BacklogItemType | undefined {
 		return !!this.dtoBeforeUpdate ? BacklogItemType[this.dtoBeforeUpdate.type] : undefined;
@@ -55,6 +60,7 @@ export class BacklogItemComponent implements OnInit {
 	ngOnInit(): void {
 		this.form = this.fb.group({
 			title: [null, [CustomValidators.required()]],
+			state: [null, [CustomValidators.required()]],
 			assigneeId: [null],
 			tags: [null],
 			relatedItems: [null],

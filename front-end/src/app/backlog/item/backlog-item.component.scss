@@ -40,6 +40,48 @@
 			}
 		}
 	}
+
+	.title-secondary-block {
+		display: flex;
+		justify-content: stretch;
+		align-content: stretch;
+		flex-wrap: nowrap;
+		padding-right: 10px;
+
+		.table {
+			flex-direction: column;
+			display: table;
+			width: 100%;
+			.row {
+				display: table-row;
+				flex-direction: row;
+				.label {
+					min-width: 70px;
+					max-width: 200px;
+					flex: 1 1 70px;
+					overflow: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+					word-wrap: normal;
+					width: 1px;
+					display: table-cell;
+					vertical-align: middle;
+				}
+				.control {
+					flex: 2 3 0;
+					min-width: 70px;
+					display: table-cell;
+					vertical-align: top;
+				}
+			}
+		}
+		.narrow {
+			flex: 2;
+		}
+		.wide {
+			flex: 8;
+		}
+	}
 }
 
 form.form {

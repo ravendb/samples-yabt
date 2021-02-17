@@ -12,6 +12,10 @@ export class FilterSingleSelectComponent extends BaseSearchableFilterButtonCompo
 
 	@Input()
 	firstUndefinedOption: string = '';
+	@Input()
+	narrowUnderscored: boolean = false;
+	@Input()
+	hideClearButton: boolean = false;
 
 	setValue(value?: string): void {
 		const el = !!value ? this.options.find(v => v.key == value) : undefined;
@@ -28,6 +32,6 @@ export class FilterSingleSelectComponent extends BaseSearchableFilterButtonCompo
 
 	protected updateLabel(key: string): void {
 		const el = !!key ? this.options.find(v => v.key == key) : undefined;
-		this.buttonText = el?.value || this.label;
+		this.buttonText = el?.value?.concat(!el?.key ? ' (deleted)' : '') || this.label;
 	}
 }

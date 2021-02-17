@@ -1,5 +1,5 @@
 <button mat-button [matMenuTriggerFor]="filterMenu" [title]="buttonAltText" [class.mat-stroked-button]="stretchedAndStroked"
-	[disabled]="isDisabled">
+	[class.narrow-underscored-button]="narrowUnderscored" [disabled]="isDisabled">
 	<span [innerText]="buttonText" [class.lighter-font]="buttonText == label"></span>
 	<mat-icon color="primary">keyboard_arrow_down</mat-icon>
 </button>
@@ -23,7 +23,7 @@
 	<div *ngIf="loading" class="searching">Searching...</div>
 	<div *ngIf="!loading && !options?.length" class="no-matches">No matches found</div>
 
-	<div *ngIf="!firstUndefinedOption" class="action-buttons">
+	<div *ngIf="!firstUndefinedOption && !hideClearButton" class="action-buttons">
 		<span (click)="clear()">Clear</span>
 	</div>
 </mat-menu>
