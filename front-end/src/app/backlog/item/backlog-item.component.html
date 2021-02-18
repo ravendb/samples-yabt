@@ -40,15 +40,8 @@
 			</div>
 			<div class="table wide">
 				<div class="row">
-					<div class="label">Tags:</div>
 					<div class="control">
-						<mat-form-field>
-							<input type="email" matInput formControlName="tags">
-							<mat-placeholder>Tags</mat-placeholder>
-							<mat-error>
-								<error-messages formControlName="tags"></error-messages>
-							</mat-error>
-						</mat-form-field>
+						<app-tags formControlName="tags"></app-tags>
 					</div>
 				</div>
 				<div class="row">

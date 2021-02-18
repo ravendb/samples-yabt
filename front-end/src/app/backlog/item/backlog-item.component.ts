@@ -30,7 +30,7 @@ export class BacklogItemComponent implements OnInit {
 	form!: FormGroupTyped<BacklogAddUpdDto>;
 	dtoBeforeUpdate: BacklogItemReadonlyProperties | undefined;
 
-	states: IKeyValuePair[] = Object.keys(BacklogItemState).map(key => {
+	readonly states: IKeyValuePair[] = Object.keys(BacklogItemState).map(key => {
 		return { key, value: BacklogItemState[key as keyof typeof BacklogItemState] };
 	});
 
@@ -38,7 +38,7 @@ export class BacklogItemComponent implements OnInit {
 		return !!this.dtoBeforeUpdate ? BacklogItemType[this.dtoBeforeUpdate.type] : undefined;
 	}
 
-	searchByAssignee = (search: string): Observable<IKeyValuePair[]> =>
+	readonly searchByAssignee = (search: string): Observable<IKeyValuePair[]> =>
 		this.userService
 			.getUserList(<Partial<UserListGetRequest>>{ search, pageSize: 1000 })
 			.pipe(map(r => r.entries?.map(t => <IKeyValuePair>{ key: t.id, value: t.nameWithInitials })));

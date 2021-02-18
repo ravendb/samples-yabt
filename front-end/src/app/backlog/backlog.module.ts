@@ -1,7 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -13,17 +15,27 @@ import { MatTableModule } from '@angular/material/table';
 import { SharedModule } from '@shared';
 import { BacklogRouting } from './backlog.routing';
 import { BacklogItemComponent } from './item';
+import { TagsComponent } from './item/tags/tags.component';
 import { BacklogListComponent } from './list/backlog-list.component';
 import { FilterBarComponent } from './list/filter-bar';
 import { BacklogFilterDialogComponent } from './list/filter-dialog';
 import { BacklogFiltersComponent } from './list/filters';
 
 @NgModule({
-	declarations: [BacklogListComponent, BacklogFiltersComponent, FilterBarComponent, BacklogFilterDialogComponent, BacklogItemComponent],
+	declarations: [
+		BacklogListComponent,
+		BacklogFiltersComponent,
+		FilterBarComponent,
+		BacklogFilterDialogComponent,
+		BacklogItemComponent,
+		TagsComponent,
+	],
 	imports: [
 		CommonModule,
 		BacklogRouting,
+		MatAutocompleteModule,
 		MatButtonModule,
+		MatChipsModule,
 		MatDialogModule,
 		MatIconModule,
 		MatInputModule,
