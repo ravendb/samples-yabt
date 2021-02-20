@@ -45,7 +45,9 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="label">{{dtoBeforeUpdate?.comments?.length || 0}} comments</div>
+					<div class="label">
+						<backlog-comments-icon [count]="dtoBeforeUpdate?.comments?.totalRecords"></backlog-comments-icon>
+					</div>
 				</div>
 			</div>
 		</div>

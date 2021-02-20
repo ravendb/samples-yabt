@@ -19,10 +19,15 @@
 				<span class="wide-column" title="Last Updated">{{ row.lastUpdated.timestamp | date: 'shortDate' }}</span>
 			</div>
 			<div class="title-block">
-				<backlog-item-icon [type]="row.type"></backlog-item-icon>
-				<a [routerLink]="[row.id]">
-					{{row.title}}
-				</a>
+				<div class="title-and-icon">
+					<backlog-item-icon [type]="row.type"></backlog-item-icon>
+					<a [routerLink]="[row.id]">
+						{{row.title}}
+					</a>
+				</div>
+				<div class="comments-icon">
+					<backlog-comments-icon [count]="row.commentsCount" [small]="true"></backlog-comments-icon>
+				</div>
 			</div>
 			<div>
 				<backlog-item-tags [tags]="row.tags"></backlog-item-tags>

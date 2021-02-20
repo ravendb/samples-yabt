@@ -14,8 +14,9 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { SharedModule } from '@shared';
 import { BacklogRouting } from './backlog.routing';
+import { CommentsIconComponent } from './elements/comments-icon';
+import { TagsComponent } from './elements/tags';
 import { BacklogItemComponent } from './item';
-import { TagsComponent } from './item/tags/tags.component';
 import { BacklogListComponent } from './list/backlog-list.component';
 import { FilterBarComponent } from './list/filter-bar';
 import { BacklogFilterDialogComponent } from './list/filter-dialog';
@@ -25,6 +26,7 @@ import { BacklogFiltersComponent } from './list/filters';
 	declarations: [
 		BacklogListComponent,
 		BacklogFiltersComponent,
+		CommentsIconComponent,
 		FilterBarComponent,
 		BacklogFilterDialogComponent,
 		BacklogItemComponent,
