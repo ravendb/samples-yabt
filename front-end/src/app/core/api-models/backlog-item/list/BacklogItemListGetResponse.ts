@@ -6,6 +6,7 @@ export class BacklogItemListGetResponse {
 	id!: string;
 	title!: string;
 	assignee: UserReference | undefined;
+	commentsCount!: number;
 	type: BacklogItemType | undefined;
 	created!: ChangedByUserReference;
 	lastUpdated!: ChangedByUserReference;

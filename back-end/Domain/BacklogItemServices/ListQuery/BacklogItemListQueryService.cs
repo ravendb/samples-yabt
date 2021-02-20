@@ -55,6 +55,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 								Type = b.Type,
 								State = b.State,
 								Assignee = b.Assignee,
+								CommentsCount = b.Comments.Count,
 								Tags = b.Tags,
 								// Have to re-calculate 'Created' and 'LastUpdated' server-side, as the entity model's fields get calculated client-side only 
 								Created		= b.ModifiedBy.OrderBy(m => m.Timestamp).FirstOrDefault() as ChangedByUserReference,

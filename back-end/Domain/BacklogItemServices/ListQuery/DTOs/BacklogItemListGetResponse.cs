@@ -17,6 +17,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs
 		public string[] Tags { get; set; }
 
 		public UserReference Assignee { get; set; }
+		
+		public int CommentsCount { get; set; }
 
 		public ChangedByUserReference Created { get; set; }
 		public ChangedByUserReference LastUpdated { get; set; }
