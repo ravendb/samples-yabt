@@ -84,6 +84,20 @@
 	}
 }
 
+.section-container {
+	width: 100%;
+
+	.wide {
+		width: 25%;
+	}
+	.narrow {
+		width: 25%;
+	}
+	.full-width {
+		width: 100%;
+	}
+}
+
 form.form {
 	margin-right: 16px;
 }

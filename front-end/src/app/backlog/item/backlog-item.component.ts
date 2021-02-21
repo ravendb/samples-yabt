@@ -2,9 +2,8 @@ import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { BacklogItemGetResponseBase } from '@core/api-models/backlog-item/item/BacklogItemGetResponseBase';
-import { BugAddUpdRequest } from '@core/api-models/backlog-item/item/BugAddUpdRequest';
-import { UserStoryAddUpdRequest } from '@core/api-models/backlog-item/item/UserStoryAddUpdRequest';
+import { BacklogAddUpdAllFieldsRequest } from '@core/api-models/backlog-item/item/BacklogAddUpdAllFieldsRequest';
+import { BacklogItemGetResponseAllFields } from '@core/api-models/backlog-item/item/BacklogItemGetResponseAllFields';
 import { BacklogItemState } from '@core/api-models/common/BacklogItemState';
 import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
 import { BacklogRelationshipType } from '@core/api-models/common/BacklogRelationshipType';
@@ -19,15 +18,13 @@ import { of, Subscription } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { BacklogItemReadonlyProperties } from './backlog-item-readonly-properties';
 
-type BacklogAddUpdDto = BugAddUpdRequest & UserStoryAddUpdRequest;
-
 @Component({
 	templateUrl: './backlog-item.component.html',
 	styleUrls: ['./backlog-item.component.scss'],
 })
 export class BacklogItemComponent implements OnInit {
 	editId: string | null = null;
-	form!: FormGroupTyped<BacklogAddUpdDto>;
+	form!: FormGroupTyped<BacklogAddUpdAllFieldsRequest>;
 	dtoBeforeUpdate: BacklogItemReadonlyProperties | undefined;
 
 	readonly states: IKeyValuePair[] = Object.keys(BacklogItemState).map(key => {
@@ -36,6 +33,9 @@ export class BacklogItemComponent implements OnInit {
 
 	get typeTitle(): BacklogItemType | undefined {
 		return !!this.dtoBeforeUpdate ? BacklogItemType[this.dtoBeforeUpdate.type] : undefined;
+	}
+	get type(): keyof typeof BacklogItemType | undefined {
+		return this.dtoBeforeUpdate?.type;
 	}
 
 	readonly searchByAssignee = (search: string): Observable<IKeyValuePair[]> =>
@@ -65,7 +65,9 @@ export class BacklogItemComponent implements OnInit {
 			tags: [null],
 			relatedItems: [null],
 			customFields: [null],
-		}) as FormGroupTyped<BacklogAddUpdDto>;
+			acceptanceCriteria: [null, [CustomValidators.requiredWhen(() => this.type == 'userStory')]],
+			stepsToReproduce: [null, [CustomValidators.requiredWhen(() => this.type == 'bug')]],
+		}) as FormGroupTyped<BacklogAddUpdAllFieldsRequest>;
 
 		this.subscriptions.add(
 			this.activatedRoute.paramMap
@@ -73,7 +75,7 @@ export class BacklogItemComponent implements OnInit {
 					switchMap((p: ParamMap) => {
 						const id = p.get('id');
 						this.editId = !!id && id !== 'create' ? id : null;
-						return !!this.editId ? this.backlogService.getBacklogItem(this.editId) : of({} as BacklogItemGetResponseBase);
+						return !!this.editId ? this.backlogService.getBacklogItem(this.editId) : of({} as BacklogItemGetResponseAllFields);
 					}),
 					map(item => {
 						// Save readonly fields
@@ -142,8 +144,8 @@ export class BacklogItemComponent implements OnInit {
 		else this.router.navigate([this._listRoute]);
 	}
 
-	private convertGetDtoToAddUpdDto(getDto: BacklogItemGetResponseBase): BacklogAddUpdDto {
-		if (!getDto) return {} as BacklogAddUpdDto;
+	private convertGetDtoToAddUpdDto(getDto: BacklogItemGetResponseAllFields): BacklogAddUpdAllFieldsRequest {
+		if (!getDto) return {} as BacklogAddUpdAllFieldsRequest;
 
 		const related = getDto.relatedItems?.reduce((result, i) => {
 			if (!!i.relatedTo?.id) result[i.relatedTo!.id!] = i.linkType;
@@ -157,6 +159,8 @@ export class BacklogItemComponent implements OnInit {
 			tags: getDto.tags,
 			relatedItems: related,
 			customFields: getDto.customFields,
-		} as BacklogAddUpdDto;
+			acceptanceCriteria: getDto.acceptanceCriteria,
+			stepsToReproduce: getDto.stepsToReproduce,
+		} as BacklogAddUpdAllFieldsRequest;
 	}
 }

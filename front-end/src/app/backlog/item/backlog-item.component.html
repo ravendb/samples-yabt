@@ -52,6 +52,26 @@
 			</div>
 		</div>
 	</div>
+	<div class="section-container">
+		<div class="wide">
+			<div *ngIf="type == 'bug'">
+				<h1 class="mat-h1">Steps to reproduce</h1>
+				<mat-form-field class="full-width">
+					<textarea matInput placeholder="Steps To Reproduce" formControlName="stepsToReproduce"></textarea>
+				</mat-form-field>
+			</div>
+			<div *ngIf="type == 'userStory'">
+				<h1 class="mat-h1">Acceptance Criteria</h1>
+				<mat-form-field class="full-width">
+					<textarea matInput placeholder="Acceptance Criteria" formControlName="acceptanceCriteria"></textarea>
+				</mat-form-field>
+			</div>
+		</div>
+		<div class="narrow">&nbsp;</div>
+	</div>
+	<div class="bottom-section">
+		<backlog-item-comment *ngFor="let comment of dtoBeforeUpdate?.comments?.entries" [value]="comment"></backlog-item-comment>
+	</div>
 
 
 	<div class="stretch">

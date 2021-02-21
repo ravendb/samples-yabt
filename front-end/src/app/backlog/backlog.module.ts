@@ -17,6 +17,7 @@ import { BacklogRouting } from './backlog.routing';
 import { CommentsIconComponent } from './elements/comments-icon';
 import { TagsComponent } from './elements/tags';
 import { BacklogItemComponent } from './item';
+import { BacklogItemCommentComponent } from './item/comment';
 import { BacklogListComponent } from './list/backlog-list.component';
 import { FilterBarComponent } from './list/filter-bar';
 import { BacklogFilterDialogComponent } from './list/filter-dialog';
@@ -30,6 +31,7 @@ import { BacklogFiltersComponent } from './list/filters';
 		FilterBarComponent,
 		BacklogFilterDialogComponent,
 		BacklogItemComponent,
+		BacklogItemCommentComponent,
 		TagsComponent,
 	],
 	imports: [
