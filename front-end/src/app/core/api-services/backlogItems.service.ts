@@ -1,6 +1,6 @@
 ﻿import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BacklogItemGetResponseBase } from '@core/api-models/backlog-item/item/BacklogItemGetResponseBase';
+import { BacklogItemGetResponseAllFields } from '@core/api-models/backlog-item/item/BacklogItemGetResponseAllFields';
 import {
 	BacklogItemListGetRequest,
 	BacklogItemListGetResponse,
@@ -23,8 +23,8 @@ export class BacklogItemsService extends BaseApiService {
 	getBacklogItemList(request?: Partial<BacklogItemListGetRequest>): Observable<ListResponse<BacklogItemListGetResponse>> {
 		return this.getList<BacklogItemListGetRequest, BacklogItemListGetResponse>('', request);
 	}
-	getBacklogItem(id: string): Observable<BacklogItemGetResponseBase> {
-		return this.getItem<void, BacklogItemGetResponseBase>(`${id}`);
+	getBacklogItem(id: string): Observable<BacklogItemGetResponseAllFields> {
+		return this.getItem<void, BacklogItemGetResponseAllFields>(`${id}`);
 	}
 
 	getBacklogItemTagList(request?: Partial<BacklogItemTagListGetRequest>): Observable<BacklogItemTagListGetResponse[]> {
