@@ -17,6 +17,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 			{
 				Title = entity.Title,
 				State = entity.State,
+				EstimatedSize = entity.EstimatedSize,
 				Assignee = entity.Assignee,
 				Created = entity.Created,
 				LastUpdated = entity.LastUpdated,

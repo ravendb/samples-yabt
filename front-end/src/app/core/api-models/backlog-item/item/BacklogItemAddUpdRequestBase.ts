@@ -4,6 +4,7 @@ import { BacklogRelationshipType } from '@core/api-models/common/BacklogRelation
 export class BacklogItemAddUpdRequestBase {
 	title!: string;
 	state!: BacklogItemState;
+	estimatedSize: number | undefined;
 	assigneeId: string | undefined;
 	tags: string[] = [];
 	relatedItems: { [key: string]: BacklogRelationshipType } = {};

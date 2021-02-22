@@ -117,6 +117,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 			entity.Title = dto.Title;
 			entity.State = dto.State;
+			entity.EstimatedSize = dto.EstimatedSize;
 			entity.Tags = dto.Tags;
 			entity.Assignee = dto.AssigneeId != null ? await _userResolver.GetReferenceById(dto.AssigneeId) : null;
 	

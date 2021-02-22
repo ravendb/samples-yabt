@@ -8,6 +8,7 @@ import { BacklogItemCommentListGetResponse } from './BacklogItemCommentListGetRe
 export class BacklogItemGetResponseBase {
 	title!: string;
 	state!: BacklogItemState;
+	estimatedSize: number | undefined;
 	type!: keyof typeof BacklogItemType;
 	assignee: UserReference | undefined;
 	created!: ChangedByUserReference;

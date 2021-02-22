@@ -13,6 +13,11 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 		public BacklogItemType Type { get; set; }
 		public BacklogItemState State { get; set; }
 		
+		/// <summary>
+		///		Estimated size of the item in the configured units (e.g. 'days')
+		/// </summary>
+		public uint? EstimatedSize { get; set; }
+		
 		public UserReference? Assignee { get; set; }
 
 		public ChangedByUserReference Created { get; set; } = null!;

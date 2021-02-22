@@ -69,6 +69,7 @@ export class BacklogItemComponent implements OnInit {
 		this.form = this.fb.group({
 			title: [null, [CustomValidators.required()]],
 			state: [null, [CustomValidators.required()]],
+			estimatedSize: [null],
 			assigneeId: [null],
 			tags: [null],
 			relatedItems: [null],
@@ -165,6 +166,7 @@ export class BacklogItemComponent implements OnInit {
 		return {
 			title: getDto.title,
 			state: getDto.state,
+			estimatedSize: getDto.estimatedSize,
 			assigneeId: getDto.assignee?.id,
 			tags: getDto.tags,
 			relatedItems: related,

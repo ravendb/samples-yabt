@@ -30,6 +30,11 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		public BacklogItemState State { get; set; } = BacklogItemState.New;
 		
 		/// <summary>
+		///		Estimated size of the item in the configured units (e.g. 'days')
+		/// </summary>
+		public uint? EstimatedSize { get; set; }
+		
+		/// <summary>
 		///		The assigned user to the ticket
 		/// </summary>
 		public UserReference? Assignee { get; set; }
