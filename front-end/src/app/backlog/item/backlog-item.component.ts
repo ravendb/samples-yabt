@@ -7,6 +7,8 @@ import { BacklogItemGetResponseAllFields } from '@core/api-models/backlog-item/i
 import { BacklogItemState } from '@core/api-models/common/BacklogItemState';
 import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
 import { BacklogRelationshipType } from '@core/api-models/common/BacklogRelationshipType';
+import { BugPriority } from '@core/api-models/common/BugPriority';
+import { BugSeverity } from '@core/api-models/common/BugSeverity';
 import { UserListGetRequest } from '@core/api-models/user/list';
 import { BacklogItemsService } from '@core/api-services/backlogItems.service';
 import { UsersService } from '@core/api-services/users.service';
@@ -29,6 +31,12 @@ export class BacklogItemComponent implements OnInit {
 
 	readonly states: IKeyValuePair[] = Object.keys(BacklogItemState).map(key => {
 		return { key, value: BacklogItemState[key as keyof typeof BacklogItemState] };
+	});
+	readonly bugPriorities: IKeyValuePair[] = Object.keys(BugPriority).map(key => {
+		return { key, value: BugPriority[key as keyof typeof BugPriority] };
+	});
+	readonly bugSeverities: IKeyValuePair[] = Object.keys(BugSeverity).map(key => {
+		return { key, value: BugSeverity[key as keyof typeof BugSeverity] };
 	});
 
 	get typeTitle(): BacklogItemType | undefined {
@@ -67,6 +75,8 @@ export class BacklogItemComponent implements OnInit {
 			customFields: [null],
 			acceptanceCriteria: [null, [CustomValidators.requiredWhen(() => this.type == 'userStory')]],
 			stepsToReproduce: [null, [CustomValidators.requiredWhen(() => this.type == 'bug')]],
+			priority: [null],
+			severity: [null],
 		}) as FormGroupTyped<BacklogAddUpdAllFieldsRequest>;
 
 		this.subscriptions.add(

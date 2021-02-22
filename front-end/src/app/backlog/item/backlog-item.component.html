@@ -55,22 +55,61 @@
 	<div class="section-container">
 		<div class="wide">
 			<div *ngIf="type == 'bug'">
-				<h1 class="mat-h1">Steps to reproduce</h1>
-				<mat-form-field class="full-width">
-					<textarea matInput placeholder="Steps To Reproduce" formControlName="stepsToReproduce"></textarea>
+				<div class="section-header">Steps to reproduce</div>
+				<mat-form-field class="full-width side-offset">
+					<textarea matInput formControlName="stepsToReproduce" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+						[cdkAutosizeMinRows]="5"></textarea>
 				</mat-form-field>
 			</div>
 			<div *ngIf="type == 'userStory'">
-				<h1 class="mat-h1">Acceptance Criteria</h1>
-				<mat-form-field class="full-width">
-					<textarea matInput placeholder="Acceptance Criteria" formControlName="acceptanceCriteria"></textarea>
+				<div class="section-header">Acceptance Criteria</div>
+				<mat-form-field class="full-width side-offset">
+					<textarea matInput formControlName="acceptanceCriteria" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+						[cdkAutosizeMinRows]="5"></textarea>
 				</mat-form-field>
 			</div>
 		</div>
-		<div class="narrow">&nbsp;</div>
+		<div class="narrow">
+			<div class="section-header">Planning</div>
+			<div class="side-offset">
+				<mat-form-field class="full-width">
+					<input matInput placeholder="Expected time">
+				</mat-form-field>
+				<div class="table monospace">
+					<div class="row" *ngIf="type == 'bug'">
+						<div class="label">Priority:</div>
+						<div class="control">
+							<filter-single-select label=" ----- " buttonAltText="Priority" [options]="bugPriorities"
+								formControlName="priority" [narrowUnderscored]="true" [hideClearButton]="false" class="full-width">
+							</filter-single-select>
+						</div>
+					</div>
+					<div class="row" *ngIf="type == 'bug'">
+						<div class="label">Severity:</div>
+						<div class="control">
+							<filter-single-select label=" ----- " buttonAltText="Severity" [options]="bugSeverities"
+								formControlName="severity" [narrowUnderscored]="true" [hideClearButton]="false" class="full-width">
+							</filter-single-select>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
-	<div class="bottom-section">
-		<backlog-item-comment *ngFor="let comment of dtoBeforeUpdate?.comments?.entries" [value]="comment"></backlog-item-comment>
+	<div class="section-container">
+		<div class="wide">
+			<div class="section-header">Comments</div>
+			<div *ngFor="let comment of dtoBeforeUpdate?.comments?.entries" class="comment-section">
+				<backlog-item-comment [value]="comment"></backlog-item-comment>
+			</div>
+		</div>
+		<div class="narrow">
+			<div class="section-header">Related</div>
+			<div>....</div>
+
+			<div class="section-header">History</div>
+			<div>....</div>
+		</div>
 	</div>
 
 

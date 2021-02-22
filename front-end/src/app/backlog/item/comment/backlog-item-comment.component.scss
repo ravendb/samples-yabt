@@ -36,6 +36,11 @@
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}
+		.time {
+			font-size: 11px;
+			margin-left: 8px;
+			color: rgba(0, 0, 0, 0.55);
+		}
 	}
 	.header-right {
 		white-space: nowrap;
