@@ -11,6 +11,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS runtime
 
 COPY --from=build /publish /app
 WORKDIR /app
-ENV APP_SETTINGS='{}' 
+ENV APP_SETTINGS='{	"Database": { "RavenDbUrls": [ "" ], "Certificate": "" } }' 
 
 CMD bash ./run.sh
