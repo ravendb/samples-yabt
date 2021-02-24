@@ -1,10 +1,15 @@
-#!/bin/bash
+#!/bin/bash -e
 
-if [ -z "$APP_SETTINGS" ]; then
-    echo "APP_SETTINGS is required."
+if [ -z "$SETTINGS_RAVENDB_URL" ]; then
+    echo "SETTINGS_RAVENDB_URL env var is required."
     exit 1
-else
-    echo "$APP_SETTINGS" > appsettings.json
 fi
 
-dotnet WebApi.dll
+if [ -z "$SETTINGS_RAVENDB_CERTIFICATE" ]; then
+    echo "SETTINGS_RAVENDB_CERTIFICATE env var is required."
+    exit 2
+fi
+
+envsubst < appsettings.docker.json > appsettings.json
+
+exec dotnet WebApi.dll
