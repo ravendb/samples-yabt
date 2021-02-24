@@ -22,7 +22,7 @@
 			<DependentUpon>appsettings.json</DependentUpon>
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
+			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
 		</Content>
 		<Content Update="appsettings.json">
 			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
