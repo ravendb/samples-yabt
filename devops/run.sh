@@ -10,6 +10,6 @@ if [ -z "$SETTINGS_RAVENDB_CERTIFICATE" ]; then
     exit 2
 fi
 
-envsubst < appsettings.docker.json > appsettings.json
+envsubst < appsettings.docker.json > appsettings.docker.json
 
-exec dotnet WebApi.dll
+exec dotnet WebApi.dll --environment=docker
