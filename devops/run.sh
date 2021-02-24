@@ -10,13 +10,4 @@ if [ -z "$SETTINGS_RAVENDB_CERTIFICATE" ]; then
     exit 2
 fi
 
-cat <<SETTINGS > appsettings.docker.json
-{
-	"Database": {
-		"RavenDbUrls": [ "$SETTINGS_RAVENDB_URL" ],
-		"Certificate": "$SETTINGS_RAVENDB_CERTIFICATE"
-	}
-}
-SETTINGS
-
 exec dotnet WebApi.dll --environment=docker
