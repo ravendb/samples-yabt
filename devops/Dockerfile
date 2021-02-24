@@ -12,6 +12,5 @@ FROM mcr.microsoft.com/dotnet/aspnet:5.0 AS runtime
 COPY --from=build /publish /app
 WORKDIR /app
 ENV SETTINGS_RAVENDB_URL='' SETTINGS_RAVENDB_CERTIFICATE='' 
-RUN apt-get update && apt-get install -y gettext
 
 CMD bash ./run.sh
