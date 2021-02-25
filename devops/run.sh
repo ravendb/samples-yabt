@@ -1,13 +1,13 @@
 #!/bin/bash -e
 
-if [ -z "$SETTINGS_RAVENDB_URL" ]; then
-    echo "SETTINGS_RAVENDB_URL env var is required."
+if [ -z "$Database__RavenDbUrls__0" ]; then
+    echo "Database__RavenDbUrls__0 env var is required."
     exit 1
 fi
 
-if [ -z "$SETTINGS_RAVENDB_CERTIFICATE" ]; then
-    echo "SETTINGS_RAVENDB_CERTIFICATE env var is required."
+if [ -z "$Database__Certificate" ]; then
+    echo "Database__Certificate env var is required."
     exit 2
 fi
 
-exec dotnet WebApi.dll --environment=docker
+exec dotnet WebApi.dll

@@ -16,18 +16,4 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Domain\Domain.csproj" />
 	</ItemGroup>
-	
-	<ItemGroup>
-		<Content Update="appsettings.docker.json">
-			<DependentUpon>appsettings.json</DependentUpon>
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
-		</Content>
-		<Content Update="appsettings.json">
-			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<CopyToPublishDirectory>Always</CopyToPublishDirectory>
-		</Content>
-	</ItemGroup>
 </Project>

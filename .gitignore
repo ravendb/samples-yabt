@@ -34,3 +34,5 @@ obj
 deploy
 
 *.env
+
+docker_start.sh
