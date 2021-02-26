@@ -34,28 +34,15 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 		{
 			BacklogItem? ticket = dto switch
 			{
-				BugAddUpdRequest bug		 => await ConvertDtoToEntity<BacklogItemBug, BugAddUpdRequest>(bug),
-				UserStoryAddUpdRequest story => await ConvertDtoToEntity<BacklogItemUserStory, UserStoryAddUpdRequest>(story),
-				TaskAddUpdRequest task		 => await ConvertDtoToEntity<BacklogItemTask, TaskAddUpdRequest>(task),
+				BugAddUpdRequest bug		 => await ConvertDtoToEntity<BacklogItemBug,		BugAddUpdRequest>(bug),
+				UserStoryAddUpdRequest story => await ConvertDtoToEntity<BacklogItemUserStory,	UserStoryAddUpdRequest>(story),
+				TaskAddUpdRequest task		 => await ConvertDtoToEntity<BacklogItemTask,		TaskAddUpdRequest>(task),
 				_ => null,
 			};
 			if (ticket == null)
 				return DomainResult.Failed<BacklogItemReference>("Incorrect Backlog structure");
 
 			await DbSession.StoreAsync(ticket);
-
-			return DomainResult.Success(
-									ticket.ToReference().RemoveEntityPrefixFromId()
-								);
-		}
-
-		public async Task<IDomainResult<BacklogItemReference>> Delete(string id)
-		{
-			var ticket = await DbSession.LoadAsync<BacklogItem>(GetFullId(id));
-			if (ticket == null)
-				return DomainResult.NotFound<BacklogItemReference>();
-
-			DbSession.Delete(ticket);
 
 			return DomainResult.Success(
 									ticket.ToReference().RemoveEntityPrefixFromId()
@@ -83,6 +70,19 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 								);
 		}
 
+		public async Task<IDomainResult<BacklogItemReference>> Delete(string id)
+		{
+			var ticket = await DbSession.LoadAsync<BacklogItem>(GetFullId(id));
+			if (ticket == null)
+				return DomainResult.NotFound<BacklogItemReference>();
+
+			DbSession.Delete(ticket);
+
+			return DomainResult.Success(
+									ticket.ToReference().RemoveEntityPrefixFromId()
+								);
+		}
+
 		public async Task<IDomainResult<BacklogItemReference>> AssignToUser(string backlogItemId, string? userShortenId)
 		{
 			var backlogItem = await DbSession.LoadAsync<BacklogItem>(GetFullId(backlogItemId));
@@ -90,9 +90,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				return DomainResult.NotFound<BacklogItemReference>("The Backlog Item not found");
 
 			if (userShortenId == null)
-			{
 				backlogItem.Assignee = null;
-			}
 			else
 			{
 				var userRef = await _userResolver.GetReferenceById(userShortenId);

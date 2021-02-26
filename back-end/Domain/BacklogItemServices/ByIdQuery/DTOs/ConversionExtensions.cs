@@ -1,4 +1,7 @@
-﻿using Raven.Yabt.Database.Models.BacklogItems;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.Helpers;
 
@@ -9,7 +12,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 	/// </summary>
 	internal static class ConversionExtensions
 	{
-		public static TResponse ConvertToDto<TEntity, TResponse>(this TEntity entity, ListResponse<BacklogItemCommentListGetResponse>? comments)
+		public static TResponse ConvertToDto<TEntity, TResponse>(this TEntity entity)
 			where TEntity : BacklogItem
 			where TResponse : BacklogItemGetResponseBase, new()
 		{
@@ -22,7 +25,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				Created = entity.Created,
 				LastUpdated = entity.LastUpdated,
 				Tags = entity.Tags,
-				Comments = comments,
+				Comments = GetCommentsList(entity),
 				RelatedItems = entity.RelatedItems,
 				CustomFields = entity.CustomFields,
 				Type = entity.Type
@@ -43,6 +46,22 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 			}
 
 			return response;
+		}
+		
+		private static List<BacklogItemCommentListGetResponse>? GetCommentsList(BacklogItem backlogEntity)
+		{
+			var ret = (from comment in backlogEntity.Comments.OrderByDescending(c => c.Created)
+				select new BacklogItemCommentListGetResponse
+				{
+					Id = comment.Id,
+					Message = comment.Message,
+					Author = comment.Author,
+					Created = comment.Created,
+					LastUpdated = comment.LastModified,
+					MentionedUserIds = comment.MentionedUserIds?.ToDictionary(pair => pair.Key, pair => pair.Value.GetShortId()!)
+				}).ToList();
+			ret.RemoveEntityPrefixFromIds(r => r.Author);
+			return ret;
 		}
 	}
 }

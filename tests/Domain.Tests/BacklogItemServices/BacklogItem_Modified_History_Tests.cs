@@ -11,7 +11,6 @@ using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery;
 using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.CommentCommands;
-using Raven.Yabt.Domain.BacklogItemServices.CommentCommands.DTOs;
 using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.Domain.UserServices.Command;
 using Raven.Yabt.Domain.UserServices.Command.DTOs;
@@ -119,7 +118,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			// WHEN Marge Simpson adds a comment to the backlog item
 			_currentUserId = margeId;
-			await _commentCommandService.Create(itemRef.Id!, new CommentAddUpdRequest { Message = "Comment" });
+			await _commentCommandService.Create(itemRef.Id!, "Comment");
 			await SaveChanges();
 
 			// THEN 
@@ -139,17 +138,17 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			var ticketId = (await CreateBacklogItem()).Id!;
 			// and a comment from Marge
 			_currentUserId = margeId;
-			var commentId = (await _commentCommandService.Create(ticketId, new CommentAddUpdRequest { Message = "Marge's comment" })).Value.CommentId!;
+			var commentId = (await _commentCommandService.Create(ticketId, "Marge's comment")).Value.CommentId!;
 			// and another comment from Homer
 			_currentUserId = homerId;
-			await _commentCommandService.Create(ticketId, new CommentAddUpdRequest { Message = "Homer's comment" });
+			await _commentCommandService.Create(ticketId, "Homer's comment");
 			await SaveChanges();
 			var item0 = (await _queryByIdService.GetById(ticketId)).Value;
 			Assert.Equal(homerId, item0.LastUpdated.ActionedBy.Id);
 
 			// WHEN Marge updates her comment
 			_currentUserId = margeId;
-			await _commentCommandService.Update(ticketId, commentId, new CommentAddUpdRequest { Message = "Updated Marge's comment" });
+			await _commentCommandService.Update(ticketId, commentId, "Updated Marge's comment");
 			await SaveChanges();
 
 			// THEN 

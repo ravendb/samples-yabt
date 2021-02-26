@@ -10,7 +10,6 @@ using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.CommentCommands;
-using Raven.Yabt.Domain.BacklogItemServices.CommentCommands.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs;
 using Raven.Yabt.Domain.Infrastructure;
@@ -60,8 +59,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			await CreateSampleBug();
 
 			// WHEN adding a new comment
-			var dto = new CommentAddUpdRequest { Message = message };
-			await _commentCommandService.Create(ticketRef.Id!, dto);
+			await _commentCommandService.Create(ticketRef.Id!, message);
 			await SaveChanges();
 			
 			// THEN 

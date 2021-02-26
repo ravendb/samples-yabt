@@ -6,11 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 using Raven.Yabt.Database.Common.References;
-using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery;
-using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.CommentCommands;
-using Raven.Yabt.Domain.BacklogItemServices.CommentCommands.DTOs;
-using Raven.Yabt.Domain.Common;
 
 namespace Raven.Yabt.WebApi.Controllers
 {
@@ -19,17 +15,6 @@ namespace Raven.Yabt.WebApi.Controllers
 	public class BacklogItemCommentsController : ControllerBase
 	{
 		/// <summary>
-		///		Get comments for a Backlog Item
-		/// </summary>
-		[HttpGet]
-		[ProducesResponseType(StatusCodes.Status200OK)]
-		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public Task<ListResponse<BacklogItemCommentListGetResponse>> GetComments([FromServices] IBacklogItemByIdQueryService service,
-		                                                                         [FromRoute] string backlogItemId,
-		                                                                         [FromQuery] BacklogItemCommentListGetRequest @params)
-			=> service.GetBacklogItemComments(backlogItemId, @params);
-
-		/// <summary>
 		///		Create a new comment
 		/// </summary>
 		[HttpPost]
@@ -37,8 +22,8 @@ namespace Raven.Yabt.WebApi.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public Task<ActionResult<BacklogItemCommentReference>> Create([FromServices] IBacklogItemCommentCommandService service, 
 		                                                              [FromRoute] string backlogItemId,
-		                                                              [FromQuery] CommentAddUpdRequest dto) 
-			=> service.Create(backlogItemId, dto).ToActionResultOfT();
+		                                                              [FromQuery] string message) 
+			=> service.Create(backlogItemId, message).ToActionResultOfT();
 
 		/// <summary>
 		///		Update a comment
@@ -49,8 +34,8 @@ namespace Raven.Yabt.WebApi.Controllers
 		public Task<ActionResult<BacklogItemCommentReference>> Update([FromServices] IBacklogItemCommentCommandService service,
 		                                                              [FromRoute] string backlogItemId,
 		                                                              [FromRoute] string commentId,
-		                                                              CommentAddUpdRequest dto)
-			=> service.Update(backlogItemId, commentId, dto).ToActionResultOfT();
+		                                                              string message)
+			=> service.Update(backlogItemId, commentId, message).ToActionResultOfT();
 		
 		/// <summary>
 		///		Delete a comment

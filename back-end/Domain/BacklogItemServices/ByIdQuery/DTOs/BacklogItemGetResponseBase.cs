@@ -2,8 +2,6 @@
 
 using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.References;
-using Raven.Yabt.Database.Models.BacklogItems;
-using Raven.Yabt.Domain.Common;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 {
@@ -24,7 +22,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 		public ChangedByUserReference LastUpdated { get; set; } = null!;
 
 		public string[]? Tags { get; set; }
-		public ListResponse<BacklogItemCommentListGetResponse>? Comments { get; set; }
+		public IList<BacklogItemCommentListGetResponse>? Comments { get; set; }
 
 		/// <summary>
 		///		Extra custom properties of various data types configured by the user: { Custom Field ID, Value }.

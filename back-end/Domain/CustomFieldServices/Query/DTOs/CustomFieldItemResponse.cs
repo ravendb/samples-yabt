@@ -4,7 +4,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query.DTOs
 {
 	public class CustomFieldItemResponse
 	{
-		public string Name { get; set; }
+		public string Name { get; set; } = null!;
 
 		public CustomFieldType FieldType { get; set; }
 		

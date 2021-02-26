@@ -11,7 +11,6 @@ using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.CommentCommands;
-using Raven.Yabt.Domain.BacklogItemServices.CommentCommands.DTOs;
 using Raven.Yabt.TicketImporter.Configuration;
 using Raven.Yabt.TicketImporter.Infrastructure;
 using Raven.Yabt.TicketImporter.Infrastructure.DTOs;
@@ -91,14 +90,14 @@ namespace Raven.Yabt.TicketImporter.Services
 			if (issue.Labels?.Any() == true)
 				dto.Tags = issue.Labels.Select(l => l.Name).ToArray();
 			if (userReferences.Any())
-				dto.AssigneeId = userReferences.OrderBy(x => Guid.NewGuid()).First().Id;
+				dto.AssigneeId = userReferences.OrderBy(_ => Guid.NewGuid()).First().Id;
 
 			settingExtraFields.Invoke(dto);
 
 			return dto;
 		}
 
-		private CommentAddUpdRequest ConvertToComment(CommentResponse comment, IList<UserReference> userReferences)
+		private string ConvertToComment(CommentResponse comment, IList<UserReference> userReferences)
 		{
 			var matches = _mentionRegex.Matches(comment.Body);
 			var references = matches.Distinct().Select(m => m.Value).ToArray();
@@ -107,12 +106,9 @@ namespace Raven.Yabt.TicketImporter.Services
 			var body = comment.Body;
 			foreach (var reference in references)
 			{
-				body = body.Replace(reference, userReferences.OrderBy(x => Guid.NewGuid()).First().MentionedName);
+				body = body.Replace(reference, userReferences.OrderBy(_ => Guid.NewGuid()).First().MentionedName);
 			}
-
-			var dto = new CommentAddUpdRequest { Message = body };
-
-			return dto;
+			return body;
 		}
 	}
 }

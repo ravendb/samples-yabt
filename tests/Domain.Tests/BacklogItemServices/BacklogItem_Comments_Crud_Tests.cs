@@ -13,7 +13,6 @@ using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery;
 using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.CommentCommands;
-using Raven.Yabt.Domain.BacklogItemServices.CommentCommands.DTOs;
 using Raven.Yabt.Domain.UserServices.Query;
 
 using Xunit;
@@ -42,7 +41,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			var userResolver = Substitute.For<IUserReferenceResolver>();
 				userResolver.GetCurrentUserReference().Returns(_currentUser);
-			services.AddScoped(x => userResolver);
+			services.AddScoped(_ => userResolver);
 		}
 
 		[Fact]
@@ -52,7 +51,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			var ticketRef = await CreateSampleBug();
 
 			// WHEN adding a new comment
-			var commentRefRes = await _commentCommandService.Create(ticketRef.Id!, new CommentAddUpdRequest { Message = "Test" });
+			var commentRefRes = await _commentCommandService.Create(ticketRef.Id!, "Test");
 			await SaveChanges();
 
 			// THEN 
@@ -63,10 +62,10 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			var ticket = (await _queryService.GetById(ticketRef.Id!)).Value;
 			Assert.NotNull(ticket);
 			// it has 1 comment
-			Assert.Equal(1, ticket!.Comments!.TotalRecords);
+			Assert.Equal(1, ticket!.Comments!.Count);
 			// all the comment properties are as expected
 			var commentRef = commentRefRes.Value;
-			var comment = ticket.Comments.Entries.Single();
+			var comment = ticket.Comments.Single();
 			Assert.Equal(commentRef.CommentId, comment.Id);
 			Assert.Equal("Test", comment.Message);
 			Assert.Equal(_currentUser.Id, comment.Author.Id);
@@ -77,15 +76,12 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		{
 			// GIVEN a 'bug' with a comment
 			var ticketRef = await CreateSampleBug();
-			var commentRef = (await _commentCommandService.Create(ticketRef.Id!, new CommentAddUpdRequest { Message = "Test" })).Value;
+			var commentRef = (await _commentCommandService.Create(ticketRef.Id!, "Test")).Value;
 			await SaveChanges();
 
 			// WHEN changing the message of the comment
-			var dto = new CommentAddUpdRequest
-			{
-				Message = "Test (Updated)"
-			};
-			var commentUpdatedRef = await _commentCommandService.Update(ticketRef.Id!, commentRef.CommentId!, dto);
+			var newText = "Test (Updated)";
+			var commentUpdatedRef = await _commentCommandService.Update(ticketRef.Id!, commentRef.CommentId!, newText);
 			await SaveChanges();
 
 			// THEN 
@@ -96,7 +92,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			// the comment has the right message
 			var ticket = (await _queryService.GetById(ticketRef.Id!)).Value;
 			Assert.NotNull(ticket);
-			var comment = ticket!.Comments!.Entries.Single();
+			var comment = ticket!.Comments!.Single();
 			Assert.Equal("Test (Updated)", comment.Message);
 		}
 
@@ -105,7 +101,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		{
 			// GIVEN a 'bug' with a comment
 			var ticketRef = await CreateSampleBug();
-			var commentRef = (await _commentCommandService.Create(ticketRef.Id!, new CommentAddUpdRequest { Message = "Test" })).Value;
+			var commentRef = (await _commentCommandService.Create(ticketRef.Id!, "Test")).Value;
 			await SaveChanges();
 
 			// WHEN deleting the comment
@@ -119,7 +115,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			// the comment gets removed from the ticket
 			var ticket = (await _queryService.GetById(ticketRef.Id!)).Value;
 			Assert.NotNull(ticket);
-			Assert.Null(ticket.Comments);
+			Assert.True(ticket.Comments?.Any() != true);
 		}
 
 		private async Task<BacklogItemReference> CreateSampleBug()

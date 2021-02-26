@@ -99,7 +99,7 @@
 	<div class="section-container">
 		<div class="wide">
 			<div class="section-header">Comments</div>
-			<div *ngFor="let comment of dtoBeforeUpdate?.comments?.entries" class="comment-section">
+			<div *ngFor="let comment of dtoBeforeUpdate?.comments" class="comment-section">
 				<backlog-item-comment [value]="comment"></backlog-item-comment>
 			</div>
 		</div>
