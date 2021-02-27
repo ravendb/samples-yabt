@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Domain.BacklogItemServices.CommentCommands;
+using Raven.Yabt.WebApi.Controllers.DTOs;
 
 namespace Raven.Yabt.WebApi.Controllers
 {
@@ -22,8 +23,8 @@ namespace Raven.Yabt.WebApi.Controllers
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public Task<ActionResult<BacklogItemCommentReference>> Create([FromServices] IBacklogItemCommentCommandService service, 
 		                                                              [FromRoute] string backlogItemId,
-		                                                              [FromQuery] string message) 
-			=> service.Create(backlogItemId, message).ToActionResultOfT();
+		                                                              BacklogItemCommentAddUpdateRequest @params) 
+			=> service.Create(backlogItemId, @params.Message).ToActionResultOfT();
 
 		/// <summary>
 		///		Update a comment
@@ -34,8 +35,8 @@ namespace Raven.Yabt.WebApi.Controllers
 		public Task<ActionResult<BacklogItemCommentReference>> Update([FromServices] IBacklogItemCommentCommandService service,
 		                                                              [FromRoute] string backlogItemId,
 		                                                              [FromRoute] string commentId,
-		                                                              string message)
-			=> service.Update(backlogItemId, commentId, message).ToActionResultOfT();
+		                                                              BacklogItemCommentAddUpdateRequest @params)
+			=> service.Update(backlogItemId, commentId, @params.Message).ToActionResultOfT();
 		
 		/// <summary>
 		///		Delete a comment
