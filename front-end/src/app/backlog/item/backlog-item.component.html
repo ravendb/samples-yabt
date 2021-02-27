@@ -55,60 +55,66 @@
 	<div class="section-container">
 		<div class="wide">
 			<div *ngIf="type == 'bug'">
-				<div class="section-header">Steps to reproduce</div>
-				<mat-form-field class="full-width side-offset">
-					<textarea matInput formControlName="stepsToReproduce" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
-						[cdkAutosizeMinRows]="5"></textarea>
-				</mat-form-field>
+				<backlog-item-section title="Steps to reproduce">
+					<mat-form-field class="full-width side-offset">
+						<textarea matInput formControlName="stepsToReproduce" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+							[cdkAutosizeMinRows]="5"></textarea>
+					</mat-form-field>
+				</backlog-item-section>
 			</div>
 			<div *ngIf="type == 'userStory'">
-				<div class="section-header">Acceptance Criteria</div>
-				<mat-form-field class="full-width side-offset">
-					<textarea matInput formControlName="acceptanceCriteria" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
-						[cdkAutosizeMinRows]="5"></textarea>
-				</mat-form-field>
+				<backlog-item-section title="Acceptance Criteria">
+					<mat-form-field class="full-width side-offset">
+						<textarea matInput formControlName="acceptanceCriteria" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+							[cdkAutosizeMinRows]="5"></textarea>
+					</mat-form-field>
+				</backlog-item-section>
 			</div>
 		</div>
 		<div class="narrow">
-			<div class="section-header">Planning</div>
-			<div class="side-offset">
-				<mat-form-field class="full-width">
-					<input matInput placeholder="Estimated size" formControlName="estimatedSize">
-				</mat-form-field>
-				<div class="table monospace">
-					<div class="row" *ngIf="type == 'bug'">
-						<div class="label">Priority:</div>
-						<div class="control">
-							<filter-single-select label=" ----- " buttonAltText="Priority" [options]="bugPriorities"
-								formControlName="priority" [narrowUnderscored]="true" [hideClearButton]="false" class="full-width">
-							</filter-single-select>
+			<backlog-item-section title="Planning">
+				<div class="side-offset">
+					<mat-form-field class="full-width">
+						<input matInput placeholder="Estimated size" formControlName="estimatedSize">
+					</mat-form-field>
+					<div class="table monospace">
+						<div class="row" *ngIf="type == 'bug'">
+							<div class="label">Priority:</div>
+							<div class="control">
+								<filter-single-select label=" ----- " buttonAltText="Priority" [options]="bugPriorities"
+									formControlName="priority" [narrowUnderscored]="true" [hideClearButton]="false" class="full-width">
+								</filter-single-select>
+							</div>
 						</div>
-					</div>
-					<div class="row" *ngIf="type == 'bug'">
-						<div class="label">Severity:</div>
-						<div class="control">
-							<filter-single-select label=" ----- " buttonAltText="Severity" [options]="bugSeverities"
-								formControlName="severity" [narrowUnderscored]="true" [hideClearButton]="false" class="full-width">
-							</filter-single-select>
+						<div class="row" *ngIf="type == 'bug'">
+							<div class="label">Severity:</div>
+							<div class="control">
+								<filter-single-select label=" ----- " buttonAltText="Severity" [options]="bugSeverities"
+									formControlName="severity" [narrowUnderscored]="true" [hideClearButton]="false" class="full-width">
+								</filter-single-select>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
+			</backlog-item-section>
 		</div>
 	</div>
 	<div class="section-container">
 		<div class="wide">
-			<div class="section-header">Comments</div>
-			<div *ngFor="let comment of dtoBeforeUpdate?.comments" class="comment-section">
-				<backlog-item-comment [value]="comment"></backlog-item-comment>
-			</div>
+			<backlog-item-section title="Comments">
+				<div *ngFor="let comment of dtoBeforeUpdate?.comments" class="comment-section">
+					<backlog-item-comment [value]="comment"></backlog-item-comment>
+				</div>
+			</backlog-item-section>
 		</div>
 		<div class="narrow">
-			<div class="section-header">Related</div>
-			<div>....</div>
+			<backlog-item-section title="Related">
+				...
+			</backlog-item-section>
 
-			<div class="section-header">History</div>
-			<div>....</div>
+			<backlog-item-section title="History">
+				...
+			</backlog-item-section>
 		</div>
 	</div>
 

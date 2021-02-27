@@ -1,0 +1,38 @@
+$font-section-header: 'Segoe UI VSS (Regular)', 'Segoe UI', '-apple-system', BlinkMacSystemFont, Roboto, 'Helvetica Neue', Helvetica, Ubuntu,
+	Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+
+.section-header {
+	display: flex;
+	border: none;
+	padding: 5.8px 1px;
+	border-bottom: 1px solid;
+	border-bottom-color: rgba(234, 234, 234, 1);
+	margin-bottom: 5px;
+	margin-left: 4px;
+	font-size: 16px;
+	font-family: $font-section-header;
+	color: rgba(0, 0, 0, 0.9);
+	font-weight: 600;
+	-moz-user-select: -moz-none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+
+	span {
+		width: 100%;
+	}
+	mat-icon {
+		vertical-align: middle;
+		visibility: hidden;
+	}
+
+	&:hover {
+		cursor: pointer;
+		color: rgba(0, 90, 158, 1);
+		border-bottom-color: rgba(199, 224, 244, 1);
+		mat-icon {
+			visibility: visible;
+		}
+	}
+}

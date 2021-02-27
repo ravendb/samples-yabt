@@ -14,14 +14,15 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { SharedModule } from '@shared';
 import { BacklogRouting } from './backlog.routing';
-import { CommentsIconComponent } from './elements/comments-icon';
-import { TagsComponent } from './elements/tags';
 import { BacklogItemComponent } from './item';
 import { BacklogItemCommentComponent } from './item/comment';
+import { BacklogItemSectionComponent } from './item/section';
 import { BacklogListComponent } from './list/backlog-list.component';
 import { FilterBarComponent } from './list/filter-bar';
 import { BacklogFilterDialogComponent } from './list/filter-dialog';
 import { BacklogFiltersComponent } from './list/filters';
+import { CommentsIconComponent } from './ui-elements/comments-icon';
+import { TagsComponent } from './ui-elements/tags';
 
 @NgModule({
 	declarations: [
@@ -32,6 +33,7 @@ import { BacklogFiltersComponent } from './list/filters';
 		BacklogFilterDialogComponent,
 		BacklogItemComponent,
 		BacklogItemCommentComponent,
+		BacklogItemSectionComponent,
 		TagsComponent,
 	],
 	imports: [
