@@ -51,6 +51,8 @@ export class BacklogItemComponent implements OnInit {
 		return this.dtoBeforeUpdate?.type;
 	}
 
+	currentUserId: string | undefined;
+
 	readonly searchByAssignee = (search: string): Observable<IKeyValuePair[]> =>
 		this.userService
 			.getUserList(<Partial<UserListGetRequest>>{ search, pageSize: 1000 })
@@ -84,6 +86,8 @@ export class BacklogItemComponent implements OnInit {
 			priority: [null],
 			severity: [null],
 		}) as FormGroupTyped<BacklogAddUpdAllFieldsRequest>;
+
+		this.userService.getCurrentUser().subscribe(u => (this.currentUserId = u.id));
 
 		this.subscriptions.add(
 			this.activatedRoute.paramMap

@@ -1,3 +1,6 @@
+@import 'spinner';
+@import 'theme';
+
 .container {
 	box-sizing: border-box;
 	font-family: 'Segoe UI VSS (Regular)', 'Segoe UI', '-apple-system', BlinkMacSystemFont, Roboto, 'Helvetica Neue', Helvetica, Ubuntu,
@@ -21,6 +24,7 @@
 	position: relative;
 	height: 34px;
 	margin-bottom: 4px;
+	color: rgba(0, 0, 0, 0.5);
 
 	.header-left {
 		display: flex;
@@ -46,7 +50,36 @@
 		white-space: nowrap;
 		font-size: 14px;
 		margin: 4px;
+		display: flex;
+		flex: auto;
+		flex-direction: row-reverse;
+
+		mat-icon {
+			visibility: hidden;
+			&:hover {
+				color: $accent-color;
+				cursor: pointer;
+			}
+		}
+	}
+	&:hover {
+		.header-right {
+			mat-icon {
+				visibility: visible;
+			}
+		}
+	}
+}
+.action-buttons {
+	display: flex;
+	button {
+		margin-right: 8px;
+	}
+	.spread {
+		flex: auto;
 	}
 }
 .content {
+}
+textarea {
 }
