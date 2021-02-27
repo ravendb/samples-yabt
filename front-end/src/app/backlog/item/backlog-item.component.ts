@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { BacklogAddUpdAllFieldsRequest } from '@core/api-models/backlog-item/item/BacklogAddUpdAllFieldsRequest';
+import { BacklogItemCommentListGetResponse } from '@core/api-models/backlog-item/item/BacklogItemCommentListGetResponse';
 import { BacklogItemGetResponseAllFields } from '@core/api-models/backlog-item/item/BacklogItemGetResponseAllFields';
 import { BacklogItemState } from '@core/api-models/common/BacklogItemState';
 import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
@@ -17,8 +18,8 @@ import { NotificationService } from '@core/notification/notification.service';
 import { IBreadcrumbItem, PageTitleService } from '@core/page-title.service';
 import { IKeyValuePair } from '@shared/filters';
 import { CustomValidators } from '@utils/custom-validators';
-import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
-import { filter, map, switchMap, take, tap } from 'rxjs/operators';
+import { Observable, of, Subscription } from 'rxjs';
+import { filter, map, switchMap } from 'rxjs/operators';
 import { BacklogItemReadonlyProperties } from './backlog-item-readonly-properties';
 
 @Component({
@@ -30,9 +31,9 @@ export class BacklogItemComponent implements OnInit {
 	form!: FormGroupTyped<BacklogAddUpdAllFieldsRequest>;
 	dtoBeforeUpdate: BacklogItemReadonlyProperties | undefined;
 
-	private _loading = new BehaviorSubject<boolean>(false);
-	loading$ = this._loading.asObservable();
-
+	get loading$(): Observable<boolean> {
+		return this.backlogService.loading$;
+	}
 	readonly states: IKeyValuePair[] = Object.keys(BacklogItemState).map(key => {
 		return { key, value: BacklogItemState[key as keyof typeof BacklogItemState] };
 	});
@@ -87,7 +88,6 @@ export class BacklogItemComponent implements OnInit {
 		this.subscriptions.add(
 			this.activatedRoute.paramMap
 				.pipe(
-					tap(() => this._loading.next(true)),
 					switchMap((p: ParamMap) => {
 						const id = p.get('id');
 						this.editId = !!id && id !== 'create' ? id : null;
@@ -98,8 +98,7 @@ export class BacklogItemComponent implements OnInit {
 						this.dtoBeforeUpdate = item;
 						// Convert to DTO for creating/editing
 						return this.convertGetDtoToAddUpdDto(item);
-					}),
-					tap(() => this._loading.next(false))
+					})
 				)
 				.subscribe(
 					item => {
@@ -124,26 +123,19 @@ export class BacklogItemComponent implements OnInit {
 		if (!this.type) return;
 
 		const saveCmd = this.backlogService.getSaveMethodByType(this.type!, this.editId);
-		of(null)
-			.pipe(
-				tap(() => this._loading.next(true)),
-				switchMap(() => saveCmd(this.form.value)),
-				tap(() => this._loading.next(false)),
-				take(1)
-			)
-			.subscribe(
-				ref => {
-					const notification = {
-						linkRoute: [this._listRoute, ref.id],
-						linkText: ref.name,
-						text: 'Backlog item saved:',
-					} as INotificationMessage;
-					this.notifyService.showNotificationWithLink(notification);
-				},
-				err => {
-					this.notifyService.showError('Failed to save', `Saving failed: '${err}'`);
-				}
-			);
+		saveCmd(this.form.value).subscribe(
+			ref => {
+				const notification = {
+					linkRoute: [this._listRoute, ref.id],
+					linkText: ref.name,
+					text: 'Backlog item saved:',
+				} as INotificationMessage;
+				this.notifyService.showNotificationWithLink(notification);
+			},
+			err => {
+				this.notifyService.showError('Failed to save', `Saving failed: '${err}'`);
+			}
+		);
 	}
 
 	delete(): void {
@@ -153,10 +145,7 @@ export class BacklogItemComponent implements OnInit {
 			.showDeleteConfirmation('Delete?', `Do you want delete '<b>${this.form?.controls.title.value}</b>'?`)
 			.pipe(
 				filter(r => r),
-				tap(() => this._loading.next(true)),
-				switchMap(() => this.backlogService.deleteBacklogItem(this.editId!)),
-				tap(() => this._loading.next(false)),
-				take(1)
+				switchMap(() => this.backlogService.deleteBacklogItem(this.editId!))
 			)
 			.subscribe(
 				ref => {
@@ -167,6 +156,10 @@ export class BacklogItemComponent implements OnInit {
 					this.notifyService.showError('Failed to delete', `Deleting failed: '${err}'`);
 				}
 			);
+	}
+
+	removeComment(comment: BacklogItemCommentListGetResponse): void {
+		this.dtoBeforeUpdate!.comments = this.dtoBeforeUpdate!.comments.filter(c => c.id != comment.id);
 	}
 
 	private goBack(): void {
