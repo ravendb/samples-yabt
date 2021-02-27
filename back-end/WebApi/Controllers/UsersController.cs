@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Domain.Common;
+using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.Domain.UserServices.Command;
 using Raven.Yabt.Domain.UserServices.Command.DTOs;
 using Raven.Yabt.Domain.UserServices.Query;
 using Raven.Yabt.Domain.UserServices.Query.DTOs;
+using Raven.Yabt.WebApi.Controllers.DTOs;
 
 namespace Raven.Yabt.WebApi.Controllers
 {
@@ -30,6 +32,22 @@ namespace Raven.Yabt.WebApi.Controllers
 																[FromRoute] string id
 															  )
 			=> service.GetById(id).ToActionResultOfT();
+
+		/// <summary>
+		///		Get the current user
+		/// </summary>
+		[HttpGet("current")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<CurrentUserResponse>> GetCurrentUser([FromServices] IUserQueryService service,
+		                                                              [FromServices] ICurrentUserResolver userResolver)
+		{
+			var currentId = userResolver.GetCurrentUserId();
+			var userResult = await service.GetById(currentId);
+			return !userResult.IsSuccess 
+				? userResult.To<CurrentUserResponse>().ToActionResultOfT() 
+				: new CurrentUserResponse(userResult.Value, currentId);
+		}
 
 		/// <summary>
 		///		Get a paged list of Users

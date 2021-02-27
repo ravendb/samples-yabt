@@ -3,15 +3,19 @@ import { Injectable } from '@angular/core';
 import { ListResponse } from '@core/api-models/common/ListResponse';
 import { UserReference } from '@core/api-models/common/references';
 import { UserAddUpdRequest, UserGetByIdResponse } from '@core/api-models/user/item';
+import { CurrentUserResponse } from '@core/api-models/user/item/CurrentUserResponse';
 import { UserListGetRequest, UserListGetResponse } from '@core/api-models/user/list';
 import { AppConfig } from '@core/app.config';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
 
 @Injectable({
 	providedIn: 'root',
 })
 export class UsersService extends BaseApiService {
+	private cachedCurrentUser: CurrentUserResponse | undefined;
+
 	constructor(httpClient: HttpClient) {
 		super(httpClient, AppConfig.AppServerUrl, 'api/Users');
 	}
@@ -22,11 +26,17 @@ export class UsersService extends BaseApiService {
 	getUser(id: string): Observable<UserGetByIdResponse> {
 		return this.getItem(id);
 	}
+	getCurrentUser(): Observable<CurrentUserResponse> {
+		if (!this.cachedCurrentUser) return of(this.cachedCurrentUser!);
+		return this.getItem<never, CurrentUserResponse>('current').pipe(tap(u => (this.cachedCurrentUser = u)));
+	}
 
 	createUser(request?: UserAddUpdRequest): Observable<UserReference> {
 		return this.post('', request);
 	}
 	updateUser(id: string, request?: UserAddUpdRequest): Observable<UserReference> {
+		if (!this.cachedCurrentUser && id == this.cachedCurrentUser!.id) this.cachedCurrentUser = undefined;
+
 		return this.put(id, request);
 	}
 	deleteUser(id: string): Observable<UserReference> {
