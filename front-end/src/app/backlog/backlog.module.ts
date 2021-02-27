@@ -16,7 +16,8 @@ import { SharedModule } from '@shared';
 import { BacklogRouting } from './backlog.routing';
 import { BacklogItemComponent } from './item';
 import { BacklogItemCommentComponent } from './item/comment';
-import { BacklogItemSectionComponent } from './item/section';
+import { BacklogItemHistoryItemComponent } from './item/ui-elements/history-item';
+import { BacklogItemSectionComponent } from './item/ui-elements/section';
 import { BacklogListComponent } from './list/backlog-list.component';
 import { FilterBarComponent } from './list/filter-bar';
 import { BacklogFilterDialogComponent } from './list/filter-dialog';
@@ -33,6 +34,7 @@ import { TagsComponent } from './ui-elements/tags';
 		BacklogFilterDialogComponent,
 		BacklogItemComponent,
 		BacklogItemCommentComponent,
+		BacklogItemHistoryItemComponent,
 		BacklogItemSectionComponent,
 		TagsComponent,
 	],

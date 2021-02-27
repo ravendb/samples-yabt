@@ -1,6 +1,8 @@
 @import 'flex-layout';
 @import 'variables';
 
+$font-label: 'Segoe UI VSS (Regular)', 'Segoe UI', '-apple-system', BlinkMacSystemFont, Roboto, 'Helvetica Neue', Helvetica, Ubuntu, Arial,
+	sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 $font-monospace: 'Segoe UI', '-apple-system', BlinkMacSystemFont, Roboto, 'Helvetica Neue', Helvetica, Ubuntu, Arial, sans-serif,
 	'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 
@@ -120,10 +122,18 @@ $font-monospace: 'Segoe UI', '-apple-system', BlinkMacSystemFont, Roboto, 'Helve
 	.comment-section {
 		margin-bottom: 16px;
 	}
+
+	.small-label {
+		font-family: $font-label;
+		font-size: 12px;
+	}
 }
 
 .side-offset {
 	padding: 0 8px 0 8px;
+}
+.side-bottom-offset {
+	padding: 0 8px 16px 8px;
 }
 
 form.form {

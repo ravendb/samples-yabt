@@ -37,7 +37,7 @@
 					<backlog-item-state [state]="row.state"></backlog-item-state>
 				</span>
 				<span *ngIf="row.assignee" class="wide-column">
-					<a *ngIf="row.assignee?.id" [routerLink]="['/users/' + row.assignee?.id]">{{row.assignee.name}}</a>
+					<a *ngIf="!!row.assignee?.id" [routerLink]="['/users/' + row.assignee.id]">{{row.assignee.name}}</a>
 					<span *ngIf="!row.assignee?.id && !!row.assignee?.name">{{row.assignee.name}}</span>
 				</span>
 			</div>

@@ -169,7 +169,7 @@ export class BacklogItemComponent implements OnInit {
 			);
 	}
 
-	goBack(): void {
+	private goBack(): void {
 		if (window.history.length > 1) this.location.back();
 		else this.router.navigate([this._listRoute]);
 	}
