@@ -12,12 +12,13 @@ import { BugSeverity } from '@core/api-models/common/BugSeverity';
 import { UserListGetRequest } from '@core/api-models/user/list';
 import { BacklogItemsService } from '@core/api-services/backlogItems.service';
 import { UsersService } from '@core/api-services/users.service';
+import { INotificationMessage } from '@core/notification';
 import { NotificationService } from '@core/notification/notification.service';
 import { IBreadcrumbItem, PageTitleService } from '@core/page-title.service';
 import { IKeyValuePair } from '@shared/filters';
 import { CustomValidators } from '@utils/custom-validators';
-import { of, Subscription } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of, Subscription } from 'rxjs';
+import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { BacklogItemReadonlyProperties } from './backlog-item-readonly-properties';
 
 @Component({
@@ -28,6 +29,9 @@ export class BacklogItemComponent implements OnInit {
 	editId: string | null = null;
 	form!: FormGroupTyped<BacklogAddUpdAllFieldsRequest>;
 	dtoBeforeUpdate: BacklogItemReadonlyProperties | undefined;
+
+	private _loading = new BehaviorSubject<boolean>(false);
+	loading$ = this._loading.asObservable();
 
 	readonly states: IKeyValuePair[] = Object.keys(BacklogItemState).map(key => {
 		return { key, value: BacklogItemState[key as keyof typeof BacklogItemState] };
@@ -83,6 +87,7 @@ export class BacklogItemComponent implements OnInit {
 		this.subscriptions.add(
 			this.activatedRoute.paramMap
 				.pipe(
+					tap(() => this._loading.next(true)),
 					switchMap((p: ParamMap) => {
 						const id = p.get('id');
 						this.editId = !!id && id !== 'create' ? id : null;
@@ -93,16 +98,22 @@ export class BacklogItemComponent implements OnInit {
 						this.dtoBeforeUpdate = item;
 						// Convert to DTO for creating/editing
 						return this.convertGetDtoToAddUpdDto(item);
-					})
+					}),
+					tap(() => this._loading.next(false))
 				)
-				.subscribe(item => {
-					this.form.reset(item);
-					const lastBreadcrumbs: IBreadcrumbItem = {
-						label: !!this.editId ? `#${this.editId}` : 'Create',
-						url: '',
-					};
-					this.pageTitle.addLastBreadcrumbs(lastBreadcrumbs);
-				})
+				.subscribe(
+					item => {
+						this.form.reset(item);
+						const lastBreadcrumbs: IBreadcrumbItem = {
+							label: !!this.editId ? `#${this.editId}` : 'Create',
+							url: '',
+						};
+						this.pageTitle.addLastBreadcrumbs(lastBreadcrumbs);
+					},
+					err => {
+						this.notifyService.showError('Not found', err);
+					}
+				)
 		);
 	}
 	ngOnDestroy() {
@@ -110,44 +121,52 @@ export class BacklogItemComponent implements OnInit {
 	}
 
 	save(): void {
-		/*var saveCmd = !!this.editId
-			? this.apiService.updateUser(this.editId, this.form.value)
-			: this.apiService.createUser(this.form.value);
-		saveCmd.pipe(take(1)).subscribe(
-			ref => {
-				const notification = {
-					linkRoute: [this._listRoute, ref.id],
-					linkText: ref.name,
-					text: 'User saved:',
-				} as INotificationMessage;
-				this.notifyService.showNotificationWithLink(notification);
-				this.goBack();
-			},
-			err => {
-				this.notifyService.showError('Failed to save', `Saving custom field failed: '${err}'`);
-			}
-		);*/
+		if (!this.type) return;
+
+		const saveCmd = this.backlogService.getSaveMethodByType(this.type!, this.editId);
+		of(null)
+			.pipe(
+				tap(() => this._loading.next(true)),
+				switchMap(() => saveCmd(this.form.value)),
+				tap(() => this._loading.next(false)),
+				take(1)
+			)
+			.subscribe(
+				ref => {
+					const notification = {
+						linkRoute: [this._listRoute, ref.id],
+						linkText: ref.name,
+						text: 'Backlog item saved:',
+					} as INotificationMessage;
+					this.notifyService.showNotificationWithLink(notification);
+				},
+				err => {
+					this.notifyService.showError('Failed to save', `Saving failed: '${err}'`);
+				}
+			);
 	}
 
 	delete(): void {
 		if (!this.editId) return;
 
-		/*this.notifyService
-			.showDeleteConfirmation('Delete Custom Field?', `Do you want delete '<b>${this._userDtoBeforeUpdate?.nameWithInitials}</b>'?`)
+		this.notifyService
+			.showDeleteConfirmation('Delete?', `Do you want delete '<b>${this.form?.controls.title.value}</b>'?`)
 			.pipe(
 				filter(r => r),
-				switchMap(() => this.apiService.deleteUser(this.editId!)),
+				tap(() => this._loading.next(true)),
+				switchMap(() => this.backlogService.deleteBacklogItem(this.editId!)),
+				tap(() => this._loading.next(false)),
 				take(1)
 			)
 			.subscribe(
 				ref => {
-					this.notifyService.showNotification(`User '${ref.name}' deleted`);
+					this.notifyService.showNotification(`Backlog item '${ref.name}' deleted`);
 					this.goBack();
 				},
 				err => {
-					this.notifyService.showError('Failed to delete', `Deleting user failed: '${err}'`);
+					this.notifyService.showError('Failed to delete', `Deleting failed: '${err}'`);
 				}
-			);*/
+			);
 	}
 
 	goBack(): void {
