@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
@@ -41,6 +41,7 @@ import { TagsComponent } from './ui-elements/tags';
 	imports: [
 		CommonModule,
 		BacklogRouting,
+		FormsModule,
 		MatAutocompleteModule,
 		MatButtonModule,
 		MatChipsModule,

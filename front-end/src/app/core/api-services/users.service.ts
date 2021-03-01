@@ -27,7 +27,7 @@ export class UsersService extends BaseApiService {
 		return this.getItem(id);
 	}
 	getCurrentUser(): Observable<CurrentUserResponse> {
-		if (!this.cachedCurrentUser) return of(this.cachedCurrentUser!);
+		if (!!this.cachedCurrentUser) return of(this.cachedCurrentUser!);
 		return this.getItem<never, CurrentUserResponse>('current').pipe(tap(u => (this.cachedCurrentUser = u)));
 	}
 

@@ -74,14 +74,15 @@
 				</mat-form-field>
 			</backlog-item-section>
 
-			<backlog-item-section title="Comments" *ngIf="!!editId">
+			<backlog-item-section title="Comments" *ngIf="!!editId && (currentUserId$ | async); let userId">
 				<div class="comment-section">
-					<backlog-item-comment [backlogItemId]="editId" [newComment]="true" [currentUserId]="currentUserId">
+					<backlog-item-comment [backlogItemId]="editId" [newComment]="true" [currentUserId]="userId"
+						(commentSaved)="addedComment($event)">
 					</backlog-item-comment>
 				</div>
 				<div *ngFor="let comment of dtoBeforeUpdate?.comments" class="comment-section">
-					<backlog-item-comment [value]="comment" [backlogItemId]="editId" (deleted)="removeComment(comment)"
-						[currentUserId]="currentUserId">
+					<backlog-item-comment [value]="comment" [backlogItemId]="editId" [currentUserId]="userId"
+						(commentDeleted)="removedComment($event)" (commentSaved)="updatedComment($event)">
 					</backlog-item-comment>
 				</div>
 			</backlog-item-section>

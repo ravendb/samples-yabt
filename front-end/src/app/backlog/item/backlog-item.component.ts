@@ -10,6 +10,8 @@ import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
 import { BacklogRelationshipType } from '@core/api-models/common/BacklogRelationshipType';
 import { BugPriority } from '@core/api-models/common/BugPriority';
 import { BugSeverity } from '@core/api-models/common/BugSeverity';
+import { UserReference } from '@core/api-models/common/references';
+import { CurrentUserResponse } from '@core/api-models/user/item/CurrentUserResponse';
 import { UserListGetRequest } from '@core/api-models/user/list';
 import { BacklogItemsService } from '@core/api-services/backlogItems.service';
 import { UsersService } from '@core/api-services/users.service';
@@ -19,7 +21,7 @@ import { IBreadcrumbItem, PageTitleService } from '@core/page-title.service';
 import { IKeyValuePair } from '@shared/filters';
 import { CustomValidators } from '@utils/custom-validators';
 import { Observable, of, Subscription } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, map, switchMap, tap } from 'rxjs/operators';
 import { BacklogItemReadonlyProperties } from './backlog-item-readonly-properties';
 
 @Component({
@@ -51,7 +53,11 @@ export class BacklogItemComponent implements OnInit {
 		return this.dtoBeforeUpdate?.type;
 	}
 
-	currentUserId: string | undefined;
+	private _currentUser: CurrentUserResponse | undefined;
+	currentUserId$ = this.userService.getCurrentUser().pipe(
+		tap(c => (this._currentUser = c)),
+		map(c => c.id)
+	);
 
 	readonly searchByAssignee = (search: string): Observable<IKeyValuePair[]> =>
 		this.userService
@@ -86,8 +92,6 @@ export class BacklogItemComponent implements OnInit {
 			priority: [null],
 			severity: [null],
 		}) as FormGroupTyped<BacklogAddUpdAllFieldsRequest>;
-
-		this.userService.getCurrentUser().subscribe(u => (this.currentUserId = u.id));
 
 		this.subscriptions.add(
 			this.activatedRoute.paramMap
@@ -162,8 +166,28 @@ export class BacklogItemComponent implements OnInit {
 			);
 	}
 
-	removeComment(comment: BacklogItemCommentListGetResponse): void {
-		this.dtoBeforeUpdate!.comments = this.dtoBeforeUpdate!.comments.filter(c => c.id != comment.id);
+	removedComment(commentId: string): void {
+		this.dtoBeforeUpdate!.comments = this.dtoBeforeUpdate!.comments.filter(c => c.id != commentId);
+	}
+	updatedComment(event: { id: string; message: string }): void {
+		const comment = this.dtoBeforeUpdate!.comments.find(c => c.id == event.id);
+		if (!!comment) {
+			comment.message = event.message;
+			comment.lastUpdated = new Date();
+		}
+	}
+	addedComment(event: { id: string; message: string }): void {
+		this.dtoBeforeUpdate!.comments.unshift({
+			id: event.id,
+			message: event.message,
+			author: {
+				id: this._currentUser?.id,
+				name: this._currentUser?.nameWithInitials,
+				fullName: this._currentUser?.fullName,
+			} as UserReference,
+			created: new Date(),
+			lastUpdated: new Date(),
+		} as BacklogItemCommentListGetResponse);
 	}
 
 	private goBack(): void {

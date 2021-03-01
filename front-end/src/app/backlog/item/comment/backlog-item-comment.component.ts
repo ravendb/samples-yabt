@@ -4,7 +4,7 @@ import { BacklogItemCommentListGetResponse } from '@core/api-models/backlog-item
 import { UserReference } from '@core/api-models/common/references';
 import { BacklogItemsService } from '@core/api-services/backlogItems.service';
 import { NotificationService } from '@core/notification/notification.service';
-import { filter, switchMap, take } from 'rxjs/operators';
+import { filter, switchMap } from 'rxjs/operators';
 
 @Component({
 	selector: 'backlog-item-comment',
@@ -22,16 +22,21 @@ export class BacklogItemCommentComponent {
 	currentUserId: string | undefined;
 
 	@Output()
-	deleted: EventEmitter<string> = new EventEmitter();
+	commentDeleted: EventEmitter<string> = new EventEmitter();
+	@Output()
+	commentSaved: EventEmitter<{ id: string; message: string }> = new EventEmitter();
 
-	editing = false;
+	private _editingMode = false;
+	get editingMode(): boolean {
+		return this._editingMode || this.newComment;
+	}
 	editableContent: string = '';
 
 	get author(): UserReference | undefined {
 		return this.value?.author;
 	}
 	get content(): string | undefined {
-		return this.value?.message;
+		return this.value?.message || '';
 	}
 	get created(): Date | undefined {
 		return this.value?.created;
@@ -48,18 +53,22 @@ export class BacklogItemCommentComponent {
 	) {}
 
 	switchMode(): void {
-		if (this.newComment) {
-			this.editing = true;
-			return;
-		}
-
-		if (this.editing) {
+		if (this.editingMode) {
 			this.value!.created = new Date();
 			this.value!.message = this.editableContent;
 		} else {
+			// Allowed to edit/delete own comments only
+			if (this.author?.id != this.currentUserId) {
+				this.notifyService.showError(
+					`You're not the author`,
+					'Editing comments of other users is prohibited! ' + this.currentUserId
+				);
+				return;
+			}
+
 			this.editableContent = `${this.content}`;
 		}
-		this.editing = !this.editing;
+		this._editingMode = !this._editingMode;
 	}
 
 	delete(): void {
@@ -69,13 +78,12 @@ export class BacklogItemCommentComponent {
 			.showDeleteConfirmation('Delete?', `Do you want delete comment of '<b>${this.getCurrentCommentDate()}</b>'?`)
 			.pipe(
 				filter(r => r),
-				switchMap(() => this.backlogService.deleteComment(this.backlogItemId!, this.value!.id)),
-				take(1)
+				switchMap(() => this.backlogService.deleteComment(this.backlogItemId!, this.value!.id))
 			)
 			.subscribe(
-				ref => {
-					this.deleted.emit(this.value!.id);
+				_ => {
 					this.notifyService.showNotification(`Comment of '${this.getCurrentCommentDate()}' deleted`);
+					this.commentDeleted.emit(this.value!.id);
 				},
 				err => {
 					this.notifyService.showError('Failed to delete', `Deleting failed: '${err}'`);
@@ -91,8 +99,11 @@ export class BacklogItemCommentComponent {
 			: this.backlogService.updateComment(this.backlogItemId!, this.value!.id!, this.editableContent);
 		request.subscribe(
 			ref => {
+				this.commentSaved.emit({ id: ref.commentId!, message: this.editableContent });
 				const txt = ref.name.length > 7 ? ref.name.substring(0, 7) + '...' : ref.name;
 				this.notifyService.showNotification(`Comment '${txt}' saved`);
+				if (this.newComment) this.editableContent = '';
+				else this.switchMode();
 			},
 			err => {
 				this.notifyService.showError('Failed to save', !!err?.detail ? err.detail : `Saving failed: '${err}'`);
