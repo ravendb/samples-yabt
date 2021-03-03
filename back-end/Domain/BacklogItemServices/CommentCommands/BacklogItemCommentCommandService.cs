@@ -46,7 +46,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 
 			ticket.AddHistoryRecord(currentUser, "Added a comment");
 			
-			return DomainResult.Success(ToLastCommentReference(ticket));
+			return DomainResult.Success(GetCommentReference(ticket.Id, comment.Id, message));
 		}
 
 		public async Task<IDomainResult<BacklogItemCommentReference>> Update(string backlogItemId, string commentId, string message)
@@ -61,8 +61,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 				return DomainResult.NotFound<BacklogItemCommentReference>("Comment not found");
 
 			var currentUser = await _userResolver.GetCurrentUserReference();
-			if (comment.Author.Id != currentUser.Id.GetShortId())
-				return DomainResult.Failed<BacklogItemCommentReference>("Cannot edit comments of other users");
+			if (comment.Author.Id != currentUser.Id)
+				return DomainResult.Unauthorized<BacklogItemCommentReference>("Cannot edit comments of other users");
 
 			var mentionedUsers = await _mentionedUserResolver.GetMentionedUsers(message);
 
@@ -72,7 +72,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 
 			ticket.AddHistoryRecord(currentUser, "Updated a comment");
 
-			return DomainResult.Success(ToLastCommentReference(ticket));
+			return DomainResult.Success(GetCommentReference(ticket.Id, commentId, message));
 		}
 
 		public async Task<IDomainResult<BacklogItemCommentReference>> Delete(string backlogItemId, string commentId)
@@ -87,22 +87,24 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 				return DomainResult.NotFound<BacklogItemCommentReference>("Comment not found");
 
 			var currentUser = await _userResolver.GetCurrentUserReference();
-			if (comment.Author.Id != currentUser.Id.GetShortId())
-				return DomainResult.Failed<BacklogItemCommentReference>("Cannot delete comments of other users");
+			if (comment.Author.Id != currentUser.Id)
+				return DomainResult.Unauthorized<BacklogItemCommentReference>("Cannot delete comments of other users");
 
 			ticket.Comments.Remove(comment);
 
 			ticket.AddHistoryRecord(currentUser, "Deleted a comment");
 
-			return DomainResult.Success(ToLastCommentReference(ticket, true));
+			return DomainResult.Success(GetCommentReference(ticket.Id, null, comment.Message));
 		}
 
-		private static BacklogItemCommentReference ToLastCommentReference(BacklogItem ticket, bool nullCommentId = false) 
-			=> new BacklogItemCommentReference
+		private static BacklogItemCommentReference GetCommentReference(string ticketId, string? commentId, string commentMessage) 
+			=> new()
 			{
-				Id = ticket.Id,
-				Name = ticket.Title,
-				CommentId = nullCommentId ? null : ticket.Comments.LastOrDefault()?.Id,
+				Id = ticketId.GetShortId(),
+				Name = commentMessage.Length > 20
+					? commentMessage.Substring(0, 17) + "..." 
+					: commentMessage,
+				CommentId = commentId,
 			};
 
 		private async Task<IDomainResult<BacklogItem>> GetEntity(string id)

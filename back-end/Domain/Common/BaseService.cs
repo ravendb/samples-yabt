@@ -13,6 +13,9 @@ namespace Raven.Yabt.Domain.Common
 			DbSession = dbSession;
 		}
 
-		protected string GetFullId(string id) => DbSession.GetFullId<TEntity>(id);
+		protected string GetFullId(string id) 
+			=> id.Contains('/') 
+				? id	// Assume it's already a full ID with a prefix  
+				: DbSession.GetFullId<TEntity>(id);
 	}
 }
