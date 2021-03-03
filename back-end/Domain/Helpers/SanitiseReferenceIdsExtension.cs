@@ -73,7 +73,7 @@ namespace Raven.Yabt.Domain.Helpers
 		/// <returns> A full ID (e.g. 'users/1-A') </returns>
 		internal static string GetFullId<T>(this IAsyncDocumentSession session, string shortId) where T : IEntity
 		{
-			// In input we don't trust. Though I might be a bit paranoid, but this value can come from outside of the app and be passed to Raven
+			// In input we don't trust. Though I might be a bit paranoiac, but this value can come from outside of the app and be passed to Raven
 			if (!new Regex(@"^\d{1,19}\-[a-z]{1}$", RegexOptions.IgnoreCase).IsMatch(shortId))
 				throw new ArgumentException("ID has incorrect format", nameof(shortId));
 
