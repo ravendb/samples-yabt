@@ -17,7 +17,6 @@
 	<mat-form-field>
 		<textarea matInput [(ngModel)]="editableContent" cdkTextareaAutosize #autosize="cdkTextareaAutosize" [cdkAutosizeMinRows]="3"
 			placeholder="Leave a comment..." name="comment"></textarea>
-		<mat-hint align="start">{{content?.length || ''}}</mat-hint>
 	</mat-form-field>
 	<div class="action-buttons">
 		<button mat-stroked-button (click)="switchMode()" *ngIf="!newComment" aria-label="Cancel any changes">Cancel</button>

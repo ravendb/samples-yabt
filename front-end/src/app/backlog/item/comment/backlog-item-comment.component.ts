@@ -59,10 +59,7 @@ export class BacklogItemCommentComponent {
 		} else {
 			// Allowed to edit/delete own comments only
 			if (this.author?.id != this.currentUserId) {
-				this.notifyService.showError(
-					`You're not the author`,
-					'Editing comments of other users is prohibited! ' + this.currentUserId
-				);
+				this.notifyService.showError(`You're not the author`, 'Editing comments of other users is prohibited!');
 				return;
 			}
 
@@ -81,8 +78,8 @@ export class BacklogItemCommentComponent {
 				switchMap(() => this.backlogService.deleteComment(this.backlogItemId!, this.value!.id))
 			)
 			.subscribe(
-				_ => {
-					this.notifyService.showNotification(`Comment of '${this.getCurrentCommentDate()}' deleted`);
+				ref => {
+					this.notifyService.showNotification(`Comment '${ref.name}' deleted`);
 					this.commentDeleted.emit(this.value!.id);
 				},
 				err => {
@@ -100,8 +97,7 @@ export class BacklogItemCommentComponent {
 		request.subscribe(
 			ref => {
 				this.commentSaved.emit({ id: ref.commentId!, message: this.editableContent });
-				const txt = ref.name.length > 7 ? ref.name.substring(0, 7) + '...' : ref.name;
-				this.notifyService.showNotification(`Comment '${txt}' saved`);
+				this.notifyService.showNotification(`Comment '${ref.name}' saved`);
 				if (this.newComment) this.editableContent = '';
 				else this.switchMode();
 			},
