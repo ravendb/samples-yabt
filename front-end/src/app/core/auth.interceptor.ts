@@ -28,11 +28,14 @@ export class AuthInterceptor implements HttpInterceptor {
 				if (err instanceof HttpErrorResponse && [401, 403].indexOf(err.status) > -1) {
 					if (!this.authFailedRequestShown) {
 						this.authFailedRequestShown = true;
+						const message =
+							(!!err?.error?.detail ? err!.error!.detail + '<br><br>\n' : '') + 'Please report it as an issue on GitHub';
+
 						// No 'switchMap()' here and start a new flow via 'setTimeout()', as flipping HttpClient pipeline
 						// to UI can be troublesome. The HttpClient pipeline need to finish as it's expected
 						setTimeout(() =>
 							this.notifyService
-								.showError('Authentication failed', 'Please report it as an issue on GitHub')
+								.showError('Authentication failed', message)
 								.subscribe(() => (this.authFailedRequestShown = false))
 						);
 					}
