@@ -81,12 +81,15 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 					ActionedBy = actionedBy,
 					Summary = message
 				});
-			// Cap the number of records in 200 most recent one. An arbitrary number to avoid the collection getting out of proportion 
-			const int maxCount = 200;
+			// Cap the number of records in 100 most recent one (an arbitrary number to avoid the collection getting out of proportion)
+			// Note: we keep the first record to avoid losing the date of creation
+			const int maxCount = 100;
 			if (ModifiedBy.Count > maxCount)
 			{
-				var lastTimestamp = ModifiedBy.OrderByDescending(m => m.Timestamp).Skip(maxCount - 1).First().Timestamp;
-				ModifiedBy.RemoveAll(m => m.Timestamp > lastTimestamp);
+				var orderedList = ModifiedBy.OrderByDescending(m => m.Timestamp).ToList();
+				var firstTimestamp = orderedList.Last().Timestamp; 
+				var lastTimestamp = orderedList.Skip(maxCount - 1).First().Timestamp;
+				ModifiedBy.RemoveAll(m => firstTimestamp < m.Timestamp && m.Timestamp < lastTimestamp );
 			}
 		}
 
