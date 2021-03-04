@@ -4,7 +4,6 @@ using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Database.Models.Users;
 using Raven.Yabt.Domain.Common;
-using Raven.Yabt.Domain.Helpers;
 using Raven.Yabt.Domain.Infrastructure;
 
 namespace Raven.Yabt.Domain.UserServices.Query
@@ -25,7 +24,7 @@ namespace Raven.Yabt.Domain.UserServices.Query
 
 			var user = await DbSession.LoadAsync<User>(fullId);
 
-			return user?.ToReference().RemoveEntityPrefixFromId();
+			return user?.ToReference();
 		}
 
 		/// <inheritdoc/>

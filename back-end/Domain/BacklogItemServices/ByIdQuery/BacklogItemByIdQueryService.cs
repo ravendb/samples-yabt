@@ -13,7 +13,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery
 {
 	public class BacklogItemByIdQueryService : BaseService<BacklogItem>, IBacklogItemByIdQueryService
 	{
-		public BacklogItemByIdQueryService(IAsyncDocumentSession dbSession) : base(dbSession) { }
+		public BacklogItemByIdQueryService(IAsyncDocumentSession dbSession) : base(dbSession) {}
 
 		/// <inheritdoc/>
 		public async Task<IDomainResult<BacklogItemGetResponseBase>> GetById(string id)
@@ -23,8 +23,11 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery
 			var ticket = await DbSession.LoadAsync<BacklogItem>(fullId);
 			if (ticket == null)
 				return DomainResult.NotFound<BacklogItemGetResponseBase>();
+			
+			// Ignore any changes to the object on saving
+			DbSession.Advanced.IgnoreChangesFor(ticket);
 
-			var dto = (ticket.Type) switch
+			var dto = ticket.Type switch
 			{
 				BacklogItemType.Bug			=> (ticket as BacklogItemBug)		?.ConvertToDto<BacklogItemBug, BugGetResponse>() as  BacklogItemGetResponseBase,
 				BacklogItemType.UserStory	=> (ticket as BacklogItemUserStory)	?.ConvertToDto<BacklogItemUserStory, UserStoryGetResponse>() as BacklogItemGetResponseBase,
