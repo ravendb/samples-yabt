@@ -30,7 +30,6 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				CustomFields = entity.CustomFields,
 				Type = entity.Type
 			};
-			response.RemoveEntityPrefixFromIds(r => r.Created.ActionedBy, r => r.LastUpdated.ActionedBy, r => r.Assignee);
 
 			if (entity is BacklogItemBug entityBug 
 				&& response is BugGetResponse responseBug)
@@ -45,7 +44,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				responseUserStory.AcceptanceCriteria = entityUserStory.AcceptanceCriteria;
 			}
 
-			return response;
+			return response.RemoveEntityPrefixFromIds(r => r.Created.ActionedBy, r => r.LastUpdated.ActionedBy, r => r.Assignee);
 		}
 		
 		private static List<BacklogItemCommentListGetResponse>? GetCommentsList(BacklogItem backlogEntity)
