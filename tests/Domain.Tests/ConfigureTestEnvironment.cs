@@ -74,7 +74,7 @@ namespace Raven.Yabt.Domain.Tests
 				});
 			services.AddScoped(c =>
 				{
-					var session = c.GetService<IDocumentStore>()!.OpenAsyncSession();
+					var session = c.GetService<IDocumentStore>()!.OpenAsyncSession(new SessionOptions { NoCaching = true });
 						session.Advanced.WaitForIndexesAfterSaveChanges();  // Wait on each change to avoid adding WaitForIndexing() in each test
 					return session;
 				});

@@ -143,9 +143,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			_currentUserId = homerId;
 			await _commentCommandService.Create(ticketId, "Homer's comment");
 			await SaveChanges();
-			var item0 = (await _queryByIdService.GetById(ticketId)).Value;
-			Assert.Equal(homerId, item0.LastUpdated.ActionedBy.Id);
-
+			
 			// WHEN Marge updates her comment
 			_currentUserId = margeId;
 			await _commentCommandService.Update(ticketId, commentId, "Updated Marge's comment");
