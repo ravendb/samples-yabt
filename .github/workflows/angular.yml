@@ -19,6 +19,8 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ env.NODE_VERSION }}
+    - name: Change folder
+      run: cd front-end
     - name: npm install and build
       run: |
         npm install
