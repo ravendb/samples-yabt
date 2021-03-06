@@ -6,24 +6,19 @@ using TextJson = System.Text.Json.Serialization;
 namespace Raven.Yabt.Database.Common.References
 {
 	/// <summary>
-	///		Reference to a <see cref="Models.Users.User"/> record
+	///		Reference to a User record
 	/// </summary>
-	public class UserReference : IEntityReference
+	public record UserReference : EntityReferenceBase
 	{
-		/// <inheritdoc/>
-		public string? Id { get; set; }
-
-		/// <inheritdoc/>
-		public string Name { get; set; } = null!;   // Non-nullable
 		/// <summary>
 		///		Full name of the user
 		/// </summary>
-		public string FullName { get; set; } = null!;   // Non-nullable
+		public string FullName  { get; init; }
 
 		/// <summary>
 		///		Link to the avatar
 		/// </summary>
-		public string? AvatarUrl { get; set; }
+		public string? AvatarUrl { get; init; }
 		
 		/// <summary>
 		///		User's name how it appears in the text as a user's mentioning, e.g. "HomerSimpson".
@@ -32,5 +27,12 @@ namespace Raven.Yabt.Database.Common.References
 		[TextJson.JsonIgnore]			// Ignore in the controller output
 		[NewtonsoftJson.JsonIgnore]		// Ignore in the RavenDB storage 
 		public string MentionedName => Regex.Replace(FullName, @"\s+", "");
+
+		public UserReference() {}
+		public UserReference(string? id, string name, string fullName, string? avatarUrl = null) : base(id, name)
+		{
+			FullName = fullName;
+			AvatarUrl = avatarUrl;
+		}
 	}
 }

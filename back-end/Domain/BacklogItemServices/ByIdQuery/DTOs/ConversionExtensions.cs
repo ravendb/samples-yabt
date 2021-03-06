@@ -2,7 +2,6 @@
 using System.Linq;
 
 using Raven.Yabt.Database.Models.BacklogItems;
-using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.Helpers;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
@@ -21,11 +20,10 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				Title = entity.Title,
 				State = entity.State,
 				EstimatedSize = entity.EstimatedSize,
-				Assignee = entity.Assignee,
-				Created = entity.Created,
-				LastUpdated = entity.LastUpdated,
+				Assignee = entity.Assignee is null ? null : (entity.Assignee with {}).RemoveEntityPrefixFromId(),
+				HistoryDescOrder = GetModifiedBy(entity.ModifiedBy),
 				Tags = entity.Tags,
-				Comments = GetCommentsList(entity),
+				Comments = GetCommentsList(entity.Comments),
 				RelatedItems = entity.RelatedItems,
 				CustomFields = entity.CustomFields,
 				Type = entity.Type
@@ -44,23 +42,28 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				responseUserStory.AcceptanceCriteria = entityUserStory.AcceptanceCriteria;
 			}
 
-			return response.RemoveEntityPrefixFromIds(r => r.Created.ActionedBy, r => r.LastUpdated.ActionedBy, r => r.Assignee);
+			return response;
+		}
+
+		private static IReadOnlyList<BacklogItemHistoryRecord> GetModifiedBy(IList<BacklogItemHistoryRecord> modifiedBy)
+		{
+			var ret = (from item in modifiedBy.OrderByDescending(i => i.Timestamp) select item with {}).ToList();
+			ret.RemoveEntityPrefixFromIds(i => i.ActionedBy);
+			return ret.AsReadOnly();
 		}
 		
-		private static List<BacklogItemCommentListGetResponse>? GetCommentsList(BacklogItem backlogEntity)
+		private static IReadOnlyList<BacklogItemCommentListGetResponse>? GetCommentsList(IList<Comment> comments)
 		{
-			var ret = (from comment in backlogEntity.Comments.OrderByDescending(c => c.Created)
+			return (from comment in comments.OrderByDescending(c => c.Created)
 				select new BacklogItemCommentListGetResponse
 				{
 					Id = comment.Id,
 					Message = comment.Message,
-					Author = comment.Author,
+					Author = comment.Author is null ? null : (comment.Author with {}).RemoveEntityPrefixFromId(),
 					Created = comment.Created,
 					LastUpdated = comment.LastModified,
 					MentionedUserIds = comment.MentionedUserIds?.ToDictionary(pair => pair.Key, pair => pair.Value.GetShortId()!)
-				}).ToList();
-			ret.RemoveEntityPrefixFromIds(r => r.Author);
-			return ret;
+				}).ToList().AsReadOnly();
 		}
 	}
 }

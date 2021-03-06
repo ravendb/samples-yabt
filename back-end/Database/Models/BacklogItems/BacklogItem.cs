@@ -76,11 +76,8 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		/// </summary>
 		public void AddHistoryRecord(UserReference actionedBy, string message)
 		{
-			ModifiedBy.Add(new BacklogItemHistoryRecord
-				{
-					ActionedBy = actionedBy,
-					Summary = message
-				});
+			ModifiedBy.Add(new BacklogItemHistoryRecord(actionedBy, message));
+			
 			// Cap the number of records in 100 most recent one (an arbitrary number to avoid the collection getting out of proportion)
 			// Note: we keep the first record to avoid losing the date of creation
 			const int maxCount = 100;

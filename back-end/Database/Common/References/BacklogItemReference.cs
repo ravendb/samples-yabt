@@ -1,11 +1,13 @@
 ﻿namespace Raven.Yabt.Database.Common.References
 {
-	public class BacklogItemReference : IEntityReference
+	public record BacklogItemReference : EntityReferenceBase
 	{
-		public string? Id { get; set; }
-
-		public string Name { get; set; } = null!; // Name is non-nullable
+		public BacklogItemType Type { get; init; }
 		
-		public BacklogItemType Type { get; set; }
+		public BacklogItemReference() {}
+		public BacklogItemReference(string? id, string name, BacklogItemType type) : base(id, name)
+		{
+			Type = type;
+		}
 	}
 }
