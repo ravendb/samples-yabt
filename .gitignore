@@ -23,7 +23,7 @@ msbuild.log
 msbuild.err
 msbuild.wrn
 /**/dist
-/**/wwwrooot
+wwwrooot/
 
 /packages
 *.metaproj
