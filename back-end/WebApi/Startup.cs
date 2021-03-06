@@ -1,18 +1,13 @@
 using System.Reflection;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 using Raven.Yabt.Domain.Infrastructure;
-using Raven.Yabt.WebApi.Authorization;
 using Raven.Yabt.WebApi.Configuration;
-using Raven.Yabt.WebApi.Infrastructure;
 
 namespace Raven.Yabt.WebApi
 {
@@ -20,7 +15,6 @@ namespace Raven.Yabt.WebApi
 	{
 		private readonly IConfiguration _configuration;
 		private readonly IWebHostEnvironment _hostingEnvironment;
-		private const string CorsPolicyName = nameof(CorsPolicy);
 
 		public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
 		{
@@ -34,42 +28,22 @@ namespace Raven.Yabt.WebApi
 			// Register Global Settings.
 			var settings = services.AddAndConfigureAppSettings(_configuration);
 
-			services.AddControllers(o =>
-						{
-							// Register a filter to manage RavenDB session
-							o.Filters.Add<DbSessionManagementFilter>();
+			// Register controllers with filters, CORS settings, static files (for SPA)
+			services.AddAndConfigureControllersAndStaticFiles(settings.CorsOrigins, settings.SpaRootPath);
 
-							// Force all API methods to require authentication
-							AuthorizationPolicy policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();
-							o.Filters.Add(new GlobalAuthorizeFilter(policy));
-						})
-					.AddJsonOptions(o =>
-						{
-							o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
-							o.JsonSerializerOptions.IgnoreNullValues = true;
-						});
-			
-			services.AddCors(c =>
-						{
-							c.AddPolicy(CorsPolicyName, options => options
-	                           .WithOrigins(settings.CorsOrigins.Split(';'))
-	                           .AllowAnyMethod()
-	                           .AllowAnyHeader()
-			                   .AllowCredentials());
-						});
-
-			services.AddApplicationInsightsTelemetry();
-
-			// Register all domain dependencies
-			services.RegisterModules(assembly: Assembly.GetAssembly(typeof(ModuleRegistrationBase))!);
+			// Register authentication
+			services.AddAndConfigureAuthentication();
 
 			// Register the database and DB session
 			services.AddAndConfigureDatabase();
 
-			// Register authentication
-			services.AddAndConfigureAuthentication();
 			// Register Swagger
 			services.AddAndConfigureSwagger();
+
+			// Register all domain dependencies
+			services.RegisterModules(assembly: Assembly.GetAssembly(typeof(ModuleRegistrationBase))!);
+
+			services.AddApplicationInsightsTelemetry();
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,14 +51,20 @@ namespace Raven.Yabt.WebApi
 		{
 			app.UseHttpsRedirection();
 
+			app.UseStaticFiles();
+			if (!_hostingEnvironment.IsDevelopment())
+				app.UseSpaStaticFiles();
+			
 			app.UseRouting();
-			app.UseCors(CorsPolicyName);
+			app.UseCors();
 
 			app.UseAuthentication();
 
 			app.ConfigureSwagger();
 
 			app.UseEndpoints(endpoints =>endpoints.MapControllers());
+
+			app.UseSpa(_ => {});
 		}
 	}
 }
