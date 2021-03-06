@@ -12,12 +12,11 @@ namespace Raven.Yabt.WebApi.Configuration
 	internal static partial class ServiceCollectionExtensions
 	{
 		/// <summary>
-		///		Register controllers with filters, CORS settings, static files (for SPA), etc.
+		///		Register controllers with filters, CORS settings, etc.
 		/// </summary>
 		/// <param name="services"></param>
 		/// <param name="corsOrigins"> CORS addresses as a ';'-separated string </param>
-		/// <param name="spaRootPath"> Path to the compiled SPA app </param>
-		public static void AddAndConfigureControllersAndStaticFiles(this IServiceCollection services, string corsOrigins, string spaRootPath)
+		public static void AddAndConfigureControllers(this IServiceCollection services, string corsOrigins)
 		{
 			services.AddControllers(o =>
 					{
@@ -42,9 +41,6 @@ namespace Raven.Yabt.WebApi.Configuration
 						                                              .AllowAnyHeader()
 						                                              .AllowCredentials());
 					});
-			
-			// In production, the Angular files will be served from this directory
-			services.AddSpaStaticFiles(configuration => { configuration.RootPath = spaRootPath; });
 		}
 	}
 }

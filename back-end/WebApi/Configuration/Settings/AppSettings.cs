@@ -20,10 +20,5 @@ namespace Raven.Yabt.WebApi.Configuration.Settings
 		///		';'-separated list of enabled consumers of the API
 		/// </summary>
 		public string CorsOrigins { get; private set; }
-		
-		/// <summary>
-		///		Folder with compiled SPA hosted by Kestrel
-		/// </summary>
-		public string SpaRootPath { get; private set; }
 	}
 }
