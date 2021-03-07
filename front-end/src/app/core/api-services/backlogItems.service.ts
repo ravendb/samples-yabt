@@ -14,7 +14,7 @@ import {
 import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
 import { ListResponse } from '@core/api-models/common/ListResponse';
 import { BacklogItemCommentReference, BacklogItemReference } from '@core/api-models/common/references';
-import { AppConfig } from '@core/app.config';
+import { AppConfigService } from '@core/app-config.service';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 
@@ -22,8 +22,8 @@ import { BaseApiService } from './base-api.service';
 	providedIn: 'root',
 })
 export class BacklogItemsService extends BaseApiService {
-	constructor(httpClient: HttpClient) {
-		super(httpClient, AppConfig.AppServerUrl, 'api/BacklogItems');
+	constructor(httpClient: HttpClient, appCfgService: AppConfigService) {
+		super(httpClient, appCfgService.getAppServerUrl(), 'api/BacklogItems');
 	}
 
 	getBacklogItemList(request?: Partial<BacklogItemListGetRequest>): Observable<ListResponse<BacklogItemListGetResponse>> {

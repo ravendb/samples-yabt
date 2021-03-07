@@ -4,7 +4,7 @@ import { MatSort, MatSortable, MatSortHeader } from '@angular/material/sort';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { ListRequest } from '@core/api-models/common/ListRequest';
 import { BaseApiService } from '@core/api-services/base-api.service';
-import { AppConfig } from '@core/app.config';
+import { AppConfigService } from '@core/app-config.service';
 import { nameOf } from '@utils/nameof';
 import { filter as arrFilter, get, isEqual, isNil, omitBy, orderBy } from 'lodash-es';
 import { merge, Subject, Subscription } from 'rxjs';
@@ -50,10 +50,9 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 	get displayedColumns(): string[] {
 		return this.defaultDisplayedColumns;
 	}
-	get pageSizeOptions(): number[] {
-		return AppConfig.PageSizeOptions;
-	}
-	pageSize: number = AppConfig.PageSize;
+
+	readonly pageSizeOptions: number[];
+	pageSize: number;
 
 	get dataSource(): PaginatedDataSource<TListItemDto, TFilter> {
 		return this._dataSource;
@@ -71,6 +70,8 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 	constructor(
 		protected router: Router,
 		protected activatedRoute: ActivatedRoute,
+		/* The config service for the default page size, etc. */
+		private configService: AppConfigService,
 		/* The service for requesting the list from API */
 		protected service: BaseApiService,
 		/* Default visible columns */
@@ -80,6 +81,8 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 	) {
 		this._filter$ = new Subject<Partial<TFilter>>();
 		this._dataSource = new PaginatedDataSource<TListItemDto, TFilter>(this.service, this._requests);
+		this.pageSizeOptions = this.configService.getPageSizeOptions();
+		this.pageSize = this.configService.getPageSize();
 	}
 
 	// Subscribe for filter triggers after the nested components get initialised (must be AfterViewInit, instead of ngOnInit).
@@ -103,8 +106,8 @@ export abstract class ListBaseComponent<TListItemDto, TFilter extends ListReques
 					let queryFilter = this.getFilterFromQueryString(params);
 					console.debug('activatedRoute: ' + JSON.stringify(queryFilter));
 
-					this._pageIndex = +(queryFilter?.pageIndex || 0); // +(params.get(nameOf<ListRequest>('pageIndex')) || 0);
-					this.pageSize = +(queryFilter?.pageSize || AppConfig.PageSize); //+(params.get(nameOf<ListRequest>('pageSize')) || AppConfig.PageSize);
+					this._pageIndex = +(queryFilter?.pageIndex || 0);
+					this.pageSize = +(queryFilter?.pageSize || this.configService.getPageSize());
 
 					// Set grid Sorting
 					if (!!this.sort && !!queryFilter?.orderBy) {

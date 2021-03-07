@@ -2,7 +2,7 @@ import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
 import { Injectable } from '@angular/core';
 import { empty, Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { AppConfig } from './app.config';
+import { AppConfigService } from './app-config.service';
 import { NotificationService } from './notification/notification.service';
 
 /**
@@ -10,12 +10,14 @@ import { NotificationService } from './notification/notification.service';
  */
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-	private apiKey = AppConfig.ApiKey;
+	private readonly apiKey: string;
 
 	private noInternetMessageShown = false;
 	private authFailedRequestShown = false;
 
-	constructor(private notifyService: NotificationService) {}
+	constructor(private notifyService: NotificationService, appCfgService: AppConfigService) {
+		this.apiKey = appCfgService.getCurrentApiKey();
+	}
 
 	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 		const updatedRequest = req.clone({

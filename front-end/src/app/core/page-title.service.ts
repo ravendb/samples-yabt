@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { isEmpty, last } from 'lodash-es';
-import { AppConfig } from './app.config';
 
 export interface IBreadcrumbItem {
 	label: string;
@@ -13,7 +12,7 @@ export interface IBreadcrumbItem {
 })
 export class PageTitleService {
 	get fullPageTitle(): string {
-		return (!isEmpty(this._title) ? this._title + ' | ' : '') + AppConfig.PageTitleSuffix;
+		return (!isEmpty(this._title) ? this._title + ' | ' : '') + 'YABT';
 	}
 	private _title = '';
 

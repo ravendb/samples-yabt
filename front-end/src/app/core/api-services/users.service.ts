@@ -5,7 +5,7 @@ import { UserReference } from '@core/api-models/common/references';
 import { UserAddUpdRequest, UserGetByIdResponse } from '@core/api-models/user/item';
 import { CurrentUserResponse } from '@core/api-models/user/item/CurrentUserResponse';
 import { UserListGetRequest, UserListGetResponse } from '@core/api-models/user/list';
-import { AppConfig } from '@core/app.config';
+import { AppConfigService } from '@core/app-config.service';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { BaseApiService } from './base-api.service';
@@ -16,8 +16,8 @@ import { BaseApiService } from './base-api.service';
 export class UsersService extends BaseApiService {
 	private cachedCurrentUser: CurrentUserResponse | undefined;
 
-	constructor(httpClient: HttpClient) {
-		super(httpClient, AppConfig.AppServerUrl, 'api/Users');
+	constructor(httpClient: HttpClient, appCfgService: AppConfigService) {
+		super(httpClient, appCfgService.getAppServerUrl(), 'api/Users');
 	}
 
 	getUserList(request?: Partial<UserListGetRequest>): Observable<ListResponse<UserListGetResponse>> {

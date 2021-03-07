@@ -6,7 +6,7 @@ import { CustomFieldItemResponse } from '@core/api-models/custom-field/item/Cust
 import { CustomFieldReferenceDto } from '@core/api-models/custom-field/item/CustomFieldReferenceDto';
 import { CustomFieldUpdateRequest } from '@core/api-models/custom-field/item/CustomFieldUpdateRequest';
 import { CustomFieldListGetRequest, CustomFieldListGetResponse } from '@core/api-models/custom-field/list';
-import { AppConfig } from '@core/app.config';
+import { AppConfigService } from '@core/app-config.service';
 import { Observable } from 'rxjs';
 import { BaseApiService } from './base-api.service';
 
@@ -14,8 +14,8 @@ import { BaseApiService } from './base-api.service';
 	providedIn: 'root',
 })
 export class CustomFieldsService extends BaseApiService {
-	constructor(httpClient: HttpClient) {
-		super(httpClient, AppConfig.AppServerUrl, 'api/CustomFields');
+	constructor(httpClient: HttpClient, appCfgService: AppConfigService) {
+		super(httpClient, appCfgService.getAppServerUrl(), 'api/CustomFields');
 	}
 
 	getCustomField(id: string): Observable<CustomFieldItemResponse> {
