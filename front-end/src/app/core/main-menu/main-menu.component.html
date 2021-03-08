@@ -23,7 +23,7 @@
 				</mat-list-item>
 			</ng-template>
 			<ng-template [ngIf]="isMobile">
-				<mat-list-item routerLink="./system/users/{{ userId }}" (click)="collapseMenu()">
+				<mat-list-item [routerLink]="currentUserLink" (click)="collapseMenu()">
 					<mat-icon>person_outline</mat-icon>
 					<span>User Profile</span>
 				</mat-list-item>
@@ -57,7 +57,7 @@
 		<span class="spacer"></span>
 		<button mat-button [matMenuTriggerFor]="accountMenu">
 			<img class="avatar" src="//www.gravatar.com/avatar/00000000000000000000000000000000?r=g&d=mm&s=40" />
-			<span>{{userName}}</span>
+			<span>{{currentUser?.nameWithInitials}}</span>
 			<mat-icon color="primary">keyboard_arrow_down</mat-icon>
 		</button>
 		<span class="divider"></span>
@@ -93,7 +93,7 @@
 </ng-template>
 
 <mat-menu #accountMenu="matMenu" [overlapTrigger]="false" xPosition="before">
-	<a mat-menu-item routerLink="./users/{{ userId }}">
+	<a mat-menu-item [routerLink]="currentUserLink">
 		<mat-icon>person</mat-icon>
 		<span>User Profile</span>
 	</a>
