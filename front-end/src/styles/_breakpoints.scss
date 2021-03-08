@@ -1,0 +1,118 @@
+// These breakpoints match what is used in the BreakpointObserver used in code to give us consistency across all style and code breakpoints
+// See https://github.com/angular/material2/blob/master/src/cdk/layout/breakpoints.ts
+
+$breakpointXs: 0;
+$breakpointSm: 600px;
+$breakpointMd: 960px;
+$breakpointLg: 1280px;
+$breakpointXl: 1920px;
+
+@mixin breakpointXSmall() {
+	@media (max-width: calc(#{$breakpointSm} - 0.01px)) {
+		@content;
+	}
+}
+@mixin breakpointSmallAndDown() {
+	@media (max-width: calc(#{$breakpointMd} - 0.01px)) {
+		@content;
+	}
+}
+@mixin breakpointSmall() {
+	@media (min-width: $breakpointSm) and (max-width: calc(#{$breakpointMd} - 0.01px)) {
+		@content;
+	}
+}
+@mixin breakpointSmallAndUp() {
+	@media (min-width: $breakpointSm) {
+		@content;
+	}
+}
+@mixin breakpointSmallToMedium() {
+	@media (min-width: $breakpointSm) and (max-width: calc(#{$breakpointLg} - 0.01px)) {
+		@content;
+	}
+}
+@mixin breakpointMediumAndDown() {
+	@media (max-width: calc(#{$breakpointLg} - 0.01px)) {
+		@content;
+	}
+}
+@mixin breakpointMedium() {
+	@media (min-width: $breakpointMd) and (max-width: calc(#{$breakpointLg} - 0.01px)) {
+		@content;
+	}
+}
+@mixin breakpointMediumAndUp() {
+	@media (min-width: $breakpointMd) {
+		@content;
+	}
+}
+@mixin breakpointLargeAndUp() {
+	@media (min-width: $breakpointLg) {
+		@content;
+	}
+}
+@mixin breakpointLargeAndDown() {
+	@media (max-width: calc(#{$breakpointXl} - 0.01px)) {
+		@content;
+	}
+}
+@mixin breakpointXLarge() {
+	@media (min-width: $breakpointXl) {
+		@content;
+	}
+}
+//---------------------------------------------------------
+// 'display: none' mixins
+//---------------------------------------------------------
+@mixin makeHiddenXSmall() {
+	@include breakpointXSmall() {
+		display: none;
+	}
+}
+@mixin makeHiddenSmallAndDown() {
+	@include breakpointSmallAndDown() {
+		display: none;
+	}
+}
+@mixin makeHiddenSmall() {
+	@include breakpointSmall() {
+		display: none;
+	}
+}
+@mixin makeHiddenSmallAndUp() {
+	@include breakpointSmallAndUp() {
+		display: none;
+	}
+}
+@mixin makeHiddenSmallToMedium() {
+	@include breakpointSmallToMedium() {
+		display: none;
+	}
+}
+@mixin makeHiddenMediumAndDown() {
+	@include breakpointMediumAndDown() {
+		display: none;
+	}
+}
+@mixin makeHiddenMedium() {
+	@include breakpointMedium() {
+		display: none;
+	}
+}
+@mixin makeHiddenMediumAndUp() {
+	@include breakpointMediumAndUp() {
+		display: none;
+	}
+}
+@mixin makeHiddenLargeAndUp() {
+	@include breakpointLargeAndUp() {
+		display: none;
+	}
+}
+
+@mixin makeHiddenLargeAndDown() {
+	@include breakpointLargeAndDown() {
+		display: none;
+	}
+}

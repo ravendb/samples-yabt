@@ -1,4 +1,4 @@
-﻿namespace Raven.Yabt.Database.Common.References
+namespace Raven.Yabt.Database.Common.References
 {
 	/// <summary>
 	///     Interface, representing key-value pair for referencing entities

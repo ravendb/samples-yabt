@@ -1,0 +1,79 @@
+<filter-bar [(filter)]="filter"></filter-bar>
+
+<div *ngIf="dataSource?.loading$ | async" class="spinner-container">
+	<mat-spinner></mat-spinner>
+</div>
+
+<mat-table [dataSource]="dataSource" matSort matSortActive="number" matSortDirection="desc">
+
+	<ng-container matColumnDef="number">
+		<mat-header-cell *matHeaderCellDef mat-sort-header> No. </mat-header-cell>
+		<mat-cell *matCellDef="let row"> {{row.id}} </mat-cell>
+	</ng-container>
+
+	<ng-container matColumnDef="title">
+		<mat-header-cell *matHeaderCellDef mat-sort-header> Title </mat-header-cell>
+		<mat-cell *matCellDef="let row">
+			<div class="embedded-number-dates-block">
+				<span class="narrow-column" title="Backlog Item Number">#{{ row.id }}</span>
+				<span class="wide-column" title="Last Updated">{{ row.lastUpdated.timestamp | date: 'shortDate' }}</span>
+			</div>
+			<div class="title-block">
+				<div class="title-and-icon">
+					<backlog-item-icon [type]="row.type"></backlog-item-icon>
+					<a [routerLink]="[row.id]">
+						{{row.title}}
+					</a>
+				</div>
+				<div class="comments-icon">
+					<backlog-comments-icon [count]="row.commentsCount" [small]="true"></backlog-comments-icon>
+				</div>
+			</div>
+			<div>
+				<backlog-item-tags [tags]="row.tags"></backlog-item-tags>
+			</div>
+			<div class="embedded-assignee-state-block">
+				<span *ngIf="row.state" class="narrow-column">
+					<backlog-item-state [state]="row.state"></backlog-item-state>
+				</span>
+				<span *ngIf="row.assignee" class="wide-column">
+					<a *ngIf="!!row.assignee?.id" [routerLink]="['/users/' + row.assignee.id]">{{row.assignee.name}}</a>
+					<span *ngIf="!row.assignee?.id && !!row.assignee?.name">{{row.assignee.name}}</span>
+				</span>
+			</div>
+		</mat-cell>
+	</ng-container>
+
+	<ng-container matColumnDef="assignee">
+		<mat-header-cell *matHeaderCellDef mat-sort-header> Assignee </mat-header-cell>
+		<mat-cell *matCellDef="let row">
+			<a *ngIf="row.assignee?.id" [routerLink]="['/users/' + row.assignee?.id]">{{row.assignee.name}}</a>
+			<span *ngIf="!row.assignee?.id && !!row.assignee?.name">{{row.assignee.name}}</span>
+		</mat-cell>
+	</ng-container>
+
+	<ng-container matColumnDef="state">
+		<mat-header-cell *matHeaderCellDef mat-sort-header> State </mat-header-cell>
+		<mat-cell *matCellDef="let row">
+			<backlog-item-state [state]="row.state"></backlog-item-state>
+		</mat-cell>
+	</ng-container>
+
+	<ng-container matColumnDef="created">
+		<mat-header-cell *matHeaderCellDef mat-sort-header> Created </mat-header-cell>
+		<mat-cell *matCellDef="let row"> {{row.created.timestamp | date: 'shortDate'}} </mat-cell>
+	</ng-container>
+
+	<ng-container matColumnDef="updated">
+		<mat-header-cell *matHeaderCellDef mat-sort-header> Updated </mat-header-cell>
+		<mat-cell *matCellDef="let row"> {{row.lastUpdated.timestamp | date: 'shortDate'}} </mat-cell>
+	</ng-container>
+
+	<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+	<mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+	<div *matNoDataRow class="no-data-table">Sorry, no records found...</div>
+</mat-table>
+
+<mat-paginator [length]="dataSource?.totalRecords$ | async" [pageIndex]="dataSource?.pageIndex$ | async" [pageSize]="pageSize"
+	[pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>

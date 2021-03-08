@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 
+using Raven.Yabt.Domain.Common;
+
 namespace Raven.Yabt.Domain.CustomFieldServices.Query.DTOs
 {
-	public class CustomFieldListGetRequest
+	public class CustomFieldListGetRequest : ListRequest<CustomFieldOrderColumns>
 	{
 		public IEnumerable<string>? Ids { get; set; }
 	}

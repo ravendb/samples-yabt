@@ -1,0 +1,28 @@
+<div class="container" [hidden]="editingMode">
+	<div class="header">
+		<div class="header-left">
+			<span class="name">{{author?.name}}</span>
+			<span class="time">{{created | date:'medium'}}</span>
+		</div>
+		<div class="header-right">
+			<mat-icon title="Edit comment" (click)="switchMode()">mode_edit</mat-icon>
+		</div>
+	</div>
+	<div class="content" [innerText]="content"></div>
+</div>
+<div class="container" [hidden]="!editingMode">
+	<div *ngIf="loading$ | async" class="spinner-container">
+		<mat-spinner></mat-spinner>
+	</div>
+	<mat-form-field>
+		<textarea matInput [(ngModel)]="editableContent" cdkTextareaAutosize #autosize="cdkTextareaAutosize" [cdkAutosizeMinRows]="3"
+			placeholder="Leave a comment..." name="comment"></textarea>
+	</mat-form-field>
+	<div class="action-buttons">
+		<button mat-stroked-button (click)="switchMode()" *ngIf="!newComment" aria-label="Cancel any changes">Cancel</button>
+		<div class="spread"></div>
+		<button *ngIf="!newComment" mat-raised-button color="primary" (click)="save()" [disabled]="!editableContent">SAVE</button>
+		<button *ngIf="newComment" mat-stroked-button color="primary" (click)="save()" [disabled]="!editableContent">Add comment</button>
+		<button mat-stroked-button color="warn" (click)="delete()" *ngIf="!newComment">Delete</button>
+	</div>
+</div>

@@ -1,0 +1,8 @@
+@import 'breakpoints';
+
+mat-card.mat-card {
+	@include breakpointSmallAndUp() {
+		max-width: 400px;
+		margin: 16px 0 0 16px;
+	}
+}

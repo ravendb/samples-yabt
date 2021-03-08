@@ -1,0 +1,21 @@
+@import 'flex-layout';
+
+.header-title {
+	display: flex;
+	padding: 16px 16px 0 24px;
+
+	mat-icon.mat-icon {
+		margin-right: 16px;
+		padding-top: 4px;
+	}
+}
+
+form.form {
+	max-width: 600px;
+	margin: 16px 32px;
+}
+
+div.stretch {
+	display: flex;
+	justify-content: space-between;
+}

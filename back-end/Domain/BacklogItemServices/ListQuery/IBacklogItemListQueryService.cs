@@ -8,5 +8,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 	public interface IBacklogItemListQueryService
 	{
 		Task<ListResponse<BacklogItemListGetResponse>> GetList(BacklogItemListGetRequest dto);
+		
+		Task<BacklogItemTagListGetResponse[]> GetTags(BacklogItemTagListGetRequest dto);
 	}
 }

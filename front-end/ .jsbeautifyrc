@@ -1,0 +1,21 @@
+{
+  "html": {
+    "indent_char": " ",
+    "indent_size": 2,
+    "extra_liners": [
+      "head",
+      "body",
+      "/html",
+      "h1",
+      "h2",
+      "h3",
+      "h4"
+    ],
+    "end_with_newline": true,
+    "wrap_line_length": 140,
+    "wrap_attributes_indent_size": 4,
+    "wrap_attributes": "force",
+    "indent_handlebars": true,
+    "preserve_newlines": false
+  }
+}

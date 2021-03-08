@@ -1,0 +1,147 @@
+@import 'flex-layout';
+@import 'spinner';
+@import 'variables';
+
+$font-label: 'Segoe UI VSS (Regular)', 'Segoe UI', '-apple-system', BlinkMacSystemFont, Roboto, 'Helvetica Neue', Helvetica, Ubuntu, Arial,
+	sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+$font-monospace: 'Segoe UI', '-apple-system', BlinkMacSystemFont, Roboto, 'Helvetica Neue', Helvetica, Ubuntu, Arial, sans-serif,
+	'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+
+:host {
+	background: white;
+}
+
+.monospace {
+	font-size: 12px;
+	font-family: $font-monospace;
+	font-weight: 300;
+}
+
+.header-bar {
+	//display: flex;
+	flex-direction: column;
+	//padding: 16px 16px 0 24px;
+
+	border-left-style: solid;
+	border-left-width: 10px;
+	border-left-color: white;
+	padding: 4px 0 5px 10px;
+
+	&.feature {
+		border-left-color: $backlog-item-type-feature;
+	}
+	&.bug {
+		border-left-color: $backlog-item-type-bug;
+	}
+	&.user-story {
+		border-left-color: $backlog-item-type-user-story;
+	}
+	&.task {
+		border-left-color: $backlog-item-type-task;
+	}
+
+	.title {
+		margin-top: 8px;
+		::ng-deep {
+			div.mat-form-field-wrapper {
+				div.mat-form-field-underline {
+					background-color: rgba(0, 0, 0, 0.2);
+				}
+			}
+		}
+	}
+
+	.title-secondary-block {
+		display: flex;
+		justify-content: stretch;
+		align-content: stretch;
+		flex-wrap: nowrap;
+		padding-right: 10px;
+
+		.narrow {
+			flex: 3;
+		}
+		.wide {
+			flex: 11;
+		}
+		.action-buttons {
+			flex: 1;
+			flex-direction: column;
+			display: flex;
+			padding-left: 16px;
+			> button {
+				margin-bottom: 8px;
+			}
+		}
+	}
+}
+
+.table {
+	flex-direction: column;
+	display: table;
+	width: 100%;
+	.row {
+		display: table-row;
+		flex-direction: row;
+		.label {
+			min-width: 70px;
+			max-width: 200px;
+			flex: 1 1 70px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			word-wrap: normal;
+			width: 1px;
+			display: table-cell;
+			vertical-align: middle;
+		}
+		.control {
+			flex: 2 3 0;
+			min-width: 70px;
+			display: table-cell;
+			vertical-align: top;
+		}
+	}
+}
+
+.section-container {
+	display: flex;
+	padding: 5px 5px 0 14px;
+
+	.wide {
+		flex: 3;
+	}
+	.narrow {
+		flex: 1;
+		max-width: 400px;
+		padding: 5px 5px 0 24px;
+	}
+	.full-width {
+		width: 100%;
+	}
+
+	.comment-section {
+		margin-bottom: 16px;
+	}
+
+	.small-label {
+		font-family: $font-label;
+		font-size: 12px;
+	}
+}
+
+.side-offset {
+	padding: 0 8px 0 8px;
+}
+.side-bottom-offset {
+	padding: 0 8px 16px 8px;
+}
+
+form.form {
+	margin-right: 16px;
+}
+
+div.stretch {
+	display: flex;
+	justify-content: space-between;
+}

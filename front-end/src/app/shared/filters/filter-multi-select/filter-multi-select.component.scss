@@ -1,0 +1,21 @@
+@import 'filter-button';
+@import 'theme';
+
+.search-form-field {
+	margin: 8px 16px 0;
+}
+
+mat-selection-list.selection-list {
+	max-height: 350px;
+	overflow-y: auto;
+}
+
+.no-matches {
+	font-style: italic;
+	background-color: #e5e5e5;
+	padding: 10px;
+}
+.searching {
+	font-style: italic;
+	padding: 10px;
+}

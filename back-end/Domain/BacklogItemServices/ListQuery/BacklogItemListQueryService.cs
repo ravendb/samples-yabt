@@ -23,11 +23,11 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 {
 	public class BacklogItemListQueryService : BaseQueryService<BacklogItem>, IBacklogItemListQueryService
 	{
-		private readonly ICustomFieldQueryService _customFieldService;
+		private readonly ICustomFieldListQueryService _customFieldService;
 		private readonly ICurrentUserResolver _userResolver;
 
 		public BacklogItemListQueryService (IAsyncDocumentSession dbSession,
-											ICustomFieldQueryService customFieldService, 
+											ICustomFieldListQueryService customFieldService, 
 											ICurrentUserResolver userResolver) : base(dbSession)
 		{
 			_customFieldService = customFieldService;
@@ -53,7 +53,10 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 								Id = b.Id,
 								Title = b.Title,
 								Type = b.Type,
+								State = b.State,
 								Assignee = b.Assignee,
+								CommentsCount = b.Comments.Count,
+								Tags = b.Tags,
 								// Have to re-calculate 'Created' and 'LastUpdated' server-side, as the entity model's fields get calculated client-side only 
 								Created		= b.ModifiedBy.OrderBy(m => m.Timestamp).FirstOrDefault() as ChangedByUserReference,
 								LastUpdated = b.ModifiedBy.OrderBy(m => m.Timestamp).LastOrDefault() as ChangedByUserReference
@@ -64,24 +67,50 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			return new ListResponse<BacklogItemListGetResponse>(ret, totalRecords, dto.PageIndex, dto.PageSize);
 		}
 
+		public async Task<BacklogItemTagListGetResponse[]> GetTags(BacklogItemTagListGetRequest dto)
+		{
+			var query = DbSession.Query<BacklogItemTagsIndexed, BacklogItems_Tags>();
+			if (!string.IsNullOrWhiteSpace(dto.Search))
+				query = ApplySearch(query, i => i.Name, dto.Search);
+			else
+				query = query.OrderByDescending(b => b.Count);
+			
+			var ret = await (from b in query
+					select new BacklogItemTagListGetResponse
+					{ 
+						Name = b.Name,
+						Count = b.Count
+					}
+				).ToArrayAsync();
+			return ret;
+		}
+
 		private async Task<IRavenQueryable<BacklogItemIndexedForList>> ApplyFilters(IRavenQueryable<BacklogItemIndexedForList> query, BacklogItemListGetRequest dto)
 		{
-			if (dto.Type != BacklogItemType.Unknown)
-				query = query.Where(t => t.Type == dto.Type);
+			if (dto.Types?.Where(v => v.HasValue).Select(v => v!.Value).ToList() is var types 
+				&& types?.Any() == true)
+				query = query.Where(t => t.Type.In(types));
+
+			if (dto.States?.Where(v => v.HasValue).Select(v => v!.Value).ToList() is var states 
+				&& states?.Any() == true)
+			{
+				query = query.Where(t => t.State.In(states));
+			}
 
 			if (dto.Tags?.Any() == true)
-				foreach (var tag in dto.Tags)
+				foreach (var tag in dto.Tags.Where(t => !string.IsNullOrEmpty(t)))
 					query = query.Where(e => e.Tags!.Contains(tag));					// Note: [Tags] is a nullable field, but when the LINQ gets converted to RQL the potential NULLs get handled 
 
-			if (dto.MentionsOfTheCurrentUserOnly)
+			if (dto.CurrentUserRelation.HasValue)
 			{
 				var userId = GetUserIdForDynamicField();
-				query = query.Where(t => t.MentionedUser![userId] > DateTime.MinValue);	// Note: [MentionedUser] is a nullable field, but when the LINQ gets converted to RQL the potential NULLs get handled
-			}
-			else if (dto.ModifiedByTheCurrentUserOnly)
-			{
-				var userIdForDynamicField = GetUserIdForDynamicField();
-				query = query.Where(t => t.ModifiedByUser[userIdForDynamicField] > DateTime.MinValue);
+				query = dto.CurrentUserRelation.Value switch
+				{
+					// Note: [MentionedUser] & [ModifiedByUser] are nullable fields, but when the LINQ gets converted to RQL the potential NULLs get handled
+					CurrentUserRelations.MentionsOf => query.Where(t => t.MentionedUser![userId] > DateTime.MinValue),
+					CurrentUserRelations.ModifiedBy => query.Where(t => t.ModifiedByUser[userId] > DateTime.MinValue),
+					_ => query
+				};
 			}
 
 			if (!string.IsNullOrEmpty(dto.AssignedUserId))
@@ -185,8 +214,9 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 			{
 				BacklogItemsOrderColumns.Number =>				dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.Id) : query.OrderByDescending(t => t.Id),
 				BacklogItemsOrderColumns.Title =>				dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.Title) : query.OrderByDescending(t => t.Title),
-				BacklogItemsOrderColumns.TimestampCreated =>	dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.CreatedTimestamp) : query.OrderByDescending(t => t.CreatedTimestamp),
-				BacklogItemsOrderColumns.TimestampLastModified=>dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.LastUpdatedTimestamp) : query.OrderByDescending(t => t.LastUpdatedTimestamp),
+				BacklogItemsOrderColumns.Assignee =>			dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.AssignedUserName) : query.OrderByDescending(t => t.AssignedUserName),
+				BacklogItemsOrderColumns.Created =>	dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.CreatedTimestamp) : query.OrderByDescending(t => t.CreatedTimestamp),
+				BacklogItemsOrderColumns.Updated=>dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.LastUpdatedTimestamp) : query.OrderByDescending(t => t.LastUpdatedTimestamp),
 				BacklogItemsOrderColumns.TimestampModifiedByCurrentUser =>
 																dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.ModifiedByUser[userKey]) : query.OrderByDescending(t => t.ModifiedByUser[userKey]),
 				BacklogItemsOrderColumns.TimestampMentionsOfCurrentUser =>

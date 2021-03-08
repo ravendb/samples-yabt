@@ -1,0 +1,19 @@
+<form [formGroup]="formGroup" class="filter">
+
+	<filter-single-select label="All" buttonAltText="Quick filter" [options]="modes" firstUndefinedOption="All"
+		formControlName="currentUserRelation"></filter-single-select>
+
+	<div class="divider"></div>
+
+	<backlog-filters [formGroup]="formGroup" [isDialog]="false"></backlog-filters>
+
+	<div class="divider"></div>
+	<button mat-button title="Set filters" color="primary" (click)="openFilterDialog()">
+		<mat-icon class="filter-accent-icon">tune</mat-icon> <span class="hide-on-mobile">Filters...</span>
+	</button>
+
+	<button mat-button title="Clear filters" class="clear-button" (click)="clearFilters()">
+		<mat-icon color="primary">clear</mat-icon>
+	</button>
+
+</form>

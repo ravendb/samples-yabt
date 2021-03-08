@@ -1,0 +1,14 @@
+<mat-form-field class="stretched">
+	<mat-chip-list #tagList aria-label="Tags" [formControl]="mainControl">
+		<mat-chip *ngFor="let tag of mainControl.value" (removed)="remove(tag)" [removable]="true">
+			{{tag}}<mat-icon matChipRemove>cancel</mat-icon>
+		</mat-chip>
+		<input #tagsInput [matChipInputFor]="tagList" placeholder="Tags..." [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+			[matChipInputAddOnBlur]="true" [matAutocomplete]="auto" (matChipInputTokenEnd)="add($event)">
+	</mat-chip-list>
+	<mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
+		<mat-option *ngFor="let t of serverTags | async" [value]="t">
+			{{t}}
+		</mat-option>
+	</mat-autocomplete>
+</mat-form-field>

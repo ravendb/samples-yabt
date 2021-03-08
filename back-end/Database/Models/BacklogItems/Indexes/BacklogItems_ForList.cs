@@ -21,6 +21,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 					ticket.Title,       // sort
 					ticket.Type,        // filter
 					AssignedUserId = ticket.Assignee.Id,    // filter
+					AssignedUserName = ticket.Assignee.FullName,    // sort
 
 					CreatedByUserId = created.ActionedBy.Id,		// filter
 					CreatedTimestamp = created.Timestamp,			// sort
@@ -36,7 +37,8 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 							}
 							.Concat(ticket.Comments.Select(c => c.Message)),
 
-					Tags = ticket.Tags.Distinct().ToList(),		// filter by 'Tags'
+					Tags = ticket.Tags.Distinct().ToList(),		// filter
+					ticket.State,								// filter
 
 					// Dynamic fields
 					// Notes:

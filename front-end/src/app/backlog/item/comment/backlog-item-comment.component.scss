@@ -1,0 +1,86 @@
+@import 'spinner';
+@import 'theme';
+
+.container {
+	box-sizing: border-box;
+	font-family: 'Segoe UI VSS (Regular)', 'Segoe UI', '-apple-system', BlinkMacSystemFont, Roboto, 'Helvetica Neue', Helvetica, Ubuntu,
+		Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
+	font-size: 14px;
+	padding: 8px 12px 0 12px;
+	border: 1px solid;
+	border-color: rgba(234, 234, 234, 1);
+	border-radius: 5px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+	border-bottom-left-radius: 5px;
+	overflow-x: hidden;
+}
+.header {
+	display: flex;
+	justify-content: flex-start;
+	overflow-x: auto;
+	overflow-y: hidden;
+	position: relative;
+	height: 34px;
+	margin-bottom: 4px;
+	color: rgba(0, 0, 0, 0.5);
+
+	.header-left {
+		display: flex;
+		justify-content: flex-start;
+		max-width: 85%;
+		margin-top: 4px;
+		min-width: 0;
+
+		.name {
+			font-weight: bold;
+			flex: 1 1 auto;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+		.time {
+			font-size: 11px;
+			margin-left: 8px;
+			color: rgba(0, 0, 0, 0.55);
+		}
+	}
+	.header-right {
+		white-space: nowrap;
+		font-size: 14px;
+		margin: 4px;
+		display: flex;
+		flex: auto;
+		flex-direction: row-reverse;
+
+		mat-icon {
+			visibility: hidden;
+			&:hover {
+				color: $accent-color;
+				cursor: pointer;
+			}
+		}
+	}
+	&:hover {
+		.header-right {
+			mat-icon {
+				visibility: visible;
+			}
+		}
+	}
+}
+.action-buttons {
+	display: flex;
+	button {
+		margin: 0 8px 8px 0;
+	}
+	.spread {
+		flex: auto;
+	}
+}
+.content {
+}
+mat-form-field.mat-form-field {
+	width: 100%;
+}

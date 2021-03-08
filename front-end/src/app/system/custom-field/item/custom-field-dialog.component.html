@@ -1,0 +1,53 @@
+<h2 mat-dialog-title class="title">
+	{{ !!data?.id ? 'Edit' : 'Create' }} Custom Field
+</h2>
+<mat-dialog-content class="flex-column" [formGroup]="form">
+	<div class="flex-row">
+		<mat-form-field>
+			<input #defaultFocusInput formControlName="name" matInput Hint="Title of the field presented on the interface">
+			<mat-hint>Should begin with a letter and can only contain alphanumeric characters, spaces and hyphens</mat-hint>
+			<mat-placeholder>Name
+				<sup class="color-warn">*</sup>
+			</mat-placeholder>
+			<mat-error>
+				<error-messages formControlName="name"></error-messages>
+			</mat-error>
+		</mat-form-field>
+	</div>
+	<div class="flex-row">
+		<mat-form-field>
+			<mat-select formControlName="fieldType">
+				<mat-option *ngFor="let type of fieldTypes" [value]="type.key">{{ type.value }}</mat-option>
+			</mat-select>
+			<mat-placeholder>Field Type
+				<sup class="color-warn">*</sup>
+			</mat-placeholder>
+			<mat-error>
+				<error-messages formControlName="fieldType"></error-messages>
+			</mat-error>
+		</mat-form-field>
+	</div>
+	<div class="flex-row">
+		<mat-form-field>
+			<mat-select formControlName="backlogItemTypes" multiple>
+				<mat-option *ngFor="let type of backlogItemTypes" [value]="type.key">{{ type.value }}</mat-option>
+			</mat-select>
+			<mat-placeholder>Backlog Item Types</mat-placeholder>
+			<mat-error>
+				<error-messages formControlName="backlogItemTypes"></error-messages>
+			</mat-error>
+		</mat-form-field>
+	</div>
+	<div class="flex-row">
+		<mat-checkbox formControlName="isMandatory">Mandatory</mat-checkbox>
+	</div>
+	&nbsp;
+
+</mat-dialog-content>
+<mat-dialog-actions>
+	<button mat-stroked-button color="warn" (click)="delete()" [disabled]="!data?.id">Delete</button>
+	<div>
+		<button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">SAVE</button>
+		<button mat-raised-button mat-dialog-close>Cancel</button>
+	</div>
+</mat-dialog-actions>

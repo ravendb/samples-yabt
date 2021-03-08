@@ -1,0 +1,36 @@
+@import 'breakpoints';
+@import 'variables';
+
+.stretched-filter-bar {
+	display: flex;
+
+	// Hide filter-buttons that don't fir
+	height: $mat-toolbar-height-mobile-portrait;
+	flex-wrap: wrap;
+	overflow: hidden;
+
+	filter-search {
+		flex: 1 1 auto;
+		min-width: 170px; // min width to fit smaller mobile screens
+	}
+	& > *:not(filter-search) {
+		@include makeHiddenXSmall();
+	}
+}
+.two-column-grid {
+	display: flex;
+	justify-content: space-between;
+	flex-wrap: wrap;
+
+	filter-search {
+		width: 100%;
+		margin: 8px 0;
+		border-bottom: thin solid;
+		border-bottom-color: rgba(200, 200, 200, 0.5);
+	}
+
+	& > *:not(filter-search) {
+		width: 49%;
+		margin: 8px 0;
+	}
+}

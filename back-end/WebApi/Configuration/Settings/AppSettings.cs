@@ -4,10 +4,21 @@
 namespace Raven.Yabt.WebApi.Configuration.Settings
 {
 #nullable disable
-	public class AppSettings : ISettingsWithDatabase
+	public record AppSettings : ISettingsWithDatabase
 	{
+		/// <summary>
+		///		RavenDB connection parameters
+		/// </summary>
 		public DatabaseSettings Database { get; private set; }
 
+		/// <summary>
+		///		Array of API keys mapped to users
+		/// </summary>
 		public AppSettingsUserApiKey[] UserApiKey { get; private set; }
+		
+		/// <summary>
+		///		';'-separated list of enabled consumers of the API
+		/// </summary>
+		public string CorsOrigins { get; private set; }
 	}
 }

@@ -1,0 +1,29 @@
+<button mat-button [matMenuTriggerFor]="filterMenu" [title]="buttonAltText" [class.mat-stroked-button]="stretchedAndStroked"
+	[class.narrow-underscored-button]="narrowUnderscored" [disabled]="isDisabled">
+	<span [innerText]="buttonText" [class.lighter-font]="buttonText == label"></span>
+	<mat-icon color="primary">keyboard_arrow_down</mat-icon>
+</button>
+<mat-menu #filterMenu="matMenu" [overlapTrigger]="false" xPosition="before">
+
+	<mat-form-field class="search-form-field" *ngIf="!!search">
+		<mat-placeholder>Filter list...</mat-placeholder>
+		<input matInput type="search" [formControl]="searchCtrl" [autofocus]="true" (click)="$event.stopPropagation()" autocomplete="off">
+		<mat-icon matSuffix>search</mat-icon>
+	</mat-form-field>
+
+	<mat-nav-list>
+		<mat-list-item *ngIf="!!firstUndefinedOption" (click)="setValue()">{{firstUndefinedOption}}</mat-list-item>
+		<mat-list-item *ngFor="let option of options" [class.selected]="value == option.key" (click)="setValue(option.key)">
+			<ng-container *ngIf="templateRef" [ngTemplateOutlet]="templateRef" [ngTemplateOutletContext]="{$implicit:option.key}">
+			</ng-container>
+			<ng-template [ngIf]="!templateRef">{{ option.value }}</ng-template>
+		</mat-list-item>
+	</mat-nav-list>
+
+	<div *ngIf="loading" class="searching">Searching...</div>
+	<div *ngIf="!loading && !options?.length" class="no-matches">No matches found</div>
+
+	<div *ngIf="!firstUndefinedOption && !hideClearButton" class="action-buttons">
+		<span (click)="clear()">Clear</span>
+	</div>
+</mat-menu>

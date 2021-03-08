@@ -1,0 +1,5 @@
+*.html
+package.json
+yarn.lock
+dist
+.vscode/*

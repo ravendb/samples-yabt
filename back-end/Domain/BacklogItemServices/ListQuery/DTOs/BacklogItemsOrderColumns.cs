@@ -5,8 +5,9 @@
 		Default,
 		Number,
 		Title,
-		TimestampCreated,
-		TimestampLastModified,
+		Assignee,
+		Created,
+		Updated,
 		TimestampModifiedByCurrentUser,
 		TimestampMentionsOfCurrentUser,
 	}

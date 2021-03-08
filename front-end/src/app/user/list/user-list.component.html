@@ -1,0 +1,42 @@
+<div class="header">
+	<user-filters [(filter)]="filter"></user-filters>
+	<div class="action-buttons">
+		<a mat-stroked-button color="primary" [routerLink]="['create']">
+			<mat-icon>add_circle</mat-icon> Create
+		</a>
+	</div>
+</div>
+
+<div *ngIf="dataSource?.loading$ | async" class="spinner-container">
+	<mat-spinner></mat-spinner>
+</div>
+
+<mat-table [dataSource]="dataSource" matSort matSortActive="name" matSortDirection="asc">
+
+	<ng-container matColumnDef="name">
+		<mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+		<mat-cell *matCellDef="let row">
+			<div class="title-block">
+				<a [routerLink]="['/users', row.id]" [title]="row.fullName">
+					{{row.lastName}}, {{row.firstName}}
+				</a>
+			</div>
+			<div class="embedded-dates-block">
+				reg: {{row.registrationDate || '' | date:'shortDate'}}
+			</div>
+		</mat-cell>
+	</ng-container>
+
+	<ng-container matColumnDef="created">
+		<mat-header-cell *matHeaderCellDef mat-sort-header> Created </mat-header-cell>
+		<mat-cell *matCellDef="let row"> {{row.registrationDate | date: 'shortDate'}} </mat-cell>
+	</ng-container>
+
+	<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+	<mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+	<div *matNoDataRow class="no-data-table">Sorry, no records found...</div>
+</mat-table>
+
+<mat-paginator [length]="dataSource?.totalRecords$ | async" [pageIndex]="dataSource?.pageIndex$ | async" [pageSize]="pageSize"
+	[pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>

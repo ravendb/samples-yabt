@@ -1,0 +1,28 @@
+@import 'variables';
+@import 'theme';
+
+button.mat-button:not(.mat-stroked-button) {
+	line-height: $mat-toolbar-height-mobile-portrait;
+}
+button.mat-stroked-button {
+	width: 100%;
+}
+span.lighter-font {
+	font-weight: 400;
+}
+.action-buttons {
+	margin: 8px 16px;
+	font-size: 14px;
+	display: flex;
+	flex-direction: row-reverse;
+	justify-content: space-between;
+
+	span {
+		color: rgba(0, 0, 0, 0.87);
+		cursor: pointer;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}

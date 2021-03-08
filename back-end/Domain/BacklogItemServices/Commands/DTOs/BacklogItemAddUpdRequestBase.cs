@@ -13,6 +13,13 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs
 		[Required]
 		public string Title { get; set; } = null!;
 
+		public BacklogItemState State { get; set; }
+		
+		/// <summary>
+		///		Estimated size of the item in the configured units (e.g. 'days')
+		/// </summary>
+		public uint? EstimatedSize { get; set; }
+
 		public string? AssigneeId { get; set; }
 
 		public string[]? Tags { get; set; }

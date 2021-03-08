@@ -1,0 +1,14 @@
+@import 'variables';
+@import 'breakpoints';
+/*
+ * Commented out due to a bug - the footer doesn't stick to the bottom as it was intended 
+
+div.main-outlet {
+	height: calc(100% - #{$footer-height} - #{$mat-toolbar-height-desktop});
+	background-color: inherit;
+
+	@include breakpointXSmall() {
+		height: calc(100% - #{$footer-height} - #{$mat-toolbar-height-mobile-portrait});
+	}
+}
+*/

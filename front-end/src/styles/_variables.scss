@@ -1,0 +1,16 @@
+// Mostly sizes of things used across the app
+
+$footer-height: 25px;
+
+/* ********************************************************************************* */
+// Variables from @angular/material toolbar
+$mat-toolbar-height-desktop: 64px !default;
+$mat-toolbar-height-mobile-portrait: 56px !default;
+
+$list-component-icon-size: 16px;
+
+// Colours of backlog item types
+$backlog-item-type-feature: #773b93;
+$backlog-item-type-bug: #cc293d;
+$backlog-item-type-user-story: #019ccc;
+$backlog-item-type-task: #f2cb1d;

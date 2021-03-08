@@ -1,0 +1,133 @@
+<div *ngIf="loading$ | async" class="spinner-container">
+	<mat-spinner></mat-spinner>
+</div>
+<form [formGroup]="form" class="form">
+
+	<div class="header-bar" [class.feature]="dtoBeforeUpdate?.type == 'feature'" [class.bug]="dtoBeforeUpdate?.type == 'bug'"
+		[class.user-story]="dtoBeforeUpdate?.type == 'userStory'" [class.task]="dtoBeforeUpdate?.type == 'task'">
+		<div *ngIf="!!dtoBeforeUpdate" class="monospace">
+			<backlog-item-icon [type]="dtoBeforeUpdate.type"></backlog-item-icon>
+			<span>{{typeTitle | uppercase}}</span>
+		</div>
+		<div class="flex-row title">
+			<mat-form-field>
+				<input type="text" matInput formControlName="title">
+				<mat-placeholder>Title
+					<sup class="color-warn">*</sup>
+				</mat-placeholder>
+				<mat-error>
+					<error-messages formControlName="title"></error-messages>
+				</mat-error>
+			</mat-form-field>
+		</div>
+		<div class="title-secondary-block monospace">
+			<div class="table narrow">
+				<div class="row">
+					<div class="label">Assignee:</div>
+					<div class="control">
+						<filter-single-select label="Not assigned" buttonAltText="Assigned to" formControlName="assigneeId"
+							[narrowUnderscored]="true" [search]="searchByAssignee"></filter-single-select>
+					</div>
+				</div>
+				<div class="row">
+					<div class="label">State:</div>
+					<div class="control">
+						<filter-single-select label="State" buttonAltText="State" [options]="states" formControlName="state"
+							[narrowUnderscored]="true" [hideClearButton]="true">
+							<ng-template let-state>
+								<backlog-item-state [state]="state"></backlog-item-state>
+							</ng-template>
+						</filter-single-select>
+					</div>
+				</div>
+			</div>
+			<div class="table wide">
+				<div class="row">
+					<div class="control">
+						<app-tags formControlName="tags"></app-tags>
+					</div>
+				</div>
+				<div class="row">
+					<div class="label">
+						<backlog-comments-icon [count]="dtoBeforeUpdate?.comments?.length"></backlog-comments-icon>
+					</div>
+				</div>
+			</div>
+			<div class="table action-buttons">
+				<button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">SAVE</button>
+				<button mat-stroked-button color="warn" (click)="delete()" *ngIf="!!editId">Delete</button>
+			</div>
+		</div>
+	</div>
+	<div class="section-container">
+		<div class="wide">
+			<backlog-item-section *ngIf="type == 'bug'" title="Steps to reproduce">
+				<mat-form-field class="full-width side-offset">
+					<textarea matInput formControlName="stepsToReproduce" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+						[cdkAutosizeMinRows]="5"></textarea>
+				</mat-form-field>
+			</backlog-item-section>
+			<backlog-item-section *ngIf="type == 'userStory'" title="Acceptance Criteria">
+				<mat-form-field class="full-width side-offset">
+					<textarea matInput formControlName="acceptanceCriteria" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+						[cdkAutosizeMinRows]="5"></textarea>
+				</mat-form-field>
+			</backlog-item-section>
+
+			<backlog-item-section title="Comments" *ngIf="!!editId && (currentUserId$ | async); let userId">
+				<div class="comment-section">
+					<backlog-item-comment [backlogItemId]="editId" [newComment]="true" [currentUserId]="userId"
+						(commentSaved)="addedComment($event)">
+					</backlog-item-comment>
+				</div>
+				<div *ngFor="let comment of dtoBeforeUpdate?.comments" class="comment-section">
+					<backlog-item-comment [value]="comment" [backlogItemId]="editId" [currentUserId]="userId"
+						(commentDeleted)="removedComment($event)" (commentSaved)="updatedComment($event)">
+					</backlog-item-comment>
+				</div>
+			</backlog-item-section>
+		</div>
+		<div class="narrow">
+			<backlog-item-section title="Planning">
+				<div class="side-offset">
+					<mat-form-field class="full-width">
+						<input matInput placeholder="Estimated size" formControlName="estimatedSize">
+					</mat-form-field>
+					<div class="table monospace">
+						<div class="row" *ngIf="type == 'bug'">
+							<div class="label">Priority:</div>
+							<div class="control">
+								<filter-single-select label=" ----- " buttonAltText="Priority" [options]="bugPriorities"
+									formControlName="priority" [narrowUnderscored]="true" [hideClearButton]="false" class="full-width">
+								</filter-single-select>
+							</div>
+						</div>
+						<div class="row" *ngIf="type == 'bug'">
+							<div class="label">Severity:</div>
+							<div class="control">
+								<filter-single-select label=" ----- " buttonAltText="Severity" [options]="bugSeverities"
+									formControlName="severity" [narrowUnderscored]="true" [hideClearButton]="false" class="full-width">
+								</filter-single-select>
+							</div>
+						</div>
+					</div>
+				</div>
+			</backlog-item-section>
+			<backlog-item-section title="Related">
+				...
+			</backlog-item-section>
+
+			<backlog-item-section title="History" *ngIf="!!dtoBeforeUpdate">
+				<div class="flex-row small-label" *ngIf="!!dtoBeforeUpdate?.created">Created:</div>
+				<div class="flex-row side-bottom-offset" *ngIf="!!dtoBeforeUpdate?.created">
+					<backlog-item-history-item [item]="dtoBeforeUpdate.created"></backlog-item-history-item>
+				</div>
+				<div class="flex-row small-label" *ngIf="!!dtoBeforeUpdate?.lastUpdated">Last updated:</div>
+				<div class="flex-row side-bottom-offset">
+					<backlog-item-history-item [item]="dtoBeforeUpdate.lastUpdated"></backlog-item-history-item>
+				</div>
+			</backlog-item-section>
+		</div>
+	</div>
+</form>
+&nbsp;

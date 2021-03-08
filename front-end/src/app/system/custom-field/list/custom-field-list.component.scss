@@ -1,0 +1,50 @@
+@import 'breakpoints';
+@import 'theme';
+@import 'list-components';
+
+.header {
+	display: flex;
+	background-color: $white-background;
+	h3.mat-h3 {
+		margin: 16px 0 0 24px;
+		color: $primary-lightish-color;
+	}
+	h3.mat-h3 {
+		@include makeHiddenSmallAndDown();
+	}
+	.action-buttons {
+		flex: auto;
+		text-align: end;
+		align-self: center;
+		padding: 16px;
+	}
+}
+
+.mat-column-name {
+	@include mainColumn();
+
+	flex-grow: 3;
+
+	.title-block {
+		@include primaryTitle();
+		@include makeHiddenSmallAndDown();
+	}
+	.embedded-title-type-block {
+		@include primaryTitle();
+		@include makeHiddenMediumAndUp();
+		display: flex;
+		align-items: center;
+	}
+	.embedded-backlogItemTypes-block {
+		@include secondaryTitle();
+		@include makeHiddenMediumAndUp();
+	}
+}
+.mat-column-fieldType {
+	flex-grow: 1;
+	@include makeHiddenSmallAndDown();
+}
+.mat-column-backlogItemTypes {
+	flex-grow: 2;
+	@include makeHiddenSmallAndDown();
+}

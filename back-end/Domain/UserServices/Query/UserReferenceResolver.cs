@@ -17,6 +17,7 @@ namespace Raven.Yabt.Domain.UserServices.Query
 			_currentUserResolver = currentUserResolver;
 		}
 
+		/// <inheritdoc/>
 		public async Task<UserReference?> GetReferenceById(string id)
 		{
 			var fullId = GetFullId(id);
@@ -26,6 +27,7 @@ namespace Raven.Yabt.Domain.UserServices.Query
 			return user?.ToReference();
 		}
 
+		/// <inheritdoc/>
 		public Task<UserReference> GetCurrentUserReference()
 		{
 			return GetReferenceById(_currentUserResolver.GetCurrentUserId())!;

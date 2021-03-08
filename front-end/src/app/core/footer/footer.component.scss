@@ -1,0 +1,13 @@
+@import 'variables';
+@import 'theme';
+
+footer {
+	border-top: $border-style;
+	overflow: hidden;
+	line-height: $footer-height - 1px;
+	font-size: 14px;
+	padding-right: 15px;
+	background-color: $white-background;
+	color: $primary-light-color;
+	text-align: right;
+}

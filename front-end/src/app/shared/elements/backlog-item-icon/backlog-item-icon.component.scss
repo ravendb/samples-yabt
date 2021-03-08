@@ -1,0 +1,27 @@
+@import 'variables';
+
+mat-icon.mat-icon {
+	font-size: $list-component-icon-size;
+	height: $list-component-icon-size;
+	width: $list-component-icon-size;
+	cursor: default;
+
+	margin-right: 4px;
+	::ng-deep {
+		g {
+			transform: scale($list-component-icon-size / 24px);
+		}
+	}
+	&.feature {
+		color: $backlog-item-type-feature;
+	}
+	&.bug {
+		color: $backlog-item-type-bug;
+	}
+	&.user-story {
+		color: $backlog-item-type-user-story;
+	}
+	&.task {
+		color: $backlog-item-type-task;
+	}
+}

@@ -1,0 +1,14 @@
+<h2 mat-dialog-title>
+	<span>Filters</span>
+	<button mat-icon-button mat-dialog-close>
+		<mat-icon>close</mat-icon>
+	</button>
+</h2>
+<mat-dialog-content>
+	<backlog-filters [formGroup]="formGroup" [isDialog]="true"></backlog-filters>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+	<button mat-button (click)="clear()">Clear</button>
+	<button mat-raised-button color="primary" (click)="apply()">Apply</button>
+</mat-dialog-actions>

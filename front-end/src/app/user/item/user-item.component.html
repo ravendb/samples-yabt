@@ -1,0 +1,58 @@
+<div class="header-title">
+	<a (click)="goBack()">
+		<mat-icon>arrow_back</mat-icon>
+	</a>
+	<h2>{{ editId ? 'Edit' : 'Create' }} User</h2>
+</div>
+
+<form [formGroup]="form" class="form">
+	<div class="flex-row">
+		<mat-form-field>
+			<input type="text" matInput formControlName="firstName">
+			<mat-placeholder>First name
+				<sup class="color-warn">*</sup>
+			</mat-placeholder>
+			<mat-error>
+				<error-messages formControlName="firstName"></error-messages>
+			</mat-error>
+		</mat-form-field>
+	</div>
+	<div class="flex-row">
+		<mat-form-field>
+			<input type="text" matInput formControlName="lastName">
+			<mat-placeholder>Last name
+				<sup class="color-warn">*</sup>
+			</mat-placeholder>
+			<mat-error>
+				<error-messages formControlName="lastName"></error-messages>
+			</mat-error>
+		</mat-form-field>
+	</div>
+
+	<div class="flex-row">
+		<mat-form-field>
+			<input type="email" matInput formControlName="email">
+			<mat-placeholder>Email
+				<sup class="color-warn">*</sup>
+			</mat-placeholder>
+			<mat-error>
+				<error-messages formControlName="email"></error-messages>
+			</mat-error>
+		</mat-form-field>
+	</div>
+	<div class="flex-row">
+		<mat-form-field>
+			<input type="text" matInput formControlName="avatarUrl">
+			<mat-placeholder>URL to the user's avatar</mat-placeholder>
+			<mat-error>
+				<error-messages formControlName="avatarUrl"></error-messages>
+			</mat-error>
+		</mat-form-field>
+	</div>
+	<div class="stretch">
+		<button mat-stroked-button color="warn" (click)="delete()" *ngIf="!!editId">Delete</button>
+		<div *ngIf="!editId"></div>
+		<button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">SAVE</button>
+	</div>
+</form>
+&nbsp;

@@ -1,0 +1,35 @@
+@import url('//fonts.googleapis.com/icon?family=Material+Icons');
+@import url('//fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap');
+
+@import '~@angular/material/theming';
+@import 'theme';
+
+/* 
+	Theming guidance - https://material.angular.io/guide/theming-your-components
+*/
+// Include non-theme styles for core.
+@include mat-core();
+// The custom theme (from '_theme.scss')
+$theme-primary: mat-palette($primary-palette);
+$theme-accent: mat-palette($accent-palette);
+$theme: mat-light-theme($theme-primary, $theme-accent);
+// Style the Angular Material components with the theme
+@include angular-material-theme($theme);
+
+html,
+body {
+	height: 100%;
+	margin: 0px;
+	min-width: 360px;
+	font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+a {
+	cursor: pointer;
+	color: $primary-color;
+	text-decoration: none;
+	&:hover {
+		color: #d82056; //#ff2465;
+		text-decoration: underline;
+	}
+}

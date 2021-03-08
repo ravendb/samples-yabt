@@ -25,6 +25,16 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		public virtual BacklogItemType Type { get; set; }    // Can't make it 'abstract'
 
 		/// <summary>
+		///		Current state of the backlog item
+		/// </summary>
+		public BacklogItemState State { get; set; } = BacklogItemState.New;
+		
+		/// <summary>
+		///		Estimated size of the item in the configured units (e.g. 'days')
+		/// </summary>
+		public uint? EstimatedSize { get; set; }
+		
+		/// <summary>
 		///		The assigned user to the ticket
 		/// </summary>
 		public UserReference? Assignee { get; set; }
@@ -33,7 +43,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		///		List of all users who modified the ticket.
 		///		The first record is creation of the ticket
 		/// </summary>
-		public List<BacklogItemHistoryRecord> ModifiedBy { get; } = new List<BacklogItemHistoryRecord>();
+		public List<BacklogItemHistoryRecord> ModifiedBy { get; } = new();
 
 		[JsonIgnore]
 		public ChangedByUserReference Created		=> ModifiedBy.OrderBy(m => m.Timestamp).First() as ChangedByUserReference;
@@ -66,25 +76,26 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		/// </summary>
 		public void AddHistoryRecord(UserReference actionedBy, string message)
 		{
-			ModifiedBy.Add(new BacklogItemHistoryRecord
-			{
-				ActionedBy = actionedBy,
-				Summary = message
-			});
-			// Cap the number of records in 200 most recent one. An arbitrary number to avoid the collection getting out of proportion 
-			const int maxCount = 200;
+			ModifiedBy.Add(new BacklogItemHistoryRecord(actionedBy, message));
+			
+			// Cap the number of records in 100 most recent one (an arbitrary number to avoid the collection getting out of proportion)
+			// Note: we keep the first record to avoid losing the date of creation
+			const int maxCount = 100;
 			if (ModifiedBy.Count > maxCount)
 			{
-				var lastTimestamp = ModifiedBy.OrderByDescending(m => m.Timestamp).Skip(maxCount - 1).First().Timestamp;
-				ModifiedBy.RemoveAll(m => m.Timestamp > lastTimestamp);
+				var orderedList = ModifiedBy.OrderByDescending(m => m.Timestamp).ToList();
+				var firstTimestamp = orderedList.Last().Timestamp; 
+				var lastTimestamp = orderedList.Skip(maxCount - 1).First().Timestamp;
+				ModifiedBy.RemoveAll(m => firstTimestamp < m.Timestamp && m.Timestamp < lastTimestamp );
 			}
 		}
 
-		public BacklogItemReference ToReference() => new BacklogItemReference
-		{
-			Id = Id,
-			Name = Title,
-			Type = Type
-		};
+		public BacklogItemReference ToReference() 
+			=> new()
+			{
+				Id = Id,
+				Name = Title,
+				Type = Type
+			};
 	}
 }

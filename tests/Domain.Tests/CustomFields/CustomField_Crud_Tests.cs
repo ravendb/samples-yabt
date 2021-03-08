@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -7,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Raven.Yabt.Domain.CustomFieldServices.Command;
 using Raven.Yabt.Domain.CustomFieldServices.Command.DTOs;
 using Raven.Yabt.Domain.CustomFieldServices.Query;
-using Raven.Yabt.Domain.CustomFieldServices.Query.DTOs;
 
 using Xunit;
 
@@ -17,12 +15,12 @@ namespace Raven.Yabt.Domain.Tests.CustomFields
 	public class CustomField_Crud_Tests : ConfigureTestEnvironment
 	{
 		private readonly ICustomFieldCommandService _commandService;
-		private readonly ICustomFieldQueryService _queryService;
+		private readonly ICustomFieldByIdQueryService _queryService;
 
 		public CustomField_Crud_Tests()
 		{
 			_commandService = Container.GetService<ICustomFieldCommandService>()!;
-			_queryService = Container.GetService<ICustomFieldQueryService>()!;
+			_queryService = Container.GetService<ICustomFieldByIdQueryService>()!;
 		}
 
 		[Fact]
@@ -38,28 +36,26 @@ namespace Raven.Yabt.Domain.Tests.CustomFields
 			Assert.NotNull(customFieldRef);
 
 			// the entity appears in the DB
-			var record = await _queryService.GetArray(new CustomFieldListGetRequest { Ids = new[] { customFieldRef.Id } });
-			Assert.Single(record);
-			Assert.Equal(customFieldRef.Name, record.Single().Name);
+			var record = (await _queryService.GetById(customFieldRef.Id)).Value;
+			Assert.Equal(customFieldRef.Name, record.Name);
 		}
 
 		[Fact]
-		private async Task Renamed_CustomField_Persistes_The_New_Name()
+		private async Task Renamed_CustomField_Persists_The_New_Name()
 		{
 			// GIVEN a custom field
 			var customFieldRef = await CreateSampleCustomField();
 
 			// WHEN renaming it
-			var response = await _commandService.Rename(customFieldRef.Id, new CustomFieldRenameRequest { Name = "New name" });
+			var response = await _commandService.Update(customFieldRef.Id, new CustomFieldUpdateRequest { Name = "New name" });
 			await SaveChanges();
 
 			// THEN 
-			// renaming was succesful
+			// renaming was successful
 			Assert.True(response.IsSuccess);
 			// the entity appears in the DB with the new name
-			var record = await _queryService.GetArray(new CustomFieldListGetRequest { Ids = new[] { customFieldRef.Id } });
-			Assert.Single(record);
-			Assert.Equal("New name", record.Single().Name);
+			var record = (await _queryService.GetById(customFieldRef.Id)).Value;
+			Assert.Equal("New name", record.Name);
 		}
 
 		[Fact]
@@ -73,14 +69,14 @@ namespace Raven.Yabt.Domain.Tests.CustomFields
 			await SaveChanges();
 
 			// THEN 
-			// Deletion was succesful
+			// Deletion was successful
 			Assert.True(response.IsSuccess);
 			// The returned ID of the deleted entity is correct
 			Assert.Equal(customFieldRef.Id, response.Value.Id);
 
 			// the entity disappears from the DB
-			var record = await _queryService.GetArray(new CustomFieldListGetRequest { Ids = new[] { customFieldRef.Id } });
-			Assert.False(record.Any());
+			var record = await _queryService.GetById(customFieldRef.Id);
+			Assert.False(record.IsSuccess);
 		}
 
 		private async Task<CustomFieldReferenceDto> CreateSampleCustomField()
@@ -88,7 +84,7 @@ namespace Raven.Yabt.Domain.Tests.CustomFields
 			var dto = new CustomFieldAddRequest
 			{
 				Name = "Test Custom Field",
-				Type = Database.Common.CustomFieldType.Text
+				FieldType = Database.Common.CustomFieldType.Text
 			};
 			var fieldRef = (await _commandService.Create(dto)).Value;
 			await SaveChanges();

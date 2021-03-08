@@ -1,0 +1,7 @@
+<div class="section-header" (click)="collapsed = !collapsed">
+	<span>{{title}}</span>
+	<mat-icon>{{!collapsed ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</mat-icon>
+</div>
+<div [hidden]="collapsed">
+	<ng-content></ng-content>
+</div>

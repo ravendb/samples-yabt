@@ -1,0 +1,62 @@
+@import 'breakpoints';
+@import 'list-components';
+
+.mat-column-number {
+	flex-grow: 1;
+	@include makeHiddenMediumAndDown();
+}
+mat-cell.mat-column-id {
+	font-family: Courier New, Courier, monospace;
+	font-size: 90%;
+}
+.mat-column-title {
+	@include mainColumn();
+
+	flex-grow: 12;
+
+	.title-block {
+		@include primaryTitle();
+		display: flex;
+		.title-and-icon {
+			flex: 1;
+		}
+		.comments-icon {
+			margin-right: 16px;
+			@include breakpointMediumAndDown() {
+				margin-right: 4px;
+			}
+			color: grey;
+			::ng-deep {
+				svg {
+					filter: invert(65%) sepia(0%) saturate(1230%) hue-rotate(316deg) brightness(101%) contrast(82%);
+				}
+			}
+		}
+	}
+
+	.embedded-number-dates-block {
+		@include tertiaryTitle();
+		@include makeHiddenLargeAndUp();
+	}
+
+	.embedded-assignee-state-block {
+		@include secondaryTitle();
+		@include makeHiddenMediumAndUp();
+	}
+}
+.mat-column-assignee {
+	flex-grow: 2;
+	@include makeHiddenSmallAndDown();
+}
+.mat-column-state {
+	flex-grow: 1;
+	@include makeHiddenSmallAndDown();
+}
+.mat-column-created {
+	flex-grow: 1;
+	@include makeHiddenLargeAndDown();
+}
+.mat-column-updated {
+	flex-grow: 1;
+	@include makeHiddenMediumAndDown();
+}

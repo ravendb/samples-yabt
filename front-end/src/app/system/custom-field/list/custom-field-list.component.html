@@ -1,0 +1,54 @@
+<div class="header">
+	<div>
+		<h3 class="mat-h3">Manage additional fields for Backlog items</h3>
+	</div>
+	<div class="action-buttons">
+		<button mat-stroked-button color="primary" (click)="openItemDialog()">
+			<mat-icon>add_circle</mat-icon> Create
+		</button>
+	</div>
+</div>
+
+<div *ngIf="dataSource?.loading$ | async" class="spinner-container">
+	<mat-spinner></mat-spinner>
+</div>
+
+<mat-table [dataSource]="dataSource" matSort matSortActive="name" matSortDirection="asc">
+
+	<ng-container matColumnDef="name">
+		<mat-header-cell *matHeaderCellDef mat-sort-header> Name </mat-header-cell>
+		<mat-cell *matCellDef="let row">
+			<div class="title-block">
+				<a (click)="openItemDialog(row.id)">{{row.name}}<sup *ngIf="row.isMandatory">*</sup></a>
+			</div>
+			<div class="embedded-title-type-block">
+				<span class="wide-column">
+					<a (click)="openItemDialog(row.id)">{{row.name}}<sup *ngIf="row.isMandatory">*</sup></a>
+				</span>
+				<span class="narrow-column" title="Field Type">{{ row.fieldType|join }}</span>
+			</div>
+			<div class="embedded-backlogItemTypes-block">
+				{{row.backlogItemTypes|join}}
+			</div>
+		</mat-cell>
+	</ng-container>
+
+	<ng-container matColumnDef="fieldType">
+		<mat-header-cell *matHeaderCellDef mat-sort-header> Field Type </mat-header-cell>
+		<mat-cell *matCellDef="let row"> {{row.fieldType|join}} </mat-cell>
+	</ng-container>
+
+	<ng-container matColumnDef="backlogItemTypes">
+		<mat-header-cell *matHeaderCellDef mat-sort-header> Ticket Types </mat-header-cell>
+		<mat-cell *matCellDef="let row"> {{row.backlogItemTypes|join}} </mat-cell>
+	</ng-container>
+
+	<mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+	<mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+
+	<div *matNoDataRow class="no-data-table">Sorry, no records found...</div>
+
+</mat-table>
+
+<mat-paginator [length]="dataSource?.totalRecords$ | async" [pageIndex]="dataSource?.pageIndex$ | async" [pageSize]="pageSize"
+	[pageSizeOptions]="pageSizeOptions" showFirstLastButtons></mat-paginator>

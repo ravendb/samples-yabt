@@ -1,0 +1,85 @@
+// Theme settings/variables
+
+// Palettes created by http://mcg.mbitson.com/#!/?mcgpalette1=%23fafafb&themename=yabt
+$primary-palette: (
+	50: #e7e8e9,
+	100: #c4c6c7,
+	200: #9da0a2,
+	300: #76797d,
+	400: #585d61,
+	500: #3b4045,
+	600: #353a3e,
+	700: #2d3236,
+	800: #262a2e,
+	900: #191c1f,
+	A100: #f96d6d,
+	A200: #e14838,
+	A400: #b82e2a,
+	A700: #992634,
+	contrast: (
+		50: #000000,
+		100: #000000,
+		200: #000000,
+		300: #ffffff,
+		400: #ffffff,
+		500: #ffffff,
+		600: #ffffff,
+		700: #ffffff,
+		800: #ffffff,
+		900: #ffffff,
+		A100: #000000,
+		A200: #000000,
+		A400: #000000,
+		A700: #000000,
+	),
+);
+$accent-palette: (
+	50: #f9e4eb,
+	100: #efbbcd,
+	200: #e58eac,
+	300: #da608b,
+	400: #d23e72,
+	500: #ca1c59,
+	600: #c51951,
+	700: #bd1448,
+	800: #b7113e,
+	900: #ab092e,
+	A100: #ffd7de,
+	A200: #ffa4b4,
+	A400: #ff718a,
+	A700: #ff5875,
+	contrast: (
+		50: #000000,
+		100: #000000,
+		200: #000000,
+		300: #000000,
+		400: #ffffff,
+		500: #ffffff,
+		600: #ffffff,
+		700: #ffffff,
+		800: #ffffff,
+		900: #ffffff,
+		A100: #000000,
+		A200: #000000,
+		A400: #000000,
+		A700: #000000,
+	),
+);
+$primary-color: map-get($primary-palette, 500);
+$primary-lightish-color: map-get($primary-palette, 300);
+$primary-light-color: map-get($primary-palette, 200);
+$primary-lighter-color: map-get($primary-palette, 100);
+$primary-dark-color: map-get($primary-palette, 600);
+
+$accent-color: map-get($accent-palette, 500);
+$accent-light-color: map-get($accent-palette, 200);
+$accent-dark-color: map-get($accent-palette, 600);
+
+$white-background: #fdfdfd;
+$light-grey-background: #555555;
+$dark-grey-background: #f9f9f9;
+
+$light-grey: #d7d7d7;
+$dark-grey: #555555;
+
+$border-style: 1px solid $light-grey;

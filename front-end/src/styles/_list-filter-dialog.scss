@@ -1,0 +1,11 @@
+.mat-dialog-title {
+	display: flex;
+	justify-content: space-between;
+	align-content: center;
+	border-bottom: thin solid;
+	border-bottom-color: rgba(200, 200, 200, 0.5);
+}
+
+mat-dialog-actions.mat-dialog-actions {
+	justify-content: space-between;
+}

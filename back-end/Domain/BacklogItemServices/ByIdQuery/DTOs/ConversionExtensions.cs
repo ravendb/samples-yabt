@@ -1,5 +1,7 @@
-﻿using Raven.Yabt.Database.Models.BacklogItems;
-using Raven.Yabt.Domain.Common;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Domain.Helpers;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
@@ -9,22 +11,23 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 	/// </summary>
 	internal static class ConversionExtensions
 	{
-		public static TResponse ConvertToDto<TEntity, TResponse>(this TEntity entity, ListResponse<BacklogItemCommentListGetResponse>? comments)
+		public static TResponse ConvertToDto<TEntity, TResponse>(this TEntity entity)
 			where TEntity : BacklogItem
 			where TResponse : BacklogItemGetResponseBase, new()
 		{
 			var response = new TResponse
 			{
 				Title = entity.Title,
-				Assignee = entity.Assignee,
-				Created = entity.Created,
-				LastUpdated = entity.LastUpdated,
+				State = entity.State,
+				EstimatedSize = entity.EstimatedSize,
+				Assignee = entity.Assignee is null ? null : (entity.Assignee with {}).RemoveEntityPrefixFromId(),
+				HistoryDescOrder = GetModifiedBy(entity.ModifiedBy),
 				Tags = entity.Tags,
-				Comments = comments,
+				Comments = GetCommentsList(entity.Comments),
+				RelatedItems = entity.RelatedItems,
 				CustomFields = entity.CustomFields,
 				Type = entity.Type
 			};
-			response.RemoveEntityPrefixFromIds(r => r.Created.ActionedBy, r => r.LastUpdated.ActionedBy, r => r.Assignee);
 
 			if (entity is BacklogItemBug entityBug 
 				&& response is BugGetResponse responseBug)
@@ -40,6 +43,27 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 			}
 
 			return response;
+		}
+
+		private static IReadOnlyList<BacklogItemHistoryRecord> GetModifiedBy(IList<BacklogItemHistoryRecord> modifiedBy)
+		{
+			var ret = (from item in modifiedBy.OrderByDescending(i => i.Timestamp) select item with {}).ToList();
+			ret.RemoveEntityPrefixFromIds(i => i.ActionedBy);
+			return ret.AsReadOnly();
+		}
+		
+		private static IReadOnlyList<BacklogItemCommentListGetResponse>? GetCommentsList(IList<Comment> comments)
+		{
+			return (from comment in comments.OrderByDescending(c => c.Created)
+				select new BacklogItemCommentListGetResponse
+				{
+					Id = comment.Id,
+					Message = comment.Message,
+					Author = comment.Author is null ? null : (comment.Author with {}).RemoveEntityPrefixFromId(),
+					Created = comment.Created,
+					LastUpdated = comment.LastModified,
+					MentionedUserIds = comment.MentionedUserIds?.ToDictionary(pair => pair.Key, pair => pair.Value.GetShortId()!)
+				}).ToList().AsReadOnly();
 		}
 	}
 }

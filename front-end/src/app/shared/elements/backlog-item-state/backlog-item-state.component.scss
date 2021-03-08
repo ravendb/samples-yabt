@@ -1,0 +1,28 @@
+.workitem-state-circle {
+	border-radius: 50%;
+	border-width: 1px;
+	border-style: solid;
+	margin-top: 5px;
+	margin-right: 5px;
+	float: left;
+	width: 8px !important;
+	height: 8px !important;
+	transition: background-color linear 0.2s;
+}
+
+.new {
+	background-color: rgb(178, 178, 178);
+	border-color: rgb(178, 178, 178);
+}
+.in-progress {
+	border-color: #007acc;
+	background-color: #007acc;
+}
+.testing {
+	border-color: #9d83bb;
+	background-color: #9d83bb;
+}
+.closed {
+	border-color: #339933;
+	background-color: #339933;
+}

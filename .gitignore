@@ -23,11 +23,11 @@ msbuild.log
 msbuild.err
 msbuild.wrn
 /**/dist
+wwwrooot/
 
 /packages
 *.metaproj
 *.metaproj.tmp
-appsettings.Development.json
 
 bin
 obj

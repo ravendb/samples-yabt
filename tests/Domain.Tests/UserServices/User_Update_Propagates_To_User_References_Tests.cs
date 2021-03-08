@@ -13,7 +13,6 @@ using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.CommentCommands;
-using Raven.Yabt.Domain.BacklogItemServices.CommentCommands.DTOs;
 using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.Domain.UserServices.Command;
 using Raven.Yabt.Domain.UserServices.Command.DTOs;
@@ -27,9 +26,9 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 	{
 		private readonly IUserCommandService _userCommandService;
 		private readonly IBacklogItemCommandService _backlogCommandService;
-		private readonly IBacklogItemCommentCommandService _commentCommandService;
 		private readonly IBacklogItemByIdQueryService _backlogQueryService;
-			
+		private readonly IBacklogItemCommentCommandService _commentCommandService;
+		
 		private ICurrentUserResolver _currentUserResolver = null!;	// Initialised in 'ConfigureIocContainer()'
 		private string _currentUserId = null!;						// Must be initialised as the 1st step in each test
 
@@ -37,8 +36,8 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 		{
 			_userCommandService = Container.GetService<IUserCommandService>()!;
 			_backlogCommandService = Container.GetService<IBacklogItemCommandService>()!;
-			_commentCommandService = Container.GetService<IBacklogItemCommentCommandService>()!;
 			_backlogQueryService = Container.GetService<IBacklogItemByIdQueryService>()!;
+			_commentCommandService = Container.GetService<IBacklogItemCommentCommandService>()!;
 		}
 
 		protected override void ConfigureIocContainer(IServiceCollection services)
@@ -104,8 +103,8 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			await SaveChanges();
 
 			// THEN all the comments have been cleaned from references to the deleted user
-			var comments = await _backlogQueryService.GetBacklogItemComments(backlogItemRef.Id!, new BacklogItemCommentListGetRequest());
-			Assert.Empty(comments.Entries.Where(c => c.MentionedUserIds?.Values.Contains(userRef.Id!) == true));
+			var comments = (await _backlogQueryService.GetById(backlogItemRef.Id!)).Value.Comments;
+			Assert.Empty(comments!.Where(c => c.MentionedUserIds?.Values.Contains(userRef.Id!) == true));
 		}
 
 		[Fact]
@@ -124,7 +123,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			await SaveChanges();
 
 			// THEN the Author of the comment remains the name, but the ID is NULL
-			var comment = (await _backlogQueryService.GetById(backlogItemRef.Id!)).Value.Comments!.Entries.First();
+			var comment = (await _backlogQueryService.GetById(backlogItemRef.Id!)).Value.Comments!.First();
 			Assert.Null(comment.Author.Id);
 			Assert.Equal("Homer Simpson", comment.Author.FullName);
 		}
@@ -144,7 +143,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 
 			// THEN the comment's author has the new name
 			var item = (await _backlogQueryService.GetById(backlogItemRef.Id!)).Value;
-			Assert.Equal(updatedRef.FullName, item.Comments!.Entries[0].Author.FullName);
+			Assert.Equal(updatedRef.FullName, item.Comments![0].Author.FullName);
 		}
 
 		[Fact]
@@ -159,14 +158,14 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			var updatedRef = await UpdateUser(userRef.Id!, "Bart", "Simpson");
 
 			// THEN all the references  
-			var comments = await _backlogQueryService.GetBacklogItemComments(backlogItemRef.Id!, new BacklogItemCommentListGetRequest());
+			var comments = (await _backlogQueryService.GetById(backlogItemRef.Id!)).Value.Comments;
 			// ...still exist
-			Assert.Equal(2, comments.Entries.Count(c => c.MentionedUserIds?.Values.Contains(userRef.Id, StringComparer.InvariantCultureIgnoreCase) == true));
+			Assert.Equal(2, comments!.Count(c => c.MentionedUserIds?.Values.Contains(userRef.Id, StringComparer.InvariantCultureIgnoreCase) == true));
 			// ...'MentionedUserIds' is updated to have the new name
-			Assert.Equal(new [] { updatedRef.MentionedName, updatedRef.MentionedName }, comments.Entries.SelectMany(c => c.MentionedUserIds?.Keys ?? Array.Empty<string>()));
+			Assert.Equal(new [] { updatedRef.MentionedName, updatedRef.MentionedName }, comments!.SelectMany(c => c.MentionedUserIds?.Keys ?? Array.Empty<string>()));
 			// ...text references are updated to the new name
-			Assert.Equal(0, comments.Entries.Count(c => c.Message.Contains(userRef.MentionedName)));
-			Assert.Equal(2, comments.Entries.Count(c => c.Message.Contains(updatedRef.MentionedName)));
+			Assert.Equal(0, comments!.Count(c => c.Message.Contains(userRef.MentionedName)));
+			Assert.Equal(2, comments!.Count(c => c.Message.Contains(updatedRef.MentionedName)));
 		}
 		
 		#endregion / UPDATE User gets reflected in Comments ---------
@@ -275,10 +274,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 		{
 			var ticket = await CreateBacklogItem();
 
-			var createdComment = await _commentCommandService.Create(
-					ticket.Id!,
-					new CommentAddUpdRequest { Message = $"Test bla" }
-				);
+			var createdComment = await _commentCommandService.Create(ticket.Id!, "Test bla");
 			if (!createdComment.IsSuccess)
 				throw new Exception("Failed to create a comment on a backlog item");
 			await SaveChanges();
@@ -292,10 +288,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 
 			foreach (var reference in referredUser)
 			{
-				var createdComment = await _commentCommandService.Create(
-					ticket.Id!,
-					new CommentAddUpdRequest { Message = $"Test @{reference.MentionedName} bla" }
-				);
+				var createdComment = await _commentCommandService.Create(ticket.Id!, $"Test @{reference.MentionedName} bla");
 				if (!createdComment.IsSuccess)
 					throw new Exception("Failed to create a comment on a backlog item");
 			}

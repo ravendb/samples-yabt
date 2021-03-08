@@ -7,6 +7,7 @@ using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Models.CustomFields;
 using Raven.Yabt.Database.Models.CustomFields.Indexes;
+using Raven.Yabt.Domain.BacklogItemServices.ByCustomFieldQuery;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.CustomFieldServices.Command.DTOs;
 
@@ -14,21 +15,44 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 {
 	public class CustomFieldCommandService : BaseService<CustomField>, ICustomFieldCommandService
 	{
-		public CustomFieldCommandService(IAsyncDocumentSession dbSession) : base(dbSession)	{}
+		private readonly IBacklogItemByCustomFieldQueryService _backlogService;
+
+		public CustomFieldCommandService(IAsyncDocumentSession dbSession, IBacklogItemByCustomFieldQueryService backlogService) : base(dbSession)
+		{
+			_backlogService = backlogService;
+		}
 
 		public async Task<IDomainResult<CustomFieldReferenceDto>> Create(CustomFieldAddRequest dto)
 		{
-			if (await DbSession.Query<CustomFieldIndexedForList, CustomFields_ForList>()
-							   .Where(cf => cf.Name == dto.Name)
-							   .AnyAsync())
-				return DomainResult.Failed<CustomFieldReferenceDto>($"Custom Field with name '{dto.Name}' already exist");
+			var verificationResult = await VerifyName(null, dto.Name);
+			if (!verificationResult.IsSuccess)
+				return verificationResult.To<CustomFieldReferenceDto>();
 
 			var entity = new CustomField
 				{
 					Name = dto.Name,
-					FieldType = dto.Type
+					FieldType = dto.FieldType,
+					BacklogItemTypes = dto.BacklogItemTypes,
+					IsMandatory = dto.IsMandatory
 				};
 			await DbSession.StoreAsync(entity);
+
+			return DomainResult.Success(GetReference(entity));
+		}
+
+		public async Task<IDomainResult<CustomFieldReferenceDto>> Update(string id, CustomFieldUpdateRequest dto)
+		{
+			var verificationResult = await VerifyName(id, dto.Name);
+			if (!verificationResult.IsSuccess)
+				return verificationResult.To<CustomFieldReferenceDto>();
+
+			var entity = await DbSession.LoadAsync<CustomField>(GetFullId(id));
+			if (entity == null)
+				return DomainResult.NotFound<CustomFieldReferenceDto>();
+
+			entity.Name = dto.Name;
+			entity.IsMandatory = dto.IsMandatory;
+			entity.BacklogItemTypes = dto.BacklogItemTypes;
 
 			return DomainResult.Success(GetReference(entity));
 		}
@@ -46,15 +70,19 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 			return DomainResult.Success(GetReference(cf));
 		}
 
-		public async Task<IDomainResult<CustomFieldReferenceDto>> Rename(string id, CustomFieldRenameRequest dto)
+		private async Task<IDomainResult> VerifyName(string? id, string name)
 		{
-			var entity = await DbSession.LoadAsync<CustomField>(GetFullId(id));
-			if (entity == null)
-				return DomainResult.NotFound<CustomFieldReferenceDto>();
+			if (string.IsNullOrWhiteSpace(name))
+				return DomainResult.Failed($"Name is a mandatory field");
+			var query =  DbSession.Query<CustomFieldIndexedForList, CustomFields_ForList>()
+			                      .Where(cf => cf.Name == name);
+			if (!string.IsNullOrEmpty(id))
+				query = query.Where(cf => cf.Id != GetFullId(id));
+			
+			if (await query.AnyAsync()) 
+				return DomainResult.Failed($"Custom Field with name '{name}' already exist");
 
-			entity.Name = dto.Name;
-
-			return DomainResult.Success(GetReference(entity));
+			return DomainResult.Success();
 		}
 
 		private CustomFieldReferenceDto GetReference (CustomField entity) => new CustomFieldReferenceDto { Id = entity.Id, Name = entity.Name };

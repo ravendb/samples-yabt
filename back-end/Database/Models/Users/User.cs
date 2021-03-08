@@ -20,7 +20,7 @@ namespace Raven.Yabt.Database.Models.Users
 		///		Full name of the user, e.g. "Homer Simpson"
 		/// </summary>
 		[JsonIgnore]
-		public string FullName => (!string.IsNullOrEmpty(FirstName) ? $"{FirstName} " : "") + LastName ?? "";
+		public string FullName => (!string.IsNullOrEmpty(FirstName) ? $"{FirstName} " : "") + (LastName ?? "");
 		/// <summary>
 		///		Shorten name of the user, e.g. "Simpson H."
 		/// </summary>
@@ -34,12 +34,6 @@ namespace Raven.Yabt.Database.Models.Users
 		/// </summary>
 		public DateTime RegistrationDate { get; set; } = DateTime.UtcNow;
 
-		public UserReference ToReference() => new UserReference
-		{
-			Id = Id,
-			Name = NameWithInitials,
-			FullName = FullName,
-			AvatarUrl = AvatarUrl
-		};
+		public UserReference ToReference() => new (Id, NameWithInitials, FullName, AvatarUrl);
 	}
 }

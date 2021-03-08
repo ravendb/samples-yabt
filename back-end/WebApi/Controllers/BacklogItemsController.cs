@@ -38,9 +38,17 @@ namespace Raven.Yabt.WebApi.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public Task<ActionResult<BacklogItemGetResponseBase>> GetById([FromServices] IBacklogItemByIdQueryService service,
-		                                                              [FromRoute] string id,
-		                                                              [FromQuery] BacklogItemCommentListGetRequest @params)
-			=> service.GetById(id, @params).ToActionResultOfT();
+		                                                              [FromRoute] string id)
+			=> service.GetById(id).ToActionResultOfT();
+
+		/// <summary>
+		///		Get a list of Backlog Items tags
+		/// </summary>
+		[HttpGet("tags")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public Task<BacklogItemTagListGetResponse[]> GetTags([FromServices] IBacklogItemListQueryService service,
+		                                                              [FromQuery] BacklogItemTagListGetRequest dto)
+			=> service.GetTags(dto);
 
 		#endregion / GET requests ---------------
 

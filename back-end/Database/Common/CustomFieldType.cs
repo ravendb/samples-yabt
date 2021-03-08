@@ -6,6 +6,6 @@
 		Date,
 		Checkbox,
 		Numeric,
-		List
+		//List
 	}
 }
