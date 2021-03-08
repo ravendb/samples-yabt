@@ -18,7 +18,7 @@ namespace Raven.Yabt.Database.Common.References
 		/// <summary>
 		///		The user who made the change
 		/// </summary>
-		public UserReference ActionedBy { get; init; }
+		public UserReference ActionedBy { get; set; } = null!;
 		
 		public ChangedByUserReference() {}
 
