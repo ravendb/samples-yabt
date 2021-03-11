@@ -1,4 +1,4 @@
-export class BacklogItemTagListGetResponse {
-	name!: string;
-	count!: number;
+export interface BacklogItemTagListGetResponse {
+	name: string;
+	count: number;
 }

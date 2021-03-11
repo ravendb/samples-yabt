@@ -1,7 +1,7 @@
 import { BacklogItemType } from '../backlog-item';
 
-export class BacklogItemReference {
+export interface BacklogItemReference {
 	id?: string;
-	name: string = '';
-	type: BacklogItemType = null!;
+	name: string;
+	type: BacklogItemType;
 }

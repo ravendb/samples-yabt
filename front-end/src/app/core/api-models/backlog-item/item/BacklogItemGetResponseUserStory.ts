@@ -1,5 +1,5 @@
 import { BacklogItemGetResponseBase } from './BacklogItemGetResponseBase';
 
-export class BacklogItemGetResponseUserStory extends BacklogItemGetResponseBase {
-	acceptanceCriteria!: string;
+export interface BacklogItemGetResponseUserStory extends BacklogItemGetResponseBase {
+	acceptanceCriteria: string;
 }

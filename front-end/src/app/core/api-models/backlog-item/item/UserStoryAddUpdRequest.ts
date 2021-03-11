@@ -1,5 +1,5 @@
 import { BacklogItemAddUpdRequestBase } from './BacklogItemAddUpdRequestBase';
 
-export class UserStoryAddUpdRequest extends BacklogItemAddUpdRequestBase {
+export interface UserStoryAddUpdRequest extends BacklogItemAddUpdRequestBase {
 	acceptanceCriteria: string | undefined;
 }

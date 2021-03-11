@@ -1,9 +1,9 @@
 import { BacklogItemType } from '@core/api-models/common/backlog-item';
 import { CustomFieldType } from '@core/api-models/common/CustomFieldType';
 
-export class CustomFieldAddRequest {
-	name!: string;
-	fieldType!: CustomFieldType;
-	isMandatory: boolean = false;
+export interface CustomFieldAddRequest {
+	name: string;
+	fieldType: CustomFieldType;
+	isMandatory: boolean;
 	backlogItemTypes: Array<BacklogItemType> | undefined;
 }

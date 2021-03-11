@@ -1,6 +1,6 @@
-export class UserReference {
+export interface UserReference {
 	id?: string;
-	name: string = '';
-	fullName: string = '';
+	name: string;
+	fullName: string;
 	avatarUrl?: string;
 }

@@ -1,4 +1,4 @@
-export class CustomFieldReferenceDto {
-	id: string | null = null;
-	name: string = '';
+export interface CustomFieldReferenceDto {
+	id: string | null;
+	name: string;
 }

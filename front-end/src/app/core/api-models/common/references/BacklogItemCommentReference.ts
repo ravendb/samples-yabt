@@ -1,5 +1,5 @@
-export class BacklogItemCommentReference {
+export interface BacklogItemCommentReference {
 	id?: string;
-	name: string = '';
+	name: string;
 	commentId?: string;
 }

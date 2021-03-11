@@ -1,6 +1,6 @@
-export abstract class UserItemBaseDto {
+export interface UserItemBaseDto {
 	firstName: string | undefined;
 	lastName: string | undefined;
 	avatarUrl: string | undefined;
-	email!: string;
+	email: string;
 }

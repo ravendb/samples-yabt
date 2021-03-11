@@ -1,3 +1,3 @@
-export class BacklogItemTagListGetRequest {
+export interface BacklogItemTagListGetRequest {
 	search: string | undefined;
 }
