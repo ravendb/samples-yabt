@@ -126,9 +126,8 @@
 				<div class="flex-row side-bottom-offset" *ngIf="!!dtoBeforeUpdate.created">
 					<backlog-item-history-item [item]="dtoBeforeUpdate.created"></backlog-item-history-item>
 				</div>
-				<div *ngIf="dtoBeforeUpdate.historyDescOrder.length > 2">
-					<a (click)="openFilterDialog()">Show
-						{{dtoBeforeUpdate.historyDescOrder.length}} more...</a>
+				<div *ngIf="dtoBeforeUpdate.historyDescOrder.length > 2" class="more-link">
+					<a (click)="openFilterDialog()">show {{dtoBeforeUpdate.historyDescOrder.length}} more...</a>
 				</div>
 			</backlog-item-section>
 		</div>

@@ -17,9 +17,7 @@
 .spread-out {
 	display: flex;
 	flex-direction: row-reverse;
-	.spacer {
-		flex: auto;
-	}
+	justify-content: space-between;
 }
 .summary {
 	color: rgba(0, 0, 0, 0.55);

@@ -1,7 +1,6 @@
 <ng-template [ngIf]="!!item">
 	<div [class.vertical-alignment]="isVerticalList" [class.spread-out]="!isVerticalList">
 		<div class="timestamp">{{ item.timestamp | date:"medium" }}</div>
-		<div *ngIf="!isVerticalList" class="spacer"></div>
 		<div>
 			<a *ngIf="!!item.actionedBy?.id" [routerLink]="['/users/' + item.actionedBy.id]" class="name">{{ item.actionedBy.name }}</a>
 			<span *ngIf="!item.actionedBy?.id" [innerText]="item.actionedBy.name" class="name"></span>
