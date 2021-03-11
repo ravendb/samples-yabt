@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
-import { BacklogItemState } from '@core/api-models/common/BacklogItemState';
+import { BacklogItemState } from '@core/api-models/common/backlog-item/BacklogItemState';
 
 @Component({
 	selector: 'backlog-item-state',

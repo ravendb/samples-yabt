@@ -9,3 +9,19 @@
 .name {
 	font-size: 15px;
 }
+
+.vertical-alignment {
+	display: flex;
+	flex-direction: column;
+}
+.spread-out {
+	display: flex;
+	flex-direction: row-reverse;
+	.spacer {
+		flex: auto;
+	}
+}
+.summary {
+	color: rgba(0, 0, 0, 0.55);
+	padding-top: 8px;
+}

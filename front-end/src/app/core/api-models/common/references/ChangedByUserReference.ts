@@ -1,6 +1,6 @@
 import { UserReference } from './UserReference';
 
-export class ChangedByUserReference {
-	timestamp!: Date;
-	actionedBy!: UserReference;
+export interface ChangedByUserReference {
+	timestamp: Date;
+	actionedBy: UserReference;
 }

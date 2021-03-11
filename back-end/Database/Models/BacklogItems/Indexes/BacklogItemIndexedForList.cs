@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 
 using Raven.Yabt.Database.Common;
+using Raven.Yabt.Database.Common.BacklogItem;
 
 namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 {

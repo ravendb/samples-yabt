@@ -4,6 +4,7 @@ using System.Linq;
 using Newtonsoft.Json;
 
 using Raven.Yabt.Database.Common;
+using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Database.Common.References;
 // ReSharper disable RedundantCast
 

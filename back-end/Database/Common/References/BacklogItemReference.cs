@@ -1,4 +1,6 @@
-﻿namespace Raven.Yabt.Database.Common.References
+﻿using Raven.Yabt.Database.Common.BacklogItem;
+
+namespace Raven.Yabt.Database.Common.References
 {
 	public record BacklogItemReference : EntityReferenceBase
 	{

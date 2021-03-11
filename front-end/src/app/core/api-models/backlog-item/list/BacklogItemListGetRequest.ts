@@ -1,5 +1,4 @@
-import { BacklogItemState } from '@core/api-models/common/BacklogItemState';
-import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
+import { BacklogItemState, BacklogItemType } from '@core/api-models/common/backlog-item';
 import { ListRequest } from '@core/api-models/common/ListRequest';
 import { CurrentUserRelations } from './CurrentUserRelations';
 

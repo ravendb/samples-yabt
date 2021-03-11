@@ -117,14 +117,18 @@
 				...
 			</backlog-item-section>
 
-			<backlog-item-section title="History" *ngIf="!!dtoBeforeUpdate">
-				<div class="flex-row small-label" *ngIf="!!dtoBeforeUpdate?.created">Created:</div>
-				<div class="flex-row side-bottom-offset" *ngIf="!!dtoBeforeUpdate?.created">
-					<backlog-item-history-item [item]="dtoBeforeUpdate.created"></backlog-item-history-item>
-				</div>
-				<div class="flex-row small-label" *ngIf="!!dtoBeforeUpdate?.lastUpdated">Last updated:</div>
+			<backlog-item-section title="History" *ngIf="!!dtoBeforeUpdate && !!dtoBeforeUpdate.historyDescOrder">
+				<div class="flex-row small-label" *ngIf="!!dtoBeforeUpdate.lastUpdated">Last updated:</div>
 				<div class="flex-row side-bottom-offset">
 					<backlog-item-history-item [item]="dtoBeforeUpdate.lastUpdated"></backlog-item-history-item>
+				</div>
+				<div class="flex-row small-label" *ngIf="!!dtoBeforeUpdate.created">Created:</div>
+				<div class="flex-row side-bottom-offset" *ngIf="!!dtoBeforeUpdate.created">
+					<backlog-item-history-item [item]="dtoBeforeUpdate.created"></backlog-item-history-item>
+				</div>
+				<div *ngIf="dtoBeforeUpdate.historyDescOrder.length > 2">
+					<a (click)="openFilterDialog()">Show
+						{{dtoBeforeUpdate.historyDescOrder.length}} more...</a>
 				</div>
 			</backlog-item-section>
 		</div>

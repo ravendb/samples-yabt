@@ -1,0 +1,16 @@
+<h2 mat-dialog-title>
+	<span>History</span>
+	<button mat-icon-button mat-dialog-close>
+		<mat-icon>close</mat-icon>
+	</button>
+</h2>
+<mat-dialog-content>
+	<ul *ngIf="!!history">
+		<li *ngFor="let item of history">
+			<backlog-item-history-item [item]="item" [showSummary]="true" [isVerticalList]="false"></backlog-item-history-item>
+		</li>
+	</ul>
+</mat-dialog-content>
+<mat-dialog-actions>
+	<button mat-raised-button color="primary" (click)="close()">Close</button>
+</mat-dialog-actions>

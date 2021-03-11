@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 
 using Raven.Yabt.Database.Common;
+using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Domain.Common;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs

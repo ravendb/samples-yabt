@@ -1,6 +1,6 @@
 ﻿using Raven.Yabt.Database.Common.References;
 
-namespace Raven.Yabt.Database.Models.BacklogItems
+namespace Raven.Yabt.Database.Common.BacklogItem
 {
 	public record BacklogItemHistoryRecord : ChangedByUserReference
 	{

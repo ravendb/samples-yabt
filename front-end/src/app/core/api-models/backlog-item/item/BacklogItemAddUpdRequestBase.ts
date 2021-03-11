@@ -1,5 +1,4 @@
-import { BacklogItemState } from '@core/api-models/common/BacklogItemState';
-import { BacklogRelationshipType } from '@core/api-models/common/BacklogRelationshipType';
+import { BacklogItemState, BacklogRelationshipType } from '@core/api-models/common/backlog-item';
 
 export class BacklogItemAddUpdRequestBase {
 	title!: string;

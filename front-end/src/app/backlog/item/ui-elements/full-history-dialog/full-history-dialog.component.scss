@@ -1,0 +1,17 @@
+@import 'list-filter-dialog';
+
+ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+
+	li {
+		padding: 8px 0 8px 0;
+		border-bottom: 1px solid;
+		border-bottom-color: rgba(234, 234, 234, 1);
+	}
+}
+
+mat-dialog-actions.mat-dialog-actions {
+	flex-direction: row-reverse;
+}

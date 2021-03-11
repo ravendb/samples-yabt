@@ -1,4 +1,4 @@
-import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
+import { BacklogItemType } from '@core/api-models/common/backlog-item';
 import { ChangedByUserReference } from '@core/api-models/common/references/ChangedByUserReference';
 import { UserReference } from '@core/api-models/common/references/UserReference';
 

@@ -1,5 +1,5 @@
 import { BacklogItemCommentListGetResponse } from '@core/api-models/backlog-item/item/BacklogItemCommentListGetResponse';
-import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
+import { BacklogItemHistoryRecord, BacklogItemType } from '@core/api-models/common/backlog-item';
 import { ChangedByUserReference } from '@core/api-models/common/references';
 
 export interface BacklogItemReadonlyProperties {
@@ -7,4 +7,5 @@ export interface BacklogItemReadonlyProperties {
 	created: ChangedByUserReference;
 	lastUpdated: ChangedByUserReference;
 	comments: BacklogItemCommentListGetResponse[];
+	historyDescOrder: BacklogItemHistoryRecord[];
 }

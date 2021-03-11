@@ -1,4 +1,5 @@
 ﻿using Raven.Yabt.Database.Common;
+using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Domain.Common;
 
 namespace Raven.Yabt.Domain.CustomFieldServices.Query.DTOs

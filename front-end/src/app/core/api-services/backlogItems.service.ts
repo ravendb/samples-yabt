@@ -11,7 +11,7 @@ import {
 	BacklogItemTagListGetRequest,
 	BacklogItemTagListGetResponse,
 } from '@core/api-models/backlog-item/list';
-import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
+import { BacklogItemType } from '@core/api-models/common/backlog-item';
 import { ListResponse } from '@core/api-models/common/ListResponse';
 import { BacklogItemCommentReference, BacklogItemReference } from '@core/api-models/common/references';
 import { AppConfigService } from '@core/app-config.service';

@@ -1,15 +1,12 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { BacklogAddUpdAllFieldsRequest } from '@core/api-models/backlog-item/item/BacklogAddUpdAllFieldsRequest';
 import { BacklogItemCommentListGetResponse } from '@core/api-models/backlog-item/item/BacklogItemCommentListGetResponse';
 import { BacklogItemGetResponseAllFields } from '@core/api-models/backlog-item/item/BacklogItemGetResponseAllFields';
-import { BacklogItemState } from '@core/api-models/common/BacklogItemState';
-import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
-import { BacklogRelationshipType } from '@core/api-models/common/BacklogRelationshipType';
-import { BugPriority } from '@core/api-models/common/BugPriority';
-import { BugSeverity } from '@core/api-models/common/BugSeverity';
+import { BacklogItemState, BacklogItemType, BacklogRelationshipType, BugPriority, BugSeverity } from '@core/api-models/common/backlog-item';
 import { UserReference } from '@core/api-models/common/references';
 import { CurrentUserResponse } from '@core/api-models/user/item/CurrentUserResponse';
 import { UserListGetRequest } from '@core/api-models/user/list';
@@ -21,8 +18,9 @@ import { IBreadcrumbItem, PageTitleService } from '@core/page-title.service';
 import { IKeyValuePair } from '@shared/filters';
 import { CustomValidators } from '@utils/custom-validators';
 import { Observable, of, Subscription } from 'rxjs';
-import { filter, map, switchMap, tap } from 'rxjs/operators';
+import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { BacklogItemReadonlyProperties } from './backlog-item-readonly-properties';
+import { BacklogItemFullHistoryDialogComponent } from './ui-elements/full-history-dialog/full-history-dialog.component';
 
 @Component({
 	templateUrl: './backlog-item.component.html',
@@ -71,6 +69,7 @@ export class BacklogItemComponent implements OnInit {
 		private activatedRoute: ActivatedRoute,
 		private router: Router,
 		private fb: FormBuilder,
+		private dialog: MatDialog,
 		private backlogService: BacklogItemsService,
 		private userService: UsersService,
 		private notifyService: NotificationService,
@@ -188,6 +187,14 @@ export class BacklogItemComponent implements OnInit {
 			created: new Date(),
 			lastUpdated: new Date(),
 		} as BacklogItemCommentListGetResponse);
+	}
+
+	openFilterDialog(): void {
+		this.dialog
+			.open(BacklogItemFullHistoryDialogComponent, { data: this.dtoBeforeUpdate?.historyDescOrder, minWidth: '350px' })
+			.afterClosed()
+			.pipe(take(1))
+			.subscribe();
 	}
 
 	private goBack(): void {

@@ -1,4 +1,4 @@
-import { BacklogItemType } from '../BacklogItemType';
+import { BacklogItemType } from '../backlog-item';
 
 export class BacklogItemReference {
 	id?: string;

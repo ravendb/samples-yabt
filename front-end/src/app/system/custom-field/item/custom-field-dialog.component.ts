@@ -1,7 +1,7 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { BacklogItemType } from '@core/api-models/common/BacklogItemType';
+import { BacklogItemType } from '@core/api-models/common/backlog-item';
 import { CustomFieldType } from '@core/api-models/common/CustomFieldType';
 import { CustomFieldAddRequest } from '@core/api-models/custom-field/item/CustomFieldAddRequest';
 import { CustomFieldItemResponse } from '@core/api-models/custom-field/item/CustomFieldItemResponse';

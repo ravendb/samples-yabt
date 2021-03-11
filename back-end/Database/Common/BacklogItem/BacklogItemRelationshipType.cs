@@ -1,4 +1,4 @@
-﻿namespace Raven.Yabt.Database.Common
+﻿namespace Raven.Yabt.Database.Common.BacklogItem
 {
 	public enum BacklogRelationshipType
 	{

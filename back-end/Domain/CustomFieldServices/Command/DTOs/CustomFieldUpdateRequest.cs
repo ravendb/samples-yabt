@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
 using Raven.Yabt.Database.Common;
+using Raven.Yabt.Database.Common.BacklogItem;
 
 namespace Raven.Yabt.Domain.CustomFieldServices.Command.DTOs
 {

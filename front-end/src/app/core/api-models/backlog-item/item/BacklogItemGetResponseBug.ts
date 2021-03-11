@@ -1,5 +1,4 @@
-import { BugPriority } from '@core/api-models/common/BugPriority';
-import { BugSeverity } from '@core/api-models/common/BugSeverity';
+import { BugPriority, BugSeverity } from '@core/api-models/common/backlog-item';
 import { BacklogItemGetResponseBase } from './BacklogItemGetResponseBase';
 
 export class BacklogItemGetResponseBug extends BacklogItemGetResponseBase {

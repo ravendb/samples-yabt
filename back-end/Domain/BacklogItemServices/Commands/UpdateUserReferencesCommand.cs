@@ -3,6 +3,7 @@
 using Raven.Client;
 using Raven.Client.Documents.Queries;
 using Raven.Client.Documents.Session;
+using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Database.Models.BacklogItems.Indexes;

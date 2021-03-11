@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Domain.Helpers;
 
