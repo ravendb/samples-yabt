@@ -25,7 +25,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				HistoryDescOrder = GetModifiedBy(entity.ModifiedBy),
 				Tags = entity.Tags,
 				Comments = GetCommentsList(entity.Comments),
-				RelatedItems = entity.RelatedItems,
+				RelatedItems = GetRelatedItems(entity.RelatedItems),
 				CustomFields = entity.CustomFields,
 				Type = entity.Type
 			};
@@ -65,6 +65,16 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 					LastUpdated = comment.LastModified,
 					MentionedUserIds = comment.MentionedUserIds?.ToDictionary(pair => pair.Key, pair => pair.Value.GetShortId()!)
 				}).ToList().AsReadOnly();
+		}
+		
+		private static IReadOnlyList<BacklogItemRelatedItem>? GetRelatedItems(IList<BacklogItemRelatedItem>? relatedItems)
+		{
+			if (relatedItems == null)
+				return null;
+			
+			var ret = (from item in relatedItems.OrderByDescending(i => i.LinkType) select item with {}).ToList();
+			ret.RemoveEntityPrefixFromIds(i => i.RelatedTo);
+			return ret.AsReadOnly();
 		}
 	}
 }

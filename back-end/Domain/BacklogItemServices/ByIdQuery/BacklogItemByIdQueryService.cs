@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using DomainResults.Common;
 
 using Raven.Client.Documents.Session;
-using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs;

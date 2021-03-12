@@ -1,18 +1,17 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.BacklogItem;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs
 {
-	public abstract class BacklogItemAddUpdRequestBase
+	public abstract record BacklogItemAddUpdRequestBase
 	{
 		/// <summary>
 		///		The ticket's title
 		/// </summary>
 		[Required]
-		public string Title { get; set; } = null!;
+		public string Title { get; set; }
 
 		public BacklogItemState State { get; set; }
 		
@@ -26,9 +25,9 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs
 		public string[]? Tags { get; set; }
 
 		/// <summary>
-		///		Related tickets: { Backlog Item ID, Relationship type }.
+		///		Related tickets: { Backlog Item ID, Relationship type, Action type: add/remove }.
 		/// </summary>
-		public IDictionary<string, BacklogRelationshipType>? RelatedItems { get; set; }
+		public IList<BacklogRelationshipAction>? ChangedRelatedItems { get; set; }
 
 		/// <summary>
 		///		Extra custom properties of various data types configured by the user: { Custom Field ID, Value }.

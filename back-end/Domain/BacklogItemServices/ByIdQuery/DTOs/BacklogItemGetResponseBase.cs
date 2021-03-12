@@ -39,6 +39,6 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 		/// <summary>
 		///		Related tickets
 		/// </summary>
-		public IList<BacklogItemRelatedItem>?  RelatedItems { get; init; }
+		public IReadOnlyList<BacklogItemRelatedItem>?  RelatedItems { get; init; }
 	}
 }

@@ -7,7 +7,6 @@ using DomainResults.Common;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
-using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Database.Models.BacklogItems;
@@ -123,7 +122,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			entity.AddHistoryRecord(
 				await _userResolver.GetCurrentUserReference(), 
 				entity.ModifiedBy.Any() ? "Modified" : "Created"	// TODO: Provide more informative description in case of modifications
-				);
+			);
 
 			if (dto.CustomFields != null)
 			{
@@ -135,7 +134,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			else
 				entity.CustomFields = null;
 
-			entity.RelatedItems = dto.RelatedItems != null ? await ResolveRelatedItems(dto.RelatedItems) : null;
+			entity.RelatedItems = await ResolveChangedRelatedItems(entity.RelatedItems, dto.ChangedRelatedItems);
 
 			// entity.CustomProperties = dto.CustomProperties;	TODO: De-serialise custom properties
 
@@ -154,28 +153,51 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			return entity;
 		}
 
-		private async Task<IList<BacklogItemRelatedItem>?> ResolveRelatedItems(IDictionary<string, BacklogRelationshipType>? relatedItems)
+		private async Task<IList<BacklogItemRelatedItem>?> ResolveChangedRelatedItems(IList<BacklogItemRelatedItem>? existingRelatedItems, IList<BacklogRelationshipAction>? actions)
 		{
-			if (relatedItems == null)
-				return null;
+			if (actions == null)
+				return existingRelatedItems;
 
-			var ids = relatedItems.Keys.Select(GetFullId);
-
-			var references = await (from b in DbSession.Query<BacklogItemIndexedForList, BacklogItems_ForList>()
-									where b.Id.In(ids)
-									select new BacklogItemReference
-									{
-										Id = b.Id,
-										Name = b.Title,
-										Type = b.Type
-									}).ToListAsync();
-
-			return (from r in references
-					select new BacklogItemRelatedItem
+			// Remove 'old' links
+			foreach (var (id, linkType) in from a in actions
+												where a.ActionType == BacklogRelationshipActionType.Remove
+												select (GetFullId(a.BacklogItemId), a.RelationType))
+			{
+				var itemToRemove = existingRelatedItems?.FirstOrDefault(existing => existing.RelatedTo.Id == id && existing.LinkType == linkType);
+				if (itemToRemove != null) existingRelatedItems?.Remove(itemToRemove);
+			}
+			
+			// Add new links
+			(string fullId, BacklogRelationshipType linkType)[] array = 
+				(from a in actions
+				 where a.ActionType == BacklogRelationshipActionType.Add
+				 select (GetFullId(a.BacklogItemId), a.RelationType)
+				 ).ToArray();
+			if (array.Any())
+			{
+				existingRelatedItems ??= new List<BacklogItemRelatedItem>();
+				
+				// Resolve new references
+				var fullIds = array.Select(a => a.fullId).Distinct();
+				var references = await (from b in DbSession.Query<BacklogItemIndexedForList, BacklogItems_ForList>()
+					where b.Id.In(fullIds)
+					select new BacklogItemReference
 					{
-						RelatedTo = r,
-						LinkType = relatedItems[r.Id!]
-					}).ToList();
+						Id = b.Id,
+						Name = b.Title,
+						Type = b.Type
+					}).ToListAsync();
+
+				// Add resolved references
+				foreach (var (fullId, linkType) in array)
+				{
+					var relatedTo = references.SingleOrDefault(r => r.Id == fullId);
+					if (relatedTo == null)
+						continue;
+					existingRelatedItems.Add(new BacklogItemRelatedItem { LinkType = linkType, RelatedTo = relatedTo });
+				}
+			}
+			return existingRelatedItems;
 		}
 	}
 }

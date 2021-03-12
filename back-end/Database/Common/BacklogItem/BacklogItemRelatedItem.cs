@@ -2,9 +2,9 @@
 
 namespace Raven.Yabt.Database.Common.BacklogItem
 {
-	public class BacklogItemRelatedItem
+	public record BacklogItemRelatedItem
 	{
-		public BacklogItemReference RelatedTo { get; set; } = null!;
+		public BacklogItemReference RelatedTo { get; set; }
 
 		public BacklogRelationshipType LinkType { get; set; }
 	}
