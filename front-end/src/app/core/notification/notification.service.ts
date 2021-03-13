@@ -1,6 +1,7 @@
 import { Injectable, NgZone } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { HttpErrorDetails } from '@core/api-services/http-error-details';
 import { Observable } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { AlertDialogComponent } from './alert-dialog.component';
@@ -27,10 +28,15 @@ export class NotificationService {
 		});
 	}
 
-	showError(title: string, html: string): Observable<void> {
+	showError(title: string, htmlBody: string, errDetails: HttpErrorDetails | undefined = undefined): Observable<void> {
+		if (!!errDetails) {
+			let addedMsg = (!!errDetails.title ? '<br>' + errDetails.title : '') + (!!errDetails.detail ? '<br>' + errDetails.detail : '');
+			if (!addedMsg) addedMsg = '' + errDetails;
+			htmlBody += addedMsg;
+		}
 		const dialogRef = this.dialog.open(AlertDialogComponent, {
 			data: {
-				html,
+				html: htmlBody,
 				title,
 			},
 		});

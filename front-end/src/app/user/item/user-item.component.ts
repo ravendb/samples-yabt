@@ -73,7 +73,7 @@ export class UserItemComponent implements OnInit, OnDestroy {
 				this.goBack();
 			},
 			err => {
-				this.notifyService.showError('Failed to save', `Saving custom field failed: '${err}'`);
+				this.notifyService.showError('Failed to save', 'Invalid form values.', err);
 			}
 		);
 	}
@@ -94,7 +94,7 @@ export class UserItemComponent implements OnInit, OnDestroy {
 					this.goBack();
 				},
 				err => {
-					this.notifyService.showError('Failed to delete', `Deleting user failed: '${err}'`);
+					this.notifyService.showError('Failed to delete', 'Deleting user failed:', err);
 				}
 			);
 	}

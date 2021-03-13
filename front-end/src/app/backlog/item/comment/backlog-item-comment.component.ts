@@ -83,7 +83,7 @@ export class BacklogItemCommentComponent {
 					this.commentDeleted.emit(this.value!.id);
 				},
 				err => {
-					this.notifyService.showError('Failed to delete', `Deleting failed: '${err}'`);
+					this.notifyService.showError('Failed to delete', '', err);
 				}
 			);
 	}
@@ -102,7 +102,7 @@ export class BacklogItemCommentComponent {
 				else this.switchMode();
 			},
 			err => {
-				this.notifyService.showError('Failed to save', !!err?.detail ? err.detail : `Saving failed: '${err}'`);
+				this.notifyService.showError('Failed to save', 'Invalid form values.', err);
 			}
 		);
 	}

@@ -100,7 +100,9 @@ export abstract class BaseApiService {
 	}
 
 	private handleErrorObservable(response: HttpErrorResponse): Observable<never> {
-		return observableThrowError(response?.error || ({ detail: response?.message } as HttpErrorDetails)); // TODO: extend the propagated error message with title/description
+		const thrownError: HttpErrorDetails | any =
+			response?.error || ({ title: (response as any)?.title, detail: response?.message } as HttpErrorDetails);
+		return observableThrowError(thrownError);
 	}
 
 	private getBaseUrl(urlExtension: string): string {

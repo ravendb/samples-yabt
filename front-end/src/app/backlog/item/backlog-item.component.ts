@@ -117,7 +117,7 @@ export class BacklogItemComponent implements OnInit {
 						this.pageTitle.addLastBreadcrumbs(lastBreadcrumbs);
 					},
 					err => {
-						this.notifyService.showError('Not found', err);
+						this.notifyService.showError('Not found', '', err);
 					}
 				)
 		);
@@ -140,7 +140,7 @@ export class BacklogItemComponent implements OnInit {
 				this.notifyService.showNotificationWithLink(notification);
 			},
 			err => {
-				this.notifyService.showError('Failed to save', `Saving failed: '${err}'`);
+				this.notifyService.showError('Failed to save', 'Invalid form values.', err);
 			}
 		);
 	}
@@ -160,7 +160,7 @@ export class BacklogItemComponent implements OnInit {
 					this.goBack();
 				},
 				err => {
-					this.notifyService.showError('Failed to delete', `Deleting failed: '${err}'`);
+					this.notifyService.showError('Failed to delete', '', err);
 				}
 			);
 	}

@@ -69,7 +69,7 @@ export class CustomFieldDialogComponent implements OnInit {
 				this.dialogRef.close(true);
 			},
 			err => {
-				this.notifyService.showError('Failed to save', `Saving custom field failed: '${err}'`);
+				this.notifyService.showError('Failed to save', 'Invalid form values.', err);
 			}
 		);
 	}
@@ -90,7 +90,7 @@ export class CustomFieldDialogComponent implements OnInit {
 					this.dialogRef.close(true);
 				},
 				err => {
-					this.notifyService.showError('Failed to delete', `Deleting custom field failed: '${err}'`);
+					this.notifyService.showError('Failed to delete', 'Deleting custom field failed:', err);
 				}
 			);
 	}
