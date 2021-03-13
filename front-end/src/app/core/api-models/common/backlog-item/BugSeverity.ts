@@ -1,6 +1,6 @@
 export enum BugSeverity {
 	critical = 'Critical',
-	hight = 'High',
+	high = 'High',
 	medium = 'Medium',
 	low = 'Low',
 }
