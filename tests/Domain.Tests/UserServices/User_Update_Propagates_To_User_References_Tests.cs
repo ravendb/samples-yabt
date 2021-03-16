@@ -9,7 +9,6 @@ using NSubstitute;
 
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery;
-using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.CommentCommands;
@@ -45,8 +44,8 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			base.ConfigureIocContainer(services);
 
 			_currentUserResolver = Substitute.For<ICurrentUserResolver>();
-			_currentUserResolver.GetCurrentUserId().Returns(c => _currentUserId);
-			services.AddScoped(x => _currentUserResolver);
+			_currentUserResolver.GetCurrentUserId().Returns(_ => _currentUserId);
+			services.AddScoped(_ => _currentUserResolver);
 		}
 
 		#region DELETE User -----------------------------------------
@@ -117,7 +116,7 @@ namespace Raven.Yabt.Domain.Tests.UserServices
 			_currentUserId = userRef.Id!;
 			var backlogItemRef = await CreateBacklogItemWithAComment();
 			_currentUserId = initialUserId;
-
+			
 			// WHEN the user gets deleted
 			await _userCommandService.Delete(userRef.Id!);
 			await SaveChanges();

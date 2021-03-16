@@ -22,9 +22,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByCustomFieldQuery
 
 		public Task<int> GetCountOfBacklogItemsUsingCustomField(string customFieldId)
 		{
-			var customFieldIdForIndex = DbSession.GetIdForDynamicField<CustomField>(customFieldId);
 			var query = DbSession.Query<BacklogItemIndexedForList, BacklogItems_ForList>()
-			                     .Where(i => i.CustomFields![customFieldIdForIndex] != null);
+			                     .Where(i => i.CustomFields![customFieldId] != null);
 			return query.CountAsync();
 		}
 	}

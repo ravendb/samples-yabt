@@ -109,7 +109,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				if (userRef == null)
 					return DomainResult.NotFound<BacklogItemReference>("The user not found");
 
-				backlogItem.Assignee = userRef;
+				backlogItem.Assignee = userRef.RemoveEntityPrefixFromId();
 			}
 
 			backlogItem.AddHistoryRecord(await _userResolver.GetCurrentUserReference(), "Assigned a user");
@@ -132,7 +132,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			entity.Assignee = dto.AssigneeId != null ? await _userResolver.GetReferenceById(dto.AssigneeId) : null;
 	
 			entity.AddHistoryRecord(
-				await _userResolver.GetCurrentUserReference(), 
+				(await _userResolver.GetCurrentUserReference()).RemoveEntityPrefixFromId(), 
 				entity.ModifiedBy.Any() ? "Modified" : "Created"	// TODO: Provide more informative description in case of modifications
 			);
 

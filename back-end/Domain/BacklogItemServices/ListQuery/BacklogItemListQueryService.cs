@@ -103,7 +103,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 
 			if (dto.CurrentUserRelation.HasValue)
 			{
-				var userId = GetUserIdForDynamicField();
+				var userId = _userResolver.GetCurrentUserId();
 				query = dto.CurrentUserRelation.Value switch
 				{
 					// Note: [MentionedUser] & [ModifiedByUser] are nullable fields, but when the LINQ gets converted to RQL the potential NULLs get handled
@@ -115,20 +115,18 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 
 			if (!string.IsNullOrEmpty(dto.AssignedUserId))
 			{
-				var fullUserId = DbSession.GetFullId<User>(dto.AssignedUserId);
-				query = query.Where(t => t.AssignedUserId == fullUserId);
+				query = query.Where(t => t.AssignedUserId == dto.AssignedUserId);
 			}
 
 			// Special filters for user's modifications (modified by, created by, etc.)
 			if (dto.UserModification != null)
 			{
-				var userIdForDynamicField = GetUserIdForDynamicField(dto.UserModification.UserId);
-				var fullUserId = DbSession.GetFullId<User>(dto.UserModification.UserId);
+				var userId = dto.UserModification.UserId;
 
 				query = dto.UserModification.Type switch
 				{
-					BacklogItemModification.ModificationType.Any		 => query.Where(t => t.ModifiedByUser[userIdForDynamicField] > DateTime.MinValue),
-					BacklogItemModification.ModificationType.CreatedOnly => query.Where(t => t.CreatedByUserId == fullUserId),
+					BacklogItemModification.ModificationType.Any		 => query.Where(t => t.ModifiedByUser[userId] > DateTime.MinValue),
+					BacklogItemModification.ModificationType.CreatedOnly => query.Where(t => t.CreatedByUserId == userId),
 					_ => throw new NotSupportedException(),
 				};
 			}
@@ -142,7 +140,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 					if (string.IsNullOrEmpty(customField.Id))
 						continue;
 					var val = dto.CustomField.First(cf => cf.Key == customField.Id).Value;
-					var customFieldIdForIndex = DbSession.GetIdForDynamicField<CustomField>(customField.Id);
+					var customFieldIdForIndex = customField.Id;
 					var op = GetCustomFieldExpression(ref val);
 
 					query = customField.FieldType switch
@@ -208,7 +206,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 				dto.OrderDirection = OrderDirections.Desc;
 			}
 
-			var userKey = GetUserIdForDynamicField();
+			var userKey = _userResolver.GetCurrentUserId();
 
 			return dto.OrderBy switch
 			{
@@ -224,9 +222,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 				_ => throw new NotImplementedException()
 			};
 		}
-
-		private string GetUserIdForDynamicField(string? userId = null) => DbSession.GetIdForDynamicField<User>(userId ?? _userResolver.GetCurrentUserId());
-
+		
 		private enum FieldOperators
 		{
 			Equal,

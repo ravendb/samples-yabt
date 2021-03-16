@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -124,7 +125,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			//	with 1 created by Marge
 			_currentUserId = margeId;
 			await CreateBacklogItem();
-
+			
 			// WHEN the current user is Homer 
 			//		and querying items created/modified by him
 			_currentUserId = homerId;

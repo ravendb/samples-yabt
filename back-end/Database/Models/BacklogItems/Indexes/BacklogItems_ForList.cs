@@ -47,7 +47,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 
 					// Create a dictionary for Modifications
 					_ = ticket.ModifiedBy.GroupBy(m => m.ActionedBy.Id)															// filter & sort by Timestamp
-											.Select(x => CreateField($"{nameof(BacklogItemIndexedForList.ModifiedByUser)}_{x.Key!.Replace("/","").ToLower()}", 
+											.Select(x => CreateField($"{nameof(BacklogItemIndexedForList.ModifiedByUser)}_{x.Key.ToLower()}", 
 																	 x.Max(o => o.Timestamp)
 																	 )
 													),
@@ -58,13 +58,13 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 							select new { user, comment.LastModified }
 						 group um by um.user into g
 						 select CreateField(
-								$"{nameof(BacklogItemIndexedForList.MentionedUser)}_{g.Key.Value!.Replace("/","").ToLower()}",
+								$"{nameof(BacklogItemIndexedForList.MentionedUser)}_{g.Key.Value.ToLower()}",
 								g.Max(f => f.LastModified)
 								),
 					// Create a dictionary for Custom Fields
 					_2 = from x in ticket.CustomFields
 						 let fieldType = LoadDocument<CustomFields.CustomField>(x.Key).FieldType
-						 let key = $"{nameof(BacklogItem.CustomFields)}_{x.Key.Replace("/", "").ToLower()}"
+						 let key = $"{nameof(BacklogItem.CustomFields)}_{x.Key.ToLower()}"
 						 select 
 							(fieldType == CustomFieldType.Text)
 								? CreateField(key, x.Value, false, true)	// search in text Custom Fields
