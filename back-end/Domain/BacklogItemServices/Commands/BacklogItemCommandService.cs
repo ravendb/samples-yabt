@@ -43,10 +43,11 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				return DomainResult.Failed<BacklogItemReference>("Incorrect Backlog structure");
 
 			await DbSession.StoreAsync(ticket);
+			var ticketRef = ticket.ToReference().RemoveEntityPrefixFromId();
 
-			return DomainResult.Success(
-									ticket.ToReference().RemoveEntityPrefixFromId()
-								);
+			UpdateRelatedItems(dto, ticketRef);
+			
+			return DomainResult.Success(ticketRef);
 		}
 
 		public async Task<IDomainResult<BacklogItemReference>> Update<T>(string id, T dto) where T : BacklogItemAddUpdRequestBase
@@ -65,18 +66,29 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			if (entity == null)
 				return DomainResult.Failed<BacklogItemReference>("Incorrect Backlog structure");
 
-			return DomainResult.Success(
-									entity.ToReference().RemoveEntityPrefixFromId()
-								);
+			var ticketRef = entity.ToReference().RemoveEntityPrefixFromId();
+
+			UpdateRelatedItems(dto, ticketRef);
+			
+			return DomainResult.Success(ticketRef);
 		}
 
-		public async Task<IDomainResult<BacklogItemReference>> Delete(string id)
+		public async Task<IDomainResult<BacklogItemReference>> Delete(string shortId)
 		{
-			var ticket = await DbSession.LoadAsync<BacklogItem>(GetFullId(id));
+			var ticket = await DbSession.LoadAsync<BacklogItem>(GetFullId(shortId));
 			if (ticket == null)
 				return DomainResult.NotFound<BacklogItemReference>();
 
 			DbSession.Delete(ticket);
+
+			// Remove references to the ticket from 'Related Items' of other tickets
+			if (ticket.RelatedItems.Any())
+				foreach (var item in ticket.RelatedItems)
+				{
+					DbSession.Advanced.Patch<BacklogItem, BacklogItemRelatedItem>(GetFullId(item.RelatedTo.Id!),
+						x => x.RelatedItems,
+						items => items.RemoveAll(i => i.RelatedTo.Id == shortId));
+				}
 
 			return DomainResult.Success(
 									ticket.ToReference().RemoveEntityPrefixFromId()
@@ -134,7 +146,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			else
 				entity.CustomFields = null;
 
-			entity.RelatedItems = await ResolveChangedRelatedItems(entity.RelatedItems, dto.ChangedRelatedItems);
+			await ResolveChangedRelatedItems(entity.RelatedItems, dto.ChangedRelatedItems);
 
 			// entity.CustomProperties = dto.CustomProperties;	TODO: De-serialise custom properties
 
@@ -153,18 +165,46 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			return entity;
 		}
 
-		private async Task<IList<BacklogItemRelatedItem>?> ResolveChangedRelatedItems(IList<BacklogItemRelatedItem>? existingRelatedItems, IList<BacklogRelationshipAction>? actions)
+		private void UpdateRelatedItems<T>(T dto, BacklogItemReference ticketRef) where T : BacklogItemAddUpdRequestBase
+		{
+			if (dto.ChangedRelatedItems?.Any() != true) return;
+			
+			foreach (var link in dto.ChangedRelatedItems)
+			{
+				if (link.ActionType == BacklogRelationshipActionType.Add)
+					DbSession.Advanced.Patch<BacklogItem, BacklogItemRelatedItem>(
+						GetFullId(link.BacklogItemId),
+						x => x.RelatedItems,
+						items => items.Add(
+							new BacklogItemRelatedItem
+							{
+								RelatedTo = ticketRef,
+								LinkType = link.RelationType.GetMirroredType()
+							}));
+				else
+				{
+					var relatedId = ticketRef.Id!;
+					var relationType = link.RelationType.GetMirroredType();
+					DbSession.Advanced.Patch<BacklogItem, BacklogItemRelatedItem>(
+						GetFullId(link.BacklogItemId),
+						x => x.RelatedItems,
+						items => items.RemoveAll(
+							i => i.RelatedTo.Id! == relatedId && i.LinkType == relationType));
+				}
+			}
+		}
+
+		private async Task ResolveChangedRelatedItems(List<BacklogItemRelatedItem> existingRelatedItems, IList<BacklogRelationshipAction>? actions)
 		{
 			if (actions == null)
-				return existingRelatedItems;
+				return;
 
 			// Remove 'old' links
 			foreach (var (id, linkType) in from a in actions
 												where a.ActionType == BacklogRelationshipActionType.Remove
-												select (GetFullId(a.BacklogItemId), a.RelationType))
+												select (a.BacklogItemId, a.RelationType))
 			{
-				var itemToRemove = existingRelatedItems?.FirstOrDefault(existing => existing.RelatedTo.Id == id && existing.LinkType == linkType);
-				if (itemToRemove != null) existingRelatedItems?.Remove(itemToRemove);
+				existingRelatedItems.RemoveAll(existing => existing.RelatedTo.Id == id && existing.LinkType == linkType);
 			}
 			
 			// Add new links
@@ -175,8 +215,6 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				 ).ToArray();
 			if (array.Any())
 			{
-				existingRelatedItems ??= new List<BacklogItemRelatedItem>();
-				
 				// Resolve new references
 				var fullIds = array.Select(a => a.fullId).Distinct();
 				var references = await (from b in DbSession.Query<BacklogItemIndexedForList, BacklogItems_ForList>()
@@ -194,10 +232,9 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 					var relatedTo = references.SingleOrDefault(r => r.Id == fullId);
 					if (relatedTo == null)
 						continue;
-					existingRelatedItems.Add(new BacklogItemRelatedItem { LinkType = linkType, RelatedTo = relatedTo });
+					existingRelatedItems.Add(new BacklogItemRelatedItem { LinkType = linkType, RelatedTo = relatedTo.RemoveEntityPrefixFromId() });
 				}
 			}
-			return existingRelatedItems;
 		}
 	}
 }

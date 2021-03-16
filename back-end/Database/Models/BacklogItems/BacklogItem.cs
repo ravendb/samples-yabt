@@ -6,7 +6,6 @@ using Newtonsoft.Json;
 using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Database.Common.References;
 // ReSharper disable RedundantCast
-// ReSharper disable UnusedAutoPropertyAccessor.Global
 
 namespace Raven.Yabt.Database.Models.BacklogItems
 {
@@ -59,11 +58,17 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		/// <summary>
 		///		Related tickets
 		/// </summary>
-		public IList<BacklogItemRelatedItem>? RelatedItems { get; set; }
+		/// <remarks>
+		///		Having an empty array by default simplifies processing in the code - no need to account for NULL
+		/// </remarks>
+		public List<BacklogItemRelatedItem> RelatedItems { get; } = new ();
 
 		/// <summary>
 		///		Comments on the ticket
 		/// </summary>
+		/// <remarks>
+		///		Having an empty array by default simplifies processing in the code - no need to account for NULL
+		/// </remarks>
 		public IList<Comment> Comments { get; } = new List<Comment>();
 
 		/// <summary>

@@ -25,22 +25,21 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				HistoryDescOrder = GetModifiedBy(entity.ModifiedBy),
 				Tags = entity.Tags,
 				Comments = GetCommentsList(entity.Comments),
-				RelatedItems = GetRelatedItems(entity.RelatedItems),
+				RelatedItems = entity.RelatedItems.AsReadOnly(),
 				CustomFields = entity.CustomFields,
 				Type = entity.Type
 			};
 
-			if (entity is BacklogItemBug entityBug 
-				&& response is BugGetResponse responseBug)
+			switch (entity)
 			{
-				responseBug.Priority = entityBug.Priority;
-				responseBug.Severity = entityBug.Severity;
-				responseBug.StepsToReproduce = entityBug.StepsToReproduce;
-			}
-			else if (entity is BacklogItemUserStory entityUserStory
-				  && response is UserStoryGetResponse responseUserStory)
-			{
-				responseUserStory.AcceptanceCriteria = entityUserStory.AcceptanceCriteria;
+				case BacklogItemBug entityBug when response is BugGetResponse responseBug:
+					responseBug.Priority = entityBug.Priority;
+					responseBug.Severity = entityBug.Severity;
+					responseBug.StepsToReproduce = entityBug.StepsToReproduce;
+					break;
+				case BacklogItemUserStory entityUserStory when response is UserStoryGetResponse responseUserStory:
+					responseUserStory.AcceptanceCriteria = entityUserStory.AcceptanceCriteria;
+					break;
 			}
 
 			return response;
@@ -65,16 +64,6 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 					LastUpdated = comment.LastModified,
 					MentionedUserIds = comment.MentionedUserIds?.ToDictionary(pair => pair.Key, pair => pair.Value.GetShortId()!)
 				}).ToList().AsReadOnly();
-		}
-		
-		private static IReadOnlyList<BacklogItemRelatedItem>? GetRelatedItems(IList<BacklogItemRelatedItem>? relatedItems)
-		{
-			if (relatedItems == null)
-				return null;
-			
-			var ret = (from item in relatedItems.OrderByDescending(i => i.LinkType) select item with {}).ToList();
-			ret.RemoveEntityPrefixFromIds(i => i.RelatedTo);
-			return ret.AsReadOnly();
 		}
 	}
 }
