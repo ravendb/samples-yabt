@@ -53,9 +53,9 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 													),
 					// Create a dictionary for mentioned users
 					_1 = from um in 
-							(from comment in ticket.Comments 
-							 from user in comment.MentionedUserIds 
-							 select new { user, comment.LastModified })
+							from comment in ticket.Comments 
+							from user in comment.MentionedUserIds 
+							select new { user, comment.LastModified }
 						 group um by um.user into g
 						 select CreateField(
 								$"{nameof(BacklogItemIndexedForList.MentionedUser)}_{g.Key.Value!.Replace("/","").ToLower()}",

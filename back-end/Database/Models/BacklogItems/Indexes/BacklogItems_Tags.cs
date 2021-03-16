@@ -5,7 +5,7 @@ using Raven.Client.Documents.Indexes;
 namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 {
 	// ReSharper disable once InconsistentNaming
-	public partial class BacklogItems_Tags : AbstractIndexCreationTask<BacklogItem, BacklogItemTagsIndexed>
+	public class BacklogItems_Tags : AbstractIndexCreationTask<BacklogItem, BacklogItemTagsIndexed>
 	{
 		public BacklogItems_Tags()
 		{

@@ -13,6 +13,9 @@ namespace Raven.Yabt.Domain.Infrastructure
 		/// <summary>
 		/// 	Add a RavenDB patch request for executing after calling <see cref="IAsyncDocumentSession.SaveChangesAsync"/> 
 		/// </summary>
+		/// <remarks>
+		///		Operation against indexes can't be performed in the same transaction. This method offloads the operation to the Server to run
+		/// </remarks>
 		void AddDeferredPatchQuery(IndexQuery patchQuery);
 	}
 

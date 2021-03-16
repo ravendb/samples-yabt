@@ -53,14 +53,14 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 			return ret.AsReadOnly();
 		}
 		
-		private static IReadOnlyList<BacklogItemCommentListGetResponse>? GetCommentsList(IList<Comment> comments)
+		private static IReadOnlyList<BacklogItemCommentListGetResponse> GetCommentsList(IList<Comment> comments)
 		{
 			return (from comment in comments.OrderByDescending(c => c.Created)
 				select new BacklogItemCommentListGetResponse
 				{
 					Id = comment.Id,
 					Message = comment.Message,
-					Author = comment.Author is null ? null : (comment.Author with {}).RemoveEntityPrefixFromId(),
+					Author = (comment.Author with {}).RemoveEntityPrefixFromId(),
 					Created = comment.Created,
 					LastUpdated = comment.LastModified,
 					MentionedUserIds = comment.MentionedUserIds?.ToDictionary(pair => pair.Key, pair => pair.Value.GetShortId()!)
