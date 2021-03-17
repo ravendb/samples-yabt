@@ -12,6 +12,6 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query
 		
 		Task<CustomFieldListGetResponse[]> GetArray(CustomFieldListGetRequest dto);
 
-		Task<IDictionary<string, string>> GetFullIdsOfExistingItems(IEnumerable<string> ids);
+		Task<IList<string>> VerifyExistingItems(IEnumerable<string> ids);
 	}
 }

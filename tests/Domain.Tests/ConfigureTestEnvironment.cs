@@ -65,7 +65,7 @@ namespace Raven.Yabt.Domain.Tests
 			services.RegisterModules(Assembly.GetAssembly(typeof(BaseService<>))!);
 
 			// Register the document store & session
-			services.AddScoped(x =>
+			services.AddScoped(_ =>
 				{
 					IDocumentStore store = GetDocumentStore();
 					// Create all indexes

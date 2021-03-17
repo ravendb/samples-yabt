@@ -8,7 +8,6 @@ using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Models.CustomFields;
 using Raven.Yabt.Database.Models.CustomFields.Indexes;
-using Raven.Yabt.Domain.BacklogItemServices.ByCustomFieldQuery;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.CustomFieldServices.Query.DTOs;
 using Raven.Yabt.Domain.Helpers;
@@ -73,7 +72,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query
 			return query.ProjectInto<CustomFieldListGetResponse>().ToArrayAsync();
 		}
 
-		public async Task<IDictionary<string, string>> GetFullIdsOfExistingItems(IEnumerable<string> ids)
+		public async Task<IList<string>> VerifyExistingItems(IEnumerable<string> ids)
 		{
 			var fullIds = ids.Select(GetFullId);
 
@@ -81,7 +80,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query
 									where b.Id.In(fullIds)
 									select b.Id
 									).ToArrayAsync();
-			return resolvedIds.ToDictionary(id => id.GetShortId()!, id => id);
+			return resolvedIds.Select(id => id.GetShortId()!).ToList();
 		}
 	}
 }

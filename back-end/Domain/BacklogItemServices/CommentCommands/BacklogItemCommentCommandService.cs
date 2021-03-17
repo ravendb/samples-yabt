@@ -34,7 +34,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 			var ticket = ticketRes.Value;
 
 			var mentionedUsers = await _mentionedUserResolver.GetMentionedUsers(message);
-			var currentUser = (await _userResolver.GetCurrentUserReference()).RemoveEntityPrefixFromId();
+			var currentUser = await _userResolver.GetCurrentUserReference();
 			
 			var comment = new Comment
 				{

@@ -34,7 +34,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 											if (mentionedUsers != null)
 												Object.keys(mentionedUsers).forEach(key =>
 												{{
-													if (mentionedUsers[key].toLowerCase() == $userId.toLowerCase())
+													if (mentionedUsers[key].toUpperCase() == $userId.toUpperCase())
 														delete mentionedUsers[key];
 												}});
 											return comment;
@@ -71,7 +71,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 											if (mentionedUsers != null)
 												Object.keys(mentionedUsers).forEach(key =>
 												{{
-													if (mentionedUsers[key].toLowerCase() == $userId.toLowerCase())
+													if (mentionedUsers[key].toUpperCase() == $userId.toUpperCase())
 													{{
 														// Replace the element in the dictionary with the new reference  
 														delete mentionedUsers[key];

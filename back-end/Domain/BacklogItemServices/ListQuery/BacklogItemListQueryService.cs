@@ -10,8 +10,6 @@ using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Database.Models.BacklogItems.Indexes;
-using Raven.Yabt.Database.Models.CustomFields;
-using Raven.Yabt.Database.Models.Users;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.CustomFieldServices.Query;

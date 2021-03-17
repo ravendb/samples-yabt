@@ -32,16 +32,16 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 								WHERE i.{nameof(BacklogItemIndexedForList.ModifiedBy)}_{sanitisedId} != null OR i.{nameof(BacklogItemIndexedForList.AssignedUserId)} == $userId
 								UPDATE
 								{{
-									if (i.{nameof(BacklogItemIndexedForList.Assignee)}.{nameof(UserReference.Id)}.toLowerCase() == $userId) {{
+									if (i.{nameof(BacklogItemIndexedForList.Assignee)}.{nameof(UserReference.Id)}.toUpperCase() == $userId) {{
 										i.{nameof(BacklogItemIndexedForList.Assignee)} = null;
 									}}
 									i.{nameof(BacklogItem.Comments)}.forEach(comment => {{
-										if (comment.{nameof(Comment.Author)}.{nameof(UserReference.Id)}.toLowerCase() == $userId) {{
+										if (comment.{nameof(Comment.Author)}.{nameof(UserReference.Id)}.toUpperCase() == $userId) {{
 											comment.{nameof(Comment.Author)}.{nameof(UserReference.Id)} = null;
 										}}
 									}});
 									i.{nameof(BacklogItem.ModifiedBy)}.forEach(modif => {{
-																			if (modif.{nameof(BacklogItemHistoryRecord.ActionedBy)}.{nameof(UserReference.Id)}.toLowerCase() == $userId)
+																			if (modif.{nameof(BacklogItemHistoryRecord.ActionedBy)}.{nameof(UserReference.Id)}.toUpperCase() == $userId)
 																				modif.{nameof(BacklogItemHistoryRecord.ActionedBy)}.{nameof(UserReference.Id)} = null;
 																		}});
 								}}";
@@ -50,7 +50,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				Query = queryString,
 				QueryParameters = new Parameters
 				{
-					{ "userId", userId.ToLower() }
+					{ "userId", userId.ToUpper() }
 				}
 			};
 
@@ -70,16 +70,16 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 								WHERE i.{nameof(BacklogItemIndexedForList.ModifiedBy)}_{sanitisedId} != null OR i.{nameof(BacklogItemIndexedForList.AssignedUserId)} == $userId
 								UPDATE
 								{{
-									if (i.{nameof(BacklogItemIndexedForList.Assignee)}.{nameof(UserReference.Id)}.toLowerCase() == $userId) {{
+									if (i.{nameof(BacklogItemIndexedForList.Assignee)}.{nameof(UserReference.Id)}.toUpperCase() == $userId) {{
 										i.{nameof(BacklogItemIndexedForList.Assignee)} = $userRef;
 									}}
 									i.{nameof(BacklogItem.Comments)}.forEach(comment => {{
-										if (comment.{nameof(Comment.Author)}.{nameof(UserReference.Id)}.toLowerCase() == $userId) {{
+										if (comment.{nameof(Comment.Author)}.{nameof(UserReference.Id)}.toUpperCase() == $userId) {{
 											comment.{nameof(Comment.Author)} = $userRef;
 										}}
 									}});
 									i.{nameof(BacklogItem.ModifiedBy)}.forEach(modif => {{
-																			if (modif.{nameof(BacklogItemHistoryRecord.ActionedBy)}.{nameof(UserReference.Id)}.toLowerCase() == $userId)
+																			if (modif.{nameof(BacklogItemHistoryRecord.ActionedBy)}.{nameof(UserReference.Id)}.toUpperCase() == $userId)
 																				modif.{nameof(BacklogItemHistoryRecord.ActionedBy)} = $userRef;
 																		}});
 								}}";
@@ -88,7 +88,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				Query = queryString,
 				QueryParameters = new Parameters
 				{
-					{ "userId", GetSanitisedId(newUserReference.Id).ToLower() },
+					{ "userId", GetSanitisedId(newUserReference.Id).ToUpper() },
 					{ "userRef", newUserReference },
 				}
 			};

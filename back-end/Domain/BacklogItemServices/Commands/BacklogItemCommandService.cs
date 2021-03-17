@@ -132,23 +132,21 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			entity.Assignee = dto.AssigneeId != null ? await _userResolver.GetReferenceById(dto.AssigneeId) : null;
 	
 			entity.AddHistoryRecord(
-				(await _userResolver.GetCurrentUserReference()).RemoveEntityPrefixFromId(), 
+				await _userResolver.GetCurrentUserReference(), 
 				entity.ModifiedBy.Any() ? "Modified" : "Created"	// TODO: Provide more informative description in case of modifications
 			);
 
 			if (dto.CustomFields != null)
 			{
-				var verifiedCustomFieldIds = await _customFieldQueryService.GetFullIdsOfExistingItems(
+				var verifiedCustomFieldIds = await _customFieldQueryService.VerifyExistingItems(
 						dto.CustomFields.Where(pair => pair.Value != null).Select(pair => pair.Key)
 					);
-				entity.CustomFields = verifiedCustomFieldIds.ToDictionary(x => x.Value, x => dto.CustomFields[x.Key]!);
+				entity.CustomFields = verifiedCustomFieldIds.ToDictionary(x => x, x => dto.CustomFields[x]!);
 			}
 			else
 				entity.CustomFields = null;
 
 			await ResolveChangedRelatedItems(entity.RelatedItems, dto.ChangedRelatedItems);
-
-			// entity.CustomProperties = dto.CustomProperties;	TODO: De-serialise custom properties
 
 			if (dto is BugAddUpdRequest bugDto && entity is BacklogItemBug bugEntity)
 			{
