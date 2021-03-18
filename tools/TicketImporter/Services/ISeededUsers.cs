@@ -7,6 +7,6 @@ namespace Raven.Yabt.TicketImporter.Services
 {
 	internal interface ISeededUsers
 	{
-		Task<IList<UserReference>> GetGeneratedUsers();
+		Task<IList<UserReference>> GetGeneratedOrFetchedUsers();
 	}
 }

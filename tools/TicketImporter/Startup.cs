@@ -1,7 +1,5 @@
-﻿using System;
-using System.Reflection;
+﻿using System.Reflection;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
 using Raven.Yabt.Domain.Common;
