@@ -24,13 +24,12 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery
 			if (ticket == null)
 				return DomainResult.NotFound<BacklogItemGetResponseBase>();
 			
-			// Ignore any changes to the object on saving
-			DbSession.Advanced.IgnoreChangesFor(ticket);
-
 			var dto = ticket.Type switch
 			{
-				BacklogItemType.Bug			=> (ticket as BacklogItemBug)		?.ConvertToDto<BacklogItemBug, BugGetResponse>() as  BacklogItemGetResponseBase,
-				BacklogItemType.UserStory	=> (ticket as BacklogItemUserStory)	?.ConvertToDto<BacklogItemUserStory, UserStoryGetResponse>() as BacklogItemGetResponseBase,
+				BacklogItemType.Bug			=> (ticket as BacklogItemBug)		?.ConvertToDto<BacklogItemBug, 		BugGetResponse>()		as BacklogItemGetResponseBase,
+				BacklogItemType.UserStory	=> (ticket as BacklogItemUserStory)	?.ConvertToDto<BacklogItemUserStory,UserStoryGetResponse>() as BacklogItemGetResponseBase,
+				BacklogItemType.Task		=> (ticket as BacklogItemTask)		?.ConvertToDto<BacklogItemTask,		TaskGetResponse>()		as BacklogItemGetResponseBase,
+				BacklogItemType.Feature		=> (ticket as BacklogItemFeature)	?.ConvertToDto<BacklogItemFeature,	FeatureGetResponse>()	as BacklogItemGetResponseBase,
 				_ => throw new NotImplementedException($"Not supported Backlog Item Type: {ticket.Type}"),
 			};
 			if (dto == null)

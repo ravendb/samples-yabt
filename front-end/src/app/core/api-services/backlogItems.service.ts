@@ -4,6 +4,8 @@ import { BacklogAddUpdAllFieldsRequest } from '@core/api-models/backlog-item/ite
 import { BacklogItemCommentAddUpdateRequest } from '@core/api-models/backlog-item/item/BacklogItemCommentAddUpdateRequest';
 import { BacklogItemGetResponseAllFields } from '@core/api-models/backlog-item/item/BacklogItemGetResponseAllFields';
 import { BugAddUpdRequest } from '@core/api-models/backlog-item/item/BugAddUpdRequest';
+import { FeatureAddUpdRequest } from '@core/api-models/backlog-item/item/FeatureAddUpdRequest';
+import { TaskAddUpdRequest } from '@core/api-models/backlog-item/item/TaskAddUpdRequest';
 import { UserStoryAddUpdRequest } from '@core/api-models/backlog-item/item/UserStoryAddUpdRequest';
 import {
 	BacklogItemListGetRequest,
@@ -46,6 +48,10 @@ export class BacklogItemsService extends BaseApiService {
 				return (request: BugAddUpdRequest) => (!!id ? this.put(`${id}/bug`, request) : this.post('/bug', request));
 			case 'userStory':
 				return (request: UserStoryAddUpdRequest) => (!!id ? this.put(`${id}/story`, request) : this.post('/story', request));
+			case 'task':
+				return (request: TaskAddUpdRequest) => (!!id ? this.put(`${id}/task`, request) : this.post('/task', request));
+			case 'feature':
+				return (request: FeatureAddUpdRequest) => (!!id ? this.put(`${id}/feature`, request) : this.post('/feature', request));
 			default:
 				throw new Error('Unsupported backlog item type');
 		}

@@ -73,6 +73,12 @@
 						[cdkAutosizeMinRows]="5"></textarea>
 				</mat-form-field>
 			</backlog-item-section>
+			<backlog-item-section *ngIf="type == 'task' || type == 'feature'" title="Description">
+				<mat-form-field class="full-width side-offset">
+					<textarea matInput formControlName="description" cdkTextareaAutosize #autosize="cdkTextareaAutosize"
+						[cdkAutosizeMinRows]="5"></textarea>
+				</mat-form-field>
+			</backlog-item-section>
 
 			<backlog-item-section title="Comments" *ngIf="!!editId && (currentUserId$ | async); let userId">
 				<div class="comment-section">
