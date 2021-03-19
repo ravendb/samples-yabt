@@ -10,7 +10,6 @@ using Microsoft.Net.Http.Headers;
 
 using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.WebApi.Configuration;
-using Raven.Yabt.WebApi.Configuration.Settings;
 
 namespace Raven.Yabt.WebApi
 {
@@ -20,12 +19,10 @@ namespace Raven.Yabt.WebApi
 		private const string CookieNameApiUserKeys = "apiUserKeys";
 		
 		private readonly IConfiguration _configuration;
-		private readonly IWebHostEnvironment _hostingEnvironment;
 
-		public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
+		public Startup(IConfiguration configuration)
 		{
 			_configuration = configuration;
-			_hostingEnvironment = hostingEnvironment;
 		}
 
 		/// <summary>
@@ -60,9 +57,11 @@ namespace Raven.Yabt.WebApi
 		/// <remarks>
 		///		Links for 'UseStaticFiles' vs 'UseSpa' - https://stackoverflow.com/a/56977859/968003
 		/// </remarks>
-		public void Configure(IApplicationBuilder app, AppSettings settings)
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
 		{
 			app.UseHttpsRedirection();
+			
+			app.AddAppExceptionHandler(env);
 
 			// Serve files inside of web root (wwwroot folder) other than 'index.html'
 			// Without this method Kestrel would return 'index.html' on all the requests for static content 

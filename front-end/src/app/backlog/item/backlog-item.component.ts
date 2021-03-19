@@ -117,7 +117,7 @@ export class BacklogItemComponent implements OnInit {
 						this.pageTitle.addLastBreadcrumbs(lastBreadcrumbs);
 					},
 					err => {
-						this.notifyService.showError('Not found', '', err);
+						this.notifyService.showError('Failed to fetch', '', err);
 					}
 				)
 		);
