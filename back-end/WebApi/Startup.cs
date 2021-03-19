@@ -1,15 +1,13 @@
-using System;
 using System.Reflection;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Net.Http.Headers;
 
 using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.WebApi.Configuration;
+using Raven.Yabt.WebApi.Configuration.Settings;
 
 namespace Raven.Yabt.WebApi
 {
@@ -51,7 +49,7 @@ namespace Raven.Yabt.WebApi
 		/// <summary>
 		///		This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
 		/// </summary>
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AppSettings appSettings)
 		{
 			app.UseHttpsRedirection();
 			
@@ -66,7 +64,7 @@ namespace Raven.Yabt.WebApi
 
 			app.UseEndpoints(endpoints => endpoints.MapControllers());
 
-			app.AddAppSpaStaticFiles();
+			app.AddAppSpaStaticFiles(appSettings.UserApiKey);
 		}
 	}
 }

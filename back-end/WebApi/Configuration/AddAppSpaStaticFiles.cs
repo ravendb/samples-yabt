@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Linq;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
+
+using Raven.Yabt.WebApi.Configuration.Settings;
 
 namespace Raven.Yabt.WebApi.Configuration
 {
@@ -20,7 +23,7 @@ namespace Raven.Yabt.WebApi.Configuration
 		/// <remarks>
 		///		Links for 'UseStaticFiles' vs 'UseSpa' - https://stackoverflow.com/a/56977859/968003
 		/// </remarks>
-		public static void AddAppSpaStaticFiles(this IApplicationBuilder app)
+		public static void AddAppSpaStaticFiles(this IApplicationBuilder app, AppSettingsUserApiKey[] userApiKeys)
 		{
 			// Serve files inside of web root (wwwroot folder) other than 'index.html'
 			// Without this method Kestrel would return 'index.html' on all the requests for static content 
@@ -34,6 +37,8 @@ namespace Raven.Yabt.WebApi.Configuration
 						headers.CacheControl = new CacheControlHeaderValue { MaxAge = TimeSpan.FromDays(12*30) };
 					}
 				});
+
+			var apiKeys = string.Join(';', userApiKeys.Select(k => k.ApiKey));
 
 			// Does 3 things:
 			//	- Rewrites all requests to the default page;
@@ -60,6 +65,7 @@ namespace Raven.Yabt.WebApi.Configuration
 						//	a) inject into 'index.html' (would need add an MVC controller to serve altered 'index.html')
 						//	b) pass into cookie (it's simple, see below) 
 						response.Cookies.Append(CookieNameApiBaseUrl, "/");
+						response.Cookies.Append(CookieNameApiUserKeys, apiKeys);
 					}
 				});
 		}
