@@ -2,5 +2,6 @@
 {
 	public record TaskAddUpdRequest : BacklogItemAddUpdRequestBase
 	{
+		public string? Description { get; set; }
 	}
 }

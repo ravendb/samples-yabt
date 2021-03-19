@@ -40,6 +40,12 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				case BacklogItemUserStory entityUserStory when response is UserStoryGetResponse responseUserStory:
 					responseUserStory.AcceptanceCriteria = entityUserStory.AcceptanceCriteria;
 					break;
+				case BacklogItemTask entityTask when response is TaskGetResponse responseTask:
+					responseTask.Description = entityTask.Description;
+					break;
+				case BacklogItemFeature entityFeature when response is FeatureGetResponse responseFeature:
+					responseFeature.Description = entityFeature.Description;
+					break;
 			}
 
 			return response;

@@ -2,5 +2,6 @@
 {
 	public record FeatureAddUpdRequest : BacklogItemAddUpdRequestBase
 	{
+		public string? Description { get; set; }
 	}
 }

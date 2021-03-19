@@ -87,6 +87,7 @@ export class BacklogItemComponent implements OnInit {
 			relatedItems: [null],
 			customFields: [null],
 			acceptanceCriteria: [null, [CustomValidators.requiredWhen(() => this.type == 'userStory')]],
+			description: [null, [CustomValidators.requiredWhen(() => this.type == 'task' || this.type == 'feature')]],
 			stepsToReproduce: [null, [CustomValidators.requiredWhen(() => this.type == 'bug')]],
 			priority: [null],
 			severity: [null],
@@ -219,6 +220,7 @@ export class BacklogItemComponent implements OnInit {
 			relatedItems: related,
 			customFields: getDto.customFields,
 			acceptanceCriteria: getDto.acceptanceCriteria,
+			description: getDto.description,
 			stepsToReproduce: getDto.stepsToReproduce,
 		} as BacklogAddUpdAllFieldsRequest;
 	}

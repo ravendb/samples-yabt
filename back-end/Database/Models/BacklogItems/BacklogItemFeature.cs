@@ -5,5 +5,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 	public class BacklogItemFeature : BacklogItem
 	{
 		public override BacklogItemType Type { get; set; } = BacklogItemType.Feature;
+
+		public string? Description { get; set; }
 	}
 }

@@ -72,16 +72,31 @@ namespace Raven.Yabt.WebApi.Controllers
 		/// <summary>
 		///		Create a new user story
 		/// </summary>
-		/// <remarks> 
-		///		.NET is not friendly with ambiguous input parameters in controller methods. It has no support of generic controller methods.
-		///		It could be possible to have one POST (create) method and use 'dynamic' type of <paramref name="dto"/>, but finding all derived classes from <see cref="BacklogItemAddUpdRequestBase"/>
-		///		and matching them to our DTO would be on our shoulders.
-		/// </remarks>
 		[HttpPost("story")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public Task<ActionResult<BacklogItemReference>> Create([FromServices] IBacklogItemCommandService service, 
 		                                                       UserStoryAddUpdRequest dto) 
+			=> service.Create(dto).ToActionResultOfT();
+
+		/// <summary>
+		///		Create a new task
+		/// </summary>
+		[HttpPost("task")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public Task<ActionResult<BacklogItemReference>> Create([FromServices] IBacklogItemCommandService service, 
+		                                                       TaskAddUpdRequest dto) 
+			=> service.Create(dto).ToActionResultOfT();
+
+		/// <summary>
+		///		Create a new feature
+		/// </summary>
+		[HttpPost("feature")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public Task<ActionResult<BacklogItemReference>> Create([FromServices] IBacklogItemCommandService service, 
+		                                                       FeatureAddUpdRequest dto) 
 			=> service.Create(dto).ToActionResultOfT();
 
 		#endregion / POST requests --------------
@@ -109,12 +124,6 @@ namespace Raven.Yabt.WebApi.Controllers
 		/// <summary>
 		///		Update a user story
 		/// </summary>
-		/// <remarks> 
-		///		The same as for the POST methods.
-		///		.NET is not friendly with ambiguous input parameters in controller methods. It has no support of generic controller methods.
-		///		It could be possible to have one POST (create) method and use 'dynamic' type of <paramref name="dto"/>, but finding all derived classes from <see cref="BacklogItemAddUpdRequestBase"/>
-		///		and matching them to our DTO would be on our shoulders.
-		/// </remarks>
 		[HttpPut("{id}/story")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -122,6 +131,30 @@ namespace Raven.Yabt.WebApi.Controllers
 		public Task<ActionResult<BacklogItemReference>> Update([FromServices] IBacklogItemCommandService service,
 																[FromRoute] string id,
 																UserStoryAddUpdRequest dto)
+			=> service.Update(id, dto).ToActionResultOfT();
+
+		/// <summary>
+		///		Update a task
+		/// </summary>
+		[HttpPut("{id}/task")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public Task<ActionResult<BacklogItemReference>> Update([FromServices] IBacklogItemCommandService service,
+		                                                       [FromRoute] string id,
+		                                                       TaskAddUpdRequest dto)
+			=> service.Update(id, dto).ToActionResultOfT();
+
+		/// <summary>
+		///		Update a feature
+		/// </summary>
+		[HttpPut("{id}/feature")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public Task<ActionResult<BacklogItemReference>> Update([FromServices] IBacklogItemCommandService service,
+		                                                       [FromRoute] string id,
+		                                                       FeatureAddUpdRequest dto)
 			=> service.Update(id, dto).ToActionResultOfT();
 
 		/// <summary>

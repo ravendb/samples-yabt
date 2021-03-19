@@ -161,6 +161,14 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			{
 				storyEntity.AcceptanceCriteria = storyDto.AcceptanceCriteria;
 			}
+			else if (dto is TaskAddUpdRequest taskDto && entity is BacklogItemTask taskEntity)
+			{
+				taskEntity.Description = taskDto.Description;
+			}
+			else if (dto is FeatureAddUpdRequest featureDto && entity is BacklogItemFeature featureEntity)
+			{
+				featureEntity.Description = featureDto.Description;
+			}
 
 			return entity;
 		}
