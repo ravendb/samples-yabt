@@ -98,8 +98,12 @@ namespace Raven.Yabt.TicketImporter.Services
 								BacklogItemType.UserStory => ConvertToBacklogItem<UserStoryAddUpdRequest>(issue, userReferences, (customFieldId, gitHubUrl),
 									d => d.AcceptanceCriteria = issue.Body
 									),
-								BacklogItemType.Task => ConvertToBacklogItem<TaskAddUpdRequest>(issue, userReferences, (customFieldId, gitHubUrl), null),
-								BacklogItemType.Feature => ConvertToBacklogItem<TaskAddUpdRequest>(issue, userReferences, (customFieldId, gitHubUrl), null),
+								BacklogItemType.Task => ConvertToBacklogItem<TaskAddUpdRequest>(issue, userReferences, (customFieldId, gitHubUrl),
+									d => d.Description = issue.Body
+								),
+								BacklogItemType.Feature => ConvertToBacklogItem<TaskAddUpdRequest>(issue, userReferences, (customFieldId, gitHubUrl), 
+									d => d.Description = issue.Body
+								),
 								_ => throw new NotImplementedException("Type not supported")
 							};
 
@@ -147,12 +151,6 @@ namespace Raven.Yabt.TicketImporter.Services
 			{
 				dto.ChangedRelatedItems = new List<BacklogRelationshipAction>
 				{
-					new()
-					{
-						BacklogItemId = _createdTicketIds[rnd.Next(_createdTicketIds.Count-1)], 
-						ActionType = BacklogRelationshipActionType.Add, 
-						RelationType = (BacklogRelationshipType) rnd.Next(Enum.GetNames(typeof(BacklogRelationshipType)).Length)
-					},
 					new()
 					{
 						BacklogItemId = _createdTicketIds[rnd.Next(_createdTicketIds.Count-1)], 

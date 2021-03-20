@@ -50,7 +50,7 @@ namespace Raven.Yabt.TicketImporter.Configuration
 		/// <summary>
 		///		Percentage of the tickets that have 'Related Items'
 		/// </summary>
-		public double PartOfTicketsWithRelatedItems { get; private set; } = .3;
+		public double PartOfTicketsWithRelatedItems { get; private set; } = .1;
 		/// <summary>
 		///		Percentage of assigned tickets
 		/// </summary>
