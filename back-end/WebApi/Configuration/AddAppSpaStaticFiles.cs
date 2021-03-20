@@ -64,8 +64,8 @@ namespace Raven.Yabt.WebApi.Configuration
 						// Two options to pass the API URL into the SPA:
 						//	a) inject into 'index.html' (would need add an MVC controller to serve altered 'index.html')
 						//	b) pass into cookie (it's simple, see below) 
-						response.Cookies.Append(CookieNameApiBaseUrl, "/");
-						response.Cookies.Append(CookieNameApiUserKeys, apiKeys);
+						response.Cookies.Append(CookieNameApiBaseUrl, "/", new CookieOptions { MaxAge = TimeSpan.FromSeconds(30) });
+						response.Cookies.Append(CookieNameApiUserKeys, apiKeys, new CookieOptions { MaxAge = TimeSpan.FromSeconds(30) });
 					}
 				});
 		}
