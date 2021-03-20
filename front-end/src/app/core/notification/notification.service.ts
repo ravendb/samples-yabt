@@ -30,7 +30,9 @@ export class NotificationService {
 
 	showError(title: string, htmlBody: string, errDetails: HttpErrorDetails | undefined = undefined): Observable<void> {
 		if (!!errDetails) {
-			let addedMsg = (!!errDetails.title ? '<br>' + errDetails.title : '') + (!!errDetails.detail ? '<br>' + errDetails.detail : '');
+			let addedMsg =
+				(!!errDetails.title ? '<br>' + errDetails.title : '') +
+				(!!errDetails.detail ? '<br>' + errDetails.detail.replace('\n', '<br>\n') : '');
 			if (!addedMsg) addedMsg = '' + errDetails;
 			htmlBody += addedMsg;
 		}

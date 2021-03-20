@@ -126,7 +126,6 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			// the main ticket's 'Related Item' are empty
 			var (mainTicket, _) = await _queryService.GetById(mainTicketId!);
 			Assert.True(mainTicket.RelatedItems?.Any() != true);
-			WaitForUserToContinueTheTest(DbSession.Advanced.DocumentStore);
 			// and the the referred ticket got the 'Related Item' deleted too
 			var (refTicket, _) = await _queryService.GetById(refTicketId!);
 			Assert.True(refTicket.RelatedItems?.Any() != true);

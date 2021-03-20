@@ -46,7 +46,7 @@ namespace Raven.Yabt.WebApi.Configuration
 				});
 		}
 
-		public static void ConfigureSwagger(this IApplicationBuilder app)
+		public static void AddAppSwaggerUi(this IApplicationBuilder app)
 		{
 			app.UseSwagger();
 			app.UseSwaggerUI(options =>

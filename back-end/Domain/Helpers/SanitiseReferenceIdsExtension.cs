@@ -104,19 +104,5 @@ namespace Raven.Yabt.Domain.Helpers
 
 			return $"{prefix}/{shortId}";
 		}
-
-		/// <summary>
-		///		Gets a special form of the ID for using in the dynamic fields
-		/// </summary>
-		/// <remarks>
-		///		Full ID can't be used due to https://issues.hibernatingrhinos.com/issue/RavenDB-15235.
-		///		Short ID can't be used due to https://issues.hibernatingrhinos.com/issue/RavenDB-15234.
-		/// </remarks>
-		/// <typeparam name="T"> The entity type (e.g. class `Users`) </typeparam>
-		/// <param name="session"> Session to resolve conventions for converting the ID </param>
-		/// <param name="shortId"> The short ID (e.g. '1-A') </param>
-		/// <returns> A special ID for dynamic fields (e.g. 'users1-A') </returns>
-		internal static string GetIdForDynamicField<T>(this IAsyncDocumentSession session, string shortId) where T : IEntity
-				=> session.GetFullId<T>(shortId).Replace("/", "").ToLower();
 	}
 }

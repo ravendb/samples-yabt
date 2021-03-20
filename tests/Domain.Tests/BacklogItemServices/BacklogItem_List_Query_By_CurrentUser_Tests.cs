@@ -124,7 +124,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			//	with 1 created by Marge
 			_currentUserId = margeId;
 			await CreateBacklogItem();
-
+			
 			// WHEN the current user is Homer 
 			//		and querying items created/modified by him
 			_currentUserId = homerId;
@@ -149,10 +149,10 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			//	with 1 created by Marge
 			_currentUserId = margeId;
 			var createdRef = await CreateBacklogItem();
-			// and 1 modified by Msrge
+			// and 1 modified by Marge
 			 await _commandService.AssignToUser(modifRef.Id!, margeId);
 			await SaveChanges();
-
+			
 			// WHEN the current user is Marge 
 			//		and querying items created/modified by him
 			var margesItems = await _queryService.GetList(new BacklogItemListGetRequest { CurrentUserRelation = CurrentUserRelations.ModifiedBy });

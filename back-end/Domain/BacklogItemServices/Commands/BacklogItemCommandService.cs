@@ -37,6 +37,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				BugAddUpdRequest bug		 => await ConvertDtoToEntity<BacklogItemBug,		BugAddUpdRequest>(bug),
 				UserStoryAddUpdRequest story => await ConvertDtoToEntity<BacklogItemUserStory,	UserStoryAddUpdRequest>(story),
 				TaskAddUpdRequest task		 => await ConvertDtoToEntity<BacklogItemTask,		TaskAddUpdRequest>(task),
+				FeatureAddUpdRequest feature => await ConvertDtoToEntity<BacklogItemFeature,	FeatureAddUpdRequest>(feature),
 				_ => null,
 			};
 			if (ticket == null)
@@ -58,9 +59,10 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 			entity = dto switch
 			{
-				BugAddUpdRequest bug			=> await ConvertDtoToEntity (bug,	entity as BacklogItemBug),
-				UserStoryAddUpdRequest story	=> await ConvertDtoToEntity (story,	entity as BacklogItemUserStory),
-				TaskAddUpdRequest task			=> await ConvertDtoToEntity (task,  entity as BacklogItemTask),
+				BugAddUpdRequest bug		 => await ConvertDtoToEntity (bug,		entity as BacklogItemBug),
+				UserStoryAddUpdRequest story => await ConvertDtoToEntity (story,	entity as BacklogItemUserStory),
+				TaskAddUpdRequest task		 => await ConvertDtoToEntity (task,		entity as BacklogItemTask),
+				FeatureAddUpdRequest feature => await ConvertDtoToEntity (feature,	entity as BacklogItemFeature),
 				_ => null
 			};
 			if (entity == null)
@@ -109,7 +111,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				if (userRef == null)
 					return DomainResult.NotFound<BacklogItemReference>("The user not found");
 
-				backlogItem.Assignee = userRef;
+				backlogItem.Assignee = userRef.RemoveEntityPrefixFromId();
 			}
 
 			backlogItem.AddHistoryRecord(await _userResolver.GetCurrentUserReference(), "Assigned a user");
@@ -138,17 +140,15 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 			if (dto.CustomFields != null)
 			{
-				var verifiedCustomFieldIds = await _customFieldQueryService.GetFullIdsOfExistingItems(
+				var verifiedCustomFieldIds = await _customFieldQueryService.VerifyExistingItems(
 						dto.CustomFields.Where(pair => pair.Value != null).Select(pair => pair.Key)
 					);
-				entity.CustomFields = verifiedCustomFieldIds.ToDictionary(x => x.Value, x => dto.CustomFields[x.Key]!);
+				entity.CustomFields = verifiedCustomFieldIds.ToDictionary(x => x, x => dto.CustomFields[x]!);
 			}
 			else
 				entity.CustomFields = null;
 
 			await ResolveChangedRelatedItems(entity.RelatedItems, dto.ChangedRelatedItems);
-
-			// entity.CustomProperties = dto.CustomProperties;	TODO: De-serialise custom properties
 
 			if (dto is BugAddUpdRequest bugDto && entity is BacklogItemBug bugEntity)
 			{
@@ -160,6 +160,14 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			else if (dto is UserStoryAddUpdRequest storyDto && entity is BacklogItemUserStory storyEntity)
 			{
 				storyEntity.AcceptanceCriteria = storyDto.AcceptanceCriteria;
+			}
+			else if (dto is TaskAddUpdRequest taskDto && entity is BacklogItemTask taskEntity)
+			{
+				taskEntity.Description = taskDto.Description;
+			}
+			else if (dto is FeatureAddUpdRequest featureDto && entity is BacklogItemFeature featureEntity)
+			{
+				featureEntity.Description = featureDto.Description;
 			}
 
 			return entity;

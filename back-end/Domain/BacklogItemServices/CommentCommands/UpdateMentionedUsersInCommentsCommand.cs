@@ -2,12 +2,9 @@
 
 using Raven.Client;
 using Raven.Client.Documents.Queries;
-using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Database.Models.BacklogItems.Indexes;
-using Raven.Yabt.Database.Models.Users;
-using Raven.Yabt.Domain.Helpers;
 using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.Domain.UserServices.Command;
 
@@ -16,25 +13,19 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 	internal class UpdateMentionedUsersInCommentsCommand : IUpdateUserReferencesCommand
 	{
 		private readonly IPatchOperationsAddDeferred _patchOperations;
-		private readonly IAsyncDocumentSession _dbSession;
 
-		public UpdateMentionedUsersInCommentsCommand(IAsyncDocumentSession dbSession, IPatchOperationsAddDeferred patchOperations)
+		public UpdateMentionedUsersInCommentsCommand(IPatchOperationsAddDeferred patchOperations)
 		{
-			_dbSession = dbSession;
 			_patchOperations = patchOperations;
 		}
 
 		public void ClearUserId(string userId)
 		{
-			// Replace invalid characters with empty strings. Can't pass it as a parameter, as string parameters get wrapped in '\"' when inserted
-			var sanitisedUserId = Regex.Replace(userId, @"[^\w\.@-]", "");
-			// Get full ID
-			var idForDynamicField = _dbSession.GetIdForDynamicField<User>(sanitisedUserId);
-			var fullId = _dbSession.GetFullId<User>(userId);
+			var sanitisedId = GetSanitizedUserId(userId);
 
 			// Form a patch query
 			var queryString = $@"FROM INDEX '{new BacklogItems_ForList().IndexName}' AS i
-								WHERE i.{nameof(BacklogItemIndexedForList.MentionedUser)}_{idForDynamicField} != null
+								WHERE i.{nameof(BacklogItemIndexedForList.MentionedUser)}_{sanitisedId} != null
 								UPDATE
 								{{
 									i.{nameof(BacklogItem.Comments)}.forEach(comment => 
@@ -43,13 +34,20 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 											if (mentionedUsers != null)
 												Object.keys(mentionedUsers).forEach(key =>
 												{{
-													if (mentionedUsers[key].toLowerCase() == '{fullId}'.toLowerCase())
+													if (mentionedUsers[key].toUpperCase() == $userId.toUpperCase())
 														delete mentionedUsers[key];
 												}});
 											return comment;
 										}});
 								}}";
-			var query = new IndexQuery { Query = queryString };
+			var query = new IndexQuery 
+			{ 
+				Query = queryString,
+				QueryParameters = new Parameters
+				{
+					{ "userId", userId },
+				}
+			};
 
 			// Add the patch to a collection
 			_patchOperations.AddDeferredPatchQuery(query);
@@ -60,12 +58,11 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 			if (string.IsNullOrEmpty(newUserReference.Id))
 				return;
 
-			// Replace invalid characters with empty strings. Can't pass it as a parameter, as string parameters get wrapped in '\"' when inserted
-			var idForDynamicField = GetSanitizedUserId(newUserReference.Id);
+			var sanitisedId = GetSanitizedUserId(newUserReference.Id);
 
 			// Form a patch query
 			var queryString = $@"FROM INDEX '{new BacklogItems_ForList().IndexName}' AS i
-								WHERE i.{nameof(BacklogItemIndexedForList.MentionedUser)}_{idForDynamicField} != null
+								WHERE i.{nameof(BacklogItemIndexedForList.MentionedUser)}_{sanitisedId} != null
 								UPDATE
 								{{
 									i.{nameof(BacklogItem.Comments)}.forEach(comment => 
@@ -74,7 +71,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 											if (mentionedUsers != null)
 												Object.keys(mentionedUsers).forEach(key =>
 												{{
-													if (mentionedUsers[key].toLowerCase() == $userId.toLowerCase())
+													if (mentionedUsers[key].toUpperCase() == $userId.toUpperCase())
 													{{
 														// Replace the element in the dictionary with the new reference  
 														delete mentionedUsers[key];
@@ -101,6 +98,9 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 			_patchOperations.AddDeferredPatchQuery(query);
 		}
 		
+		/// <summary>
+		///		Replace invalid characters with empty strings. Can't pass it as a parameter, as string parameters get wrapped in '\"' when inserted
+		/// </summary>
 		private static string GetSanitizedUserId(string userId) =>  Regex.Replace(userId, @"[^\w\.@-]", "");
 	}
 }

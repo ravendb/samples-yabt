@@ -2,10 +2,10 @@
 
 namespace Raven.Yabt.Database.Models.BacklogItems
 {
-	public class BacklogItemTask : BacklogItem
+	public class BacklogItemFeature : BacklogItem
 	{
-		public override BacklogItemType Type { get; set; } = BacklogItemType.Task;
-		
+		public override BacklogItemType Type { get; set; } = BacklogItemType.Feature;
+
 		public string? Description { get; set; }
 	}
 }

@@ -21,6 +21,6 @@ namespace Raven.Yabt.TicketImporter.Infrastructure
 		/// <summary>
 		///		Get a random generated user as the current one
 		/// </summary>
-		public string GetCurrentUserId() => _seededUser.GetGeneratedUsers().Result.OrderBy(x => Guid.NewGuid()).First().Id!;
+		public string GetCurrentUserId() => _seededUser.GetGeneratedOrFetchedUsers().Result.OrderBy(x => Guid.NewGuid()).First().Id!;
 	}
 }

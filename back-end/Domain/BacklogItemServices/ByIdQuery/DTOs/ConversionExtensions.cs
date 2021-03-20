@@ -22,7 +22,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				State = entity.State,
 				EstimatedSize = entity.EstimatedSize,
 				Assignee = entity.Assignee is null ? null : (entity.Assignee with {}).RemoveEntityPrefixFromId(),
-				HistoryDescOrder = GetModifiedBy(entity.ModifiedBy),
+				HistoryDescOrder = entity.ModifiedBy.OrderByDescending(i => i.Timestamp).ToList(),
 				Tags = entity.Tags,
 				Comments = GetCommentsList(entity.Comments),
 				RelatedItems = entity.RelatedItems.AsReadOnly(),
@@ -40,16 +40,15 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				case BacklogItemUserStory entityUserStory when response is UserStoryGetResponse responseUserStory:
 					responseUserStory.AcceptanceCriteria = entityUserStory.AcceptanceCriteria;
 					break;
+				case BacklogItemTask entityTask when response is TaskGetResponse responseTask:
+					responseTask.Description = entityTask.Description;
+					break;
+				case BacklogItemFeature entityFeature when response is FeatureGetResponse responseFeature:
+					responseFeature.Description = entityFeature.Description;
+					break;
 			}
 
 			return response;
-		}
-
-		private static IReadOnlyList<BacklogItemHistoryRecord> GetModifiedBy(IList<BacklogItemHistoryRecord> modifiedBy)
-		{
-			var ret = (from item in modifiedBy.OrderByDescending(i => i.Timestamp) select item with {}).ToList();
-			ret.RemoveEntityPrefixFromIds(i => i.ActionedBy);
-			return ret.AsReadOnly();
 		}
 		
 		private static IReadOnlyList<BacklogItemCommentListGetResponse> GetCommentsList(IList<Comment> comments)
@@ -59,7 +58,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				{
 					Id = comment.Id,
 					Message = comment.Message,
-					Author = (comment.Author with {}).RemoveEntityPrefixFromId(),
+					Author = comment.Author,
 					Created = comment.Created,
 					LastUpdated = comment.LastModified,
 					MentionedUserIds = comment.MentionedUserIds?.ToDictionary(pair => pair.Key, pair => pair.Value.GetShortId()!)

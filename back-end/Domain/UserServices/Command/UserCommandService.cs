@@ -58,15 +58,13 @@ namespace Raven.Yabt.Domain.UserServices.Command
 			if (user == null)
 				return DomainResult.NotFound<UserReference>();
 
-			var newRef = dto.ConvertToUser(user).ToReference();
+			var newRef = dto.ConvertToUser(user).ToReference().RemoveEntityPrefixFromId();
 
 			// Update the name in all references to this user
 			foreach (var updateUserRef in _updateUserReferences)
 				updateUserRef.UpdateReferences(newRef);
 
-			var response = user.ToReference().RemoveEntityPrefixFromId();
-
-			return DomainResult.Success(response);
+			return DomainResult.Success(newRef);
 		}
 	}
 }
