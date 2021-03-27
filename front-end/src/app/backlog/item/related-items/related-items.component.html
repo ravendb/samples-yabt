@@ -1,0 +1,16 @@
+<button mat-icon-button color="primary">
+	<mat-icon>add</mat-icon> Add link
+</button>
+<ul>
+	<li *ngFor="let type of types">
+		<div>{{type}}</div>
+		<div *ngFor="let item of groupedItems[type]">
+			<div class="title-and-icon">
+				<backlog-item-icon [type]="item.type"></backlog-item-icon>
+				<a [routerLink]="['backlog-items', item.id]">
+					{{item.name}}
+				</a>
+			</div>
+		</div>
+	</li>
+</ul>

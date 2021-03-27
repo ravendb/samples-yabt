@@ -209,7 +209,7 @@ export class BacklogItemComponent implements OnInit {
 		const related = getDto.relatedItems?.reduce((result, i) => {
 			if (!!i.relatedTo?.id) result[i.relatedTo!.id!] = i.linkType;
 			return result;
-		}, {} as { [key: string]: BacklogRelationshipType });
+		}, {} as { [key: string]: keyof typeof BacklogRelationshipType });
 
 		return {
 			title: getDto.title,
