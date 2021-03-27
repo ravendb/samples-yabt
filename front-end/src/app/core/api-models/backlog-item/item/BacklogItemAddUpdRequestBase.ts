@@ -2,10 +2,10 @@ import { BacklogItemState, BacklogRelationshipType } from '@core/api-models/comm
 
 export interface BacklogItemAddUpdRequestBase {
 	title: string;
-	state: BacklogItemState;
+	state: keyof typeof BacklogItemState;
 	estimatedSize: number | undefined;
 	assigneeId: string | undefined;
 	tags: string[];
-	relatedItems: { [key: string]: BacklogRelationshipType };
+	relatedItems: { [key: string]: keyof typeof BacklogRelationshipType };
 	customFields: { [key: string]: any };
 }
