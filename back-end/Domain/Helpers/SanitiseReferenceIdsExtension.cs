@@ -33,7 +33,6 @@ namespace Raven.Yabt.Domain.Helpers
 		internal static T RemoveEntityPrefixFromIds<T, TReference>(this T target, params Expression<Func<T, TReference?>>[] referenceMemberLambdas) 
 			where TReference : class, IEntityReference
 		{
-			// TODO: Make 'target' immutable (maybe by deep cloning https://www.codeproject.com/Articles/1111658/Fast-Deep-Copy-by-Expression-Trees-C-Sharp)
 			foreach (var referenceMember in referenceMemberLambdas)
 				target.RemoveEntityPrefixFromIds(referenceMember);
 			return target;

@@ -25,7 +25,7 @@ namespace Raven.Yabt.WebApi.Configuration
 		/// </remarks>
 		public static void AddAppSpaStaticFiles(this IApplicationBuilder app, AppSettingsUserApiKey[] userApiKeys)
 		{
-			// Serve files inside of web root (wwwroot folder) other than 'index.html'
+			// Serves other than `index.html` files under the web root (by default `wwwroot`) folder.
 			// Without this method Kestrel would return 'index.html' on all the requests for static content 
 			app.UseStaticFiles(
 				// Set cache expiration for all static files except 'index.html'
@@ -41,7 +41,7 @@ namespace Raven.Yabt.WebApi.Configuration
 			var apiKeys = string.Join(';', userApiKeys.Select(k => k.ApiKey));
 
 			// Does 3 things:
-			//	- Rewrites all requests to the default page;
+			//	- Redirects all requests to the default page;
 			//	- Serves 'index.html'
 			//	- Tries to configure static files serving (falls back to UseSpaStaticFiles() and serving them from 'wwwroot')
 			app.UseSpa(
