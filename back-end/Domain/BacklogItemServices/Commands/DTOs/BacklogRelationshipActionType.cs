@@ -1,4 +1,4 @@
-namespace Raven.Yabt.Database.Common.BacklogItem
+namespace Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs
 {
 	public enum BacklogRelationshipActionType
 	{

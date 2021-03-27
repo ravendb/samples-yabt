@@ -15,5 +15,5 @@ export interface BacklogItemGetResponseBase {
 	tags: string[];
 	comments: BacklogItemCommentListGetResponse[];
 	customFields: { [key: string]: any };
-	relatedItems: BacklogItemRelatedItem[];
+	relatedItems: BacklogItemRelatedItem[] | undefined;
 }

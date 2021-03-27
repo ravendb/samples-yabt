@@ -1,7 +1,7 @@
 <button mat-icon-button color="primary">
 	<mat-icon>add</mat-icon> Add link
 </button>
-<ul>
+<ul *ngIf="!!groupedItems">
 	<li *ngFor="let type of types">
 		<div>{{type}}</div>
 		<div *ngFor="let item of groupedItems[type]">
