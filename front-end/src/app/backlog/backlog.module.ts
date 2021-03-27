@@ -14,11 +14,14 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { SharedModule } from '@shared';
 import { BacklogRouting } from './backlog.routing';
-import { BacklogItemComponent } from './item';
-import { BacklogItemCommentComponent } from './item/comment';
-import { BacklogItemFullHistoryDialogComponent } from './item/ui-elements/full-history-dialog/full-history-dialog.component';
-import { BacklogItemHistoryItemComponent } from './item/ui-elements/history-item';
-import { BacklogItemSectionComponent } from './item/ui-elements/section';
+import {
+	BacklogItemCommentComponent,
+	BacklogItemComponent,
+	BacklogItemFullHistoryDialogComponent,
+	BacklogItemHistoryItemComponent,
+	BacklogItemRelatedItemsComponent,
+	BacklogItemSectionComponent,
+} from './item';
 import { BacklogListComponent } from './list/backlog-list.component';
 import { FilterBarComponent } from './list/filter-bar';
 import { BacklogFilterDialogComponent } from './list/filter-dialog';
@@ -39,6 +42,7 @@ import { TagsComponent } from './ui-elements/tags';
 		BacklogItemSectionComponent,
 		TagsComponent,
 		BacklogItemFullHistoryDialogComponent,
+		BacklogItemRelatedItemsComponent,
 	],
 	imports: [
 		CommonModule,
