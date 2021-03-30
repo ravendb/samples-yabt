@@ -1,8 +1,8 @@
 export enum BacklogRelationshipType {
 	duplicate = 'Duplicate',
 	related = 'Related',
-	blockedBy = 'BlockedBy',
+	blockedBy = 'Blocked by',
 	blocks = 'Blocks',
-	causedBy = 'CausedBy',
+	causedBy = 'Caused by',
 	causes = 'Causes',
 }

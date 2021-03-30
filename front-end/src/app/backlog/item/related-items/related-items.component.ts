@@ -29,6 +29,10 @@ export class BacklogItemRelatedItemsComponent implements ControlValueAccessor {
 
 	isDisabled = false;
 
+	public get relationshipType(): typeof BacklogRelationshipType {
+		return BacklogRelationshipType;
+	}
+
 	/* View -> model callback called when select has been touched */
 	private _onTouched: () => void = () => {};
 	/* View -> model callback called when value changes from the UI */

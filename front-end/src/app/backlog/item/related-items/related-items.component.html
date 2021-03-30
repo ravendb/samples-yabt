@@ -3,11 +3,11 @@
 </button>
 <ul *ngIf="!!groupedItems">
 	<li *ngFor="let type of types">
-		<div>{{type}}</div>
+		<div>{{relationshipType[type]}}</div>
 		<div *ngFor="let item of groupedItems[type]">
 			<div class="title-and-icon">
 				<backlog-item-icon [type]="item.type"></backlog-item-icon>
-				<a [routerLink]="['backlog-items', item.id]">
+				<a [routerLink]="['/backlog-items', item.id]">
 					{{item.name}}
 				</a>
 			</div>
