@@ -1,0 +1,25 @@
+<h2 mat-dialog-title>
+	<span>Add link</span>
+	<button mat-icon-button mat-dialog-close>
+		<mat-icon>close</mat-icon>
+	</button>
+</h2>
+<mat-dialog-content [formGroup]="form" class="flex-column">
+	<div class="flex-row">
+		<mat-form-field>
+			<mat-select formControlName="relationType">
+				<mat-option *ngFor="let link of linkTypes" [value]="link.key">{{ link.value }}</mat-option>
+			</mat-select>
+			<mat-placeholder>Link type</mat-placeholder>
+			<mat-error>
+				<error-messages formControlName="relationType"></error-messages>
+			</mat-error>
+		</mat-form-field>
+	</div>
+	<div class="flex-row">
+	</div>
+</mat-dialog-content>
+<mat-dialog-actions>
+	<button mat-raised-button mat-dialog-close>Cancel</button>
+	<button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">SAVE</button>
+</mat-dialog-actions>

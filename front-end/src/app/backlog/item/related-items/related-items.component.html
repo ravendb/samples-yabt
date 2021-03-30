@@ -1,5 +1,5 @@
-<button mat-icon-button color="primary">
-	<mat-icon>add</mat-icon> Add link
+<button mat-button color="primary" (click)="openAddLinkDialog()">
+	<mat-icon class="shifted-icon">add</mat-icon> Add link
 </button>
 <ul *ngIf="!!groupedItems">
 	<li *ngFor="let type of types">

@@ -190,7 +190,7 @@ export class BacklogItemComponent implements OnInit {
 		} as BacklogItemCommentListGetResponse);
 	}
 
-	openFilterDialog(): void {
+	openHistoryDialog(): void {
 		this.dialog
 			.open(BacklogItemFullHistoryDialogComponent, { data: this.dtoBeforeUpdate?.historyDescOrder, minWidth: '350px' })
 			.afterClosed()

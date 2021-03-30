@@ -1,8 +1,10 @@
 import { Component, Input, Optional, Self } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
 import { BacklogItemRelatedItem, BacklogRelationshipType } from '@core/api-models/common/backlog-item';
 import { BacklogItemReference } from '@core/api-models/common/references';
-
+import { take } from 'rxjs/operators';
+import { RelatedItemsAddDialogComponent } from './add-dialog';
 @Component({
 	selector: 'backlog-item-related-items',
 	templateUrl: './related-items.component.html',
@@ -46,12 +48,17 @@ export class BacklogItemRelatedItemsComponent implements ControlValueAccessor {
 
 	constructor(
 		/* Based on https://material.angular.io/guide/creating-a-custom-form-field-control#ngcontrol */
-		@Optional() @Self() private ngControl: NgControl
+		@Optional() @Self() private ngControl: NgControl,
+		private dialog: MatDialog
 	) {
 		if (this.ngControl != null) {
 			// Setting the value accessor directly (instead of using the providers) to avoid running into a circular import
 			this.ngControl.valueAccessor = this;
 		}
+	}
+
+	openAddLinkDialog(): void {
+		this.dialog.open(RelatedItemsAddDialogComponent).afterClosed().pipe(take(1)).subscribe();
 	}
 
 	writeValue(value?: BacklogItemRelatedItem[]): void {

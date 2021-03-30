@@ -8,7 +8,7 @@ import { CustomFormControlBase } from '@shared/forms/custom-form-control-base';
 import { map } from 'rxjs/internal/operators/map';
 
 @Component({
-	selector: 'app-tags',
+	selector: 'backlog-item-tags-selector',
 	templateUrl: './tags.component.html',
 	styleUrls: ['./tags.component.scss'],
 	providers: [

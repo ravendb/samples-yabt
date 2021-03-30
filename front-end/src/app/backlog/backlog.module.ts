@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { SharedModule } from '@shared';
@@ -21,13 +22,14 @@ import {
 	BacklogItemHistoryItemComponent,
 	BacklogItemRelatedItemsComponent,
 	BacklogItemSectionComponent,
+	RelatedItemsAddDialogComponent,
 } from './item';
+import { TagsComponent } from './item/ui-elements/tags';
 import { BacklogListComponent } from './list/backlog-list.component';
 import { FilterBarComponent } from './list/filter-bar';
 import { BacklogFilterDialogComponent } from './list/filter-dialog';
 import { BacklogFiltersComponent } from './list/filters';
 import { CommentsIconComponent } from './ui-elements/comments-icon';
-import { TagsComponent } from './ui-elements/tags';
 
 @NgModule({
 	declarations: [
@@ -43,6 +45,7 @@ import { TagsComponent } from './ui-elements/tags';
 		TagsComponent,
 		BacklogItemFullHistoryDialogComponent,
 		BacklogItemRelatedItemsComponent,
+		RelatedItemsAddDialogComponent,
 	],
 	imports: [
 		CommonModule,
@@ -57,6 +60,7 @@ import { TagsComponent } from './ui-elements/tags';
 		MatMenuModule,
 		MatPaginatorModule,
 		MatProgressSpinnerModule,
+		MatSelectModule,
 		MatSortModule,
 		MatTableModule,
 		ReactiveFormsModule,

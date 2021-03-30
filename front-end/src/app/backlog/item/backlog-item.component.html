@@ -44,7 +44,7 @@
 			<div class="table wide">
 				<div class="row">
 					<div class="control">
-						<app-tags formControlName="tags"></app-tags>
+						<backlog-item-tags-selector formControlName="tags"></backlog-item-tags-selector>
 					</div>
 				</div>
 				<div class="row">
@@ -134,7 +134,7 @@
 					<backlog-item-history-item [item]="dtoBeforeUpdate.created"></backlog-item-history-item>
 				</div>
 				<div *ngIf="dtoBeforeUpdate.historyDescOrder.length > 2" class="more-link">
-					<a (click)="openFilterDialog()">show {{dtoBeforeUpdate.historyDescOrder.length}} more...</a>
+					<a (click)="openHistoryDialog()">show {{dtoBeforeUpdate.historyDescOrder.length}} more...</a>
 				</div>
 			</backlog-item-section>
 		</div>
