@@ -1,13 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { FormBuilder, FormControl } from '@angular/forms';
+import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialogRef } from '@angular/material/dialog';
 import { BacklogRelationshipAction } from '@core/api-models/backlog-item/item/BacklogRelationshipAction';
 import { BacklogRelationshipActionType } from '@core/api-models/backlog-item/item/BacklogRelationshipActionType';
+import { BacklogItemListGetResponse } from '@core/api-models/backlog-item/list';
 import { BacklogRelationshipType } from '@core/api-models/common/backlog-item';
 import { BacklogItemsService } from '@core/api-services/backlogItems.service';
 import { IKeyValuePair } from '@shared/filters';
 import { CustomValidators } from '@utils/custom-validators';
-import { map } from 'rxjs/operators';
+import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 
 @Component({
 	templateUrl: './related-items-add-dialog.component.html',
@@ -19,23 +21,15 @@ export class RelatedItemsAddDialogComponent implements OnInit {
 	});
 
 	form!: FormGroupTyped<BacklogRelationshipAction>;
+	backlogItemTitleFormCtrl!: FormControlTyped<string>;
 
-	backlogItems = this.backlogService.getBacklogItemList().pipe(map(list => list.entries.map(t => t.title)));
+	backlogItems: BacklogItemListGetResponse[] | undefined;
 
 	constructor(
 		private fb: FormBuilder,
 		private backlogService: BacklogItemsService,
 		private dialogRef: MatDialogRef<RelatedItemsAddDialogComponent>
 	) {}
-
-	save(): void {
-		this.dialogRef.close();
-	}
-	close(): void {
-		this.dialogRef.close();
-	}
-
-	backlogItemSelected(): void {}
 
 	ngOnInit(): void {
 		const add: keyof typeof BacklogRelationshipActionType = 'add';
@@ -44,5 +38,29 @@ export class RelatedItemsAddDialogComponent implements OnInit {
 			relationType: [null, [CustomValidators.required()]],
 			actionType: [add, [CustomValidators.required()]],
 		}) as FormGroupTyped<BacklogRelationshipAction>;
+
+		this.backlogItemTitleFormCtrl = new FormControl(null, CustomValidators.required()) as FormControlTyped<string>;
+		this.backlogItemTitleFormCtrl.valueChanges
+			.pipe(
+				distinctUntilChanged(),
+				debounceTime(300),
+				switchMap(v => this.backlogService.getBacklogItemList({ search: v, pageSize: 20 })),
+				map(list => list.entries)
+			)
+			.subscribe(items => (this.backlogItems = items));
+		this.backlogItemTitleFormCtrl.setValue('');
+	}
+
+	addLink(): void {
+		this.dialogRef.close(this.form.value);
+	}
+	close(): void {
+		this.dialogRef.close();
+	}
+
+	backlogItemSelected(event: MatAutocompleteSelectedEvent): void {
+		this.form.controls.backlogItemId.setValue(event.option.value);
+		const item = this.backlogItems?.find(i => i.id == event.option.value);
+		this.backlogItemTitleFormCtrl.setValue(item?.title || '');
 	}
 }
