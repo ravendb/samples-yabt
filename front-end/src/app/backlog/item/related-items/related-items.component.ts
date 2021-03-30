@@ -58,7 +58,7 @@ export class BacklogItemRelatedItemsComponent implements ControlValueAccessor {
 	}
 
 	openAddLinkDialog(): void {
-		this.dialog.open(RelatedItemsAddDialogComponent).afterClosed().pipe(take(1)).subscribe();
+		this.dialog.open(RelatedItemsAddDialogComponent, { minWidth: '400px' }).afterClosed().pipe(take(1)).subscribe();
 	}
 
 	writeValue(value?: BacklogItemRelatedItem[]): void {

@@ -7,7 +7,7 @@ export interface BacklogItemListGetResponse {
 	title: string;
 	assignee: UserReference | undefined;
 	commentsCount: number;
-	type: BacklogItemType | undefined;
+	type: keyof typeof BacklogItemType;
 	created: ChangedByUserReference;
 	lastUpdated: ChangedByUserReference;
 }

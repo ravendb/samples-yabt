@@ -17,9 +17,18 @@
 		</mat-form-field>
 	</div>
 	<div class="flex-row">
+		<mat-form-field>
+			<input matInput [formControl]="backlogItemTitleFormCtrl" placeholder="Backlog item to link" [matAutocomplete]="auto">
+			<mat-autocomplete #auto="matAutocomplete" (optionSelected)="backlogItemSelected($event)">
+				<mat-option *ngFor="let t of backlogItems" [value]="t.id">
+					<backlog-item-icon [type]="t.type"></backlog-item-icon>
+					{{t.title}}
+				</mat-option>
+			</mat-autocomplete>
+		</mat-form-field>
 	</div>
 </mat-dialog-content>
 <mat-dialog-actions>
 	<button mat-raised-button mat-dialog-close>Cancel</button>
-	<button mat-raised-button color="primary" (click)="save()" [disabled]="form.invalid">SAVE</button>
+	<button mat-raised-button color="primary" (click)="addLink()" [disabled]="form.invalid">ADD</button>
 </mat-dialog-actions>
