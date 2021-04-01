@@ -1,4 +1,5 @@
 import { BacklogItemState } from '@core/api-models/common/backlog-item';
+import { BacklogCustomFieldAction } from './BacklogCustomFieldAction';
 import { BacklogRelationshipAction } from './BacklogRelationshipAction';
 
 export interface BacklogItemAddUpdRequestBase {
@@ -8,5 +9,5 @@ export interface BacklogItemAddUpdRequestBase {
 	assigneeId: string | undefined;
 	tags: string[];
 	changedRelatedItems: BacklogRelationshipAction[] | undefined;
-	customFields: { [key: string]: any };
+	changedCustomFields: BacklogCustomFieldAction[] | undefined;
 }

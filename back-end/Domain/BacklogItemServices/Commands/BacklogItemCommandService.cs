@@ -1,19 +1,14 @@
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 using DomainResults.Common;
 
-using Raven.Client.Documents;
-using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Database.Models.BacklogItems;
-using Raven.Yabt.Database.Models.BacklogItems.Indexes;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.Common;
-using Raven.Yabt.Domain.CustomFieldServices.Query;
 using Raven.Yabt.Domain.Helpers;
 using Raven.Yabt.Domain.UserServices.Query;
 
@@ -22,22 +17,22 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 	public class BacklogItemCommandService : BaseService<BacklogItem>, IBacklogItemCommandService
 	{
 		private readonly IUserReferenceResolver _userResolver;
-		private readonly ICustomFieldListQueryService _customFieldQueryService;
+		private readonly IBacklogItemDtoToEntityConversion _dtoToEntityConversion;
 
-		public BacklogItemCommandService(IAsyncDocumentSession dbSession, IUserReferenceResolver userResolver, ICustomFieldListQueryService customFieldQueryService) : base(dbSession)
+		public BacklogItemCommandService(IAsyncDocumentSession dbSession, IUserReferenceResolver userResolver, IBacklogItemDtoToEntityConversion dtoToEntityConversion) : base(dbSession)
 		{
 			_userResolver = userResolver;
-			_customFieldQueryService = customFieldQueryService;
+			_dtoToEntityConversion = dtoToEntityConversion;
 		}
 
 		public async Task<IDomainResult<BacklogItemReference>> Create<T>(T dto) where T : BacklogItemAddUpdRequestBase
 		{
 			BacklogItem? ticket = dto switch
 			{
-				BugAddUpdRequest bug		 => await ConvertDtoToEntity<BacklogItemBug,		BugAddUpdRequest>(bug),
-				UserStoryAddUpdRequest story => await ConvertDtoToEntity<BacklogItemUserStory,	UserStoryAddUpdRequest>(story),
-				TaskAddUpdRequest task		 => await ConvertDtoToEntity<BacklogItemTask,		TaskAddUpdRequest>(task),
-				FeatureAddUpdRequest feature => await ConvertDtoToEntity<BacklogItemFeature,	FeatureAddUpdRequest>(feature),
+				BugAddUpdRequest bug		 => await _dtoToEntityConversion.ConvertToEntity<BacklogItemBug,		BugAddUpdRequest>(bug),
+				UserStoryAddUpdRequest story => await _dtoToEntityConversion.ConvertToEntity<BacklogItemUserStory,	UserStoryAddUpdRequest>(story),
+				TaskAddUpdRequest task		 => await _dtoToEntityConversion.ConvertToEntity<BacklogItemTask,		TaskAddUpdRequest>(task),
+				FeatureAddUpdRequest feature => await _dtoToEntityConversion.ConvertToEntity<BacklogItemFeature,	FeatureAddUpdRequest>(feature),
 				_ => null,
 			};
 			if (ticket == null)
@@ -59,10 +54,10 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 			entity = dto switch
 			{
-				BugAddUpdRequest bug		 => await ConvertDtoToEntity (bug,		entity as BacklogItemBug),
-				UserStoryAddUpdRequest story => await ConvertDtoToEntity (story,	entity as BacklogItemUserStory),
-				TaskAddUpdRequest task		 => await ConvertDtoToEntity (task,		entity as BacklogItemTask),
-				FeatureAddUpdRequest feature => await ConvertDtoToEntity (feature,	entity as BacklogItemFeature),
+				BugAddUpdRequest bug		 => await _dtoToEntityConversion.ConvertToEntity (bug,		entity as BacklogItemBug),
+				UserStoryAddUpdRequest story => await _dtoToEntityConversion.ConvertToEntity (story,	entity as BacklogItemUserStory),
+				TaskAddUpdRequest task		 => await _dtoToEntityConversion.ConvertToEntity (task,		entity as BacklogItemTask),
+				FeatureAddUpdRequest feature => await _dtoToEntityConversion.ConvertToEntity (feature,	entity as BacklogItemFeature),
 				_ => null
 			};
 			if (entity == null)
@@ -120,66 +115,14 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 									backlogItem.ToReference().RemoveEntityPrefixFromId()
 								);
 		}
-
-		private async Task<TModel> ConvertDtoToEntity<TModel, TDto>(TDto dto, TModel? entity = null)
-			where TModel : BacklogItem, new()
-			where TDto : BacklogItemAddUpdRequestBase
-		{
-			entity ??= new TModel();
-
-			entity.Title = dto.Title;
-			entity.State = dto.State;
-			entity.EstimatedSize = dto.EstimatedSize;
-			entity.Tags = dto.Tags;
-			entity.Assignee = dto.AssigneeId != null ? await _userResolver.GetReferenceById(dto.AssigneeId) : null;
-	
-			entity.AddHistoryRecord(
-				await _userResolver.GetCurrentUserReference(), 
-				entity.ModifiedBy.Any() ? "Modified" : "Created"	// TODO: Provide more informative description in case of modifications
-			);
-
-			if (dto.CustomFields != null)
-			{
-				var verifiedCustomFieldIds = await _customFieldQueryService.VerifyExistingItems(
-						dto.CustomFields.Where(pair => pair.Value != null).Select(pair => pair.Key)
-					);
-				entity.CustomFields = verifiedCustomFieldIds.ToDictionary(x => x, x => dto.CustomFields[x]!);
-			}
-			else
-				entity.CustomFields = null;
-
-			await ResolveChangedRelatedItems(entity.RelatedItems, dto.ChangedRelatedItems);
-
-			if (dto is BugAddUpdRequest bugDto && entity is BacklogItemBug bugEntity)
-			{
-				bugEntity.Severity = bugDto.Severity;
-				bugEntity.Priority = bugDto.Priority;
-				bugEntity.StepsToReproduce = bugDto.StepsToReproduce;
-				bugEntity.AcceptanceCriteria = bugDto.AcceptanceCriteria;
-			}
-			else if (dto is UserStoryAddUpdRequest storyDto && entity is BacklogItemUserStory storyEntity)
-			{
-				storyEntity.AcceptanceCriteria = storyDto.AcceptanceCriteria;
-			}
-			else if (dto is TaskAddUpdRequest taskDto && entity is BacklogItemTask taskEntity)
-			{
-				taskEntity.Description = taskDto.Description;
-			}
-			else if (dto is FeatureAddUpdRequest featureDto && entity is BacklogItemFeature featureEntity)
-			{
-				featureEntity.Description = featureDto.Description;
-			}
-
-			return entity;
-		}
-
+		
 		private void UpdateRelatedItems<T>(T dto, BacklogItemReference ticketRef) where T : BacklogItemAddUpdRequestBase
 		{
 			if (dto.ChangedRelatedItems?.Any() != true) return;
 			
 			foreach (var link in dto.ChangedRelatedItems)
 			{
-				if (link.ActionType == BacklogRelationshipActionType.Add)
+				if (link.ActionType == ListActionType.Add)
 					DbSession.Advanced.Patch<BacklogItem, BacklogItemRelatedItem>(
 						GetFullId(link.BacklogItemId),
 						x => x.RelatedItems,
@@ -198,49 +141,6 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 						x => x.RelatedItems,
 						items => items.RemoveAll(
 							i => i.RelatedTo.Id! == relatedId && i.LinkType == relationType));
-				}
-			}
-		}
-
-		private async Task ResolveChangedRelatedItems(List<BacklogItemRelatedItem> existingRelatedItems, IList<BacklogRelationshipAction>? actions)
-		{
-			if (actions == null)
-				return;
-
-			// Remove 'old' links
-			foreach (var (id, linkType) in from a in actions
-												where a.ActionType == BacklogRelationshipActionType.Remove
-												select (a.BacklogItemId, a.RelationType))
-			{
-				existingRelatedItems.RemoveAll(existing => existing.RelatedTo.Id == id && existing.LinkType == linkType);
-			}
-			
-			// Add new links
-			(string fullId, BacklogRelationshipType linkType)[] array = 
-				(from a in actions
-				 where a.ActionType == BacklogRelationshipActionType.Add
-				 select (GetFullId(a.BacklogItemId), a.RelationType)
-				 ).ToArray();
-			if (array.Any())
-			{
-				// Resolve new references
-				var fullIds = array.Select(a => a.fullId).Distinct();
-				var references = await (from b in DbSession.Query<BacklogItemIndexedForList, BacklogItems_ForList>()
-					where b.Id.In(fullIds)
-					select new BacklogItemReference
-					{
-						Id = b.Id,
-						Name = b.Title,
-						Type = b.Type
-					}).ToListAsync();
-
-				// Add resolved references
-				foreach (var (fullId, linkType) in array)
-				{
-					var relatedTo = references.SingleOrDefault(r => r.Id == fullId);
-					if (relatedTo == null)
-						continue;
-					existingRelatedItems.Add(new BacklogItemRelatedItem { LinkType = linkType, RelatedTo = relatedTo.RemoveEntityPrefixFromId() });
 				}
 			}
 		}

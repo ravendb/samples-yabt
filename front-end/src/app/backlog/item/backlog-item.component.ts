@@ -6,7 +6,7 @@ import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { BacklogAddUpdAllFieldsRequest } from '@core/api-models/backlog-item/item/BacklogAddUpdAllFieldsRequest';
 import { BacklogItemCommentListGetResponse } from '@core/api-models/backlog-item/item/BacklogItemCommentListGetResponse';
 import { BacklogItemGetResponseAllFields } from '@core/api-models/backlog-item/item/BacklogItemGetResponseAllFields';
-import { BacklogItemState, BacklogItemType, BacklogRelationshipType, BugPriority, BugSeverity } from '@core/api-models/common/backlog-item';
+import { BacklogItemState, BacklogItemType, BugPriority, BugSeverity } from '@core/api-models/common/backlog-item';
 import { UserReference } from '@core/api-models/common/references';
 import { CurrentUserResponse } from '@core/api-models/user/item/CurrentUserResponse';
 import { UserListGetRequest } from '@core/api-models/user/list';
@@ -206,18 +206,12 @@ export class BacklogItemComponent implements OnInit {
 	private convertGetDtoToAddUpdDto(getDto: BacklogItemGetResponseAllFields): BacklogAddUpdAllFieldsRequest {
 		if (!getDto) return {} as BacklogAddUpdAllFieldsRequest;
 
-		const related = getDto.relatedItems?.reduce((result, i) => {
-			if (!!i.relatedTo?.id) result[i.relatedTo!.id!] = i.linkType;
-			return result;
-		}, {} as { [key: string]: keyof typeof BacklogRelationshipType });
-
 		return {
 			title: getDto.title,
 			state: getDto.state,
 			estimatedSize: getDto.estimatedSize,
 			assigneeId: getDto.assignee?.id,
 			tags: getDto.tags,
-			customFields: getDto.customFields,
 			acceptanceCriteria: getDto.acceptanceCriteria,
 			description: getDto.description,
 			stepsToReproduce: getDto.stepsToReproduce,

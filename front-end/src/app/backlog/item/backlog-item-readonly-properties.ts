@@ -9,4 +9,5 @@ export interface BacklogItemReadonlyProperties {
 	comments: BacklogItemCommentListGetResponse[];
 	historyDescOrder: BacklogItemHistoryRecord[];
 	relatedItems: BacklogItemRelatedItem[] | undefined;
+	customFields: Record<string, any> | undefined;
 }

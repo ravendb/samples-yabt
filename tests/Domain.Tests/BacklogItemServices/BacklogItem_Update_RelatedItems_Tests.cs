@@ -13,6 +13,7 @@ using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery;
 using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
+using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.UserServices.Query;
 
 using Xunit;
@@ -57,7 +58,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 					{
 						BacklogItemId = refTicketId!,
 						RelationType = BacklogRelationshipType.Related,
-						ActionType = BacklogRelationshipActionType.Add
+						ActionType = ListActionType.Add
 					}
 				});
 			await _commandService.Update(mainTicketId!, dto);
@@ -98,7 +99,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 						{
 							BacklogItemId = refTicketId!, 
 							RelationType = setLinkType, 
-							ActionType = BacklogRelationshipActionType.Add
+							ActionType = ListActionType.Add
 						}
 					}
 				);
@@ -115,10 +116,10 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			// GIVEN 2 tickets
 			var (refTicketId, _) = await CreateSampleBug();
 			// one of them has a related item
-			var (mainTicketId, _) = await CreateSampleBug(GetRelatedItemAction(refTicketId!, BacklogRelationshipActionType.Add));
+			var (mainTicketId, _) = await CreateSampleBug(GetRelatedItemAction(refTicketId!, ListActionType.Add));
 			
 			// When the related item gets removed
-			var dto = GetAddUpdateDto(GetRelatedItemAction(refTicketId!, BacklogRelationshipActionType.Remove));
+			var dto = GetAddUpdateDto(GetRelatedItemAction(refTicketId!, ListActionType.Remove));
 			await _commandService.Update(mainTicketId!, dto);
 			await SaveChanges();
 			
@@ -137,8 +138,8 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			// GIVEN 3 tickets
 			var (mainTicketId, _) = await CreateSampleBug();
 			// where the 'main' ticket is related to 2 others 
-			var (refTicket1Id, _) = await CreateSampleBug(GetRelatedItemAction(mainTicketId!, BacklogRelationshipActionType.Add));
-			var (refTicket2Id, _) = await CreateSampleBug(GetRelatedItemAction(mainTicketId!, BacklogRelationshipActionType.Add));
+			var (refTicket1Id, _) = await CreateSampleBug(GetRelatedItemAction(mainTicketId!, ListActionType.Add));
+			var (refTicket2Id, _) = await CreateSampleBug(GetRelatedItemAction(mainTicketId!, ListActionType.Add));
 			
 			// When the 'main' ticket is deleted
 			await _commandService.Delete(mainTicketId!);
@@ -174,7 +175,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			return dto;
 		}
 
-		private static Action<BugAddUpdRequest> GetRelatedItemAction(string id, BacklogRelationshipActionType actionType)
+		private static Action<BugAddUpdRequest> GetRelatedItemAction(string id, ListActionType actionType)
 		{
 			return d => d.ChangedRelatedItems =
 				new List<BacklogRelationshipAction>
