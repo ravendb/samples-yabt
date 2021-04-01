@@ -17,35 +17,50 @@ export abstract class BaseApiService {
 	}
 
 	// Note: This method is public as it is used by 'paginated-datasource' but it should not be used anywhere else
-	getList<TRequestDto, TListItemDto>(urlExtension?: string, dto?: Partial<TRequestDto>): Observable<ListResponse<TListItemDto>> {
-		return this.wrappedRequest(() =>
-			this.httpClient.get<ListResponse<TListItemDto>>(this.getFullUrl(urlExtension), {
-				params: this.toHttpParams(dto),
-			})
+	getList<TRequestDto, TListItemDto>(
+		urlExtension?: string,
+		dto?: Partial<TRequestDto>,
+		setLoadingFlag: boolean = true
+	): Observable<ListResponse<TListItemDto>> {
+		return this.wrappedRequest(
+			() =>
+				this.httpClient.get<ListResponse<TListItemDto>>(this.getFullUrl(urlExtension), {
+					params: this.toHttpParams(dto),
+				}),
+			setLoadingFlag
 		);
 	}
 
 	// This method gets all the records without paging and filtering
-	protected getAll<TListItemDto>(urlExtension?: string): Observable<TListItemDto[]> {
-		return this.wrappedRequest(() => this.httpClient.get<TListItemDto[]>(this.getFullUrl(urlExtension)));
+	protected getAll<TListItemDto>(urlExtension?: string, setLoadingFlag: boolean = true): Observable<TListItemDto[]> {
+		return this.wrappedRequest(() => this.httpClient.get<TListItemDto[]>(this.getFullUrl(urlExtension)), setLoadingFlag);
 	}
 
-	protected getItem<TRequestDto, TItemDto>(urlExtension?: string, dto?: Partial<TRequestDto>): Observable<TItemDto> {
-		return this.wrappedRequest(() =>
-			this.httpClient.get<TItemDto>(this.getFullUrl(urlExtension), {
-				params: this.toHttpParams(dto),
-			})
+	protected getItem<TRequestDto, TItemDto>(
+		urlExtension?: string,
+		dto?: Partial<TRequestDto>,
+		setLoadingFlag: boolean = true
+	): Observable<TItemDto> {
+		return this.wrappedRequest(
+			() =>
+				this.httpClient.get<TItemDto>(this.getFullUrl(urlExtension), {
+					params: this.toHttpParams(dto),
+				}),
+			setLoadingFlag
 		);
 	}
 
 	protected getArray<TRequestDto, TListItemDto>(
 		urlExtension?: string,
-		dto?: Partial<TRequestDto> | { [param: string]: string | string[] }
+		dto?: Partial<TRequestDto> | { [param: string]: string | string[] },
+		setLoadingFlag: boolean = true
 	): Observable<TListItemDto[]> {
-		return this.wrappedRequest(() =>
-			this.httpClient.get<TListItemDto[]>(this.getFullUrl(urlExtension), {
-				params: this.toHttpParams(dto),
-			})
+		return this.wrappedRequest(
+			() =>
+				this.httpClient.get<TListItemDto[]>(this.getFullUrl(urlExtension), {
+					params: this.toHttpParams(dto),
+				}),
+			setLoadingFlag
 		);
 	}
 
@@ -89,13 +104,17 @@ export abstract class BaseApiService {
 		});
 	}
 
-	private wrappedRequest<T>(request: () => Observable<T>): Observable<T> {
+	private wrappedRequest<T>(request: () => Observable<T>, setLoadingFlag: boolean = true): Observable<T> {
 		return of(null).pipe(
-			tap(() => this._loading.next(true)),
+			tap(() => {
+				if (setLoadingFlag) this._loading.next(true);
+			}),
 			switchMap(_ => request()),
 			take(1),
 			catchError(e => this.handleErrorObservable(e)),
-			finalize(() => this._loading.next(false))
+			finalize(() => {
+				if (setLoadingFlag) this._loading.next(false);
+			})
 		);
 	}
 

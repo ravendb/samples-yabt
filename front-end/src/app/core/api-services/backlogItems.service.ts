@@ -28,18 +28,24 @@ export class BacklogItemsService extends BaseApiService {
 		super(httpClient, appCfgService.getAppServerUrl(), 'api/BacklogItems');
 	}
 
-	getBacklogItemList(request?: Partial<BacklogItemListGetRequest>): Observable<ListResponse<BacklogItemListGetResponse>> {
-		return this.getList<BacklogItemListGetRequest, BacklogItemListGetResponse>('', request);
+	getBacklogItemList(
+		request?: Partial<BacklogItemListGetRequest>,
+		setLoadingFlag: boolean = true
+	): Observable<ListResponse<BacklogItemListGetResponse>> {
+		return this.getList<BacklogItemListGetRequest, BacklogItemListGetResponse>('', request, setLoadingFlag);
 	}
-	getBacklogItem(id: string): Observable<BacklogItemGetResponseAllFields> {
-		return this.getItem<void, BacklogItemGetResponseAllFields>(`${id}`);
+	getBacklogItem(id: string, setLoadingFlag: boolean = true): Observable<BacklogItemGetResponseAllFields> {
+		return this.getItem<void, BacklogItemGetResponseAllFields>(`${id}`, undefined, setLoadingFlag);
 	}
 
-	getBacklogItemTagList(request?: Partial<BacklogItemTagListGetRequest>): Observable<BacklogItemTagListGetResponse[]> {
-		return this.getArray<BacklogItemTagListGetRequest, BacklogItemTagListGetResponse>('tags', request);
+	getBacklogItemTagList(
+		request?: Partial<BacklogItemTagListGetRequest>,
+		setLoadingFlag: boolean = true
+	): Observable<BacklogItemTagListGetResponse[]> {
+		return this.getArray<BacklogItemTagListGetRequest, BacklogItemTagListGetResponse>('tags', request, setLoadingFlag);
 	}
 
-	getSaveMethodByType<T extends BacklogAddUpdAllFieldsRequest>(
+	saveMethodByType<T extends BacklogAddUpdAllFieldsRequest>(
 		type: keyof typeof BacklogItemType,
 		id: string | null | undefined
 	): (r: T) => Observable<BacklogItemReference> {

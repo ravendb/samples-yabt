@@ -130,7 +130,7 @@ export class BacklogItemComponent implements OnInit {
 	save(): void {
 		if (!this.type) return;
 
-		const saveCmd = this.backlogService.getSaveMethodByType(this.type!, this.editId);
+		const saveCmd = this.backlogService.saveMethodByType(this.type!, this.editId);
 		saveCmd(this.form.value).subscribe(
 			ref => {
 				const notification = {
