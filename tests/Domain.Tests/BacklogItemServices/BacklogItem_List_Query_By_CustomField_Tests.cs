@@ -12,6 +12,7 @@ using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs;
+using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.CustomFieldServices.Command;
 using Raven.Yabt.Domain.CustomFieldServices.Command.DTOs;
 using Raven.Yabt.Domain.Infrastructure;
@@ -188,12 +189,12 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			return homer.Value.Id!;
 		}
 
-		private async Task<string> CreateBacklogItem<T>(string customFieldId, T customFieldValue)
+		private async Task<string> CreateBacklogItem<T>(string customFieldId, T customFieldValue) where T : notnull
 		{
 			var dto = new BugAddUpdRequest 
 				{ 
 					Title = "Test_" + GetRandomString(), 
-					CustomFields = new Dictionary<string, object?> { { customFieldId, customFieldValue } }
+					ChangedCustomFields = new List<BacklogCustomFieldAction> { new() { CustomFieldId = customFieldId, Value = customFieldValue, ActionType = ListActionType.Add } }
 				};
 			var addedRef = await _commandService.Create(dto);
 			if (!addedRef.IsSuccess)

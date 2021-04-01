@@ -128,7 +128,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 			// Remove 'old' fields
 			foreach (var id in from a in actions
-				where a.ActionType == ListActionType.Remove
+				where a.ActionType == ListActionType.Remove || a.Value is null
 				select a.CustomFieldId)
 			{
 				existingFields?.Remove(id);
