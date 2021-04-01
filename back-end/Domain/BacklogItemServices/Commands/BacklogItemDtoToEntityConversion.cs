@@ -51,7 +51,11 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				entity.ModifiedBy.Any() ? "Modified" : "Created"	// TODO: Provide more informative description in case of modifications
 			);
 
-			await ResolveChangedCustomFields(entity.CustomFields, dto.ChangedCustomFields);
+			if (dto.ChangedCustomFields != null)
+			{
+				entity.CustomFields ??= new Dictionary<string, object>();
+				await ResolveChangedCustomFields(entity.CustomFields, dto.ChangedCustomFields);
+			}
 
 			await ResolveChangedRelatedItems(entity.RelatedItems, dto.ChangedRelatedItems);
 
@@ -121,7 +125,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			}
 		}
 	
-		private async Task ResolveChangedCustomFields(IDictionary<string, object>? existingFields, IList<BacklogCustomFieldAction>? actions)
+		private async Task ResolveChangedCustomFields(IDictionary<string, object> existingFields, IList<BacklogCustomFieldAction>? actions)
 		{
 			if (actions == null)
 				return;
@@ -131,7 +135,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				where a.ActionType == ListActionType.Remove || a.Value is null
 				select a.CustomFieldId)
 			{
-				existingFields?.Remove(id);
+				existingFields.Remove(id);
 			}
 			
 			// Add new fields
@@ -142,8 +146,6 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				).ToList();
 			if (array.Any())
 			{
-				existingFields ??= new Dictionary<string, object>();
-				
 				var verifiedCustomFieldIds = await _customFieldQueryService.VerifyExistingItems(
 					array.Select(a => a.id).Distinct()
 				);
