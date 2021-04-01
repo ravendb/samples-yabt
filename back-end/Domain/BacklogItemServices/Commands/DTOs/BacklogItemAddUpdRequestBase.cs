@@ -25,13 +25,13 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs
 		public string[]? Tags { get; set; }
 
 		/// <summary>
-		///		Related tickets: { Backlog Item ID, Relationship type, Action type: add/remove }.
+		///		Changed related tickets: { Backlog Item ID, Relationship type, Action type: add/remove }.
 		/// </summary>
 		public IList<BacklogRelationshipAction>? ChangedRelatedItems { get; set; }
 
 		/// <summary>
-		///		Extra custom properties of various data types configured by the user: { Custom Field ID, Value }.
+		///		Changed custom properties of various data types configured by the user: { Custom Field ID, Value, Action type: add/remove }.
 		/// </summary>
-		public IDictionary<string, object?>? CustomFields { get; set; }
+		public IList<BacklogCustomFieldAction>? ChangedCustomFields { get; set; }
 	}
 }

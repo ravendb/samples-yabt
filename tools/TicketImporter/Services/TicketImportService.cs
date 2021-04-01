@@ -14,6 +14,7 @@ using Raven.Yabt.Database.Models.BacklogItems.Indexes;
 using Raven.Yabt.Domain.BacklogItemServices.Commands;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.BacklogItemServices.CommentCommands;
+using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.CustomFieldServices.Command;
 using Raven.Yabt.Domain.CustomFieldServices.Command.DTOs;
 using Raven.Yabt.Domain.CustomFieldServices.Query;
@@ -145,7 +146,7 @@ namespace Raven.Yabt.TicketImporter.Services
 				dto.AssigneeId = userReferences.OrderBy(_ => Guid.NewGuid()).First().Id;
 
 			var (customFieldId, customFieldValue) = customField;
-			dto.CustomFields = new Dictionary<string, object?> { { customFieldId, customFieldValue } };
+			dto.ChangedCustomFields = new List<BacklogCustomFieldAction> { new() { CustomFieldId = customFieldId, Value = customFieldValue, ActionType = ListActionType.Add } };
 			
 			if (_createdTicketIds.Count > 1 && rnd.NextDouble() < _settings.GeneratedRecords.PartOfTicketsWithRelatedItems)
 			{
@@ -154,7 +155,7 @@ namespace Raven.Yabt.TicketImporter.Services
 					new()
 					{
 						BacklogItemId = _createdTicketIds[rnd.Next(_createdTicketIds.Count-1)], 
-						ActionType = BacklogRelationshipActionType.Add, 
+						ActionType = ListActionType.Add, 
 						RelationType = (BacklogRelationshipType) rnd.Next(Enum.GetNames(typeof(BacklogRelationshipType)).Length)
 					}
 				};

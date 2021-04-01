@@ -1,4 +1,5 @@
 using Raven.Yabt.Database.Common.BacklogItem;
+using Raven.Yabt.Domain.Common;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs
 {
@@ -8,6 +9,6 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs
 		
 		public BacklogRelationshipType RelationType  { get; init; }
 		
-		public BacklogRelationshipActionType ActionType  { get; init; }
+		public ListActionType ActionType  { get; init; }
 	}
 }
