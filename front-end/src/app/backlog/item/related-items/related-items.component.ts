@@ -24,6 +24,9 @@ export class BacklogItemRelatedItemsComponent implements ControlValueAccessor {
 	}
 	private _initialRelatedItems: BacklogItemRelatedItem[] | undefined;
 
+	@Input()
+	currentBacklogItemId: string | undefined | null;
+
 	get value(): BacklogRelationshipAction[] | undefined {
 		return this._value;
 	}
@@ -63,7 +66,7 @@ export class BacklogItemRelatedItemsComponent implements ControlValueAccessor {
 
 	openAddLinkDialog(): void {
 		this.dialog
-			.open(RelatedItemsAddDialogComponent, { minWidth: '400px' })
+			.open(RelatedItemsAddDialogComponent, { data: this.currentBacklogItemId, minWidth: '400px' })
 			.afterClosed()
 			.pipe(
 				filter((l: BacklogRelationshipActionEx) => !!l),

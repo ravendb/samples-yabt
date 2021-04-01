@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BacklogItemListGetResponse } from '@core/api-models/backlog-item/list';
 import { BacklogRelationshipType } from '@core/api-models/common/backlog-item';
 import { ListActionType } from '@core/api-models/common/ListActionType';
@@ -25,6 +25,7 @@ export class RelatedItemsAddDialogComponent implements OnInit {
 	backlogItems: BacklogItemListGetResponse[] | undefined;
 
 	constructor(
+		@Inject(MAT_DIALOG_DATA) public currentBacklogItemId: string | undefined,
 		private fb: FormBuilder,
 		private backlogService: BacklogItemsService,
 		private dialogRef: MatDialogRef<RelatedItemsAddDialogComponent>
@@ -45,7 +46,7 @@ export class RelatedItemsAddDialogComponent implements OnInit {
 				distinctUntilChanged(),
 				debounceTime(300),
 				switchMap(v => this.backlogService.getBacklogItemList({ search: v, pageSize: 20 }, false)),
-				map(list => list.entries)
+				map(list => list.entries.filter(e => !this.currentBacklogItemId || e.id != this.currentBacklogItemId))
 			)
 			.subscribe(items => (this.backlogItems = items));
 		this.form.controls.backlogItemTitle.setValue('');
