@@ -1,10 +1,12 @@
 import { Component, Input, Optional, Self } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
+import { BacklogRelationshipAction } from '@core/api-models/backlog-item/item/BacklogRelationshipAction';
 import { BacklogItemRelatedItem, BacklogRelationshipType } from '@core/api-models/common/backlog-item';
 import { BacklogItemReference } from '@core/api-models/common/references';
-import { take } from 'rxjs/operators';
+import { filter, take } from 'rxjs/operators';
 import { RelatedItemsAddDialogComponent } from './add-dialog';
+import { BacklogRelationshipActionEx } from './BacklogRelationshipActionEx';
 @Component({
 	selector: 'backlog-item-related-items',
 	templateUrl: './related-items.component.html',
@@ -18,16 +20,18 @@ export class BacklogItemRelatedItemsComponent implements ControlValueAccessor {
 			i => i.linkType,
 			i => i.relatedTo!
 		);
+		this._initialRelatedItems = val;
 	}
+	private _initialRelatedItems: BacklogItemRelatedItem[] | undefined;
 
-	get value(): BacklogItemRelatedItem[] | undefined {
+	get value(): BacklogRelationshipAction[] | undefined {
 		return this._value;
 	}
-	set value(val: BacklogItemRelatedItem[] | undefined) {
+	set value(val: BacklogRelationshipAction[] | undefined) {
 		this._value = val;
 		this._onChange(val);
 	}
-	private _value: BacklogItemRelatedItem[] | undefined;
+	private _value: BacklogRelationshipAction[] | undefined;
 
 	isDisabled = false;
 
@@ -38,7 +42,7 @@ export class BacklogItemRelatedItemsComponent implements ControlValueAccessor {
 	/* View -> model callback called when select has been touched */
 	private _onTouched: () => void = () => {};
 	/* View -> model callback called when value changes from the UI */
-	private _onChange: (value?: BacklogItemRelatedItem[]) => void = () => {};
+	private _onChange: (value?: BacklogRelationshipAction[]) => void = () => {};
 
 	groupedItems: Record<keyof typeof BacklogRelationshipType, BacklogItemReference[]> | undefined;
 
@@ -58,13 +62,27 @@ export class BacklogItemRelatedItemsComponent implements ControlValueAccessor {
 	}
 
 	openAddLinkDialog(): void {
-		this.dialog.open(RelatedItemsAddDialogComponent, { minWidth: '400px' }).afterClosed().pipe(take(1)).subscribe();
+		this.dialog
+			.open(RelatedItemsAddDialogComponent, { minWidth: '400px' })
+			.afterClosed()
+			.pipe(
+				filter((l: BacklogRelationshipActionEx) => !!l),
+				take(1)
+			)
+			.subscribe(l => {
+				if (!this.value?.length) this.value = [l];
+				else this.value.push(l);
+
+				if (!this._initialRelatedItems?.length) this._initialRelatedItems = [this.getBacklogRelatedItem(l)];
+				else this._initialRelatedItems.push(this.getBacklogRelatedItem(l));
+				this.initialRelatedItems = this._initialRelatedItems;
+			});
 	}
 
-	writeValue(value?: BacklogItemRelatedItem[]): void {
+	writeValue(value?: BacklogRelationshipAction[]): void {
 		this._value = value;
 	}
-	registerOnChange(fn: (value?: BacklogItemRelatedItem[]) => void): void {
+	registerOnChange(fn: (value?: BacklogRelationshipAction[]) => void): void {
 		this._onChange = fn;
 	}
 	registerOnTouched(fn: () => {}): void {
@@ -87,5 +105,12 @@ export class BacklogItemRelatedItemsComponent implements ControlValueAccessor {
 			previous[group].push(getResult(currentItem));
 			return previous;
 		}, {} as Record<keyof typeof BacklogRelationshipType, BacklogItemReference[]>);
+	}
+
+	private getBacklogRelatedItem(b: BacklogRelationshipActionEx): BacklogItemRelatedItem {
+		return {
+			linkType: b.relationType,
+			relatedTo: { id: b.backlogItemId, name: b.backlogItemTitle, type: b.backlogItemType } as BacklogItemReference,
+		} as BacklogItemRelatedItem;
 	}
 }
