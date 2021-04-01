@@ -2,9 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialogRef } from '@angular/material/dialog';
-import { BacklogRelationshipActionType } from '@core/api-models/backlog-item/item/BacklogRelationshipActionType';
 import { BacklogItemListGetResponse } from '@core/api-models/backlog-item/list';
 import { BacklogRelationshipType } from '@core/api-models/common/backlog-item';
+import { ListActionType } from '@core/api-models/common/ListActionType';
 import { BacklogItemsService } from '@core/api-services/backlogItems.service';
 import { IKeyValuePair } from '@shared/filters';
 import { CustomValidators } from '@utils/custom-validators';
@@ -31,7 +31,7 @@ export class RelatedItemsAddDialogComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		const add: keyof typeof BacklogRelationshipActionType = 'add';
+		const add: keyof typeof ListActionType = 'add';
 		this.form = this.fb.group({
 			backlogItemId: [null, [CustomValidators.required()]],
 			backlogItemTitle: [null, [CustomValidators.required()]],
