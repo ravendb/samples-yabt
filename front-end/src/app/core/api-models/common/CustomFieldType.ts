@@ -3,4 +3,5 @@ export enum CustomFieldType {
 	date = 'Date',
 	checkbox = 'Checkbox',
 	numeric = 'Numeric',
+	url = 'URL',
 }

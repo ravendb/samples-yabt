@@ -85,7 +85,7 @@ export class BacklogItemComponent implements OnInit {
 			assigneeId: [null],
 			tags: [null],
 			changedRelatedItems: [null],
-			customFields: [null],
+			changedCustomFields: [null],
 			acceptanceCriteria: [null, [CustomValidators.requiredWhen(() => this.type == 'userStory')]],
 			description: [null, [CustomValidators.requiredWhen(() => this.type == 'task' || this.type == 'feature')]],
 			stepsToReproduce: [null, [CustomValidators.requiredWhen(() => this.type == 'bug')]],

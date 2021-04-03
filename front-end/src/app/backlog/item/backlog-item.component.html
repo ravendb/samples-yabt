@@ -119,6 +119,10 @@
 					</div>
 				</div>
 			</backlog-item-section>
+			<backlog-item-section title="Custom Fields">
+				<backlog-item-custom-fields [customFields]="dtoBeforeUpdate?.customFields" formControlName="changedCustomFields">
+				</backlog-item-custom-fields>
+			</backlog-item-section>
 			<backlog-item-section title="Related">
 				<backlog-item-related-items [initialRelatedItems]="dtoBeforeUpdate?.relatedItems" [currentBacklogItemId]="editId"
 					formControlName="changedRelatedItems">

@@ -12,10 +12,3 @@ ul {
 .title {
 	color: grey;
 }
-::ng-deep {
-	.mat-button-wrapper {
-		mat-icon.shifted-icon {
-			margin-bottom: 4px;
-		}
-	}
-}

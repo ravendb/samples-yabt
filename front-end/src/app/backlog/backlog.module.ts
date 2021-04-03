@@ -18,6 +18,7 @@ import { BacklogRouting } from './backlog.routing';
 import {
 	BacklogItemCommentComponent,
 	BacklogItemComponent,
+	BacklogItemCustomFieldsComponent,
 	BacklogItemFullHistoryDialogComponent,
 	BacklogItemHistoryItemComponent,
 	BacklogItemRelatedItemsComponent,
@@ -46,6 +47,7 @@ import { CommentsIconComponent } from './ui-elements/comments-icon';
 		BacklogItemFullHistoryDialogComponent,
 		BacklogItemRelatedItemsComponent,
 		RelatedItemsAddDialogComponent,
+		BacklogItemCustomFieldsComponent,
 	],
 	imports: [
 		CommonModule,

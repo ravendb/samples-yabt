@@ -2,6 +2,7 @@ import { BacklogItemHistoryRecord, BacklogItemRelatedItem, BacklogItemState, Bac
 import { ChangedByUserReference } from '@core/api-models/common/references/ChangedByUserReference';
 import { UserReference } from '@core/api-models/common/references/UserReference';
 import { BacklogItemCommentListGetResponse } from './BacklogItemCommentListGetResponse';
+import { BacklogItemCustomFieldValue } from './BacklogItemCustomFieldValue';
 
 export interface BacklogItemGetResponseBase {
 	title: string;
@@ -14,6 +15,6 @@ export interface BacklogItemGetResponseBase {
 	lastUpdated: ChangedByUserReference;
 	tags: string[];
 	comments: BacklogItemCommentListGetResponse[];
-	customFields: Record<string, any> | undefined;
+	customFields: BacklogItemCustomFieldValue[] | undefined;
 	relatedItems: BacklogItemRelatedItem[] | undefined;
 }
