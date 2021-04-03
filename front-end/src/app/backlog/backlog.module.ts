@@ -23,6 +23,7 @@ import {
 	BacklogItemHistoryItemComponent,
 	BacklogItemRelatedItemsComponent,
 	BacklogItemSectionComponent,
+	CustomFieldsAddDialogComponent,
 	RelatedItemsAddDialogComponent,
 } from './item';
 import { TagsComponent } from './item/ui-elements/tags';
@@ -48,6 +49,7 @@ import { CommentsIconComponent } from './ui-elements/comments-icon';
 		BacklogItemRelatedItemsComponent,
 		RelatedItemsAddDialogComponent,
 		BacklogItemCustomFieldsComponent,
+		CustomFieldsAddDialogComponent,
 	],
 	imports: [
 		CommonModule,
