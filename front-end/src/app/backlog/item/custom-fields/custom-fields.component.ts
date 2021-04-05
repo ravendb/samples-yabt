@@ -3,8 +3,11 @@ import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { BacklogCustomFieldAction } from '@core/api-models/backlog-item/item/BacklogCustomFieldAction';
 import { BacklogItemCustomFieldValue } from '@core/api-models/backlog-item/item/BacklogItemCustomFieldValue';
+import { BacklogItemType } from '@core/api-models/common/backlog-item';
 import { CustomFieldsService } from '@core/api-services/customfields.service';
 import { orderBy } from 'lodash';
+import { filter, take } from 'rxjs/operators';
+import { CustomFieldsAddDialogComponent, ICustomFieldsAddDialogParams } from './add-dialog/custom-fields-add-dialog.component';
 
 @Component({
 	selector: 'backlog-item-custom-fields',
@@ -12,6 +15,10 @@ import { orderBy } from 'lodash';
 	styleUrls: ['./custom-fields.component.scss'],
 })
 export class BacklogItemCustomFieldsComponent implements ControlValueAccessor, OnInit {
+	@Input()
+	currentBacklogItemId: string | undefined | null;
+	@Input()
+	backlogItemType: keyof typeof BacklogItemType | undefined | null;
 	@Input()
 	customFields: BacklogItemCustomFieldValue[] | undefined;
 
@@ -49,22 +56,26 @@ export class BacklogItemCustomFieldsComponent implements ControlValueAccessor, O
 	ngOnInit(): void {}
 
 	openAddFieldDialog(): void {
-		/*		this.dialog
-			.open(RelatedItemsAddDialogComponent, { data: this.currentBacklogItemId, minWidth: '400px' })
+		if (!this.currentBacklogItemId || !this.backlogItemType) return;
+		const params: ICustomFieldsAddDialogParams = {
+			backlogItemId: this.currentBacklogItemId,
+			currentFieldIds: this.customFields?.map(cf => cf.customFieldId),
+			backlogItemType: this.backlogItemType,
+		};
+		this.dialog
+			.open(CustomFieldsAddDialogComponent, { data: params, minWidth: '400px' })
 			.afterClosed()
 			.pipe(
-				filter((l: BacklogRelationshipActionEx) => !!l),
+				filter((l: BacklogCustomFieldAction | BacklogItemCustomFieldValue) => !!l),
 				take(1)
 			)
 			.subscribe(l => {
-				if (!this.value?.length) this.value = [l];
-				else this.value.push(l);
+				if (!this.value?.length) this.value = [l as BacklogCustomFieldAction];
+				else this.value.push(l as BacklogCustomFieldAction);
 
-				if (!this._initialRelatedItems?.length) this._initialRelatedItems = [this.getBacklogRelatedItem(l)];
-				else this._initialRelatedItems.push(this.getBacklogRelatedItem(l));
-				this.initialRelatedItems = this._initialRelatedItems;
+				if (!this.customFields?.length) this.customFields = [l as BacklogItemCustomFieldValue];
+				else this.customFields.push(l as BacklogItemCustomFieldValue);
 			});
-		*/
 	}
 
 	writeValue(value?: BacklogCustomFieldAction[]): void {

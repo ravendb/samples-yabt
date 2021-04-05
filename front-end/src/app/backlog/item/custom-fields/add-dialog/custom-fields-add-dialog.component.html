@@ -1,25 +1,29 @@
 <h2 mat-dialog-title>Add custom field</h2>
-<mat-dialog-content [formGroup]="form" class="flex-column">
+<mat-dialog-content [formGroup]="form" class="flex-column" *ngIf="fields$ | async; let fields">
 	<div class="flex-row">
 		<mat-form-field>
-			<mat-select formControlName="relationType">
-				<mat-option *ngFor="let link of linkTypes" [value]="link.key">{{ link.value }}</mat-option>
+			<mat-select formControlName="customFieldId">
+				<mat-option *ngFor="let field of fields" [value]="field.key">{{ field.value }}</mat-option>
 			</mat-select>
 			<mat-placeholder>Field</mat-placeholder>
 			<mat-error>
-				<error-messages formControlName="relationType"></error-messages>
+				<error-messages formControlName="customFieldId"></error-messages>
 			</mat-error>
 		</mat-form-field>
 	</div>
 	<div class="flex-row">
-		<mat-form-field>
-			<input matInput formControlName="backlogItemTitle" placeholder="Backlog item to link" [matAutocomplete]="auto">
-			<mat-autocomplete #auto="matAutocomplete" (optionSelected)="backlogItemSelected($event)">
-				<mat-option *ngFor="let t of backlogItems" [value]="t.id">
-					<backlog-item-icon [type]="t.type"></backlog-item-icon>
-					{{t.title}}
-				</mat-option>
-			</mat-autocomplete>
+		<mat-form-field appearance="fill" *ngIf="form.controls.type.value">
+			<mat-label>Value</mat-label>
+			<div [ngSwitch]="form.controls.type.value">
+				<input *ngSwitchCase="'numeric'" type="number" matInput formControlName="value">
+				<span *ngSwitchCase="'date'">
+					<input matInput formControlName="value" [matDatepicker]="picker">
+					<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+					<mat-datepicker #picker></mat-datepicker>
+				</span>
+				<mat-checkbox *ngSwitchCase="'checkbox'">Yes!</mat-checkbox>
+				<input *ngSwitchDefault type="text" matInput formControlName="value">
+			</div>
 		</mat-form-field>
 	</div>
 </mat-dialog-content>

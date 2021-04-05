@@ -2,6 +2,7 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BacklogCustomFieldAction } from '@core/api-models/backlog-item/item/BacklogCustomFieldAction';
+import { BacklogItemCustomFieldValue } from '@core/api-models/backlog-item/item/BacklogItemCustomFieldValue';
 import { BacklogItemType } from '@core/api-models/common/backlog-item';
 import { ListActionType } from '@core/api-models/common/ListActionType';
 import { CustomFieldListGetResponse } from '@core/api-models/custom-field/list';
@@ -11,6 +12,7 @@ import { CustomValidators } from '@utils/custom-validators';
 import { map } from 'rxjs/operators';
 
 export interface ICustomFieldsAddDialogParams {
+	backlogItemId: string;
 	currentFieldIds: string[] | undefined;
 	backlogItemType: keyof typeof BacklogItemType;
 }
@@ -20,9 +22,9 @@ export interface ICustomFieldsAddDialogParams {
 	styleUrls: ['./custom-fields-add-dialog.component.scss'],
 })
 export class CustomFieldsAddDialogComponent implements OnInit {
-	form!: FormGroupTyped<BacklogCustomFieldAction>;
+	form!: FormGroupTyped<BacklogCustomFieldAction & BacklogItemCustomFieldValue>;
 
-	public get fields(): Observable<IKeyValuePair[]> {
+	public get fields$(): Observable<IKeyValuePair[]> {
 		return this.apiService
 			.getCustomFieldList({ backlogItemType: this.dialogParams.backlogItemType })
 			.pipe(
@@ -49,7 +51,10 @@ export class CustomFieldsAddDialogComponent implements OnInit {
 			customFieldId: [null, [CustomValidators.required()]],
 			value: [null, [CustomValidators.required()]],
 			actionType: [add, [CustomValidators.required()]],
-		}) as FormGroupTyped<BacklogCustomFieldAction>;
+			name: [null, [CustomValidators.required()]],
+			type: [null, [CustomValidators.required()]],
+			isMandatory: [null, [CustomValidators.required()]],
+		}) as FormGroupTyped<BacklogCustomFieldAction & BacklogItemCustomFieldValue>;
 	}
 
 	add(): void {
