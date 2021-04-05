@@ -25,7 +25,7 @@ Firstly
 
 Now you can build the solution and fiddle with the tests that work against a real embedded RavenDB database and cover multiple scenarios.
 
-[See description](back-end/README.md) in the `back-end` folder to learn more about the back-end implementation.
+[See description](back-end) in the `back-end` folder to learn more about the back-end implementation.
 
 #### Next - Run API
 

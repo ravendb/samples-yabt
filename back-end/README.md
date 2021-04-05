@@ -15,7 +15,7 @@
 
 ![](./documentation/projects-map.png)
 
-NOTE: all tests are located under `./tests` folder. |Domain.Tests|Automation of test scenarios applying Behavior Driven Tests (BDT).|
+NOTE: all tests are located under `./tests` folder.
 
 ## Getting Started
 Firstly, check out the GIT repo.
@@ -23,7 +23,7 @@ Firstly, check out the GIT repo.
 ### Compile and run the tests
 
 1. Install [.NET SDK](https://dotnet.microsoft.com/download) v5.x.<br>
-Note that while the back-end would run on any version of .NET 5, the embedded _RavenDB_ used for the test project has a strong dependency on the _.NET SDK_ version. Check the required version in the [GitHub Action](./.github/workflows/dotnet-core.yml) used to run tests.
+Note that while the back-end would run on any version of .NET 5, the embedded _RavenDB_ used for the test project has a strong dependency on the _.NET SDK_ version. Check the required version in the [GitHub Action](../.github/workflows/dotnet-core.yml) used to run tests.
 
 2. Open the solution and run the tests located under `./tests` folder.<br>
 The tests that work against a real embedded _RavenDB_ database and cover multiple scenarios.
