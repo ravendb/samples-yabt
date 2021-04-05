@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 
 using Microsoft.AspNetCore.Builder;
@@ -8,6 +9,7 @@ using Microsoft.OpenApi.Models;
 
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.WebApi.Authorization.ApiKeyAuth;
+using Raven.Yabt.WebApi.Configuration.Settings;
 using Raven.Yabt.WebApi.Configuration.Swagger;
 
 namespace Raven.Yabt.WebApi.Configuration
@@ -16,7 +18,7 @@ namespace Raven.Yabt.WebApi.Configuration
 	{
 		private const string AppName = "Yet Another Bug Tracker (YABT) API";
 
-		public static void AddAndConfigureSwagger(this IServiceCollection services)
+		public static void AddAndConfigureSwagger(this IServiceCollection services, AppSettingsUserApiKey[] userApiKeys)
 		{
 			services.AddSwaggerGen(options =>
 				{
@@ -33,10 +35,11 @@ namespace Raven.Yabt.WebApi.Configuration
 					options.IncludeXmlComments(domainXmlPath);
 
 					// Configure authentication
+					var apiKeys = string.Join(",", userApiKeys.Select(k => k.ApiKey));
 					options.AddSecurityDefinition ( PredefinedUserApiKeyAuthOptions.DefaultScheme, 
 													new OpenApiSecurityScheme
 													{
-														Description = "The API key corresponds to the user",
+														Description = "The API key corresponds to the user. Acceptable values: "+apiKeys,
 														Name = PredefinedUserApiKeyAuthHandler.ApiKeyHeaderName,
 														In = ParameterLocation.Header,
 														Type = SecuritySchemeType.ApiKey,

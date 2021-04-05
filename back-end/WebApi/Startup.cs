@@ -38,7 +38,7 @@ namespace Raven.Yabt.WebApi
 			services.AddAndConfigureDatabase();
 
 			// Register Swagger
-			services.AddAndConfigureSwagger();
+			services.AddAndConfigureSwagger(settings.UserApiKey);
 
 			// Register all domain dependencies
 			services.RegisterModules(assembly: Assembly.GetAssembly(typeof(ModuleRegistrationBase))!);

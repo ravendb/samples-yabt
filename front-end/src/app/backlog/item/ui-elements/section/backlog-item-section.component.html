@@ -2,6 +2,6 @@
 	<span>{{title}}</span>
 	<mat-icon>{{!collapsed ? 'keyboard_arrow_up' : 'keyboard_arrow_down'}}</mat-icon>
 </div>
-<div [hidden]="collapsed">
+<div [hidden]="collapsed" class="section-content">
 	<ng-content></ng-content>
 </div>

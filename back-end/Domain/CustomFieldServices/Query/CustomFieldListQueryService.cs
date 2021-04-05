@@ -21,7 +21,8 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query
 		public async Task<ListResponse<CustomFieldListGetResponse>> GetList(CustomFieldListGetRequest dto)
 		{
 			var query = DbSession.Query<CustomFieldIndexedForList, CustomFields_ForList>();
-
+			query = ApplyFilters(query, dto);
+			
 			var totalRecords = await query.CountAsync();
 
 			query = ApplySorting(query, dto);
@@ -41,6 +42,29 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query
 			return new ListResponse<CustomFieldListGetResponse>(ret, totalRecords, dto.PageIndex, dto.PageSize);
 		}
 
+		public Task<CustomFieldListGetResponse[]> GetArray(CustomFieldListGetRequest dto)
+		{
+			var query = DbSession.Query<CustomFieldIndexedForList, CustomFields_ForList>();
+			query = ApplyFilters(query, dto);
+
+			return query.OrderBy(cf => cf.Name)
+			            .ProjectInto<CustomFieldListGetResponse>()
+			            .ToArrayAsync();
+		}
+
+		private IRavenQueryable<CustomFieldIndexedForList> ApplyFilters(IRavenQueryable<CustomFieldIndexedForList> query, CustomFieldListGetRequest dto)
+		{
+			if (dto.Ids?.Any() == true)
+			{
+				IEnumerable<string> fullIds = dto.Ids.Select(GetFullId);
+				query = query.Where(cf => cf.Id.In(fullIds));
+			}
+			if (dto.BacklogItemType.HasValue)
+				query = query.Where(cf => cf.BacklogItemTypes!.Contains(dto.BacklogItemType));
+			
+			return query;
+		}
+
 		private IRavenQueryable<CustomFieldIndexedForList> ApplySorting(IRavenQueryable<CustomFieldIndexedForList> query, CustomFieldListGetRequest dto)
 		{
 			if (dto.OrderBy == CustomFieldOrderColumns.Default)
@@ -55,21 +79,6 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query
 				CustomFieldOrderColumns.Type				=> dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.FieldType)	: query.OrderByDescending(t => t.FieldType),
 				_ => throw new NotImplementedException()
 			};
-		}
-
-		public Task<CustomFieldListGetResponse[]> GetArray(CustomFieldListGetRequest dto)
-		{
-			var query = DbSession.Query<CustomFieldIndexedForList, CustomFields_ForList>()
-								 .OrderBy(cf => cf.Name);
-
-			if (dto.Ids?.Any() == true)
-			{
-				IEnumerable<string> fullIds = dto.Ids.Select(GetFullId);
-
-				query = query.Where(cf => cf.Id.In(fullIds));
-			}
-
-			return query.ProjectInto<CustomFieldListGetResponse>().ToArrayAsync();
 		}
 
 		public async Task<IList<string>> VerifyExistingItems(IEnumerable<string> ids)

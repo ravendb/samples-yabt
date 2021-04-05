@@ -12,8 +12,8 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command.DTOs
 
 		public string Id
 		{
-			get { return _id; }
-			set { _id = value?.Split('/').Last(); }
+			get => _id;
+			set => _id = value?.Split('/').Last();
 		}
 
 		public string Name { get; set; } = null!;   // Non-nullable

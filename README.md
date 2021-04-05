@@ -1,38 +1,30 @@
 # Yet Another Bug Tracker (YABT)
-![.NET Core](https://github.com/ravendb/samples-yabt/workflows/.NET%20Core/badge.svg?branch=master)
+[![.NET Build & Tests](https://github.com/ravendb/samples-yabt/actions/workflows/dotnet-core.yml/badge.svg)](https://github.com/ravendb/samples-yabt/actions/workflows/dotnet-core.yml)
+[![Angular front-end](https://github.com/ravendb/samples-yabt/actions/workflows/angular.yml/badge.svg)](https://github.com/ravendb/samples-yabt/actions/workflows/angular.yml)
 <br/>
 
-A sample solution to showcase [RavenDB](https://ravendb.net) features accompanied with a [series of articles](https://ravendb.net/articles/building-application-with-net-core-and-ravendb-nosql-database). It has minimum third-party dependencies and many examples of the best practices like the [Domain Driven Design](https://en.wikipedia.org/wiki/Domain-driven_design) (DDD), [Command Query Responsibility Segregation](https://martinfowler.com/bliki/CQRS.html) (CQRS) and the [Onion Architecture](https://jeffreypalermo.com/2008/07/the-onion-architecture-part-1/).
+ An educational project leveraging [RavenDB](https://ravendb.net) database and accompanied with a [series of articles](https://ravendb.net/news/use-cases/yabt-series) explaining various aspects of building bespoke enterprise apps with NoSQL.
+ 
+ Available live at [yabt.ravendb.net](https://yabt.ravendb.net) (and API at [yabt.ravendb.net/swagger](https://yabt.ravendb.net/swagger/index.html)). Feel free to poke around!
+
+![Screenshot](./documentation/screenshot.png)
 
 ## Technologies
 * ASP .NET Core 5.0
 * RavenDB 5.1
-* xUnit, NSubstitute
+* Angular 11
 
-## Getting Started
+It has minimum third-party dependencies and heaps of best practices.
 
-The easiest way to get started is to check out the solution and run the tests locally (WebAPI and UI will be added later):
+## Get it up locally
 
-1. Install the latest [.NET Core SDK](https://dotnet.microsoft.com/download).
-2. Open the solution (e.g. in VS .NET, VS Code or Rider IDE).
-3. Build & fiddle with the tests.<br>Want more?
-4. Acquire a RavenDB instance (either in the [cloud](https://cloud.ravendb.net/) or [download](https://ravendb.net/download) and install locally).
-5. Run the WebAPI (Swagger).
-
-Check out a series of _YABT_ articles on the [RavenDB website](https://ravendb.net/articles/building-application-with-net-core-and-ravendb-nosql-database).
-
-## Overview of the solution
-
-|Project name|Description|
-| ---------- | ----------|
-|Database|All entities and aggregates, related classes and enums and DB-related settings.|
-|Domain|All interfaces, types and logic specific to the domain layer.|
-|WebAPI|The application layer (WebAPI).|
-|Domain.Tests|Automation of test scenarios applying Behavior Driven Tests (BDT).|
+1. Check out the GIT repo.
+2. Get the back-end running (see [steps in 'back-end/README'](./back-end/)).
+3. Get the front-end running (see [steps in 'front-end/README'](./front-end/)).
 
 ## Support
 
-If you are having problems, please let us know by [raising a new issue](https://github.com/ravendb/samples-yabt/issues/new).
+If you spot a bug, have an idea or a question, please let us know by [raising a new issue](https://github.com/ravendb/samples-yabt/issues/new), submitting a [pull request](https://docs.github.com/en/github/collaborating-with-issues-and-pull-requests/creating-a-pull-request) or contacting the author on Twitter @ [_AlexKlaus](https://twitter.com/_AlexKlaus).
 
 ## License
 

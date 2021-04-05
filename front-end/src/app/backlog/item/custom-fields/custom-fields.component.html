@@ -1,0 +1,25 @@
+<button *ngIf="false" mat-button color="primary" (click)="openAddFieldDialog()">
+	<mat-icon class="shifted-icon">add</mat-icon> Add custom field
+</button>
+<ul *ngIf="!!customFields">
+	<li *ngFor="let field of customFieldsOrdered">
+		<div class="title">{{field.name}}</div>
+		<div [ngSwitch]="field.type">
+			<span *ngSwitchCase="'text'">
+				{{field.value}}
+			</span>
+			<span *ngSwitchCase="'date'">
+				{{field.value | date: 'shortDate'}}
+			</span>
+			<span *ngSwitchCase="'checkbox'">
+				{{field.value ? 'Yes' : 'No'}}
+			</span>
+			<span *ngSwitchCase="'numeric'">
+				{{field.value | number: '1.0-2'}}
+			</span>
+			<span *ngSwitchCase="'url'">
+				<a href="{{field.value}}" target="_blank">{{field.value}}</a>
+			</span>
+		</div>
+	</li>
+</ul>

@@ -1,4 +1,5 @@
 import { BacklogItemCommentListGetResponse } from '@core/api-models/backlog-item/item/BacklogItemCommentListGetResponse';
+import { BacklogItemCustomFieldValue } from '@core/api-models/backlog-item/item/BacklogItemCustomFieldValue';
 import { BacklogItemHistoryRecord, BacklogItemRelatedItem, BacklogItemType } from '@core/api-models/common/backlog-item';
 import { ChangedByUserReference } from '@core/api-models/common/references';
 
@@ -9,5 +10,5 @@ export interface BacklogItemReadonlyProperties {
 	comments: BacklogItemCommentListGetResponse[];
 	historyDescOrder: BacklogItemHistoryRecord[];
 	relatedItems: BacklogItemRelatedItem[] | undefined;
-	customFields: Record<string, any> | undefined;
+	customFields: BacklogItemCustomFieldValue[] | undefined;
 }

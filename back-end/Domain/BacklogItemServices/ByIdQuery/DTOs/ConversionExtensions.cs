@@ -2,6 +2,7 @@
 using System.Linq;
 
 using Raven.Yabt.Database.Models.BacklogItems;
+using Raven.Yabt.Domain.CustomFieldServices.Query.DTOs;
 using Raven.Yabt.Domain.Helpers;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
@@ -11,7 +12,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 	/// </summary>
 	internal static class ConversionExtensions
 	{
-		public static TResponse ConvertToDto<TEntity, TResponse>(this TEntity entity)
+		public static TResponse ConvertToDto<TEntity, TResponse>(this TEntity entity, List<BacklogItemCustomFieldValue>? customFieldValues)
 			where TEntity : BacklogItem
 			where TResponse : BacklogItemGetResponseBase, new()
 		{
@@ -24,8 +25,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				HistoryDescOrder = entity.ModifiedBy.OrderByDescending(i => i.Timestamp).ToList(),
 				Tags = entity.Tags,
 				Comments = GetCommentsList(entity.Comments),
-				RelatedItems = entity.RelatedItems.AsReadOnly(),
-				CustomFields = entity.CustomFields,
+				RelatedItems = entity.RelatedItems?.AsReadOnly(),
+				CustomFields = customFieldValues?.AsReadOnly(),
 				Type = entity.Type
 			};
 
@@ -49,6 +50,16 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 
 			return response;
 		}
+
+		public static List<BacklogItemCustomFieldValue> ConvertFieldToDto(this IEnumerable<CustomFieldListGetResponse> customFieldList, IDictionary<string, object>? values)
+			=> customFieldList.Select(f => new BacklogItemCustomFieldValue
+			{
+				CustomFieldId = f.Id!,
+				Type = f.FieldType,
+				IsMandatory = f.IsMandatory,
+				Name = f.Name,
+				Value = values![f.Id!]
+			}).ToList();
 		
 		private static IReadOnlyList<BacklogItemCommentListGetResponse> GetCommentsList(IList<Comment> comments)
 		{

@@ -32,9 +32,9 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 		public IReadOnlyList<BacklogItemCommentListGetResponse>? Comments { get; init; }
 
 		/// <summary>
-		///		Extra custom properties of various data types configured by the user: { Custom Field ID, Value }.
+		///		Extra custom properties of various data types configured by the user
 		/// </summary>
-		public IDictionary<string, object>? CustomFields { get; init; }
+		public IReadOnlyList<BacklogItemCustomFieldValue>? CustomFields { get; init; }
 		
 		/// <summary>
 		///		Related tickets
