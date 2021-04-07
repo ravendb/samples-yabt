@@ -7,7 +7,6 @@ using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Models.CustomFields;
 using Raven.Yabt.Database.Models.CustomFields.Indexes;
-using Raven.Yabt.Domain.BacklogItemServices.ByCustomFieldQuery;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.CustomFieldServices.Command.DTOs;
 
@@ -15,12 +14,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 {
 	public class CustomFieldCommandService : BaseService<CustomField>, ICustomFieldCommandService
 	{
-		private readonly IBacklogItemByCustomFieldQueryService _backlogService;
-
-		public CustomFieldCommandService(IAsyncDocumentSession dbSession, IBacklogItemByCustomFieldQueryService backlogService) : base(dbSession)
-		{
-			_backlogService = backlogService;
-		}
+		public CustomFieldCommandService(IAsyncDocumentSession dbSession) : base(dbSession) {}
 
 		public async Task<IDomainResult<CustomFieldReferenceDto>> Create(CustomFieldAddRequest dto)
 		{
@@ -33,7 +27,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 					Name = dto.Name,
 					FieldType = dto.FieldType,
 					BacklogItemTypes = dto.BacklogItemTypes,
-					IsMandatory = dto.IsMandatory
+					IsMandatory = dto.IsMandatory.HasValue && dto.IsMandatory.Value
 				};
 			await DbSession.StoreAsync(entity);
 
@@ -51,7 +45,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 				return DomainResult.NotFound<CustomFieldReferenceDto>();
 
 			entity.Name = dto.Name;
-			entity.IsMandatory = dto.IsMandatory;
+			entity.IsMandatory = dto.IsMandatory.HasValue && dto.IsMandatory.Value;
 			entity.BacklogItemTypes = dto.BacklogItemTypes;
 
 			return DomainResult.Success(GetReference(entity));
