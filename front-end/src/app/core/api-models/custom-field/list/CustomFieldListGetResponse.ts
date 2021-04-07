@@ -4,7 +4,7 @@ import { CustomFieldType } from '@core/api-models/common/CustomFieldType';
 export interface CustomFieldListGetResponse {
 	id: string;
 	name: string;
-	fieldType: CustomFieldType;
+	fieldType: keyof typeof CustomFieldType;
 	isMandatory: boolean;
-	backlogItemTypes: Array<BacklogItemType> | undefined;
+	backlogItemTypes: Array<keyof typeof BacklogItemType> | undefined;
 }

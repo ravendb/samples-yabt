@@ -1,12 +1,14 @@
-import { Component, Input, OnInit, Optional, Self } from '@angular/core';
+import { Component, Input, Optional, Self } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { BacklogCustomFieldAction } from '@core/api-models/backlog-item/item/BacklogCustomFieldAction';
 import { BacklogItemCustomFieldValue } from '@core/api-models/backlog-item/item/BacklogItemCustomFieldValue';
 import { BacklogItemType } from '@core/api-models/common/backlog-item';
+import { CustomFieldListGetResponse } from '@core/api-models/custom-field/list';
 import { CustomFieldsService } from '@core/api-services/customfields.service';
 import { orderBy } from 'lodash';
-import { filter, take } from 'rxjs/operators';
+import { isEmpty } from 'lodash-es';
+import { filter, map, take } from 'rxjs/operators';
 import { CustomFieldsAddDialogComponent, ICustomFieldsAddDialogParams } from './add-dialog/custom-fields-add-dialog.component';
 
 @Component({
@@ -14,13 +16,24 @@ import { CustomFieldsAddDialogComponent, ICustomFieldsAddDialogParams } from './
 	templateUrl: './custom-fields.component.html',
 	styleUrls: ['./custom-fields.component.scss'],
 })
-export class BacklogItemCustomFieldsComponent implements ControlValueAccessor, OnInit {
+export class BacklogItemCustomFieldsComponent implements ControlValueAccessor {
 	@Input()
 	currentBacklogItemId: string | undefined | null;
 	@Input()
-	backlogItemType: keyof typeof BacklogItemType | undefined | null;
-	@Input()
 	customFields: BacklogItemCustomFieldValue[] | undefined;
+	@Input()
+	set backlogItemType(val: keyof typeof BacklogItemType | undefined) {
+		this._backlogItemType = val;
+		if (!!this._backlogItemType)
+			this.apiService
+				.getCustomFieldList({ backlogItemType: this._backlogItemType })
+				.pipe(
+					map(i => i.entries.filter(e => !this.customFields || !this.customFields.find(c => c.customFieldId == e.id))),
+					take(1)
+				)
+				.subscribe(f => (this._availableFields = !isEmpty(f) ? f : undefined));
+	}
+	private _backlogItemType: keyof typeof BacklogItemType | undefined;
 
 	get customFieldsOrdered(): BacklogItemCustomFieldValue[] | undefined {
 		return !!this.customFields ? orderBy(this.customFields, c => c.name) : undefined;
@@ -36,6 +49,11 @@ export class BacklogItemCustomFieldsComponent implements ControlValueAccessor, O
 	private _value: BacklogCustomFieldAction[] | undefined;
 
 	isDisabled = false;
+
+	public get availableFields(): CustomFieldListGetResponse[] | undefined {
+		return this._availableFields;
+	}
+	private _availableFields: CustomFieldListGetResponse[] | undefined;
 
 	/* View -> model callback called when select has been touched */
 	private _onTouched: () => void = () => {};
@@ -53,28 +71,36 @@ export class BacklogItemCustomFieldsComponent implements ControlValueAccessor, O
 			this.ngControl.valueAccessor = this;
 		}
 	}
-	ngOnInit(): void {}
 
 	openAddFieldDialog(): void {
-		if (!this.currentBacklogItemId || !this.backlogItemType) return;
+		if (!this._availableFields) return;
 		const params: ICustomFieldsAddDialogParams = {
-			backlogItemId: this.currentBacklogItemId,
-			currentFieldIds: this.customFields?.map(cf => cf.customFieldId),
-			backlogItemType: this.backlogItemType,
+			availableFields: this._availableFields,
 		};
 		this.dialog
 			.open(CustomFieldsAddDialogComponent, { data: params, minWidth: '400px' })
 			.afterClosed()
 			.pipe(
-				filter((l: BacklogCustomFieldAction | BacklogItemCustomFieldValue) => !!l),
+				filter((l: BacklogCustomFieldAction) => !!l),
 				take(1)
 			)
 			.subscribe(l => {
+				const field = this._availableFields?.find(x => x.id == l.customFieldId);
+				if (!field) return;
+
 				if (!this.value?.length) this.value = [l as BacklogCustomFieldAction];
 				else this.value.push(l as BacklogCustomFieldAction);
 
-				if (!this.customFields?.length) this.customFields = [l as BacklogItemCustomFieldValue];
-				else this.customFields.push(l as BacklogItemCustomFieldValue);
+				const fieldVal: BacklogItemCustomFieldValue = {
+					customFieldId: l.customFieldId,
+					value: l.value,
+					name: field.name,
+					type: field.fieldType,
+					isMandatory: field.isMandatory,
+				};
+
+				if (!this.customFields?.length) this.customFields = [fieldVal];
+				else this.customFields.push(fieldVal);
 			});
 	}
 

@@ -1,30 +1,41 @@
 <h2 mat-dialog-title>Add custom field</h2>
-<mat-dialog-content [formGroup]="form" class="flex-column" *ngIf="fields$ | async; let fields">
+<mat-dialog-content [formGroup]="form" class="flex-column" *ngIf="dialogParams.availableFields">
 	<div class="flex-row">
 		<mat-form-field>
-			<mat-select formControlName="customFieldId">
-				<mat-option *ngFor="let field of fields" [value]="field.key">{{ field.value }}</mat-option>
+			<mat-select [formControl]="customFieldCtrl">
+				<mat-option *ngFor="let field of dialogParams.availableFields" [value]="field">{{ field.name }}</mat-option>
 			</mat-select>
 			<mat-placeholder>Field</mat-placeholder>
 			<mat-error>
-				<error-messages formControlName="customFieldId"></error-messages>
+				<error-messages [formControl]="customFieldCtrl"></error-messages>
 			</mat-error>
+			<mat-hint>{{customFieldCtrl.value?.fieldType}}</mat-hint>
 		</mat-form-field>
 	</div>
-	<div class="flex-row">
-		<mat-form-field appearance="fill" *ngIf="form.controls.type.value">
-			<mat-label>Value</mat-label>
-			<div [ngSwitch]="form.controls.type.value">
-				<input *ngSwitchCase="'numeric'" type="number" matInput formControlName="value">
-				<span *ngSwitchCase="'date'">
-					<input matInput formControlName="value" [matDatepicker]="picker">
-					<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-					<mat-datepicker #picker></mat-datepicker>
-				</span>
-				<mat-checkbox *ngSwitchCase="'checkbox'">Yes!</mat-checkbox>
-				<input *ngSwitchDefault type="text" matInput formControlName="value">
-			</div>
-		</mat-form-field>
+	<div class="flex-row" *ngIf="!!customFieldCtrl.value">
+		<span *ngIf="customFieldCtrl.value?.fieldType == 'checkbox'; else otherControls">
+			<mat-checkbox formControlName="value" [indeterminate]="false">Yes!</mat-checkbox>
+		</span>
+
+		<ng-template #otherControls>
+			<mat-form-field appearance="fill">
+				<mat-label>Value</mat-label>
+				<div [ngSwitch]="customFieldCtrl.value?.fieldType">
+					<input *ngSwitchCase="'numeric'" type="number" matInput formControlName="value">
+					<span *ngSwitchCase="'date'">
+						<input matInput formControlName="value" [matDatepicker]="picker">
+						<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+						<mat-datepicker #picker></mat-datepicker>
+					</span>
+
+					<input *ngSwitchCase="'checkbox'" [hidden]="true" matInput>
+					<input *ngSwitchDefault type="text" matInput formControlName="value">
+				</div>
+				<mat-error>
+					<error-messages formControlName="value"></error-messages>
+				</mat-error>
+			</mat-form-field>
+		</ng-template>
 	</div>
 </mat-dialog-content>
 <mat-dialog-actions>

@@ -1,4 +1,4 @@
-<button *ngIf="false" mat-button color="primary" (click)="openAddFieldDialog()">
+<button mat-button color="primary" (click)="openAddFieldDialog()" *ngIf="!!availableFields">
 	<mat-icon class="shifted-icon">add</mat-icon> Add custom field
 </button>
 <ul *ngIf="!!customFields">
