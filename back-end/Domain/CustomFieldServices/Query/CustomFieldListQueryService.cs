@@ -60,7 +60,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query
 				query = query.Where(cf => cf.Id.In(fullIds));
 			}
 			if (dto.BacklogItemType.HasValue)
-				query = query.Where(cf => cf.BacklogItemTypes!.Contains(dto.BacklogItemType));
+				query = query.Where(cf => cf.BacklogItemTypes!.Any() == false || cf.BacklogItemTypes!.Contains(dto.BacklogItemType));
 			
 			return query;
 		}
@@ -75,9 +75,10 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query
 
 			return dto.OrderBy switch
 			{
-				CustomFieldOrderColumns.Name				=> dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.Name)		: query.OrderByDescending(t => t.Name),
-				CustomFieldOrderColumns.Type				=> dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.FieldType)	: query.OrderByDescending(t => t.FieldType),
-				_ => throw new NotImplementedException()
+				CustomFieldOrderColumns.Name 
+					or CustomFieldOrderColumns.Default	=> dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.Name)		: query.OrderByDescending(t => t.Name),
+				CustomFieldOrderColumns.Type			=> dto.OrderDirection == OrderDirections.Asc ? query.OrderBy(t => t.FieldType)	: query.OrderByDescending(t => t.FieldType),
+				_ => throw new ArgumentOutOfRangeException($"Unsupported 'order by' - {dto.OrderBy}")
 			};
 		}
 

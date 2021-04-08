@@ -146,7 +146,7 @@ namespace Raven.Yabt.TicketImporter.Services
 				dto.AssigneeId = userReferences.OrderBy(_ => Guid.NewGuid()).First().Id;
 
 			var (customFieldId, customFieldValue) = customField;
-			dto.ChangedCustomFields = new List<BacklogCustomFieldAction> { new() { CustomFieldId = customFieldId, Value = customFieldValue, ActionType = ListActionType.Add } };
+			dto.ChangedCustomFields = new List<BacklogCustomFieldAction> { new() { CustomFieldId = customFieldId, ObjValue = customFieldValue, ActionType = ListActionType.Add } };
 			
 			if (_createdTicketIds.Count > 1 && rnd.NextDouble() < _settings.GeneratedRecords.PartOfTicketsWithRelatedItems)
 			{
