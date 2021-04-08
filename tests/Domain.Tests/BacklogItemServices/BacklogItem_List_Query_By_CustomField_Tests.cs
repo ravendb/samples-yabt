@@ -194,7 +194,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			var dto = new BugAddUpdRequest 
 				{ 
 					Title = "Test_" + GetRandomString(), 
-					ChangedCustomFields = new List<BacklogCustomFieldAction> { new() { CustomFieldId = customFieldId, Value = customFieldValue, ActionType = ListActionType.Add } }
+					ChangedCustomFields = new List<BacklogCustomFieldAction> { new() { CustomFieldId = customFieldId, ObjValue = customFieldValue, ActionType = ListActionType.Add } }
 				};
 			var addedRef = await _commandService.Create(dto);
 			if (!addedRef.IsSuccess)

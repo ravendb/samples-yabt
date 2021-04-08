@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -5,6 +6,7 @@ using System.Threading.Tasks;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
+using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Database.Models.BacklogItems;
@@ -12,6 +14,7 @@ using Raven.Yabt.Database.Models.BacklogItems.Indexes;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.CustomFieldServices.Query;
+using Raven.Yabt.Domain.CustomFieldServices.Query.DTOs;
 using Raven.Yabt.Domain.Helpers;
 using Raven.Yabt.Domain.UserServices.Query;
 
@@ -139,24 +142,40 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			}
 			
 			// Add new fields
-			List<(string id, object value)> array = 
+			var array = 
 				(from a in actions
-					where a.ActionType == ListActionType.Add
-					select (a.CustomFieldId, a.Value)
+					where a.ActionType == ListActionType.Add	// Keep only the ones that we're adding
+					select a
 				).ToList();
 			if (array.Any())
 			{
-				var verifiedCustomFieldIds = await _customFieldQueryService.VerifyExistingItems(
-					array.Select(a => a.id).Distinct()
-				);
-				array.RemoveAll(a => !verifiedCustomFieldIds.Contains(a.id));
+				var fieldRequest = new CustomFieldListGetRequest
+					{
+						Ids = array.Select(a => a.CustomFieldId).Distinct(),
+						PageSize = Int32.MaxValue
+					};
+				var verifiedCustomFields = await _customFieldQueryService.GetArray(fieldRequest);
 
-				foreach (var (id, value) in array)
+				foreach (var a in array)
 				{
-					if (existingFields.ContainsKey(id))
-						existingFields[id] = value;
+					var field = verifiedCustomFields.SingleOrDefault(f => f.Id == a.CustomFieldId);
+					if (a.Value is null || field is null)
+						continue;
+
+					var obj = field.FieldType switch
+					{
+						CustomFieldType.Text or CustomFieldType.Url => a.GetValue<string>(),
+						CustomFieldType.Numeric => a.GetValue<decimal>(),
+						CustomFieldType.Date => a.GetValue<DateTime>(),
+						_ => throw new ArgumentOutOfRangeException($"Unsupported field type: {field.FieldType}")
+					};
+					if (obj is null)
+						continue;
+					
+					if (existingFields.ContainsKey(a.CustomFieldId))
+						existingFields[a.CustomFieldId] = obj;
 					else
-						existingFields.Add(id, value);
+						existingFields.Add(a.CustomFieldId, obj);
 				}
 			}
 		}
