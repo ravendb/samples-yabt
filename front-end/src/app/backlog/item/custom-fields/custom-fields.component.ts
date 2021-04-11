@@ -85,22 +85,7 @@ export class BacklogItemCustomFieldsComponent implements ControlValueAccessor {
 				take(1)
 			)
 			.subscribe(l => {
-				const field = this._availableFields?.find(x => x.id == l.customFieldId);
-				if (!field) return;
-
-				if (!this.value?.length) this.value = [l as BacklogCustomFieldAction];
-				else this.value.push(l as BacklogCustomFieldAction);
-
-				const fieldVal: BacklogItemCustomFieldValue = {
-					customFieldId: l.customFieldId,
-					value: l.value,
-					name: field.name,
-					type: field.fieldType,
-					isMandatory: field.isMandatory,
-				};
-
-				if (!this.customFields?.length) this.customFields = [fieldVal];
-				else this.customFields.push(fieldVal);
+				this.addCustomFieldAction(l as BacklogCustomFieldAction);
 			});
 	}
 
@@ -115,5 +100,32 @@ export class BacklogItemCustomFieldsComponent implements ControlValueAccessor {
 	}
 	setDisabledState(isDisabled: boolean): void {
 		this.isDisabled = isDisabled;
+	}
+
+	remove(customFieldId: string): void {
+		this.addCustomFieldAction({ customFieldId, actionType: 'remove' } as BacklogCustomFieldAction);
+	}
+
+	private addCustomFieldAction(action: BacklogCustomFieldAction): void {
+		if (action.actionType == 'add') {
+			const field = this._availableFields?.find(x => x.id == action.customFieldId);
+			if (!field) return;
+
+			const fieldVal: BacklogItemCustomFieldValue = {
+				customFieldId: action.customFieldId,
+				value: action.value,
+				name: field.name,
+				type: field.fieldType,
+				isMandatory: field.isMandatory,
+			};
+			if (!this.customFields?.length) this.customFields = [fieldVal];
+			else this.customFields.push(fieldVal);
+		} else {
+			if (!this.customFields?.length) return;
+			var index = this.customFields.findIndex(x => x.customFieldId == action.customFieldId);
+			if (index > -1) this.customFields.splice(index, 1);
+		}
+		if (!this.value?.length) this.value = [action];
+		else this.value.push(action);
 	}
 }

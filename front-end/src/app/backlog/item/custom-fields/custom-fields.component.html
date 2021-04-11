@@ -3,7 +3,12 @@
 </button>
 <ul *ngIf="!!customFields">
 	<li *ngFor="let field of customFieldsOrdered">
-		<div class="title">{{field.name}}</div>
+		<div class="title">
+			<div class="title-left">{{field.name}}</div>
+			<div class="title-right">
+				<mat-icon title="Remove custom field" (click)="remove(field.customFieldId)">clear</mat-icon>
+			</div>
+		</div>
 		<div [ngSwitch]="field.type">
 			<span *ngSwitchCase="'text'">
 				{{field.value}}

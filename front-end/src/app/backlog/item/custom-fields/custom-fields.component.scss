@@ -7,6 +7,42 @@ ul {
 		padding: 8px 0 8px 0;
 		border-bottom: 1px solid;
 		border-bottom-color: rgba(234, 234, 234, 1);
+		.title {
+			display: flex;
+			justify-content: flex-start;
+
+			.title-left {
+				display: flex;
+				justify-content: flex-start;
+				max-width: 85%;
+				margin-top: 4px;
+				min-width: 0;
+			}
+			.title-right {
+				white-space: nowrap;
+				font-size: 14px;
+				margin: 4px;
+				display: flex;
+				flex: auto;
+				flex-direction: row-reverse;
+
+				mat-icon {
+					visibility: hidden;
+					&:hover {
+						cursor: pointer;
+					}
+				}
+			}
+		}
+		&:hover {
+			.title {
+				.title-right {
+					mat-icon {
+						visibility: visible;
+					}
+				}
+			}
+		}
 	}
 }
 .title {
