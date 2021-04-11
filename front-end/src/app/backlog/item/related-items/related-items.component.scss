@@ -7,10 +7,44 @@ ul {
 		padding: 8px 0 8px 0;
 		border-bottom: 1px solid;
 		border-bottom-color: rgba(234, 234, 234, 1);
+		.title {
+			color: grey;
+		}
+		.related-item {
+			display: flex;
+			justify-content: flex-start;
+
+			.item-left {
+				display: flex;
+				justify-content: flex-start;
+				max-width: 85%;
+				margin-top: 4px;
+				min-width: 0;
+			}
+			.remove-action {
+				white-space: nowrap;
+				font-size: 14px;
+				margin: 4px;
+				display: flex;
+				flex: auto;
+				flex-direction: row-reverse;
+
+				mat-icon {
+					visibility: hidden;
+					&:hover {
+						cursor: pointer;
+					}
+				}
+			}
+		}
+		.related-item:hover {
+			.remove-action {
+				mat-icon {
+					visibility: visible;
+				}
+			}
+		}
 	}
-}
-.title {
-	color: grey;
 }
 ::ng-deep {
 	.mat-button-wrapper {

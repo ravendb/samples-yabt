@@ -3,13 +3,16 @@
 </button>
 <ul *ngIf="!!groupedItems">
 	<li *ngFor="let type of types">
-		<div class="title">{{relationshipType[type]}}</div>
-		<div *ngFor="let item of groupedItems[type]">
-			<div>
+		<div>{{relationshipType[type]}}</div>
+		<div *ngFor="let item of groupedItems[type]" class="related-item">
+			<div class="item-left">
 				<backlog-item-icon [type]="item.type"></backlog-item-icon>
 				<a [routerLink]="['/backlog-items', item.id]">
 					{{item.name}}
 				</a>
+			</div>
+			<div class="remove-action">
+				<mat-icon title="Remove related item" (click)="remove(item.id!, type)">clear</mat-icon>
 			</div>
 		</div>
 	</li>

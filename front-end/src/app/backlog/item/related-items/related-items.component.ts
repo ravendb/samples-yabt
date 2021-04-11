@@ -95,6 +95,17 @@ export class BacklogItemRelatedItemsComponent implements ControlValueAccessor {
 		this.isDisabled = isDisabled;
 	}
 
+	remove(backlogItemId: string, relationType: keyof typeof BacklogRelationshipType): void {
+		const action: BacklogRelationshipAction = { actionType: 'remove', backlogItemId, relationType };
+		if (!this.value?.length) this.value = [action];
+		else this.value.push(action);
+
+		if (!this._initialRelatedItems?.length) return;
+		this.initialRelatedItems = this._initialRelatedItems.filter(
+			x => x.relatedTo?.id != action.backlogItemId && x.linkType != relationType
+		);
+	}
+
 	private getGroupedItems(
 		list: BacklogItemRelatedItem[] | undefined,
 		getKey: (item: BacklogItemRelatedItem) => keyof typeof BacklogRelationshipType,
