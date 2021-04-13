@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 using DomainResults.Common;
 
@@ -14,7 +15,13 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 {
 	public class CustomFieldCommandService : BaseService<CustomField>, ICustomFieldCommandService
 	{
-		public CustomFieldCommandService(IAsyncDocumentSession dbSession) : base(dbSession) {}
+		private readonly IEnumerable<IRemoveCustomFieldReferencesCommand> _clearFieldReferences;
+
+		public CustomFieldCommandService(IAsyncDocumentSession dbSession, IEnumerable<IRemoveCustomFieldReferencesCommand> clearFieldReferences) : base(
+			dbSession)
+		{
+			_clearFieldReferences = clearFieldReferences;
+		}
 
 		public async Task<IDomainResult<CustomFieldReferenceDto>> Create(CustomFieldAddRequest dto)
 		{
@@ -53,14 +60,16 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 
 		public async Task<IDomainResult<CustomFieldReferenceDto>> Delete(string id)
 		{
-			// TODO: Prohibit deletion if there are any references
-
 			var cf = await DbSession.LoadAsync<CustomField>(GetFullId(id));
 			if (cf == null)
 				return DomainResult.NotFound<CustomFieldReferenceDto>();
 
 			DbSession.Delete(cf);
 
+			// Delete the ID in all references
+			foreach (var clearFieldRef in _clearFieldReferences)
+				clearFieldRef.ClearCustomFieldId(id);
+			
 			return DomainResult.Success(GetReference(cf));
 		}
 
