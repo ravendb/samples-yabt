@@ -111,7 +111,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		}
 
 		[Fact]
-		private async Task Deleted_Related_Item_Get_Persisted_In_Both_Tickets()
+		private async Task Deleted_Related_Item_Get_Reflected_In_Both_Tickets()
 		{
 			// GIVEN 2 tickets
 			var (refTicketId, _) = await CreateSampleBug();

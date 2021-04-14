@@ -3,7 +3,7 @@
 </button>
 <ul *ngIf="!!groupedItems">
 	<li *ngFor="let type of types">
-		<div>{{relationshipType[type]}}</div>
+		<div class="title">{{relationshipType[type]}}</div>
 		<div *ngFor="let item of groupedItems[type]" class="related-item">
 			<div class="item-left">
 				<backlog-item-icon [type]="item.type"></backlog-item-icon>

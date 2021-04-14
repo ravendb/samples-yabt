@@ -80,7 +80,8 @@
 				</mat-form-field>
 			</backlog-item-section>
 
-			<backlog-item-section title="Comments" *ngIf="!!editId && (currentUserId$ | async); let userId">
+			<backlog-item-section [title]="'Comments'+(dtoBeforeUpdate?.comments?.length ? ' ('+dtoBeforeUpdate?.comments?.length+')' : '')"
+				*ngIf="!!editId && (currentUserId$ | async); let userId">
 				<div class="comment-section">
 					<backlog-item-comment [backlogItemId]="editId" [newComment]="true" [currentUserId]="userId"
 						(commentSaved)="addedComment($event)">
@@ -97,7 +98,8 @@
 			<backlog-item-section title="Planning">
 				<div class="side-offset">
 					<mat-form-field class="full-width">
-						<input matInput placeholder="Estimated size" formControlName="estimatedSize">
+						<input matInput type="number" placeholder="Estimated size"
+							title="whatever units (days, hours, fibonacci numbers, etc.)" formControlName="estimatedSize">
 					</mat-form-field>
 					<div class="table monospace">
 						<div class="row" *ngIf="type == 'bug'">

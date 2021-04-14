@@ -9,7 +9,7 @@
 				<mat-icon title="Remove custom field" (click)="remove(field.customFieldId)">clear</mat-icon>
 			</div>
 		</div>
-		<div [ngSwitch]="field.type">
+		<div [ngSwitch]="field.type" class="field-value">
 			<span *ngSwitchCase="'text'">
 				{{field.value}}
 			</span>

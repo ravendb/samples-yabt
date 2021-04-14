@@ -10,6 +10,7 @@ ul {
 		.title {
 			display: flex;
 			justify-content: flex-start;
+			color: grey;
 
 			.title-left {
 				display: flex;
@@ -43,8 +44,10 @@ ul {
 				}
 			}
 		}
+
+		.field-value {
+			text-overflow: ellipsis;
+			overflow: hidden;
+		}
 	}
-}
-.title {
-	color: grey;
 }
