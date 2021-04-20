@@ -11,7 +11,7 @@
 
 	filter-search {
 		flex: 1 1 auto;
-		min-width: 170px; // min width to fit smaller mobile screens
+		min-width: 130px; // min width to fit smaller mobile screens
 	}
 	& > *:not(filter-search) {
 		@include makeHiddenXSmall();
