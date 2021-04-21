@@ -140,7 +140,7 @@ namespace Raven.Yabt.TicketImporter.Services
 			var rnd = new Random();
 			var dto = new T { Title = issue.Title };
 			if (issue.Labels?.Any() == true)
-				dto.Tags = issue.Labels.Select(l => l.Name).ToArray();
+				dto.Tags = issue.Labels.Select(l => l.Name).Where(l => l.Length is > 0 and < 11 && l[0] != ':').ToArray();
 			
 			if (userReferences.Any() && rnd.NextDouble() < _settings.GeneratedRecords.PartOfAssignedTickets)
 				dto.AssigneeId = userReferences.OrderBy(_ => Guid.NewGuid()).First().Id;

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+using DomainResults.Common;
+
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
@@ -22,7 +24,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 {
 	public interface IBacklogItemDtoToEntityConversion
 	{
-		Task<TModel> ConvertToEntity<TModel, TDto>(TDto dto, TModel? entity = null)
+		Task<IDomainResult<BacklogItem>> ConvertToEntity<TModel, TDto>(TDto dto, TModel? entity = null)
 			where TModel : BacklogItem, new() where TDto : BacklogItemAddUpdRequestBase;
 	}
 	
@@ -37,7 +39,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			_customFieldQueryService = customFieldQueryService;
 		}
 
-		public async Task<TModel> ConvertToEntity<TModel, TDto>(TDto dto, TModel? entity = null)
+		public async Task<IDomainResult<BacklogItem>> ConvertToEntity<TModel, TDto>(TDto dto, TModel? entity = null)
 			where TModel : BacklogItem, new()
 			where TDto : BacklogItemAddUpdRequestBase
 		{
@@ -46,9 +48,12 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			entity.Title = dto.Title;
 			entity.State = dto.State;
 			entity.EstimatedSize = dto.EstimatedSize;
-			entity.Tags = dto.Tags;
 			entity.Assignee = dto.AssigneeId != null ? await _userResolver.GetReferenceById(dto.AssigneeId) : null;
-	
+
+			if (dto.Tags?.Any(t => t.Length > 10) == true)
+				return DomainResult<BacklogItem>.Failed("Each tag can't exceed 10 symbols");
+			entity.Tags = dto.Tags;
+
 			entity.AddHistoryRecord(
 				await _userResolver.GetCurrentUserReference(), 
 				entity.ModifiedBy.Any() ? "Modified" : "Created"	// TODO: Provide more informative description in case of modifications
@@ -82,7 +87,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				featureEntity.Description = featureDto.Description;
 			}
 
-			return entity;
+			return DomainResult.Success<BacklogItem>(entity);
 		}
 
 		private async Task ResolveChangedRelatedItems(List<BacklogItemRelatedItem> existingRelatedItems, IList<BacklogRelationshipAction>? actions)

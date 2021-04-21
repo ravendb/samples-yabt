@@ -22,6 +22,9 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs
 
 		public string? AssigneeId { get; set; }
 
+		/// <summary>
+		///		Tags. Note that each tag can't exceed 10 characters
+		/// </summary>
 		public string[]? Tags { get; set; }
 
 		/// <summary>

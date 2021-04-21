@@ -4,7 +4,7 @@
 			{{tag}}<mat-icon matChipRemove>cancel</mat-icon>
 		</mat-chip>
 		<input #tagsInput [matChipInputFor]="tagList" placeholder="Tags..." [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-			[matChipInputAddOnBlur]="true" [matAutocomplete]="auto" (matChipInputTokenEnd)="add($event)">
+			[matChipInputAddOnBlur]="true" [matAutocomplete]="auto" (matChipInputTokenEnd)="add($event)" maxlength="10">
 	</mat-chip-list>
 	<mat-autocomplete #auto="matAutocomplete" (optionSelected)="selected($event)">
 		<mat-option *ngFor="let t of serverTags | async" [value]="t">

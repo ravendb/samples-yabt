@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -27,16 +28,16 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 		public async Task<IDomainResult<BacklogItemReference>> Create<T>(T dto) where T : BacklogItemAddUpdRequestBase
 		{
-			BacklogItem? ticket = dto switch
+			var (ticket, status) = dto switch
 			{
 				BugAddUpdRequest bug		 => await _dtoToEntityConversion.ConvertToEntity<BacklogItemBug,		BugAddUpdRequest>(bug),
 				UserStoryAddUpdRequest story => await _dtoToEntityConversion.ConvertToEntity<BacklogItemUserStory,	UserStoryAddUpdRequest>(story),
 				TaskAddUpdRequest task		 => await _dtoToEntityConversion.ConvertToEntity<BacklogItemTask,		TaskAddUpdRequest>(task),
 				FeatureAddUpdRequest feature => await _dtoToEntityConversion.ConvertToEntity<BacklogItemFeature,	FeatureAddUpdRequest>(feature),
-				_ => null,
+				_ => throw new ArgumentException($"Unsupported type ${typeof(T)}", nameof(dto))
 			};
-			if (ticket == null)
-				return DomainResult.Failed<BacklogItemReference>("Incorrect Backlog structure");
+			if (!status.IsSuccess)
+				return status.To<BacklogItemReference>();
 
 			await DbSession.StoreAsync(ticket);
 			var ticketRef = ticket.ToReference().RemoveEntityPrefixFromId();
@@ -52,16 +53,16 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			if (entity == null)
 				return DomainResult.NotFound<BacklogItemReference>();
 
-			entity = dto switch
+			var (_, status) = dto switch
 			{
 				BugAddUpdRequest bug		 => await _dtoToEntityConversion.ConvertToEntity (bug,		entity as BacklogItemBug),
 				UserStoryAddUpdRequest story => await _dtoToEntityConversion.ConvertToEntity (story,	entity as BacklogItemUserStory),
 				TaskAddUpdRequest task		 => await _dtoToEntityConversion.ConvertToEntity (task,		entity as BacklogItemTask),
 				FeatureAddUpdRequest feature => await _dtoToEntityConversion.ConvertToEntity (feature,	entity as BacklogItemFeature),
-				_ => null
+				_ => throw new ArgumentException($"Unsupported type ${typeof(T)}", nameof(dto))
 			};
-			if (entity == null)
-				return DomainResult.Failed<BacklogItemReference>("Incorrect Backlog structure");
+			if (!status.IsSuccess)
+				return status.To<BacklogItemReference>();
 
 			var ticketRef = entity.ToReference().RemoveEntityPrefixFromId();
 
