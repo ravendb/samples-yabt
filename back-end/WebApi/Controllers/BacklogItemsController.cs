@@ -5,6 +5,7 @@ using DomainResults.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
+using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery;
 using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs;
@@ -164,10 +165,18 @@ namespace Raven.Yabt.WebApi.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public Task<ActionResult<BacklogItemReference>> AssignToUser([FromServices] IBacklogItemCommandService service,
-																	 [FromRoute] string id,
-																	 string userId)
-			=> service.AssignToUser(id, userId).ToActionResultOfT();
+		public Task<IActionResult> AssignToUser([FromServices] IBacklogItemCommandService service, [FromRoute] string id, string userId) =>
+			service.AssignToUser(id, userId).ToActionResult();
+
+		/// <summary>
+		///		Set a new state for a Backlog Item
+		/// </summary>
+		[HttpPut("{id}/state")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public Task<IActionResult> SetState([FromServices] IBacklogItemCommandService service, [FromRoute] string id, BacklogItemState newState) =>
+			service.SetState(id, newState).ToActionResult();
 
 		#endregion / PUT requests ---------------
 
