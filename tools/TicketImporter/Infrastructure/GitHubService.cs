@@ -40,7 +40,7 @@ namespace Raven.Yabt.TicketImporter.Infrastructure
 							issue.Comments.AddRange(comments);
 						}
 					}
-					return issues.Where(i => i.Labels.All(l => l.Name != "auto-merge")).ToArray();
+					return issues.Where(i => !i.IsPullRequest).ToArray();
 				}
 
 			return GetList<IssueResponse>(requestString, maxNumber, cancellationToken, IssueProcessing);

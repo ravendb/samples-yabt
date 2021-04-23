@@ -102,7 +102,7 @@ namespace Raven.Yabt.TicketImporter.Services
 								BacklogItemType.Task => ConvertToBacklogItem<TaskAddUpdRequest>(issue, userReferences, (customFieldId, gitHubUrl),
 									d => d.Description = issue.Body
 								),
-								BacklogItemType.Feature => ConvertToBacklogItem<TaskAddUpdRequest>(issue, userReferences, (customFieldId, gitHubUrl), 
+								BacklogItemType.Feature => ConvertToBacklogItem<FeatureAddUpdRequest>(issue, userReferences, (customFieldId, gitHubUrl), 
 									d => d.Description = issue.Body
 								),
 								_ => throw new NotImplementedException("Type not supported")
@@ -118,6 +118,12 @@ namespace Raven.Yabt.TicketImporter.Services
 							{
 								await _backlogCommentService.Create(createdTicketRef.Id!, commentDto);
 							}
+
+						if (issue.State == "closed")
+						{
+							await SaveChanges(cancellationToken);
+							await _backlogItemService.SetState(createdTicketRef.Id!, BacklogItemState.Closed);
+						}
 					}
 					await SaveChanges(cancellationToken);
 					_createdTicketIds.AddRange(ticketIdPerIteration);
@@ -125,14 +131,14 @@ namespace Raven.Yabt.TicketImporter.Services
 			}
 		}
 
-		private async Task<string[]> GetGitHubUrlsForExistingTickets(string customFieldId)
+		private async Task<string?[]> GetGitHubUrlsForExistingTickets(string customFieldId)
 		{
 			var cf = await (
 					from t in _dbSession.Query<BacklogItemIndexedForList, BacklogItems_ForList>()
 					where t.CustomFields![customFieldId] != null
 					select t.CustomFields!
 				).ToArrayAsync();
-			return cf.Select(c => c[customFieldId].ToString()).ToArray();
+			return cf.Where(c => c != null).Select(c => c![customFieldId].ToString()).ToArray();
 		}
 
 		private T ConvertToBacklogItem<T>(IssueResponse issue, IList<UserReference> userReferences, (string, string) customField, Action<T>? settingExtraFields) where T : BacklogItemAddUpdRequestBase, new()
@@ -140,7 +146,14 @@ namespace Raven.Yabt.TicketImporter.Services
 			var rnd = new Random();
 			var dto = new T { Title = issue.Title };
 			if (issue.Labels?.Any() == true)
-				dto.Tags = issue.Labels.Select(l => l.Name).Where(l => l.Length is > 0 and < 11 && l[0] != ':').ToArray();
+			{
+				// Sanitise labels
+				 var labels = from l in issue.Labels.Select(l => Regex.Replace(l.Name, "(feature|bug|task|user\\sstory|area)-{0,1}",""))
+					                          where l.Length is > 0 and < 12 
+						                          && !l.Any(c => c is ':' or '*')
+					                          select l;
+				 dto.Tags = labels.Distinct().ToArray();
+			}
 			
 			if (userReferences.Any() && rnd.NextDouble() < _settings.GeneratedRecords.PartOfAssignedTickets)
 				dto.AssigneeId = userReferences.OrderBy(_ => Guid.NewGuid()).First().Id;
@@ -191,7 +204,7 @@ namespace Raven.Yabt.TicketImporter.Services
 			return 
 				issue.Labels.Any(l => l.Name == "bug") ? BacklogItemType.Bug :
 				issue.Labels.Any(l => l.Name == "task") ? BacklogItemType.Task : 
-				issue.Labels.Any(l => l.Name == "feature") ? BacklogItemType.Feature : BacklogItemType.UserStory; 
+				issue.Labels.Any(l => l.Name.StartsWith("feature")) ? BacklogItemType.Feature : BacklogItemType.UserStory; 
 		} 
 		
 		private async Task<string> GenerateOrFetchUrlCustomField()
