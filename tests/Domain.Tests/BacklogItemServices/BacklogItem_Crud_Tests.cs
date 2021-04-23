@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using NSubstitute;
 
-using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery;
@@ -27,7 +26,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		private readonly IBacklogItemCommandService _commandService;
 		private readonly IBacklogItemByIdQueryService _queryService;
 
-		private readonly UserReference _currentUser = new UserReference { Id = "1", Name = "H. Simpson", FullName = "Homer Simpson" };
+		private readonly UserReference _currentUser = new (){ Id = "1", Name = "H. Simpson", FullName = "Homer Simpson" };
 
 		public BacklogItem_Crud_Tests()
 		{
@@ -41,7 +40,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 			var userResolver = Substitute.For<IUserReferenceResolver>();
 				userResolver.GetCurrentUserReference().Returns(_currentUser);
-			services.AddScoped(x => userResolver);
+			services.AddScoped(_ => userResolver);
 		}
 
 		[Fact]
@@ -65,10 +64,10 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		[Fact]
 		private async Task Updated_Bug_Properties_Get_Persisted()
 		{
-			// GIVEN a 'bug'
+			// GIVEN a ticket
 			var ticketRef = await CreateSampleBug();
 
-			// WHEN changing the title of the 'bug'
+			// WHEN changing the title of the ticket
 			var dto = new BugAddUpdRequest
 			{
 				Title = "Test Bug (Updated)",
@@ -96,10 +95,10 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		[Fact]
 		private async Task Deleted_Bug_Disappears_From_Db()
 		{
-			// GIVEN a 'bug'
+			// GIVEN a ticket
 			var ticketRef = await CreateSampleBug();
 
-			// WHEN deleting the 'bug'
+			// WHEN deleting the ticket
 			var ticketDeletedRef = await _commandService.Delete(ticketRef.Id!);
 			await SaveChanges();
 
@@ -111,6 +110,22 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			// the ticket disappears from the DB
 			var ticket = await _queryService.GetById(ticketRef.Id!);
 			Assert.Equal(DomainOperationStatus.NotFound, ticket.Status);
+		}
+
+		[Fact]
+		private async Task Set_New_Status_Get_Persisted()
+		{
+			// GIVEN a ticket with 'Open' status
+			var (id, _) = await CreateSampleBug();
+
+			// WHEN changing the status to 'Closed'
+			await _commandService.SetState(id!, BacklogItemState.Closed);
+			await SaveChanges();
+
+			// THEN 
+			// The new state gets persisted
+			var (ticket, _) = await _queryService.GetById(id!);
+			Assert.Equal(BacklogItemState.Closed, ticket.State);
 		}
 
 		private async Task<BacklogItemReference> CreateSampleBug()

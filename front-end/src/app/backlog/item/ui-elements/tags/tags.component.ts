@@ -37,14 +37,14 @@ export class TagsComponent extends CustomFormControlBase<string[]> {
 		const input = event.input;
 		const value = event.value;
 
-		// Add our fruit
+		// Add a new tag
 		if ((value || '').trim()) {
 			this.mainControl.setValue([...this.mainControl.value, value.trim()]);
 			this.mainControl.updateValueAndValidity();
 		}
 
 		// Reset the input value
-		if (input) {
+		if (!!input) {
 			input.value = '';
 		}
 	}

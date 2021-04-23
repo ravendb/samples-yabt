@@ -50,9 +50,9 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			entity.EstimatedSize = dto.EstimatedSize;
 			entity.Assignee = dto.AssigneeId != null ? await _userResolver.GetReferenceById(dto.AssigneeId) : null;
 
-			if (dto.Tags?.Any(t => t.Length > 10) == true)
+			if (dto.Tags?.Any(t => t.Length > 11) == true)
 				return DomainResult<BacklogItem>.Failed("Each tag can't exceed 10 symbols");
-			entity.Tags = dto.Tags;
+			entity.Tags = dto.Tags?.Distinct().ToArray();
 
 			entity.AddHistoryRecord(
 				await _userResolver.GetCurrentUserReference(), 

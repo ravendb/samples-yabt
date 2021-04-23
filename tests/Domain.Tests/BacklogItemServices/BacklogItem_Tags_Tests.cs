@@ -75,8 +75,8 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 
 		[Theory]
 		[InlineData(new[] { "123", "1234" }, true)]
-		[InlineData(new[] { "1234567890", "12345678901" }, false)]
-		[InlineData(new[] { "12345678901", "12345678901" }, false)]
+		[InlineData(new[] { "1234567890", "123456789012" }, false)]
+		[InlineData(new[] { "123456789012", "123456789012" }, false)]
 		private async Task Tags_Longer_10_Symbols_Prohibited(string[] tags, bool isValid)
 		{
 			// GIVEN a ticket tags
