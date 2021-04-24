@@ -76,14 +76,15 @@ namespace Raven.Yabt.TicketImporter.Services
 			// Iterate through the GitHub repos and import tickets with comments  
 			foreach (var repo in _settings.GitHub.Repos)
 			{
-				await foreach (var issues in _gitHubService.GetIssues(repo, _settings.GitHub.MaxImportedIssues, cancellationToken).WithCancellation(cancellationToken))
+				var repoUrl = $"https://github.com/{repo}/issues/";
+				var validateIssue = new Func<IssueResponse, bool>(issue => !gitHubUrls.Contains($"{repoUrl}{issue.Number}"));
+				
+				await foreach (var issues in _gitHubService.GetIssues(repo, _settings.GitHub.MaxImportedIssues, validateIssue, cancellationToken).WithCancellation(cancellationToken))
 				{
 					var ticketIdPerIteration = new List<string>();
 					foreach (var issue in issues)
 					{
-						var gitHubUrl = $"https://github.com/{repo}/issues/{issue.Number}";
-						if (gitHubUrls.Contains(gitHubUrl))
-							continue;
+						var gitHubUrl = $"{repoUrl}{issue.Number}";
 						
 						BacklogItemAddUpdRequestBase dto = 
 							GetBacklogItemType(issue) switch

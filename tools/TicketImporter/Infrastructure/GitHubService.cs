@@ -25,23 +25,24 @@ namespace Raven.Yabt.TicketImporter.Infrastructure
 			_logger = logger;
 		}
 
-		public IAsyncEnumerable<IssueResponse[]> GetIssues(string repoName, int maxNumber = int.MaxValue, CancellationToken cancellationToken = default)
+		public IAsyncEnumerable<IssueResponse[]> GetIssues(string repoName, int maxNumber = int.MaxValue, Func<IssueResponse, bool>? validateIssue = null, CancellationToken cancellationToken = default)
 		{
 			var builder = new QueryBuilder(DtoConversion.ToDictionary(new IssuesRequest()));
 			var requestString = string.Concat($"repos/{repoName}/issues", builder.ToString());
 
 			async Task<IssueResponse[]> IssueProcessing(IssueResponse[] issues)
+			{
+				var issueQuery = issues.Where(i => !i.IsPullRequest && validateIssue?.Invoke(i) != false).AsQueryable();
+				foreach (var issue in issueQuery.Where(i => i.CommentsCount > 0))
 				{
-					foreach (var issue in issues.Where(i => i.CommentsCount > 0))
+					issue.Comments = new List<CommentResponse>();
+					await foreach (var comments in GetList<CommentResponse>(issue.CommentsUrl, maxNumber, cancellationToken))
 					{
-						issue.Comments = new List<CommentResponse>();
-						await foreach (var comments in GetList<CommentResponse>(issue.CommentsUrl, maxNumber, cancellationToken))
-						{
-							issue.Comments.AddRange(comments);
-						}
+						issue.Comments.AddRange(comments);
 					}
-					return issues.Where(i => !i.IsPullRequest).ToArray();
 				}
+				return issueQuery.ToArray();
+			}
 
 			return GetList<IssueResponse>(requestString, maxNumber, cancellationToken, IssueProcessing);
 		}
