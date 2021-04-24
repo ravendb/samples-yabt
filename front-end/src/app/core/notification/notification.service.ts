@@ -8,7 +8,9 @@ import { AlertDialogComponent } from './alert-dialog.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog.component';
 import { INotificationMessage, NotificationComponent } from './notification.component';
 
-@Injectable()
+@Injectable({
+	providedIn: 'root',
+})
 export class NotificationService {
 	constructor(private dialog: MatDialog, private notifySnack: MatSnackBar, private zone: NgZone) {}
 

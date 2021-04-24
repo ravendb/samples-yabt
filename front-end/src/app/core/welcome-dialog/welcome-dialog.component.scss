@@ -1,0 +1,34 @@
+@import 'theme';
+
+mat-icon.mat-icon {
+	margin-right: 4px;
+	padding: 4px;
+}
+
+.mat-dialog-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+.mat-dialog-actions {
+	justify-content: flex-end;
+}
+
+.option {
+	display: flex;
+	align-items: center;
+}
+
+a {
+	cursor: pointer;
+	color: $accent-color;
+	text-decoration: none;
+	&:hover {
+		color: $accent-dark-color;
+		text-decoration: underline;
+	}
+}
+
+div {
+	padding-bottom: 12px;
+}

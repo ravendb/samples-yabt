@@ -1,0 +1,25 @@
+<h2 mat-dialog-title class="title">Welcome to YABT</h2>
+<mat-dialog-content>
+	<div>
+		It's a bug-tracker. A demo project leveraging <a href="https://ravendb.net" target="_blank">RavenDB</a> database (along with .NET &
+		Angular).
+	</div>
+	<div class="option">
+		<mat-icon color="primary" svgIcon="GitHub"></mat-icon>
+		<span>Open-source & MIT project. Grab the code on <a href="https://github.com/ravendb/samples-yabt"
+				target="_blank">GitHub</a></span>.
+	</div>
+	<div class="option">
+		<mat-icon color="primary" class="material-icons-outlined">visibility</mat-icon>
+		<span>Check out a <a href="https://ravendb.net/news/use-cases/yabt-series" target="_blank">series of articles</a> explaining
+			various aspects of building bespoke enterprise apps with NoSQL.</span>
+	</div>
+	<div class="option">
+		<mat-icon color="primary" class="material-icons-outlined">sentiment_satisfied_alt</mat-icon>
+		<span>Feel free to poke around. Go and search, modify, delete and create entries.<br> You're logged in as one of the users
+			already.</span>
+	</div>
+</mat-dialog-content>
+<mat-dialog-actions>
+	<button mat-raised-button color="primary" [mat-dialog-close]="true">OK, got it!</button>
+</mat-dialog-actions>

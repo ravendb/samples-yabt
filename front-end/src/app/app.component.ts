@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { PageTitleService } from '@core/page-title.service';
+import { WelcomeDialogCheckService } from '@core/welcome-dialog/welcome-dialog-check.service';
 import { Subscription } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
@@ -20,9 +21,14 @@ import { filter } from 'rxjs/operators';
 export class AppComponent implements OnInit, OnDestroy {
 	private subscriptions: Subscription = new Subscription();
 
-	constructor(private router: Router, @Inject(DOCUMENT) private document: Document, private pageTitle: PageTitleService) {}
+	constructor(
+		private router: Router,
+		@Inject(DOCUMENT) private document: Document,
+		private pageTitle: PageTitleService,
+		private welcomeDialogCheck: WelcomeDialogCheckService
+	) {}
 
-	ngOnInit() {
+	async ngOnInit() {
 		this.subscriptions.add(
 			this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((): void => {
 				// Scroll to top on Route Change (still doesn't work on iOS though)
@@ -32,6 +38,8 @@ export class AppComponent implements OnInit, OnDestroy {
 				this.pageTitle.initializePageTitles();
 			})
 		);
+
+		this.welcomeDialogCheck.displayWelcomeDialogIfNecessary();
 	}
 
 	ngOnDestroy() {
