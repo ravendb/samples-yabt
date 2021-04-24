@@ -54,7 +54,7 @@ $font-monospace: 'Segoe UI', '-apple-system', BlinkMacSystemFont, Roboto, 'Helve
 		display: flex;
 		justify-content: stretch;
 		align-content: stretch;
-		@include breakpointXSmall() {
+		@include breakpointSmallAndDown() {
 			flex-wrap: wrap;
 		}
 		width: 100%;
@@ -62,14 +62,14 @@ $font-monospace: 'Segoe UI', '-apple-system', BlinkMacSystemFont, Roboto, 'Helve
 
 		.narrow {
 			width: 20%;
-			@include breakpointXSmall() {
+			@include breakpointSmallAndDown() {
 				order: 1;
 				width: calc(100% - 80px);
 			}
 		}
 		.wide {
 			width: calc(80% - 100px);
-			@include breakpointXSmall() {
+			@include breakpointSmallAndDown() {
 				order: 3;
 				width: 100%;
 			}
@@ -78,7 +78,7 @@ $font-monospace: 'Segoe UI', '-apple-system', BlinkMacSystemFont, Roboto, 'Helve
 			flex-direction: column;
 			display: flex;
 			width: 100px;
-			@include breakpointXSmall() {
+			@include breakpointSmallAndDown() {
 				order: 2;
 				width: 60px;
 			}
