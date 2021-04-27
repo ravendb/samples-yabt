@@ -13,6 +13,6 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Kick off Raven API end-point via Curl
-      uses: wei/curl@v1.1.1
-      with:
-        args: -F 'importOptions={"IncludeExpired":false,"IncludeArtificial":false,"RemoveAnalyzers":false,"OperateOnTypes":"Documents,Indexes,Identities,Tombstones","OperateOnDatabaseRecordTypes":"None"}' -F 'file=documentation/exported_data.ravendbdump' ${{ secrets.RavenDB_URL }}/smuggler/import
+        uses: wei/curl@v1.1.1
+        with:
+          args: -F 'importOptions={"IncludeExpired":false,"IncludeArtificial":false,"RemoveAnalyzers":false,"OperateOnTypes":"Documents,Indexes,Identities,Tombstones","OperateOnDatabaseRecordTypes":"None"}' -F 'file=documentation/exported_data.ravendbdump' ${{ secrets.RavenDB_URL }}/smuggler/import
