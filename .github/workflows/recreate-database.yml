@@ -12,7 +12,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: print secrets
+      - run: 'echo "$CERTIFICATE_KEY" > crt.key'
+        shell: bash
+        env:
+          SSH_KEY: ${{secrets.CERTIFICATE_KEY}}
+      - run: 'echo "$CERTIFICATE_PEM" > crt.pem'
+        shell: bash
+        env:
+          SSH_KEY: ${{secrets.CERTIFICATE_PEM}}
       - name: Kick off Raven API end-point via Curl
         uses: wei/curl@v1.1.1
         with:
-          args: -F 'importOptions={"IncludeExpired":false,"IncludeArtificial":false,"RemoveAnalyzers":false,"OperateOnTypes":"Documents,Indexes,Identities,Tombstones","OperateOnDatabaseRecordTypes":"None"}' -F 'file=documentation/exported_data.ravendbdump' ${{ secrets.RavenDB_URL }}/smuggler/import
+          args: -F 'importOptions={"IncludeExpired":false,"IncludeArtificial":false,"RemoveAnalyzers":false,"OperateOnTypes":"Documents,Indexes,Identities,Tombstones","OperateOnDatabaseRecordTypes":"None"}' -F 'file=documentation/exported_data.ravendbdump' ${{ secrets.RavenDB_URL }}/smuggler/import --key ./crt.key --cert ./crt.pem
