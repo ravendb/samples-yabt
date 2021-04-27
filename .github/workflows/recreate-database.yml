@@ -24,4 +24,4 @@ jobs:
       - name: Kick off Raven API end-point via Curl
         uses: wei/curl@v1.1.1
         with:
-          args: -F 'importOptions={"IncludeExpired":false,"IncludeArtificial":false,"RemoveAnalyzers":false,"OperateOnTypes":"Documents,Indexes,Identities,Tombstones","OperateOnDatabaseRecordTypes":"None"}' -F 'file=documentation/exported_data.ravendbdump' ${{ secrets.RavenDB_URL }}/smuggler/import --key ./crt.key --cert ./crt.pem
+          args: -F 'importOptions={"IncludeExpired":false,"IncludeArtificial":false,"RemoveAnalyzers":false,"OperateOnTypes":"Documents,Indexes,Identities,Tombstones","OperateOnDatabaseRecordTypes":"None"}' -F 'file=./documentation/exported_data.ravendbdump' --key ./crt.key --cert ./crt.pem ${{ secrets.RavenDB_URL }}/smuggler/import
