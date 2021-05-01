@@ -16,7 +16,7 @@ jobs:
       - run: 'echo "$CERTIFICATE_KEY" > crt.key'
         shell: bash
         env:
-          SSH_KEY: ${{secrets.CERTIFICATE_KEY}}
+          CERTIFICATE_KEY: ${{secrets.CERTIFICATE_KEY}}
       - run: 'echo "$CERTIFICATE_PEM" > crt.pem'
         shell: bash
         env:
