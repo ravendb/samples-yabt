@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: print secrets
-      - run: 'echo "$CERTIFICATE_KEY" > crt.key'
+        run: 'echo "$CERTIFICATE_KEY" > crt.key'
         shell: bash
         env:
           CERTIFICATE_KEY: ${{secrets.CERTIFICATE_KEY}}
