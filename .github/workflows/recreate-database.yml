@@ -1,0 +1,38 @@
+name: Re-create the database
+
+on: 
+  schedule:
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: print secrets
+        run: 'echo "$CERTIFICATE_KEY" > crt.key'
+        shell: bash
+        env:
+          CERTIFICATE_KEY: ${{secrets.CERTIFICATE_KEY}}
+      - run: 'echo "$CERTIFICATE_PEM" > crt.pem'
+        shell: bash
+        env:
+          CERTIFICATE_PEM: ${{secrets.CERTIFICATE_PEM}}
+
+      - name: Delete the DB (hit Raven API end-point via Curl)
+        uses: wei/curl@v1.1.1
+        with:
+          args: -X 'DELETE' '${{ secrets.RavenDB_URL }}/admin/databases' --data-raw '{"HardDelete":true,"DatabaseNames":["${{ secrets.RavenDB_DB_Name }}"]}' --key ./crt.key --cert ./crt.pem
+
+      - name: Create the DB (hit Raven API end-point via Curl)
+        uses: wei/curl@v1.1.1
+        with:
+          args: -X 'PUT' '${{ secrets.RavenDB_URL }}/admin/databases?name=${{ secrets.RavenDB_DB_Name }}&replicationFactor=1' --data-raw '{"DatabaseName":"${{ secrets.RavenDB_DB_Name }}","Settings":{},"Disabled":false,"Encrypted":false,"Topology":{"DynamicNodesDistribution":false}}' --key ./crt.key --cert ./crt.pem
+
+      - name: Import data to the DB (hit Raven API end-point via Curl)
+        uses: wei/curl@v1.1.1
+        with:
+          args: -F 'importOptions={"IncludeExpired":false,"IncludeArtificial":false,"RemoveAnalyzers":false,"OperateOnTypes":"Documents,Indexes,Identities,Tombstones","OperateOnDatabaseRecordTypes":"None"}' -F 'file=@documentation/exported_data.ravendbdump' --key ./crt.key --cert ./crt.pem ${{ secrets.RavenDB_URL }}/databases/${{ secrets.RavenDB_DB_Name }}/smuggler/import
