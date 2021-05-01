@@ -20,7 +20,7 @@ jobs:
       - run: 'echo "$CERTIFICATE_PEM" > crt.pem'
         shell: bash
         env:
-          SSH_KEY: ${{secrets.CERTIFICATE_PEM}}
+          CERTIFICATE_PEM: ${{secrets.CERTIFICATE_PEM}}
 
       - name: Delete the DB (hit Raven API end-point via Curl)
         uses: wei/curl@v1.1.1
