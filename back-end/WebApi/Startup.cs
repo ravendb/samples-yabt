@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.WebApi.Configuration;
@@ -51,18 +52,27 @@ namespace Raven.Yabt.WebApi
 		/// </summary>
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AppSettings appSettings)
 		{
-			app.UseHttpsRedirection();
-			
-			app.AddAppExceptionHandler(env);
+			if (env.IsDevelopment())
+				// CORS is used for development only 
+				app.UseCors();
+			else
+			{	// Enforce use of HTTPS
+				app.UseHsts();
+				app.UseHttpsRedirection();
+			}
 
-			app.UseRouting();
-			app.UseCors();
+			app.AddAppExceptionHandler(env);
 
 			app.UseAuthentication();
 
 			app.AddAppSwaggerUi();
 
-			app.UseEndpoints(endpoints => endpoints.MapControllers());
+			// Matches request to an endpoint
+			app.UseRouting();
+			// Executes the matched endpoint
+			app.UseEndpoints(endpoints => 
+				endpoints.MapControllers() // Maps attributes on the controllers, like, [Route], [HttpGet], etc.
+			);
 
 			app.AddAppSpaStaticFiles(appSettings.UserApiKey);
 		}
