@@ -52,7 +52,7 @@ namespace Raven.Yabt.Database.Migration
 		///		Check for errors with the DB indexes
 		/// </summary>
 		/// <param name="maxWaitingForStaleIndexes"> Max waiting interval for checking stale indexes </param>
-		/// <param name="cancellationToken"> The task cancelation token </param>
+		/// <param name="cancellationToken"> The cancellation token </param>
 		/// <returns> Error message if fail, otherwise - NULL </returns>
 		private async Task<string?> GetIndexErrors(int maxWaitingForStaleIndexes, CancellationToken cancellationToken)
 		{

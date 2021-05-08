@@ -22,6 +22,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\back-end\Database\Database.csproj" />
+    <ProjectReference Include="..\..\back-end\Database.Common\Database.Common.csproj" />
     <ProjectReference Include="..\..\back-end\Domain\Domain.csproj" />
   </ItemGroup>
 

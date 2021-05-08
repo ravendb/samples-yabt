@@ -6,6 +6,8 @@ using Newtonsoft.Json;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Conventions;
 using Raven.Client.Json.Serialization.NewtonsoftJson;
+
+using Raven.Yabt.Database.Common.Configuration;
 using Raven.Yabt.Database.Models.BacklogItems;
 
 namespace Raven.Yabt.Database
@@ -38,25 +40,38 @@ namespace Raven.Yabt.Database
 		/// <summary>
 		///     Configure RavenDB Document Store
 		/// </summary>
-		public static IDocumentStore GetDocumentStore(string[] ravenDbUrl, string base64EncodedCertificate, string dbName)
+		/// <remarks>
+		///		It DOESN'T create/update the indexes (by calling 'IndexCreation.CreateIndexes()'), as it may interfere with complex migration processes! Index creation/update should be called outside (along with the migration process).
+		/// </remarks>
+		public static IDocumentStore GetDocumentStore(DatabaseSettings settings, bool preInitialise = true, Action<IDocumentStore>? customInit = null, bool initialise = true)
 		{
-			// Connect to a public RavenDB (authentication via certificate)
-			if (!string.IsNullOrEmpty(base64EncodedCertificate))
+			var store = new DocumentStore
+				{
+					Urls = settings.RavenDbUrls,
+					Database = settings.DbName,
+				};
+
+			try
 			{
-				byte[] certificate = Convert.FromBase64String(base64EncodedCertificate);
-				return new DocumentStore
-				{
-					Certificate = new X509Certificate2(certificate),
-					Urls = ravenDbUrl,
-					Database = dbName
-				};
+				// A public/secure instance of RavenDB requires authentication via certificate
+				if (!string.IsNullOrEmpty(settings.Certificate))
+					store.Certificate = new X509Certificate2(Convert.FromBase64String(settings.Certificate));
+				
+				if (preInitialise)
+					store.PreInitializeDocumentStore();
+				
+				customInit?.Invoke(store);
+
+				if (initialise)
+					store.Initialize();
 			}
-			else    // Connect to local RavenDB (no authentication)
-				return new DocumentStore
-				{
-					Urls = ravenDbUrl,
-					Database = dbName
-				};
+			catch
+			{
+				store.Dispose();
+				throw;
+			}
+			
+			return store;
 		}
 	}
 }

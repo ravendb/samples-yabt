@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.Logging;
 
 using Raven.Client.Documents.Session;
-using Raven.Yabt.Database.Configuration;
+using Raven.Yabt.Database.Common.Configuration;
 using Raven.Yabt.Domain.Infrastructure;
 
 namespace Raven.Yabt.WebApi.Infrastructure
@@ -24,13 +24,13 @@ namespace Raven.Yabt.WebApi.Infrastructure
 			IAsyncDocumentSession dbSession,
 			IPatchOperationsExecuteAsync patchOperations,
 			ILogger<DbSessionManagementFilter> logger,
-			DatabaseSettings ravenDbSettings)
+			DatabaseSessionSettings ravenSessionSettings)
 		{
 			_dbSession = dbSession ?? throw new ArgumentNullException(nameof(dbSession));
 			_patchOperations = patchOperations;
 			_logger = logger;
-			_logWarningIfSavingTakesMoreThan= ravenDbSettings.LogWarningIfSavingTakesMoreThan * 1000;
-			_logErrorIfSavingTakesMoreThan	= ravenDbSettings.LogErrorIfSavingTakesMoreThan	  * 1000;
+			_logWarningIfSavingTakesMoreThan= ravenSessionSettings.LogWarningIfSavingTakesMoreThan	* 1000;
+			_logErrorIfSavingTakesMoreThan	= ravenSessionSettings.LogErrorIfSavingTakesMoreThan	* 1000;
 		}
 
 		public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -57,6 +57,7 @@ namespace Raven.Yabt.WebApi.Infrastructure
 				await _patchOperations.SendAsyncDeferredPatchByQueryOperations();
 				sw.Stop();
 
+				// Controlling saving time is important only if configured to wait indexes to update
 				if (sw.ElapsedMilliseconds > _logWarningIfSavingTakesMoreThan)
 				{
 					string str = $"SaveChanges() execution took {(sw.ElapsedMilliseconds / 1000):D}s";

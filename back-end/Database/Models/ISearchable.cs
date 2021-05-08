@@ -1,4 +1,4 @@
-﻿namespace Raven.Yabt.Database.Common
+﻿namespace Raven.Yabt.Database.Models
 {
 	/// <summary>
 	///		Interface with a searchable field

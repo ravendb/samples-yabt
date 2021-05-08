@@ -14,7 +14,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Database\Database.csproj" />
+		<ProjectReference Include="..\Database.Common\Database.Common.csproj" />
+		<ProjectReference Include="..\Database\Database.csproj">
+			<PrivateAssets>all</PrivateAssets>
+		</ProjectReference>
 	</ItemGroup>
 
 </Project>

@@ -25,7 +25,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
 				HistoryDescOrder = entity.ModifiedBy.OrderByDescending(i => i.Timestamp).ToList(),
 				Tags = entity.Tags,
 				Comments = GetCommentsList(entity.Comments),
-				RelatedItems = entity.RelatedItems?.AsReadOnly(),
+				RelatedItems = entity.RelatedItems.AsReadOnly(),
 				CustomFields = customFieldValues?.AsReadOnly(),
 				Type = entity.Type
 			};

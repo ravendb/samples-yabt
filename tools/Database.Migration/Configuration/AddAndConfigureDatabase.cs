@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-using Raven.Yabt.Database.Configuration;
+using Raven.Yabt.Database.Common.Configuration;
 
 namespace Raven.Yabt.Database.Migration.Configuration
 {
@@ -14,9 +14,7 @@ namespace Raven.Yabt.Database.Migration.Configuration
 			services.AddSingleton(x =>
 				{
 					var config = x.GetService<DatabaseSettings>();
-					var store = SetupDocumentStore.GetDocumentStore(config!.RavenDbUrls, config.Certificate, config.DbName);
-					store.PreInitializeDocumentStore();
-					return store.Initialize();
+					return SetupDocumentStore.GetDocumentStore(config!, true, null, true);
 				});
 		}
 	}

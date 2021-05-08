@@ -18,6 +18,7 @@ namespace Raven.Yabt.WebApi.Configuration
 			services.Configure<AppSettings>(configuration, c => c.BindNonPublicProperties = true);
 			services.AddSingleton(r => r.GetRequiredService<IOptions<AppSettings>>().Value);
 			services.AddSingleton(r => r.GetRequiredService<AppSettings>().Database);
+			services.AddSingleton(r => r.GetRequiredService<AppSettings>().DatabaseSession);
 			
 			// Makes IServiceProvider available in the container.
 			var resolver = services.BuildServiceProvider();

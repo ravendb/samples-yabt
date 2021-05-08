@@ -16,6 +16,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\back-end\Domain\Domain.csproj" />
+    <ProjectReference Include="..\..\back-end\Database\Database.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="appsettings.json">

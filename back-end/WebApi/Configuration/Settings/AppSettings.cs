@@ -1,4 +1,5 @@
-﻿using Raven.Yabt.Database.Configuration;
+﻿using Raven.Yabt.Database.Common.Configuration;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
 namespace Raven.Yabt.WebApi.Configuration.Settings
@@ -6,10 +7,11 @@ namespace Raven.Yabt.WebApi.Configuration.Settings
 #nullable disable
 	public record AppSettings : ISettingsWithDatabase
 	{
-		/// <summary>
-		///		RavenDB connection parameters
-		/// </summary>
+		/// <inheritdoc/>
 		public DatabaseSettings Database { get; private set; }
+		
+		/// <inheritdoc/>
+		public DatabaseSessionSettings DatabaseSession { get; private set; }
 
 		/// <summary>
 		///		Array of API keys mapped to users

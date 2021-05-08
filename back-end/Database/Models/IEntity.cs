@@ -1,4 +1,4 @@
-﻿namespace Raven.Yabt.Database.Common
+﻿namespace Raven.Yabt.Database.Models
 {
 	/// <summary>
 	///     Applies a constraint on the ID fields
