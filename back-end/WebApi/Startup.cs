@@ -43,7 +43,7 @@ namespace Raven.Yabt.WebApi
 			services.AddAndConfigureDatabase();
 			
 			// A start-up task to update DB indexes shouldn't be executed in PROD as it's a migration concern,
-			// but registering it here makes live easier for the devs to quickly test updated indexes on a local instance
+			// but registering it here makes dev live a bit easier by applying index updates on a start-up
 			if (!_env.IsProduction())
 				services.AddStartupTask<DbStartupTask>();
 

@@ -30,11 +30,12 @@ namespace Raven.Yabt.Domain.Infrastructure
 					var config = x.GetService<DatabaseSessionSettings>();
 					var session = x.GetService<IDocumentStore>()!.OpenAsyncSession();
 
-					TimeSpan? timeout = config!.WaitForIndexesAfterSaveChanges.HasValue
-						? TimeSpan.FromSeconds(config.WaitForIndexesAfterSaveChanges.Value)   // Wait on each change to avoid adding WaitForIndexing() in each test
-						: null;
-					session.Advanced.WaitForIndexesAfterSaveChanges(timeout, false);
-					
+					if (config!.WaitForIndexesAfterSaveChanges > 0) 
+						// Wait on each change to avoid adding WaitForIndexing() in each test
+						session.Advanced.WaitForIndexesAfterSaveChanges(
+							TimeSpan.FromSeconds(config.WaitForIndexesAfterSaveChanges.Value), 
+							false);
+
 					return session;
 				});
 		}
