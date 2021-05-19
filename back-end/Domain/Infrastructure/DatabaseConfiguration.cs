@@ -43,9 +43,7 @@ namespace Raven.Yabt.Domain.Infrastructure
 		/// <summary>
 		///		Creates/updates the DB indexes
 		/// </summary>
-		public static async Task CreateUpdateIndexes(this IDocumentStore store)
-		{
-			await IndexCreation.CreateIndexesAsync(typeof(SetupDocumentStore).Assembly, store, null, store.Database);
-		}
+		public static Task CreateUpdateIndexesAsync(this IDocumentStore store) =>
+			IndexCreation.CreateIndexesAsync(typeof(SetupDocumentStore).Assembly, store, null, store.Database);
 	}
 }

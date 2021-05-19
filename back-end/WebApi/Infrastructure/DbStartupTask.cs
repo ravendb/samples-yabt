@@ -29,7 +29,7 @@ namespace Raven.Yabt.WebApi.Infrastructure
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
-			await _store.CreateUpdateIndexes();
+			await _store.CreateUpdateIndexesAsync();
 
 			_startupTaskContext.MarkTaskAsComplete();
 		}
