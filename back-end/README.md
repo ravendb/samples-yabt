@@ -1,44 +1,48 @@
 # YABT. Back-end
 
 ## Technologies
-* ASP .NET Core 5.0
-* RavenDB 5.1
 
-It has minimum third-party dependencies and heaps of best practices like the [Domain Driven Design](https://en.wikipedia.org/wiki/Domain-driven_design) (DDD), [Command Query Responsibility Segregation](https://martinfowler.com/bliki/CQRS.html) (CQRS), [Onion Architecture](https://jeffreypalermo.com/2008/07/the-onion-architecture-part-1/), etc.
+- ASP .NET Core 5.0
+- RavenDB 5.1
+
+It has minimum third-party dependencies and heaps of best practices like the [Domain Driven Design](https://en.wikipedia.org/wiki/Domain-driven_design) (DDD), [Command Query Responsibility Segregation](https://martinfowler.com/bliki/CQRS.html) (CQRS), etc.
 
 ## Overview of the solution
 
-|Project name|Description|
-| ---------- | ----------|
-|Database|All entities and aggregates, related classes and enums, plus DB-related settings.|
-|Domain|All interfaces, types and logic specific to the domain layer.|
-|WebAPI|The application layer (WebAPI).|
+| Project name    | Description                                                                                                    |
+| --------------- | -------------------------------------------------------------------------------------------------------------- |
+| Database.Common | Shared auxiliary structures used in DB models and DTOs on the WebAPI.                                          |
+| Database        | All entities and aggregates, plus DB-related settings. Note: this project is exposed only to `Domain` project. |
+| Domain          | All interfaces, types and logic specific to the domain layer.                                                  |
+| WebAPI          | The application layer (API).                                                                                   |
 
-![Onion architecture](../documentation/projects-map.png)
+![Onion architecture](../documentation/projects-diagram.png)
 
 NOTE: all tests are located under ['./tests'](../tests/) folder.
 
 ## Getting Started
+
 Firstly, check out the GIT repo.
 
 ### Compile and run the tests
 
 1. Install [.NET SDK](https://dotnet.microsoft.com/download) v5.x.<br>
-Note that while the back-end would run on any version of .NET 5, the embedded _RavenDB_ used for the test project has a strong dependency on the _.NET SDK_ version. Check the required version in the [GitHub Action](../.github/workflows/dotnet-core.yml) used to run tests.
+   Note that while the back-end would run on any version of .NET 5, the embedded _RavenDB_ used for the test project has a strong dependency on the _.NET SDK_ version. Check the required version in the [GitHub Action](../.github/workflows/dotnet-core.yml) used to run tests.
 
 2. Open the solution and run the tests located under ['./tests'](../tests/) folder.<br>
-The tests that work against a real embedded _RavenDB_ database and cover multiple scenarios.
+   The tests that work against a real embedded _RavenDB_ database and cover multiple scenarios.
 
 ### Run Web API (Swagger)
+
 Once you can run tests of the solutions, it's time to spin off a database and run the API.
 
 1. Setup the database:
-    1. Acquire a _RavenDB_ instance . Use on of the free options:
-        1. free [cloud](https://cloud.ravendb.net/) instance;
-        2. [download](https://ravendb.net/download) and install locally for your OS or Docker.
-    2. Create a new database on the _RavenDB_ server ([see the docs](https://ravendb.net/docs/article-page/latest/csharp/studio/server/databases/create-new-database/general-flow)).
-    3. Import test data from `/documentation/exported_data.ravendbdump` file ([see the docs](https://ravendb.net/docs/article-page/latest/csharp/studio/database/tasks/import-data/import-data-file))
-    4. Set the address to the _RavenDB_ server and the DB name in `./back-end/WebApi/appsettings.Development.json`.
+   1. Acquire a _RavenDB_ instance . Use on of the free options:
+      1. free [cloud](https://cloud.ravendb.net/) instance;
+      2. [download](https://ravendb.net/download) and install locally for your OS or Docker.
+   2. Create a new database on the _RavenDB_ server ([see the docs](https://ravendb.net/docs/article-page/latest/csharp/studio/server/databases/create-new-database/general-flow)).
+   3. Import test data from `/documentation/exported_data.ravendbdump` file ([see the docs](https://ravendb.net/docs/article-page/latest/csharp/studio/database/tasks/import-data/import-data-file))
+   4. Set the address to the _RavenDB_ server and the DB name in `./back-end/WebApi/appsettings.Development.json`.
 2. Launch the solution (the `WebAPI` project).
 3. Open `https://localhost:5001/swagger` in the browser.
 
