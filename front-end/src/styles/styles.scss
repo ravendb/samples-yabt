@@ -1,20 +1,20 @@
+@use '~@angular/material' as mat;
 @import url('//fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined');
 @import url('//fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap');
 
-@import '~@angular/material/theming';
 @import 'theme';
 
 /* 
 	Theming guidance - https://material.angular.io/guide/theming-your-components
 */
 // Include non-theme styles for core.
-@include mat-core();
+@include mat.core();
 // The custom theme (from '_theme.scss')
-$theme-primary: mat-palette($primary-palette);
-$theme-accent: mat-palette($accent-palette);
-$theme: mat-light-theme($theme-primary, $theme-accent);
+$theme-primary: mat.define-palette($primary-palette);
+$theme-accent: mat.define-palette($accent-palette);
+$theme: mat.define-light-theme($theme-primary, $theme-accent);
 // Style the Angular Material components with the theme
-@include angular-material-theme($theme);
+@include mat.all-component-themes($theme);
 
 html,
 body {
