@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="DomainResult" Version="1.1.0" />
+	  <PackageReference Include="DomainResult" Version="1.1.1" />
 	  <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.16.0" />
 	  <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.3" />
 	  <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
