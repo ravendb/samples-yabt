@@ -1,7 +1,7 @@
 # YABT. Front-end
 
 ## Technologies
-* Angular 11
+* Angular 12
 * Angular Material
 
 ## Getting Started
