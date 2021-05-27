@@ -1,6 +1,4 @@
-﻿using Raven.Yabt.Database.Common;
-
-namespace Raven.Yabt.Database.Models
+﻿namespace Raven.Yabt.Database.Models
 {
 	public abstract class BaseEntity : IEntity
 	{

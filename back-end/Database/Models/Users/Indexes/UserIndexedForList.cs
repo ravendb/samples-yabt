@@ -1,6 +1,4 @@
-﻿using Raven.Yabt.Database.Common;
-
-namespace Raven.Yabt.Database.Models.Users.Indexes
+﻿namespace Raven.Yabt.Database.Models.Users.Indexes
 {
 	public class UserIndexedForList : User, ISearchable
 	{
