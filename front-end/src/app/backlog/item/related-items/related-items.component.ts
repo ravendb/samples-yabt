@@ -102,7 +102,7 @@ export class BacklogItemRelatedItemsComponent implements ControlValueAccessor {
 
 		if (!this._initialRelatedItems?.length) return;
 		this.initialRelatedItems = this._initialRelatedItems.filter(
-			x => x.relatedTo?.id != action.backlogItemId && x.linkType != relationType
+			x => x.relatedTo?.id != action.backlogItemId || x.linkType != relationType
 		);
 	}
 
