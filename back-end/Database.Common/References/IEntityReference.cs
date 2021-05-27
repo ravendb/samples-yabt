@@ -15,7 +15,7 @@ namespace Raven.Yabt.Database.Common.References
 		string? Id { get; }
 
 		/// <summary>
-		///		Shorthen name/title used in the reference
+		///		Shorten name/title used in the reference
 		/// </summary>
 		string Name { get; }
 	}

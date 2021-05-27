@@ -9,7 +9,6 @@ using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Session;
 using Raven.TestDriver;
 using Raven.Yabt.Database;
-using Raven.Yabt.Database.Common;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.Infrastructure;
 
@@ -69,7 +68,7 @@ namespace Raven.Yabt.Domain.Tests
 				{
 					IDocumentStore store = GetDocumentStore();
 					// Create all indexes
-					IndexCreation.CreateIndexes(typeof(IEntity).Assembly, store);
+					IndexCreation.CreateIndexes(typeof(SetupDocumentStore).Assembly, store, null, store.Database);
 					return store;
 				});
 			services.AddScoped(c =>

@@ -1,5 +1,6 @@
 ﻿using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common;
+using Raven.Yabt.Database.Models;
 using Raven.Yabt.Domain.Helpers;
 
 namespace Raven.Yabt.Domain.Common

@@ -2,9 +2,8 @@ using Raven.Yabt.Database.Common;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs
 {
-	public class BacklogItemTagListGetRequest : ISearchable
+	public class BacklogItemTagListGetRequest
 	{
-		/// <inheritdoc/>
 		public string? Search { get; set; }
 	}
 }

@@ -1,11 +1,14 @@
-﻿using Raven.Yabt.Database.Configuration;
+﻿using Raven.Yabt.Database.Common.Configuration;
+
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 
 namespace Raven.Yabt.Database.Migration.Configuration
 {
-#nullable disable
 	public class AppSettings : ISettingsWithDatabase
 	{
-		public DatabaseSettings Database { get; private set; }
+		/// <inheritdoc/>
+		public DatabaseSettings Database { get; private set; } = null!;
+		/// <inheritdoc/>
+		public DatabaseSessionSettings DatabaseSession { get; private set; } = null!;
 	}
 }

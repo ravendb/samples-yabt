@@ -8,13 +8,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DomainResult.Common" Version="1.1.0" />
+		<PackageReference Include="DomainResult.Common" Version="1.1.1" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
-		<PackageReference Include="RavenDB.Client" Version="5.1.5" />
+		<PackageReference Include="RavenDB.Client" Version="5.1.8" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Database\Database.csproj" />
+		<ProjectReference Include="..\Database.Common\Database.Common.csproj" />
+		<ProjectReference Include="..\Database\Database.csproj">
+			<PrivateAssets>all</PrivateAssets>
+		</ProjectReference>
 	</ItemGroup>
 
 </Project>

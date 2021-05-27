@@ -1,5 +1,5 @@
 ﻿#nullable disable
-using Raven.Yabt.Database.Configuration;
+using Raven.Yabt.Database.Common.Configuration;
 
 // ReSharper disable UnusedAutoPropertyAccessor.Local
 // ReSharper disable ClassNeverInstantiated.Global
@@ -14,7 +14,7 @@ namespace Raven.Yabt.TicketImporter.Configuration
 		public GitHubSettings GitHub { get; private set; }
 
 		public DatabaseSettings Database { get; private set; }
-		
+
 		public GeneratedRecordsSettings GeneratedRecords { get; private set; }
 	}
 

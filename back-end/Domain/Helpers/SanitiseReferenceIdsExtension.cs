@@ -7,8 +7,8 @@ using System.Text.RegularExpressions;
 
 using Raven.Client.Documents.Conventions;
 using Raven.Client.Documents.Session;
-using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Database.Models;
 
 namespace Raven.Yabt.Domain.Helpers
 {

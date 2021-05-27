@@ -2,7 +2,7 @@
 
 using Raven.Client.Documents;
 using Raven.Yabt.Database;
-using Raven.Yabt.Database.Configuration;
+using Raven.Yabt.Database.Common.Configuration;
 
 namespace Raven.Yabt.TicketImporter.Configuration
 {
@@ -11,15 +11,16 @@ namespace Raven.Yabt.TicketImporter.Configuration
 		/// <summary>
 		///		Register the document store as single instance, initializing it on first use
 		/// </summary>
-		public static IServiceCollection AddAndConfigureDatabase(this IServiceCollection services)
+		public static IServiceCollection AddAndConfigureDatabaseForImport(this IServiceCollection services)
 		{
 			services.AddSingleton(x =>
 				{
 					var config = x.GetService<DatabaseSettings>();
-					var store = SetupDocumentStore.GetDocumentStore(config!.RavenDbUrls, config.Certificate, config.DbName);
-						store.PreInitializeDocumentStore();
-						store.Conventions.MaxNumberOfRequestsPerSession = 20000;
-					return store.Initialize();
+					return SetupDocumentStore.GetDocumentStore(
+						config!,
+						true, 
+						(store) => store.Conventions.MaxNumberOfRequestsPerSession = 20000, 
+						true);
 				});
 			services.AddScoped(c =>
 				{

@@ -6,6 +6,7 @@ using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common;
+using Raven.Yabt.Database.Models;
 
 namespace Raven.Yabt.Domain.Common
 {

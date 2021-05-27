@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,8 +10,11 @@ using Raven.Client.Documents.Session;
 namespace Raven.Yabt.Domain.Infrastructure
 {
     /// <summary>
-    ///     Base class for notification handlers to patch data in teh database on saving the main transaction
+    ///     Manages a queue of patch requests and executes them against the database on saving of the main transaction
     /// </summary>
+    /// <remarks>
+    ///		It must be registered as a single instance for the lifetime of the DB session
+    /// </remarks>
     internal class PatchOperationsExecuteAsync : IPatchOperationsExecuteAsync, IPatchOperationsAddDeferred
     {
         private readonly IAsyncDocumentSession _dbSession;
@@ -20,7 +23,7 @@ namespace Raven.Yabt.Domain.Infrastructure
         ///		Collection of deferred patch queries.
         ///		Will be executed after saving data in the main DB session
         /// </summary>
-        private readonly List<IndexQuery> _deferredPatchQueries = new List<IndexQuery>();
+        private readonly ConcurrentQueue<IndexQuery> _deferredPatchQueries = new();
 
         public PatchOperationsExecuteAsync(IAsyncDocumentSession dbSession)
         {
@@ -33,7 +36,7 @@ namespace Raven.Yabt.Domain.Infrastructure
         /// <inheritdoc/>
         public async Task SendAsyncDeferredPatchByQueryOperations(bool waitForCompletion = false)
         {
-            foreach (var queryIndex in _deferredPatchQueries)
+            while (_deferredPatchQueries.TryDequeue(out var queryIndex))
             {
                 // The default timeout is not documented. Seems to be around  15 sec
                 queryIndex.WaitForNonStaleResultsTimeout = TimeSpan.MaxValue;
@@ -49,7 +52,7 @@ namespace Raven.Yabt.Domain.Infrastructure
         /// <inheritdoc/>
         public void AddDeferredPatchQuery(IndexQuery patchQuery)
         {
-            _deferredPatchQueries.Add(patchQuery);
+            _deferredPatchQueries.Enqueue(patchQuery);
         }
     }
 }

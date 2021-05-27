@@ -1,7 +1,7 @@
 ﻿namespace Raven.Yabt.Database.Common.References
 {
 	/// <summary>
-	///     Interface, representing key-value pair for referencing entities
+	///     Represents a key-value pair for referencing entities
 	/// </summary>
 	public abstract record EntityReferenceBase : IEntityReference
 	{

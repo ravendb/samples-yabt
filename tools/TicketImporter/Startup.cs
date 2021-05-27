@@ -23,7 +23,7 @@ namespace Raven.Yabt.TicketImporter
 						{
 							services.AddAndConfigureAppSettings(context.Configuration)
 									.AddAndConfigureHttpClients()
-									.AddAndConfigureDatabase()
+									.AddAndConfigureDatabaseForImport()
 									.AddAndConfigureAuthentication()
 									.AddAndConfigureJobServices()
 									.RegisterModules(Assembly.GetAssembly(typeof(BaseService<>))!);

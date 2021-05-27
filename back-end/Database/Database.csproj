@@ -7,8 +7,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
-		<PackageReference Include="RavenDB.Client" Version="5.1.5" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+		<PackageReference Include="RavenDB.Client" Version="5.1.8" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Database.Common\Database.Common.csproj" />
 	</ItemGroup>
 
 </Project>

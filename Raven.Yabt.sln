@@ -23,6 +23,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "front-end", "front-end", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TicketImporter", "tools\TicketImporter\TicketImporter.csproj", "{1586B4A1-7F29-4242-AA86-39F5DF90C732}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Database.Common", "back-end\Database.Common\Database.Common.csproj", "{C93B4C84-F868-49CF-A580-6ACE5986A011}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{1586B4A1-7F29-4242-AA86-39F5DF90C732}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1586B4A1-7F29-4242-AA86-39F5DF90C732}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1586B4A1-7F29-4242-AA86-39F5DF90C732}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C93B4C84-F868-49CF-A580-6ACE5986A011}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C93B4C84-F868-49CF-A580-6ACE5986A011}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C93B4C84-F868-49CF-A580-6ACE5986A011}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C93B4C84-F868-49CF-A580-6ACE5986A011}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +70,7 @@ Global
 		{790AC7C8-B079-4278-89A5-B5B1ABD5F46C} = {6DACF9C1-7879-4132-8A7E-99115200EA3C}
 		{22FE0EF0-B224-4587-A0F0-660502EC28E5} = {4DFEDF21-6F51-41E0-AB66-9FDC050108F8}
 		{1586B4A1-7F29-4242-AA86-39F5DF90C732} = {4DFEDF21-6F51-41E0-AB66-9FDC050108F8}
+		{C93B4C84-F868-49CF-A580-6ACE5986A011} = {6DACF9C1-7879-4132-8A7E-99115200EA3C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FE3A5CE0-9137-4438-AE89-215C547E8DCC}
