@@ -25,7 +25,6 @@
 						"main": "src/main.ts",
 						"polyfills": "src/polyfills.ts",
 						"tsConfig": "tsconfig.app.json",
-						"aot": true,
 						"assets": [
 							"src/safari-pinned-tab.svg",
 							"src/assets"
@@ -38,7 +37,13 @@
 								"src/styles/"
 							]
 						},
-						"scripts": []
+						"scripts": [],
+						"vendorChunk": true,
+						"extractLicenses": false,
+						"buildOptimizer": false,
+						"sourceMap": true,
+						"optimization": false,
+						"namedChunks": true
 					},
 					"configurations": {
 						"production": {
@@ -50,10 +55,7 @@
 						],
 						"optimization": true,
 						"outputHashing": "all",
-						"sourceMap": true,
 						"namedChunks": false,
-						"extractLicenses": false,
-						"vendorChunk": true,
 						"buildOptimizer": true,
 						"budgets": [
 							{
