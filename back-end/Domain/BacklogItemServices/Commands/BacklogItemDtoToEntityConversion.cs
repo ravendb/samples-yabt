@@ -172,6 +172,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 						CustomFieldType.Text or CustomFieldType.Url => a.GetValue<string>(),
 						CustomFieldType.Numeric => a.GetValue<decimal>(),
 						CustomFieldType.Date => a.GetValue<DateTime>(),
+						CustomFieldType.Checkbox => a.GetValue<bool>(),
 						_ => throw new ArgumentOutOfRangeException($"Unsupported field type: {field.FieldType}")
 					};
 					if (obj is null)
