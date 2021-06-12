@@ -40,9 +40,27 @@ Once you can run tests of the solutions, it's time to spin off a database and ru
    1. Acquire a _RavenDB_ instance . Use on of the free options:
       1. free [cloud](https://cloud.ravendb.net/) instance;
       2. [download](https://ravendb.net/download) and install locally for your OS or Docker.
-   2. Create a new database on the _RavenDB_ server ([see the docs](https://ravendb.net/docs/article-page/latest/csharp/studio/server/databases/create-new-database/general-flow)).
+   2. Create a new database on the _RavenDB_ server ([see the docs](https://ravendb.net/docs/article-page/latest/csharp/studio/server/databases/create-new-database/general-flow)). 
    3. Import test data from `/documentation/exported_data.ravendbdump` file ([see the docs](https://ravendb.net/docs/article-page/latest/csharp/studio/database/tasks/import-data/import-data-file))
-   4. Set the address to the _RavenDB_ server and the DB name in `./back-end/WebApi/appsettings.Development.json`.
+   4. Set the address to the _RavenDB_ server and the DB name in `./back-end/WebApi/appsettings.Development.json`. The database config follows the structure specified in [DatabaseSettings.cs](./back-end/Database/DataBase.Common/Configuration/DatabaseSettings.cs). As an example:
+   ```json
+   {
+      "CorsOrigin": "<url>",
+      "Database": {
+         "RavenDbUrls": ["a.node.com:8080", "b.node.com:8080", "c.node.com:8080"],
+         "Certificate": "<path_to_cert_if_applicable>",
+         "DbName": "<DbName>"
+      },
+      "Logging": {
+         "LogLevel": {
+            "Default": "Information",
+            "Microsoft": "Warning",
+            "Microsoft.Hosting.Lifetime": "Information"
+         }
+      }
+   }
+   ```
+   
 2. Launch the solution (the `WebAPI` project).
 3. Open `https://localhost:5001/swagger` in the browser.
 
