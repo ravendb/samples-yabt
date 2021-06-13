@@ -64,7 +64,8 @@ namespace Raven.Yabt.WebApi.Authorization.ApiKeyAuth
 
 			var claims = new List<Claim>
 				{
-					new Claim(CurrentUserResolver.UserIdClaimType,  apiKeyUser.UserId)
+					new (CurrentUserResolver.UserIdClaimType,		apiKeyUser.UserId),
+					new (CurrentTenantResolver.TenantIdClaimType,	apiKeyUser.TenantId),
 				};
 			var identity  = new ClaimsIdentity(claims, Options.AuthenticationType);
 			var principal = new ClaimsPrincipal(new [] { identity });

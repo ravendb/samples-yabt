@@ -3,6 +3,7 @@ using System.Reflection;
 
 using Microsoft.Extensions.DependencyInjection;
 
+using Raven.Yabt.Database.Common.Helpers;
 using Raven.Yabt.Domain.Common;
 
 namespace Raven.Yabt.Domain.Infrastructure

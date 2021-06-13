@@ -41,18 +41,6 @@ namespace Raven.Yabt.Domain.Infrastructure
 			return services;
 		}
 
-		/// <summary>
-		///		Determines whether the candidate type (<paramref name="type"/>) supports any base or interface that closes the provided generic type (<paramref name="openGeneric"/>)
-		/// </summary>
-		/// <remarks>
-		///		The implementation was copied from Autofac - https://github.com/autofac/Autofac/blob/develop/src/Autofac/Util/TypeExtensions.cs
-		/// </remarks>
-		public static bool IsClosedTypeOf(this Type type, Type openGeneric)
-		{
-			IEnumerable<Type> candidates = TypesAssignableFrom(type);
-			return candidates.Any(t => t.GetTypeInfo().IsGenericType && !type.GetTypeInfo().ContainsGenericParameters && t.GetGenericTypeDefinition() == openGeneric);
-		}
-
 		#region Auxiliary methods [PRIVATE, STATIC] ---------------------------
 
 		/// <summary>
@@ -70,38 +58,6 @@ namespace Raven.Yabt.Domain.Infrastructure
 
 			foreach (Type interfaceType in interfaces)
 				services.Add(new ServiceDescriptor(interfaceType, classType, lifetime));
-		}
-
-		/// <summary>
-		///		Gets all types <paramref name="candidateType"/> is derived from
-		/// </summary>
-		/// <remarks>
-		///		The implementation was copied from Autofac - https://github.com/autofac/Autofac/blob/develop/src/Autofac/Util/TypeExtensions.cs
-		/// </remarks>
-		private static IEnumerable<Type> TypesAssignableFrom(Type candidateType)
-		{
-			return candidateType.GetTypeInfo().ImplementedInterfaces
-								.Concat(
-#pragma warning disable CS8603 // Pretty sure that 't.GetTypeInfo().BaseType' won't be null :)
-										Across(candidateType, t => t.GetTypeInfo().BaseType)
-#pragma warning restore CS8603
-								);
-		}
-
-		/// <summary>
-		///		Returns items meeting condition in <paramref name="next"/>
-		/// </summary>
-		/// <remarks>
-		///		The implementation was copied from Autofac - https://github.com/autofac/Autofac/blob/develop/src/Autofac/Util/Traverse.cs
-		/// </remarks>
-		private static IEnumerable<T> Across<T>(T first, Func<T, T?> next) where T : class
-		{
-			var item = first;
-			while (item != null)
-			{
-				yield return item;
-				item = next(item);
-			}
 		}
 		#endregion Auxiliary methods [PRIVATE, STATIC] ------------------------
 	}

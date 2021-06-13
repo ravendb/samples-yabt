@@ -5,7 +5,6 @@ using System.Text.RegularExpressions;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
-using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Models;
 
 namespace Raven.Yabt.Domain.Common
@@ -18,7 +17,7 @@ namespace Raven.Yabt.Domain.Common
 
 		protected virtual IRavenQueryable<TIndexModel> ApplySearch<TIndexModel>(IRavenQueryable<TIndexModel> query, string? search) where TIndexModel: ISearchable
 		{
-			return ApplySearch(query, s => (s as ISearchable).Search, search);
+			return ApplySearch(query, s => s.Search, search);
 		}
 
 		protected IRavenQueryable<T> ApplySearch<T>(IRavenQueryable<T> query, Expression<Func<T, object?>> fieldExpression, string? search)

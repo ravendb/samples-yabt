@@ -5,6 +5,7 @@ namespace Raven.Yabt.WebApi.Configuration.Settings
 	public class AppSettingsUserApiKey
 	{
 		public string UserId { get; private set; }
+		public string TenantId { get; private set; }
 		public string ApiKey { get; private set; }
 	}
 }

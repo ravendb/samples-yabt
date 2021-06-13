@@ -15,19 +15,21 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 			 */
 			Map = tickets => 
 				from t in tickets
-				from tag in t.Tags
+				from tag in t.Tags!
 				where tag != null
 				select new BacklogItemTagsIndexed
 				{
+					TenantId = t.TenantId,
 					Name = tag.ToLower(),
 					Count = 1
 				};
 			Reduce = results => from r in results
-				group r by r.Name into g
+				group r by new { r.Name, r.TenantId } into g
 				select new BacklogItemTagsIndexed
 				{
-					Name = g.Key,
-					Count = g.Sum(i => i.Count)
+					TenantId = g.Key.TenantId,
+					Name = g.Key.Name,
+					Count = g.Sum(i => i.Count),
 				};
 			
 			StoreAllFields(FieldStorage.Yes);

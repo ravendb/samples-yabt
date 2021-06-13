@@ -16,8 +16,9 @@ namespace Raven.Yabt.Database.Models.CustomFields.Indexes
 				from field in fields
 				select new CustomFieldIndexedForList
 				{
-					Name = field.Name,						// sort & filter
-					BacklogItemTypes = field.BacklogItemTypes	// filter
+					TenantId		= field.TenantId,			// filter
+					Name			= field.Name,				// sort & filter
+					BacklogItemTypes= field.BacklogItemTypes	// filter
 				};
 		}
 	}

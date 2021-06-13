@@ -20,17 +20,18 @@ namespace Raven.Yabt.Domain.Infrastructure
 			// Register the document store as single instance, initializing it on first use
 			services.AddSingleton(x =>
 				{
-					var config = x.GetService<DatabaseSettings>();
-					return SetupDocumentStore.GetDocumentStore(config!);
+					var config = x.GetRequiredService<DatabaseSettings>();
+					//var tenantResolver = x.GetService<ICurrentTenantResolver>();
+					return SetupDocumentStore.GetDocumentStore(config);//, tenantResolver != null ? tenantResolver.GetCurrentTenantId : null);
 				});
 			
 			// Register a session
 			services.AddScoped(x =>
 				{
 					var config = x.GetService<DatabaseSessionSettings>();
-					var session = x.GetService<IDocumentStore>()!.OpenAsyncSession();
+					var session = x.GetRequiredService<IDocumentStore>().OpenAsyncSession();
 
-					if (config!.WaitForIndexesAfterSaveChanges > 0) 
+					if (config?.WaitForIndexesAfterSaveChanges > 0) 
 						// Wait on each change to avoid adding WaitForIndexing() in each test
 						session.Advanced.WaitForIndexesAfterSaveChanges(
 							TimeSpan.FromSeconds(config.WaitForIndexesAfterSaveChanges.Value), 

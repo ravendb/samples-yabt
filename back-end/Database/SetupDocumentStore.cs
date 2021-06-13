@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 
 using Newtonsoft.Json;
 
 using Raven.Client.Documents;
 using Raven.Client.Documents.Conventions;
+using Raven.Client.Documents.Session;
 using Raven.Client.Json.Serialization.NewtonsoftJson;
 
 using Raven.Yabt.Database.Common.Configuration;
+using Raven.Yabt.Database.Common.Helpers;
+using Raven.Yabt.Database.Models;
 using Raven.Yabt.Database.Models.BacklogItems;
 
 namespace Raven.Yabt.Database
@@ -17,7 +21,7 @@ namespace Raven.Yabt.Database
 		/// <summary>
 		///     Configure RavenDB Document Store
 		/// </summary>
-		public static void PreInitializeDocumentStore(this IDocumentStore store)
+		public static void PreInitializeDocumentStore(this IDocumentStore store, Func<string>? tenantResolverFunc = null)
 		{
 			store.Conventions.UseOptimisticConcurrency = true;
 
@@ -35,6 +39,41 @@ namespace Raven.Yabt.Database
 
 					return DocumentConventions.DefaultGetCollectionName(type);
 				};
+			//if (tenantResolverFunc != null)
+			{
+				store.OnBeforeQuery += (_, args) =>
+				{
+					//Type argument = args.QueryCustomization.GetType().GetGenericArguments()[0];
+					//argument.IsAssignableFrom(typeof(ITenantData));
+					var customization = args.QueryCustomization;
+					//q.WhereEquals("TenantId", "1234");
+
+					var type = customization.GetType();
+					var entityType = type.GetInterfaces()
+					                     .SingleOrDefault(
+						                     i => i.IsClosedTypeOf(typeof(IDocumentQuery<>)) ||
+							                     i.IsClosedTypeOf(typeof(IAsyncDocumentQuery<>)))
+					                     ?.GetGenericArguments()
+					                     .Single();
+					if (entityType != null && entityType.IsAssignableTo<ITenantedEntity>())
+					{
+						(customization as IAsyncDocumentQuery<>).AndAlso()
+						
+						// Add the "AND" to the the WHERE clause 
+						// (the method has a check under the hood to prevent adding "AND" if the "WHERE" is empty)
+						type.GetDeclaredMethod("AndAlso").Invoke(customization, null);
+						// Add "TenantId = 'Bla'" into the WHERE clause
+						type.GetDeclaredMethod("WhereEquals", new[] { typeof(string), typeof(object) })
+						    .Invoke(
+							    customization,
+							    new object[]
+							    {
+								    nameof(ITenantedEntity.TenantId),
+								    "tenantResolverFunc()"
+							    });
+					}
+				};
+			}
 		}
 
 		/// <summary>
@@ -43,27 +82,24 @@ namespace Raven.Yabt.Database
 		/// <remarks>
 		///		It DOESN'T create/update the indexes (by calling 'IndexCreation.CreateIndexes()'), as it may interfere with complex migration processes! Index creation/update should be called outside (along with the migration process).
 		/// </remarks>
-		public static IDocumentStore GetDocumentStore(DatabaseSettings settings, bool preInitialise = true, Action<IDocumentStore>? customInit = null, bool initialise = true)
+		public static IDocumentStore GetDocumentStore(DatabaseSettings settings,  Func<string>? tenantResolverFunc = null, Action<IDocumentStore>? customInit = null)
 		{
 			var store = new DocumentStore
 				{
 					Urls = settings.RavenDbUrls,
 					Database = settings.DbName,
 				};
-
 			try
 			{
 				// A public/secure instance of RavenDB requires authentication via certificate
 				if (!string.IsNullOrEmpty(settings.Certificate))
 					store.Certificate = new X509Certificate2(Convert.FromBase64String(settings.Certificate));
 				
-				if (preInitialise)
-					store.PreInitializeDocumentStore();
+				store.PreInitializeDocumentStore(tenantResolverFunc);
 				
 				customInit?.Invoke(store);
 
-				if (initialise)
-					store.Initialize();
+				store.Initialize();
 			}
 			catch
 			{

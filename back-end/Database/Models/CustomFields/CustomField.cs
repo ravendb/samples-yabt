@@ -3,7 +3,7 @@ using Raven.Yabt.Database.Common.BacklogItem;
 
 namespace Raven.Yabt.Database.Models.CustomFields
 {
-	public class CustomField : BaseEntity
+	public class CustomField : BaseTenantedEntity
 	{
 		public string Name { get; set; } = null!;
 
