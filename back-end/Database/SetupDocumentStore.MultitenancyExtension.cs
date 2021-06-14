@@ -18,7 +18,16 @@ namespace Raven.Yabt.Database
 			store.OnAfterConversionToEntity += (_, args) => ValidateRightTenantOnLoadingEntity(args.Document, tenantResolverFunc());
 			store.OnBeforeConversionToEntity += (sender, args) => { };
 			store.OnBeforeDelete += (sender, args) => { };
-			store.OnBeforeStore += (sender, args) => { };
+			store.OnBeforeStore += (_, args) => AddTenantIdOnStoring(args.Entity, tenantResolverFunc());
+		}
+
+		private static void AddTenantIdOnStoring(object entity, string currentTenantId)
+		{
+			var entityType = entity.GetType(); 
+			if (entityType.IsAssignableTo<ITenantedEntity>() != true) 
+				return;
+			entityType.GetProperty(nameof(ITenantedEntity.TenantId))?
+					  .SetValue(entity, currentTenantId);
 		}
 
 		private static void AddFilteringByTenantIdToSelectQueries(IDocumentQueryCustomization customization, string currentTenantId)
