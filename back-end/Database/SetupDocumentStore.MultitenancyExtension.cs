@@ -6,8 +6,6 @@ using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common.Helpers;
 using Raven.Yabt.Database.Models;
 
-using Sparrow.Json;
-
 namespace Raven.Yabt.Database
 {
 	public static partial class SetupDocumentStore
@@ -15,9 +13,9 @@ namespace Raven.Yabt.Database
 		private static partial void SetupMultitenancy(this IDocumentStore store, Func<string> tenantResolverFunc)
 		{
 			store.OnBeforeQuery += (_, args) => AddFilteringByTenantIdToSelectQueries(args.QueryCustomization, tenantResolverFunc());
-			store.OnAfterConversionToEntity += (_, args) => ValidateRightTenantOnLoadingEntity(args.Document, tenantResolverFunc());
-			store.OnBeforeConversionToEntity += (sender, args) => { };
-			store.OnBeforeDelete += (sender, args) => { };
+			store.OnAfterConversionToEntity += (_, args) => ValidateTenantOnLoadingEntity(args.Entity, tenantResolverFunc());
+		//	store.OnBeforeConversionToEntity += (sender, args) => { args. };
+			store.OnBeforeDelete += (sender, args) => ValidateTenantOnDeletingEntity(sender, args.DocumentId, args.Entity, tenantResolverFunc());
 			store.OnBeforeStore += (_, args) => AddTenantIdOnStoring(args.Entity, tenantResolverFunc());
 		}
 
@@ -42,7 +40,7 @@ namespace Raven.Yabt.Database
 			                     ?.GetGenericArguments()
 			                     .SingleOrDefault();
 			if (entityType?.IsAssignableTo<ITenantedEntity>() != true) 
-				return;
+				return;				
 				
 			// Add the "AND" to the the WHERE clause 
 			// (the method has a check under the hood to prevent adding "AND" if the "WHERE" is empty)
@@ -63,10 +61,29 @@ namespace Raven.Yabt.Database
 				    });
 		}
 
-		private static void ValidateRightTenantOnLoadingEntity(BlittableJsonReaderObject document, string currentTenantId)
+		private static void ValidateTenantOnLoadingEntity(object entity, string currentTenantId)
 		{
-			if ((string) document[nameof(ITenantedEntity.TenantId)] != currentTenantId)
-				throw new Exception("AAA");
+			if (entity is ITenantedEntity tenantedEntity && tenantedEntity.TenantId != currentTenantId)
+				throw new InvalidTenantException();
+		}
+
+		private static void ValidateTenantOnDeletingEntity(object? sender, string? entityId, object? entity, string currentTenantId)
+		{
+			if (entityId != null && entity == null)
+			{
+				if (sender == null)
+					throw new NotSupportedException("Can't resolve the session object on deleting by ID");
+
+			//	if (sender is AsyncDocumentSession asyncSession)
+			//		entity = asyncSession.LoadAsync<dynamic>(entityId).Result;	// Get an exception on running 2 async operations simultaneously
+				if (sender is DocumentSession session)
+					entity = session.Load<dynamic>(entityId);
+
+			}
+			if (entity is ITenantedEntity tenantedEntity && tenantedEntity.TenantId != currentTenantId)
+				throw new InvalidTenantException();
 		}
 	}
+	
+	public class InvalidTenantException: Exception { }
 }

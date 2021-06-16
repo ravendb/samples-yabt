@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -60,6 +61,16 @@ namespace Raven.Yabt.Database.Tests
 						session.Advanced.WaitForIndexesAfterSaveChanges();  // Wait on each change to avoid adding WaitForIndexing() in each test
 					return session;
 				});
+		}
+
+		/// <summary>
+		///		Save changes in the DB
+		/// </summary>
+		protected async Task SaveChanges()
+		{
+			await DbSession.SaveChangesAsync();
+
+			DbSession.Advanced.Clear(); // Clear all cached entities
 		}
 
 		/// <summary>
