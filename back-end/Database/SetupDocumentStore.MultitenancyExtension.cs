@@ -56,7 +56,7 @@ namespace Raven.Yabt.Database
 				    new object[]
 				    {
 					    nameof(ITenantedEntity.TenantId),
-					    currentTenantId,
+					    currentTenantId.ToLower(),
 					    true,
 				    });
 		}
@@ -73,12 +73,13 @@ namespace Raven.Yabt.Database
 			{
 				if (sender == null)
 					throw new NotSupportedException("Can't resolve the session object on deleting by ID");
+				
+				throw new NotSupportedException("Deletion by ID not supported");
 
-			//	if (sender is AsyncDocumentSession asyncSession)
-			//		entity = asyncSession.LoadAsync<dynamic>(entityId).Result;	// Get an exception on running 2 async operations simultaneously
+				if (sender is AsyncDocumentSession asyncSession)
+					entity = asyncSession.LoadAsync<dynamic>(entityId).Result;	// Get an exception on running 2 async operations simultaneously
 				if (sender is DocumentSession session)
 					entity = session.Load<dynamic>(entityId);
-
 			}
 			if (entity is ITenantedEntity tenantedEntity && tenantedEntity.TenantId != currentTenantId)
 				throw new InvalidTenantException();

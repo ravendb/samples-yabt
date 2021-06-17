@@ -64,16 +64,6 @@ namespace Raven.Yabt.Database.Tests
 		}
 
 		/// <summary>
-		///		Save changes in the DB
-		/// </summary>
-		protected async Task SaveChanges()
-		{
-			await DbSession.SaveChangesAsync();
-
-			DbSession.Advanced.Clear(); // Clear all cached entities
-		}
-
-		/// <summary>
 		///		Returns a string with random content (8 char long)
 		/// </summary>
 		protected static string GetRandomString()

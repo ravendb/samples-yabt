@@ -18,8 +18,9 @@ namespace Raven.Yabt.Database.Tests.MultiTenancy
 			
 			// WHEN create a task
 			var createdTicket = await CreateMySampleTicket();
-				
+			
 			// THEN it the current Tenant ID injected
+			DbSession.Advanced.Clear();
 			var validatedTicket = await DbSession.LoadAsync<BacklogItemTask>(createdTicket.Id);
 			Assert.Equal(GetCurrentTenantId(), validatedTicket.TenantId);
 		}
@@ -31,6 +32,7 @@ namespace Raven.Yabt.Database.Tests.MultiTenancy
 			var ticket = await CreateNotMySampleTicket();
 			
 			// WHEN load the ticket by ID
+			DbSession.Advanced.Clear();
 			Task LoadTicket() => DbSession.LoadAsync<BacklogItemTask>(ticket.Id);
 			
 			// THEN it throws an exception

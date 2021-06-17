@@ -27,7 +27,7 @@ namespace Raven.Yabt.Database.Tests.MultiTenancy
 		{
 			var entity = new BacklogItemTask { Title = "Test task" };
 			await DbSession.StoreAsync(entity);
-			await SaveChanges();
+			await DbSession.SaveChangesAsync();
 
 			return entity;
 		}
