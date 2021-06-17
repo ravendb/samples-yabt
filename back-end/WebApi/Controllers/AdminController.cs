@@ -32,7 +32,7 @@ namespace Raven.Yabt.WebApi.Controllers
 
             await Task.WhenAll(tasks);
 
-            return await Task.FromResult(new DatabaseServerStatsResponse()
+            return new DatabaseServerStatsResponse()
             {
                 FreeMemory = memStats.Result.FreeMem,
                 PhysicalMemory = memStats.Result.PhysicalMemory,
@@ -42,7 +42,7 @@ namespace Raven.Yabt.WebApi.Controllers
                 CountOfIndexes = dbStats.Result.CountOfIndexes,
                 RequestsPerSecond_FiveMinuteRate = dbMetrics.Result.Requests.RequestsPerSec.FiveMinuteRate,
                 IndexedPerSecond_FiveMinuteRate = dbMetrics.Result.MapIndexes.IndexedPerSec.FiveMinuteRate
-            });
+            };
         }
         #endregion / GET requests --------------------
     }
