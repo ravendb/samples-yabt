@@ -54,6 +54,9 @@ namespace Raven.Yabt.WebApi
 			services.RegisterModules(assembly: Assembly.GetAssembly(typeof(ModuleRegistrationBase))!);
 
 			services.AddApplicationInsightsTelemetry();
+
+			// Register all Http Clients
+			services.AddAndConfigureHttpClients();
 		}
 
 		/// <summary>
