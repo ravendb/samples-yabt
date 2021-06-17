@@ -52,7 +52,7 @@ namespace Raven.Yabt.Database.Tests.MultiTenancy
 			await CreateNotMySampleTicket();
 			
 			// WHEN query all tickets
-			var tickets = await DbSession.Query<BacklogItemIndexedForList,BacklogItems_ForList>().Select(t => t.Id).ToArrayAsync();
+			var tickets = await DbSession.Query<BacklogItemTask>().Select(t => t.Id).ToArrayAsync();
 			
 			// THEN the list has only my ticket(s)
 			Assert.Equal(new [] { ticketMy.Id }, tickets);
