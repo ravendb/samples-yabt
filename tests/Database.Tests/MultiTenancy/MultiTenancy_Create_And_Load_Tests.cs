@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
@@ -22,7 +21,7 @@ namespace Raven.Yabt.Database.Tests.MultiTenancy
 			// THEN it the current Tenant ID injected
 			DbSession.Advanced.Clear();
 			var validatedTicket = await DbSession.LoadAsync<BacklogItemTask>(createdTicket.Id);
-			Assert.Equal(GetCurrentTenantId(), validatedTicket.TenantId);
+			Assert.Equal(GetCurrentTenantId(), validatedTicket?.TenantId);
 		}
 
 		[Fact]
@@ -33,11 +32,10 @@ namespace Raven.Yabt.Database.Tests.MultiTenancy
 			
 			// WHEN load the ticket by ID
 			DbSession.Advanced.Clear();
-			Task LoadTicket() => DbSession.LoadAsync<BacklogItemTask>(ticket.Id);
+			var loadedTicket = await DbSession.LoadAsync<BacklogItemTask>(ticket.Id);
 			
 			// THEN it throws an exception
-			var exception = await Assert.ThrowsAsync<InvalidOperationException>(LoadTicket);
-			Assert.True(exception.InnerException is InvalidTenantException);
+			Assert.Null(loadedTicket);
 		}
 	}
 }

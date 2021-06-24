@@ -5,7 +5,7 @@ using DomainResults.Common;
 
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
-using Raven.Client.Documents.Session;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.Users;
 using Raven.Yabt.Database.Models.Users.Indexes;
 using Raven.Yabt.Domain.Common;
@@ -15,7 +15,7 @@ namespace Raven.Yabt.Domain.UserServices.Query
 {
 	public class UserQueryService : BaseQueryService<User>, IUserQueryService
 	{
-		public UserQueryService(IAsyncDocumentSession dbSession) : base(dbSession) { }
+		public UserQueryService(IAsyncTenantedDocumentSession dbSession) : base(dbSession) { }
 
 		public async Task<IDomainResult<UserGetByIdResponse>> GetById(string id)
 		{

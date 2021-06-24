@@ -4,9 +4,9 @@ using System.Threading.Tasks;
 
 using DomainResults.Common;
 
-using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
 using Raven.Yabt.Domain.Common;
@@ -20,7 +20,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 		private readonly IUserReferenceResolver _userResolver;
 		private readonly IBacklogItemDtoToEntityConversion _dtoToEntityConversion;
 
-		public BacklogItemCommandService(IAsyncDocumentSession dbSession, IUserReferenceResolver userResolver, IBacklogItemDtoToEntityConversion dtoToEntityConversion) : base(dbSession)
+		public BacklogItemCommandService(IAsyncTenantedDocumentSession dbSession, IUserReferenceResolver userResolver, IBacklogItemDtoToEntityConversion dtoToEntityConversion) : base(dbSession)
 		{
 			_userResolver = userResolver;
 			_dtoToEntityConversion = dtoToEntityConversion;

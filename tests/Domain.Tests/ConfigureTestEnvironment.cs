@@ -8,7 +8,7 @@ using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Session;
 using Raven.TestDriver;
-using Raven.Yabt.Database;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.Infrastructure;
 
@@ -20,8 +20,13 @@ namespace Raven.Yabt.Domain.Tests
 	public abstract class ConfigureTestEnvironment : RavenTestDriver
 	{
 		protected IServiceProvider Container { get; }
-		protected IAsyncDocumentSession DbSession => Container.GetService<IAsyncDocumentSession>()!;
-
+		protected IAsyncTenantedDocumentSession DbSession => Container.GetRequiredService<IAsyncTenantedDocumentSession>();
+		
+		/// <summary>
+		///		Get the ID of the current tenant		
+		/// </summary>
+		protected virtual string GetCurrentTenantId() => "1-A";
+		
 		/// <summary>
 		///		The default c-tor initialising all the IoC interfaces
 		/// </summary>
@@ -73,7 +78,8 @@ namespace Raven.Yabt.Domain.Tests
 				});
 			services.AddScoped(c =>
 				{
-					var session = c.GetService<IDocumentStore>()!.OpenAsyncSession(new SessionOptions { NoCaching = true });
+					var docStore = c.GetRequiredService<IDocumentStore>();
+					var session = AsyncTenantedDocumentSession.Create(docStore, GetCurrentTenantId, new SessionOptions { NoCaching = true });
 						session.Advanced.WaitForIndexesAfterSaveChanges();  // Wait on each change to avoid adding WaitForIndexing() in each test
 					return session;
 				});

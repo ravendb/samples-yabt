@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,6 +6,7 @@ using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Session;
 using Raven.TestDriver;
+using Raven.Yabt.Database.Infrastructure;
 
 namespace Raven.Yabt.Database.Tests
 {
@@ -16,7 +16,7 @@ namespace Raven.Yabt.Database.Tests
 	public abstract class ConfigureTestEnvironment : RavenTestDriver
 	{
 		protected IServiceProvider Container { get; }
-		protected IAsyncDocumentSession DbSession => Container.GetService<IAsyncDocumentSession>()!;
+		protected IAsyncTenantedDocumentSession DbSession => Container.GetService<IAsyncTenantedDocumentSession>()!;
 		
 		/// <summary>
 		///		Get the ID of the current tenant		
@@ -36,7 +36,7 @@ namespace Raven.Yabt.Database.Tests
 
 		protected override void PreInitialize(IDocumentStore store)
 		{
-			store.PreInitializeDocumentStore(GetCurrentTenantId);
+			store.PreInitializeDocumentStore();
 			store.Conventions.MaxNumberOfRequestsPerSession = 200;
 
 			base.PreInitialize(store);
@@ -57,7 +57,8 @@ namespace Raven.Yabt.Database.Tests
 				});
 			services.AddScoped(c =>
 				{
-					var session = c.GetService<IDocumentStore>()!.OpenAsyncSession(new SessionOptions { NoCaching = true });
+					var docStore = c.GetRequiredService<IDocumentStore>();
+					var session = AsyncTenantedDocumentSession.Create(docStore, GetCurrentTenantId, new SessionOptions { NoCaching = true });
 						session.Advanced.WaitForIndexesAfterSaveChanges();  // Wait on each change to avoid adding WaitForIndexing() in each test
 					return session;
 				});

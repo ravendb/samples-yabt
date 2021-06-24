@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
-using Raven.Client.Documents.Session;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models;
 
 namespace Raven.Yabt.Domain.Common
@@ -13,7 +13,7 @@ namespace Raven.Yabt.Domain.Common
 	{
 		protected bool IsSearchResult;
 
-		protected BaseQueryService(IAsyncDocumentSession dbSession) : base(dbSession) { }
+		protected BaseQueryService(IAsyncTenantedDocumentSession dbSession) : base(dbSession) { }
 
 		protected virtual IRavenQueryable<TIndexModel> ApplySearch<TIndexModel>(IRavenQueryable<TIndexModel> query, string? search) where TIndexModel: ISearchable
 		{

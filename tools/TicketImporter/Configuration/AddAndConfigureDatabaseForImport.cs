@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 using Raven.Client.Documents;
-using Raven.Yabt.Database;
 using Raven.Yabt.Database.Common.Configuration;
+using Raven.Yabt.Database.Infrastructure;
 
 namespace Raven.Yabt.TicketImporter.Configuration
 {
@@ -18,7 +18,6 @@ namespace Raven.Yabt.TicketImporter.Configuration
 					var config = x.GetService<DatabaseSettings>();
 					return SetupDocumentStore.GetDocumentStore(
 						config!,
-						null, 
 						store => store.Conventions.MaxNumberOfRequestsPerSession = 20000);
 				});
 			services.AddScoped(c =>

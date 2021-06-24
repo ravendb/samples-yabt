@@ -6,18 +6,16 @@ using Newtonsoft.Json;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Conventions;
 using Raven.Client.Json.Serialization.NewtonsoftJson;
-
 using Raven.Yabt.Database.Common.Configuration;
-using Raven.Yabt.Database.Models.BacklogItems;
 
-namespace Raven.Yabt.Database
+namespace Raven.Yabt.Database.Infrastructure
 {
-	public static partial class SetupDocumentStore
+	public static class SetupDocumentStore
 	{
 		/// <summary>
 		///     Configure RavenDB Document Store
 		/// </summary>
-		public static void PreInitializeDocumentStore(this IDocumentStore store, Func<string>? tenantResolverFunc = null)
+		public static void PreInitializeDocumentStore(this IDocumentStore store)
 		{
 			store.Conventions.UseOptimisticConcurrency = true;
 
@@ -30,15 +28,11 @@ namespace Raven.Yabt.Database
 			// Set one collection for derived classes
 			store.Conventions.FindCollectionName = type =>
 				{
-					if (typeof(BacklogItem).IsAssignableFrom(type))
-						return DocumentConventions.DefaultGetCollectionName(typeof(BacklogItem)); // "BacklogItems";
+					if (typeof(Models.BacklogItems.BacklogItem).IsAssignableFrom(type))
+						return DocumentConventions.DefaultGetCollectionName(typeof(Models.BacklogItems.BacklogItem)); // "BacklogItems";
 
 					return DocumentConventions.DefaultGetCollectionName(type);
 				};
-			
-			if (tenantResolverFunc != null)
-				// Setup multi-tenancy
-				store.SetupMultitenancy(tenantResolverFunc);
 		}
 
 		/// <summary>
@@ -47,7 +41,7 @@ namespace Raven.Yabt.Database
 		/// <remarks>
 		///		It DOESN'T create/update the indexes (by calling 'IndexCreation.CreateIndexes()'), as it may interfere with complex migration processes! Index creation/update should be called outside (along with the migration process).
 		/// </remarks>
-		public static IDocumentStore GetDocumentStore(DatabaseSettings settings,  Func<string>? tenantResolverFunc = null, Action<IDocumentStore>? customInit = null)
+		public static IDocumentStore GetDocumentStore(DatabaseSettings settings, Action<IDocumentStore>? customInit = null)
 		{
 			var store = new DocumentStore
 				{
@@ -60,7 +54,7 @@ namespace Raven.Yabt.Database
 				if (!string.IsNullOrEmpty(settings.Certificate))
 					store.Certificate = new X509Certificate2(Convert.FromBase64String(settings.Certificate));
 				
-				store.PreInitializeDocumentStore(tenantResolverFunc);
+				store.PreInitializeDocumentStore();
 				
 				customInit?.Invoke(store);
 
@@ -74,7 +68,5 @@ namespace Raven.Yabt.Database
 			
 			return store;
 		}
-		
-		private static partial void SetupMultitenancy(this IDocumentStore store, Func<string> tenantResolverFunc);
 	}
 }

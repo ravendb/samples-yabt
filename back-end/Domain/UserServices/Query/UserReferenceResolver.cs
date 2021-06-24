@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 
-using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.Users;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.Helpers;
@@ -13,7 +13,7 @@ namespace Raven.Yabt.Domain.UserServices.Query
 	{
 		private readonly ICurrentUserResolver _currentUserResolver;
 
-		public UserReferenceResolver(IAsyncDocumentSession dbSession, ICurrentUserResolver currentUserResolver) : base(dbSession)
+		public UserReferenceResolver(IAsyncTenantedDocumentSession dbSession, ICurrentUserResolver currentUserResolver) : base(dbSession)
 		{
 			_currentUserResolver = currentUserResolver;
 		}

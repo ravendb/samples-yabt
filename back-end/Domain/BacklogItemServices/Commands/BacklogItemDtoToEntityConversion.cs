@@ -7,10 +7,10 @@ using DomainResults.Common;
 
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
-using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Database.Models.BacklogItems.Indexes;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
@@ -33,7 +33,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 		private readonly IUserReferenceResolver _userResolver;
 		private readonly ICustomFieldListQueryService _customFieldQueryService;
 
-		public BacklogItemDtoToEntityConversion(IAsyncDocumentSession dbSession, IUserReferenceResolver userResolver, ICustomFieldListQueryService customFieldQueryService) : base(dbSession)
+		public BacklogItemDtoToEntityConversion(IAsyncTenantedDocumentSession dbSession, IUserReferenceResolver userResolver, ICustomFieldListQueryService customFieldQueryService) : base(dbSession)
 		{
 			_userResolver = userResolver;
 			_customFieldQueryService = customFieldQueryService;

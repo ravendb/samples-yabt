@@ -5,7 +5,7 @@ using DomainResults.Common;
 
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
-using Raven.Client.Documents.Session;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.CustomFields;
 using Raven.Yabt.Database.Models.CustomFields.Indexes;
 using Raven.Yabt.Domain.Common;
@@ -17,8 +17,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 	{
 		private readonly IEnumerable<IRemoveCustomFieldReferencesCommand> _clearFieldReferences;
 
-		public CustomFieldCommandService(IAsyncDocumentSession dbSession, IEnumerable<IRemoveCustomFieldReferencesCommand> clearFieldReferences) : base(
-			dbSession)
+		public CustomFieldCommandService(IAsyncTenantedDocumentSession dbSession, IEnumerable<IRemoveCustomFieldReferencesCommand> clearFieldReferences) : base(dbSession)
 		{
 			_clearFieldReferences = clearFieldReferences;
 		}

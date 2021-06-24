@@ -10,23 +10,6 @@ namespace Raven.Yabt.Database.Tests.MultiTenancy
 	public class MultiTenancy_Delete_Tests : MultiTenancyTestsBase
 	{
 		[Fact]
-		public async Task DeleteById_Unsupported()
-		{
-			// GIVEN a ticket created by the current user
-			var ticket = await CreateMySampleTicket();
-			
-			// WHEN delete the ticket
-			async Task DeleteTicket()
-				{
-					DbSession.Delete(ticket.Id);
-					await DbSession.SaveChangesAsync();
-				}
-			
-			// THEN it throws an exception
-			await Assert.ThrowsAsync<NotSupportedException>(DeleteTicket);
-		}
-
-		[Fact]
 		public async Task DeleteByEntity_My_Entity_Works()
 		{
 			// GIVEN a ticket created by the current user
@@ -55,7 +38,7 @@ namespace Raven.Yabt.Database.Tests.MultiTenancy
 				}
 
 			// THEN it throws an exception
-			await Assert.ThrowsAsync<InvalidTenantException>(DeleteTicket);
+			await Assert.ThrowsAsync<ArgumentException>(DeleteTicket);
 			//		and the ticket remains in the DB  
 			DbSession.Advanced.Clear();	// Required due to https://github.com/ravendb/ravendb/issues/12398
 			var ticketExists = await DbSession.Advanced.ExistsAsync(ticket.Id);

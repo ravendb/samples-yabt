@@ -11,6 +11,7 @@ using Raven.Client.Documents.Operations;
 using Raven.Client.Documents.Operations.Indexes;
 using Raven.Client.Exceptions.Database;
 using Raven.Migrations;
+using Raven.Yabt.Database.Infrastructure;
 
 namespace Raven.Yabt.Database.Migration
 {

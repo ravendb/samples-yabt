@@ -5,8 +5,8 @@ using Microsoft.Extensions.DependencyInjection;
 
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
-using Raven.Yabt.Database;
 using Raven.Yabt.Database.Common.Configuration;
+using Raven.Yabt.Database.Infrastructure;
 
 namespace Raven.Yabt.Domain.Infrastructure
 {
@@ -21,15 +21,17 @@ namespace Raven.Yabt.Domain.Infrastructure
 			services.AddSingleton(x =>
 				{
 					var config = x.GetRequiredService<DatabaseSettings>();
-					//var tenantResolver = x.GetService<ICurrentTenantResolver>();
-					return SetupDocumentStore.GetDocumentStore(config);//, tenantResolver != null ? tenantResolver.GetCurrentTenantId : null);
+					return SetupDocumentStore.GetDocumentStore(config);
 				});
 			
-			// Register a session
+			// Register a tenanted session
 			services.AddScoped(x =>
 				{
-					var config = x.GetService<DatabaseSessionSettings>();
-					var session = x.GetRequiredService<IDocumentStore>().OpenAsyncSession();
+					var docStore		= x.GetRequiredService<IDocumentStore>();
+					var tenantResolver	= x.GetRequiredService<ICurrentTenantResolver>();
+					var config			= x.GetService<DatabaseSessionSettings>();
+
+					var session = AsyncTenantedDocumentSession.Create(docStore, tenantResolver.GetCurrentTenantId);
 
 					if (config?.WaitForIndexesAfterSaveChanges > 0) 
 						// Wait on each change to avoid adding WaitForIndexing() in each test

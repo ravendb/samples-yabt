@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
-using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Database.Models.BacklogItems.Indexes;
 using Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs;
@@ -24,9 +24,9 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery
 		private readonly ICustomFieldListQueryService _customFieldService;
 		private readonly ICurrentUserResolver _userResolver;
 
-		public BacklogItemListQueryService (IAsyncDocumentSession dbSession,
-											ICustomFieldListQueryService customFieldService, 
-											ICurrentUserResolver userResolver) : base(dbSession)
+		public BacklogItemListQueryService (IAsyncTenantedDocumentSession dbSession,
+		                                    ICustomFieldListQueryService customFieldService, 
+		                                    ICurrentUserResolver userResolver) : base(dbSession)
 		{
 			_customFieldService = customFieldService;
 			_userResolver = userResolver;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 using Raven.Yabt.Database.Common.Configuration;
+using Raven.Yabt.Database.Infrastructure;
 
 namespace Raven.Yabt.Database.Migration.Configuration
 {

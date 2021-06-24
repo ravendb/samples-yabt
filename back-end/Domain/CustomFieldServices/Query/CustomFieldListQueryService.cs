@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
-using Raven.Client.Documents.Session;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.CustomFields;
 using Raven.Yabt.Database.Models.CustomFields.Indexes;
 using Raven.Yabt.Domain.Common;
@@ -16,7 +16,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query
 {
 	public class CustomFieldListQueryService : BaseService<CustomField>, ICustomFieldListQueryService
 	{
-		public CustomFieldListQueryService(IAsyncDocumentSession dbSession) : base(dbSession) {}
+		public CustomFieldListQueryService(IAsyncTenantedDocumentSession dbSession) : base(dbSession) {}
 
 		public async Task<ListResponse<CustomFieldListGetResponse>> GetList(CustomFieldListGetRequest dto)
 		{
@@ -90,7 +90,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query
 									where b.Id.In(fullIds)
 									select b.Id
 									).ToArrayAsync();
-			return resolvedIds.Select(id => id.GetShortId()!).ToList();
+			return resolvedIds.Select(id => SanitiseReferenceIdsExtension.GetShortId(id)!).ToList();
 		}
 	}
 }
