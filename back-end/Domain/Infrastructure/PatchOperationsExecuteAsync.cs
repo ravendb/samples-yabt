@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Raven.Client.Documents.Operations;
 using Raven.Client.Documents.Queries;
 using Raven.Client.Documents.Session;
+using Raven.Yabt.Database.Infrastructure;
 
 namespace Raven.Yabt.Domain.Infrastructure
 {
@@ -17,7 +18,7 @@ namespace Raven.Yabt.Domain.Infrastructure
     /// </remarks>
     internal class PatchOperationsExecuteAsync : IPatchOperationsExecuteAsync, IPatchOperationsAddDeferred
     {
-        private readonly IAsyncDocumentSession _dbSession;
+        private readonly IAsyncTenantedDocumentSession _dbSession;
 
         /// <summary>
         ///		Collection of deferred patch queries.
@@ -25,7 +26,7 @@ namespace Raven.Yabt.Domain.Infrastructure
         /// </summary>
         private readonly ConcurrentQueue<IndexQuery> _deferredPatchQueries = new();
 
-        public PatchOperationsExecuteAsync(IAsyncDocumentSession dbSession)
+        public PatchOperationsExecuteAsync(IAsyncTenantedDocumentSession dbSession)
         {
             _dbSession = dbSession;
         }
