@@ -8,7 +8,6 @@ using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Domain.Common;
-using Raven.Yabt.Domain.Helpers;
 using Raven.Yabt.Domain.UserServices.Query;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
@@ -100,7 +99,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 		private static BacklogItemCommentReference GetCommentReference(string ticketId, string? commentId, string commentMessage) 
 			=> new()
 			{
-				Id = SanitiseReferenceIdsExtension.GetShortId(ticketId),
+				Id = ticketId.GetShortId(),
 				Name = commentMessage.Length > 20
 					? commentMessage.Substring(0, 17) + "..." 
 					: commentMessage,

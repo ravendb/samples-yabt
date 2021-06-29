@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace Raven.Yabt.Database.Common.Helpers
+namespace Raven.Yabt.Domain.Helpers
 {
 	public static class TypeExtensions
 	{
 		/// <summary>
-		///		Checks whether this (<paramref name="@this"/>) is a closed type of a given generic type (<paramref name="openGeneric"/>)
+		///		Checks whether this (<paramref name="this"/>) is a closed type of a given generic type (<paramref name="openGeneric"/>)
 		/// </summary>
 		/// <remarks>
 		///		The implementation was copied from Autofac - https://github.com/autofac/Autofac/blob/develop/src/Autofac/Util/TypeExtensions.cs

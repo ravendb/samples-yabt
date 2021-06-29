@@ -11,8 +11,8 @@ using Raven.Client.Documents.Session.Loaders;
 namespace Raven.Yabt.Database.Infrastructure
 {
 	/// <summary>
-	///		Special multi-tenanted DB session - a wrapper on <see cref="IAsyncDocumentSession"/>.
-	///		`IAsyncDocumentSession` methods that won't support multi-tenancy checks (e.g. Delete(string)) have been omitted
+	///		A multi-tenanted DB session - a wrapper on <see cref="IAsyncDocumentSession"/>.
+	///		All the `IAsyncDocumentSession` methods that won't support multi-tenancy checks (e.g. Delete(string)) have been omitted
 	/// </summary>
 	public interface IAsyncTenantedDocumentSession : IDisposable
 	{

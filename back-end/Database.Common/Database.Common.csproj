@@ -8,6 +8,5 @@
 
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-        <PackageReference Include="RavenDB.Client" Version="5.1.8" />
     </ItemGroup>
 </Project>

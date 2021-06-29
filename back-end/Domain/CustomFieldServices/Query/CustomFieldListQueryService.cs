@@ -10,7 +10,6 @@ using Raven.Yabt.Database.Models.CustomFields;
 using Raven.Yabt.Database.Models.CustomFields.Indexes;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.CustomFieldServices.Query.DTOs;
-using Raven.Yabt.Domain.Helpers;
 
 namespace Raven.Yabt.Domain.CustomFieldServices.Query
 {
@@ -90,7 +89,7 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query
 									where b.Id.In(fullIds)
 									select b.Id
 									).ToArrayAsync();
-			return resolvedIds.Select(id => SanitiseReferenceIdsExtension.GetShortId(id)!).ToList();
+			return resolvedIds.Select(id => id.GetShortId()!).ToList();
 		}
 	}
 }
