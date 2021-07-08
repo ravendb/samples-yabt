@@ -8,16 +8,18 @@ using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Linq;
 using Raven.Client.Documents.Session;
-using Raven.Client.Documents.Session.Loaders;
 using Raven.Yabt.Database.Models;
 
 namespace Raven.Yabt.Database.Infrastructure
 {
 	public class AsyncTenantedDocumentSession : IAsyncTenantedDocumentSession
 	{
-		private IAsyncDocumentSession? _dbSession;
+		/// <inheritdoc />
+		public bool ThrowExceptionOnWrongTenant { get; }
+
 		private readonly IDocumentStore _documentStore;
-		private readonly SessionOptions? _sessionOptions; 
+		private readonly SessionOptions? _sessionOptions;
+
 		/// <summary>
 		///		The current Tenant ID resolver
 		/// </summary>
@@ -34,54 +36,71 @@ namespace Raven.Yabt.Database.Infrastructure
 				? _documentStore.OpenAsyncSession(_sessionOptions) 
 				: _documentStore.OpenAsyncSession();
 
+		private IAsyncDocumentSession? _dbSession;
+
 		/// <summary>
 		///		Share <seealso cref="IAsyncDocumentSession.Advanced"/> of the embedded session
 		/// </summary>
 		public IAsyncAdvancedSessionOperations Advanced => DbSession.Advanced;
 
-		public AsyncTenantedDocumentSession(IDocumentStore documentStore, Func<string> getCurrentTenantIdFunc, SessionOptions? options = null)
+		/// <summary>
+		///		Constructor.
+		/// </summary>
+		/// <param name="documentStore"> An instance of the <see cref="IDocumentStore"/> </param>
+		/// <param name="getCurrentTenantIdFunc"> The function resolving the current Tenant ID </param>
+		/// <param name="throwExceptionOnWrongTenant"> The flag defining the behaviour on requesting a record of a wrong tenant </param>
+		/// <param name="options"> Optional session settings (see <see cref="SessionOptions"/>) </param>
+		public AsyncTenantedDocumentSession(IDocumentStore documentStore, Func<string> getCurrentTenantIdFunc, bool throwExceptionOnWrongTenant = false, SessionOptions? options = null)
 		{
 			_documentStore = documentStore;
 			_getCurrentTenantIdFunc = getCurrentTenantIdFunc;
+			ThrowExceptionOnWrongTenant = throwExceptionOnWrongTenant;
 			_sessionOptions = options;
 		}
-		
-		public static IAsyncTenantedDocumentSession Create(IDocumentStore documentStore, Func<string> getCurrentTenantIdFunc, SessionOptions? options = null) =>
-			new AsyncTenantedDocumentSession(documentStore, getCurrentTenantIdFunc, options);
-
 		public void Dispose() => _dbSession?.Dispose();
 
-		public IAsyncSessionDocumentCounters CountersFor(string documentId) => DbSession.CountersFor(documentId);
-
-		public IAsyncSessionDocumentCounters CountersFor(object entity) => DbSession.CountersFor(entity);
-		
-		public void Delete<T>(T entity) where T: new()
+		/// <inheritdoc />
+		public IAsyncSessionDocumentCounters? CountersFor<T>(T entity) where T: notnull
 		{
-			if (IsNotTenantedEntity(entity) || HasCorrectTenant(entity))
+			if (IsNotTenantedType<T>() || HasCorrectTenant(entity))
+				return DbSession.CountersFor(entity);
+			
+			ThrowArgumentExceptionIfRequired();
+			return default;
+		}
+		
+		/// <inheritdoc />
+		public void Delete<T>(T entity) where T: notnull
+		{
+			if (IsNotTenantedType<T>() || HasCorrectTenant(entity))
 				DbSession.Delete(entity);
 			else
-				throw new ArgumentException("Attempt to delete a record for another tenant");
+				ThrowArgumentExceptionIfRequired();
 		}
 
+		/// <inheritdoc />
 		public Task SaveChangesAsync(CancellationToken token = default) => DbSession.SaveChangesAsync(token);
 
 		#region StoreAsync [PUBLIC] -------------------------------------------
 
-		public Task StoreAsync(object entity, CancellationToken token = default)
+		/// <inheritdoc />
+		public Task StoreAsync<T>(T entity, CancellationToken token = default) where T: notnull
 		{
 			SetTenantIdOnEntity(entity);
 
 			return DbSession.StoreAsync(entity, token);
 		}
 
-		public Task StoreAsync(object entity, string changeVector, string id, CancellationToken token = default)
+		/// <inheritdoc />
+		public Task StoreAsync<T>(T entity, string changeVector, string id, CancellationToken token = default) where T: notnull
 		{
 			SetTenantIdOnEntity(entity);
 
 			return DbSession.StoreAsync(entity, changeVector, id, token);
 		}
 
-		public Task StoreAsync(object entity, string id, CancellationToken token = default)
+		/// <inheritdoc />
+		public Task StoreAsync<T>(T entity, string id, CancellationToken token = default) where T: notnull
 		{
 			SetTenantIdOnEntity(entity);
 
@@ -91,89 +110,104 @@ namespace Raven.Yabt.Database.Infrastructure
 
 		#region LoadAsync [PUBLIC] --------------------------------------------
 
+		/// <inheritdoc />
 		public async Task<T?> LoadAsync<T>(string id, CancellationToken token = default)
 		{
 			var entity = await DbSession.LoadAsync<T>(id, token);
 
-			return IsNotTenantedEntity(entity) || HasCorrectTenant(entity)
-				? entity
-				: default;
+			if (entity == null || IsNotTenantedType<T>() || HasCorrectTenant(entity))
+				return entity;
+			
+			ThrowArgumentExceptionIfRequired();
+			return default;
 		}
 
+		/// <inheritdoc />
 		public async Task<Dictionary<string, T>> LoadAsync<T>(IEnumerable<string> ids, CancellationToken token = default)
 		{
 			Dictionary<string, T> entities = await DbSession.LoadAsync<T>(ids, token);
+
+			if (IsNotTenantedType<T>())
+				return entities;
+
+			var sanitisedEntities = entities
+			                        .Where(e => HasCorrectTenant(e.Value))
+			                        .ToDictionary(i => i.Key, i => i.Value);
 			
-			return typeof(T).GetInterfaces().Contains(typeof(ITenantedEntity)) 
-				? entities.Where(e => HasCorrectTenant(e.Value)).ToDictionary(i => i.Key, i => i.Value) 
-				: entities;
-		}
-
-		public async Task<T?> LoadAsync<T>(string id, Action<IIncludeBuilder<T>> includes, CancellationToken token = default)
-		{
-			var entity = await DbSession.LoadAsync(id, includes, token);
-
-			return IsNotTenantedEntity(entity) || HasCorrectTenant(entity)
-				 ? entity
-				 : default;
-		}
-
-		public async Task<Dictionary<string, T>> LoadAsync<T>(IEnumerable<string> ids, Action<IIncludeBuilder<T>> includes, CancellationToken token = default (CancellationToken))
-		{
-			Dictionary<string, T> entities = await DbSession.LoadAsync(ids, includes, token);
+			if (sanitisedEntities.Count != entities.Count)
+				ThrowArgumentExceptionIfRequired();
 			
-			return typeof(T).GetInterfaces().Contains(typeof(ITenantedEntity)) 
-				? entities.Where(HasCorrectTenant).ToDictionary(i => i.Key, i => i.Value) 
-				: entities;
+			return sanitisedEntities;
 		}
 		#endregion LoadAsync [PUBLIC] -----------------------------------------
 
 		#region Query [PUBLIC] ------------------------------------------------
 
+		/// <inheritdoc />
 		public IRavenQueryable<T> Query<T>(string? indexName = null, string? collectionName = null, bool isMapReduce = false)
 		{
 			var query = DbSession.Query<T>(indexName, collectionName, isMapReduce);
 
-			if (typeof(T).GetInterfaces().Contains(typeof(ITenantedEntity)))
-			{
-				var tenantId = _getCurrentTenantIdFunc();	// Evaluate tenant separately from the WHERE condition, otherwise LINQ-to-JavaScript conversion fails 
-				return query.Where(e => (e as ITenantedEntity)!.TenantId == tenantId);
-			}
-			return query;
+			if (IsNotTenantedType<T>())
+				return query;
+
+			// Evaluate tenant separately from the WHERE condition, otherwise LINQ-to-JavaScript conversion fails
+			var tenantId = _getCurrentTenantIdFunc(); 
+			
+			// Add an extra WHERE condition on the current tenant
+			return query.Where(e => (e as ITenantedEntity)!.TenantId == tenantId);
 		}
 
+		/// <inheritdoc />
 		public IRavenQueryable<T> Query<T, TIndexCreator>() where TIndexCreator : AbstractIndexCreationTask, new()
 		{
 			var query = DbSession.Query<T, TIndexCreator>();
 
 			var lastArgType = typeof(TIndexCreator).BaseType?.GenericTypeArguments.LastOrDefault();
 
-			if (lastArgType != null && lastArgType.GetInterfaces().Contains(typeof(ITenantedEntity)))
-			{
-				var tenantId = _getCurrentTenantIdFunc();	// Evaluate tenant separately from the WHERE condition, otherwise LINQ-to-JavaScript conversion fails
-				return query.Where(e => (e as ITenantedEntity)!.TenantId == tenantId);
-			}
-			return query;
+			if (lastArgType == null || IsNotTenantedType(lastArgType))
+				return query;
+
+			// Evaluate tenant separately from the WHERE condition, otherwise LINQ-to-JavaScript conversion fails
+			var tenantId = _getCurrentTenantIdFunc();
+
+			// Add an extra WHERE condition on the current tenant
+			return query.Where(e => (e as ITenantedEntity)!.TenantId == tenantId);
 		}
 		#endregion Query [PUBLIC] ---------------------------------------------
 
+		/// <inheritdoc />
 		public bool HasChanges()
 		{
+			// Use direct property, so we don't open a new session too early 
 			return _dbSession?.Advanced.HasChanges == true
 				// Check if there is a PATCH request
 				|| _dbSession?.Advanced is InMemoryDocumentSessionOperations { DeferredCommandsCount: > 0 };
 		}
 
-		private static bool IsNotTenantedEntity<T>(T entity) => entity is not ITenantedEntity;
+		#region Auxiliary methods [PRIVATE] -----------------------------------
+		
+		private static bool IsNotTenantedType<T>() => IsNotTenantedType(typeof(T));
+		private static bool IsNotTenantedType(Type type) => !type.GetInterfaces().Contains(typeof(ITenantedEntity));
+		
 		private bool HasCorrectTenant<T>(T entity) => (entity as ITenantedEntity)?.TenantId == _getCurrentTenantIdFunc();
 
-		private void SetTenantIdOnEntity(object entity)
+		private void SetTenantIdOnEntity<T>(T entity) where T: notnull
 		{
-			if (entity is not ITenantedEntity) return;
+			if (IsNotTenantedType<T>()) return;
 			
-			var entityType = entity.GetType(); 
-			entityType.GetProperty(nameof(ITenantedEntity.TenantId))
-			          ?.SetValue(entity, _getCurrentTenantIdFunc());
+			var property = typeof(T).GetProperty(nameof(ITenantedEntity.TenantId));
+			if (property == null)
+				throw new ArgumentException("Can't resolve tenanted property");
+			
+			property.SetValue(entity, _getCurrentTenantIdFunc());
 		}
+
+		private void ThrowArgumentExceptionIfRequired()
+		{
+			if (ThrowExceptionOnWrongTenant)
+				throw new ArgumentException("Attempt to access a record of another tenant");
+		}
+		#endregion / Auxiliary methods [PRIVATE] ------------------------------
 	}
 }

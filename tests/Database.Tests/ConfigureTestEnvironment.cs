@@ -17,6 +17,7 @@ namespace Raven.Yabt.Database.Tests
 	{
 		protected IServiceProvider Container { get; }
 		protected IAsyncTenantedDocumentSession DbSession => Container.GetService<IAsyncTenantedDocumentSession>()!;
+		protected bool ThrowExceptionOnWrongTenant = true;
 		
 		/// <summary>
 		///		Get the ID of the current tenant		
@@ -45,7 +46,7 @@ namespace Raven.Yabt.Database.Tests
 		/// <summary>
 		///		Configure IoC, register all dependencies
 		/// </summary>
-		protected virtual void ConfigureIocContainer(IServiceCollection services)
+		protected void ConfigureIocContainer(IServiceCollection services)
 		{
 			// Register the document store & session
 			services.AddScoped(_ =>
@@ -58,27 +59,10 @@ namespace Raven.Yabt.Database.Tests
 			services.AddScoped(c =>
 				{
 					var docStore = c.GetRequiredService<IDocumentStore>();
-					var session = AsyncTenantedDocumentSession.Create(docStore, GetCurrentTenantId, new SessionOptions { NoCaching = true });
+					var session = new AsyncTenantedDocumentSession(docStore, GetCurrentTenantId, ThrowExceptionOnWrongTenant, new SessionOptions { NoCaching = true });
 						session.Advanced.WaitForIndexesAfterSaveChanges();  // Wait on each change to avoid adding WaitForIndexing() in each test
-					return session;
+					return session as IAsyncTenantedDocumentSession;
 				});
-		}
-
-		/// <summary>
-		///		Returns a string with random content (8 char long)
-		/// </summary>
-		protected static string GetRandomString()
-		{
-			const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-			var stringChars = new char[8];
-			var random = new Random();
-
-			for (var i = 0; i < stringChars.Length; i++)
-			{
-				stringChars[i] = chars[random.Next(chars.Length)];
-			}
-
-			return new string(stringChars);
 		}
 	}
 }

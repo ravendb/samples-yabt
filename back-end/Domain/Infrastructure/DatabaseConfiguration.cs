@@ -31,7 +31,7 @@ namespace Raven.Yabt.Domain.Infrastructure
 					var tenantResolver	= x.GetRequiredService<ICurrentTenantResolver>();
 					var config			= x.GetService<DatabaseSessionSettings>();
 
-					var session = AsyncTenantedDocumentSession.Create(docStore, tenantResolver.GetCurrentTenantId);
+					var session = new AsyncTenantedDocumentSession(docStore, tenantResolver.GetCurrentTenantId);
 
 					if (config?.WaitForIndexesAfterSaveChanges > 0) 
 						// Wait on each change to avoid adding WaitForIndexing() in each test

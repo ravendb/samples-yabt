@@ -79,9 +79,9 @@ namespace Raven.Yabt.Domain.Tests
 			services.AddScoped(c =>
 				{
 					var docStore = c.GetRequiredService<IDocumentStore>();
-					var session = AsyncTenantedDocumentSession.Create(docStore, GetCurrentTenantId, new SessionOptions { NoCaching = true });
+					var session = new AsyncTenantedDocumentSession(docStore, GetCurrentTenantId, true, new SessionOptions { NoCaching = true });
 						session.Advanced.WaitForIndexesAfterSaveChanges();  // Wait on each change to avoid adding WaitForIndexing() in each test
-					return session;
+					return session as IAsyncTenantedDocumentSession;
 				});
 		}
 
