@@ -19,10 +19,14 @@ namespace Raven.Yabt.Database.Tests
 		protected IAsyncTenantedDocumentSession DbSession => Container.GetService<IAsyncTenantedDocumentSession>()!;
 		protected bool ThrowExceptionOnWrongTenant = true;
 		
+		private const string MyTenantId = "1-A";
+		private const string NotMyTenantId = "2-A";
+		protected bool IsMyTenantFlag = true;
+
 		/// <summary>
 		///		Get the ID of the current tenant		
 		/// </summary>
-		protected virtual string GetCurrentTenantId() => "1-A";
+		protected string GetCurrentTenantId() => IsMyTenantFlag ? MyTenantId : NotMyTenantId;
 
 		/// <summary>
 		///		The default c-tor initialising all the IoC interfaces
