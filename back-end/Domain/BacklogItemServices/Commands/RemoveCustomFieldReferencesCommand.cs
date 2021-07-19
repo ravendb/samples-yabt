@@ -26,7 +26,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			var sanitisedId = GetSanitisedId(customFieldId).ToUpper();
 
 			// Form a patch query
-			var queryString = $@"FROM INDEX '{new BacklogItems_ForList().IndexName}' AS i
+			var queryString= $@"FROM INDEX '{new BacklogItems_ForList().IndexName}' AS i
 								WHERE i.{nameof(BacklogItem.CustomFields)}_{sanitisedId} != null
 								UPDATE
 								{{

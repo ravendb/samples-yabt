@@ -117,8 +117,6 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				userRef = await _userResolver.GetReferenceById(userShortenId);
 				if (userRef == null)
 					return DomainResult.NotFound("The user not found");
-
-				userRef = userRef.RemoveEntityPrefixFromId();
 			}
 
 			DbSession.Advanced.Patch<BacklogItem, UserReference?>(fullId, x => x.Assignee, userRef);

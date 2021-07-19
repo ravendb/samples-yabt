@@ -43,7 +43,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery
 				BacklogItemType.UserStory	=> (ticket as BacklogItemUserStory)	?.ConvertToDto<BacklogItemUserStory,UserStoryGetResponse>	(customFieldValues)	as BacklogItemGetResponseBase,
 				BacklogItemType.Task		=> (ticket as BacklogItemTask)		?.ConvertToDto<BacklogItemTask,		TaskGetResponse>		(customFieldValues)	as BacklogItemGetResponseBase,
 				BacklogItemType.Feature		=> (ticket as BacklogItemFeature)	?.ConvertToDto<BacklogItemFeature,	FeatureGetResponse>		(customFieldValues)	as BacklogItemGetResponseBase,
-				_ => throw new NotImplementedException($"Not supported Backlog Item Type: {ticket.Type}"),
+				_ => throw new ArgumentException($"Not supported Backlog Item Type: {ticket.Type}"),
 			};
 			if (dto == null)
 				throw new NotSupportedException($"Failed to return Backlog Item type of {ticket.Type}");

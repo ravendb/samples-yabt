@@ -30,10 +30,10 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 
 			var entity = new CustomField
 				{
-					Name = dto.Name,
-					FieldType = dto.FieldType,
-					BacklogItemTypes = dto.BacklogItemTypes,
-					IsMandatory = dto.IsMandatory.HasValue && dto.IsMandatory.Value
+					Name			= dto.Name,
+					FieldType		= dto.FieldType,
+					BacklogItemTypes= dto.BacklogItemTypes,
+					IsMandatory		= dto.IsMandatory.HasValue && dto.IsMandatory.Value
 				};
 			await DbSession.StoreAsync(entity);
 
@@ -50,9 +50,9 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Command
 			if (entity == null)
 				return DomainResult.NotFound<CustomFieldReferenceDto>();
 
-			entity.Name = dto.Name;
-			entity.IsMandatory = dto.IsMandatory.HasValue && dto.IsMandatory.Value;
-			entity.BacklogItemTypes = dto.BacklogItemTypes;
+			entity.Name				= dto.Name;
+			entity.IsMandatory		= dto.IsMandatory.HasValue && dto.IsMandatory.Value;
+			entity.BacklogItemTypes	= dto.BacklogItemTypes;
 
 			return DomainResult.Success(GetReference(entity));
 		}

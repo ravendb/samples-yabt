@@ -29,10 +29,10 @@ namespace Raven.Yabt.Domain.CustomFieldServices.Query
 
 			var item = new CustomFieldItemResponse
 			{
-				Name = entity.Name,
-				FieldType = entity.FieldType,
-				IsMandatory = entity.IsMandatory,
-				BacklogItemTypes = entity.BacklogItemTypes,
+				Name					= entity.Name,
+				FieldType				= entity.FieldType,
+				IsMandatory				= entity.IsMandatory,
+				BacklogItemTypes		= entity.BacklogItemTypes,
 				UsedInBacklogItemsCount = await _backlogService.GetCountOfBacklogItemsUsingCustomField(id)
 			};
 			return DomainResult.Success(item);

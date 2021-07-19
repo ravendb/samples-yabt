@@ -28,7 +28,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			var sanitisedId = GetSanitisedId(userId);
 
 			// Form a patch query
-			var queryString = $@"FROM INDEX '{new BacklogItems_ForList().IndexName}' AS i
+			var queryString= $@"FROM INDEX '{new BacklogItems_ForList().IndexName}' AS i
 								WHERE i.{nameof(BacklogItemIndexedForList.ModifiedBy)}_{sanitisedId} != null OR i.{nameof(BacklogItemIndexedForList.AssignedUserId)} == $userId
 								UPDATE
 								{{
