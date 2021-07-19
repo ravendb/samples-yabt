@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.BacklogItem;
 
 namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 {
 	public class BacklogItemIndexedForList : BacklogItem, ISearchable
 	{
-		public override BacklogItemType Type { get; set; }
-
 		public string? AssignedUserId { get; set; }
 		public string AssignedUserName { get; set; } = string.Empty;
 

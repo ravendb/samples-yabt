@@ -22,7 +22,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 		/// </summary>
 		public string Title { get; set; } = null!;
 
-		public virtual BacklogItemType Type { get; set; }    // Can't make it 'abstract'
+		public virtual BacklogItemType Type { get; protected set; }		// Can't make it 'abstract'
 
 		/// <summary>
 		///		Current state of the backlog item

@@ -1,5 +1,4 @@
-﻿using Raven.Yabt.Database.Common;
-using Raven.Yabt.Database.Common.BacklogItem;
+﻿using Raven.Yabt.Database.Common.BacklogItem;
 
 namespace Raven.Yabt.Database.Models.BacklogItems
 {
@@ -7,6 +6,6 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 	{
 		public string? AcceptanceCriteria { get; set; }
 
-		public override BacklogItemType Type { get; set; } = BacklogItemType.UserStory;
+		public override BacklogItemType Type { get; protected set; } = BacklogItemType.UserStory;
 	}
 }
