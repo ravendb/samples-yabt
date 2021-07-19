@@ -1,7 +1,7 @@
 ﻿namespace Raven.Yabt.Database.Models
 {
 	/// <summary>
-	///     Top-level entities, which belong to a tenant/project
+	///     Entity that belongs to a tenant/project
 	/// </summary>
 	public interface ITenantedEntity
 	{

@@ -18,6 +18,7 @@ namespace Raven.Yabt.Database.Models.Users.Indexes
 					FullName = user.LastName + " " + user.FirstName,    // sort
 					user.Email,											// sort
 					user.RegistrationDate,								// sort
+					user.TenantId,										// filter
 
 					Search = new[] { user.FirstName.ToLower(), user.LastName.ToLower() },
 				};
