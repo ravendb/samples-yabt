@@ -7,7 +7,7 @@ using Raven.Yabt.Database.Models.BacklogItems;
 
 using Xunit;
 
-namespace Raven.Yabt.Database.Tests.MultiTenancy
+namespace Raven.Yabt.Database.Tests.BacklogItem
 {
 	[SuppressMessage("ReSharper", "InconsistentNaming")]
 	public class MultiTenancy_Create_And_Load_Tests : MultiTenancyTestsBase
