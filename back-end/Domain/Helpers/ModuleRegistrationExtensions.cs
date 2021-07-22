@@ -5,7 +5,7 @@ using System.Reflection;
 
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Raven.Yabt.Domain.Infrastructure
+namespace Raven.Yabt.Domain.Helpers
 {
 	public static class ModuleRegistrationExtensions
 	{
@@ -29,21 +29,6 @@ namespace Raven.Yabt.Domain.Infrastructure
 		}
 
 		/// <summary>
-		///		Register all modules (classes derived from <see cref="ModuleRegistrationBase"/>) in the specified assembly
-		/// </summary>
-		public static IServiceCollection RegisterModules(this IServiceCollection services, Assembly assembly)
-		{
-			foreach (Type tp in assembly.GetTypes().Where(t => t.IsSubclassOf(typeof(ModuleRegistrationBase))))
-			{
-				if (Activator.CreateInstance(tp) is ModuleRegistrationBase module)
-					module.Configure(services);
-			}
-			return services;
-		}
-
-		#region Auxiliary methods [PRIVATE, STATIC] ---------------------------
-
-		/// <summary>
 		///		This registers the type against any public interfaces (other than IDisposable) implemented by the class
 		/// </summary>
 		/// <remarks>
@@ -59,6 +44,5 @@ namespace Raven.Yabt.Domain.Infrastructure
 			foreach (Type interfaceType in interfaces)
 				services.Add(new ServiceDescriptor(interfaceType, classType, lifetime));
 		}
-		#endregion Auxiliary methods [PRIVATE, STATIC] ------------------------
 	}
 }

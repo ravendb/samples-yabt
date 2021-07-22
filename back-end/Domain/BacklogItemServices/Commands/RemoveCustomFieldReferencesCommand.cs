@@ -2,21 +2,17 @@
 
 using Raven.Client;
 using Raven.Client.Documents.Queries;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Database.Models.BacklogItems.Indexes;
+using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.CustomFieldServices.Command;
-using Raven.Yabt.Domain.Infrastructure;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 {
-	internal class RemoveCustomFieldReferencesCommand : IRemoveCustomFieldReferencesCommand
+	internal class RemoveCustomFieldReferencesCommand : BaseDbService, IRemoveCustomFieldReferencesCommand
 	{
-		private readonly IPatchOperationsAddDeferred _patchOperations;
-
-		public RemoveCustomFieldReferencesCommand(IPatchOperationsAddDeferred patchOperations)
-		{
-			_patchOperations = patchOperations;
-		}
+		public RemoveCustomFieldReferencesCommand(IAsyncTenantedDocumentSession session): base(session) {}
 
 		public void ClearCustomFieldId(string customFieldId)
 		{
@@ -42,7 +38,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			};
 
 			// Add the patch to a collection
-			_patchOperations.AddDeferredPatchQuery(query);
+			DbSession.AddDeferredPatchQuery(query);
 		}
 
 		/// <summary>

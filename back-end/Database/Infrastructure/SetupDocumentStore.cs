@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 
 using Raven.Client.Documents;
 using Raven.Client.Documents.Conventions;
+using Raven.Client.Documents.Indexes;
 using Raven.Client.Json.Serialization.NewtonsoftJson;
 using Raven.Yabt.Database.Common.Configuration;
 
@@ -59,6 +60,9 @@ namespace Raven.Yabt.Database.Infrastructure
 				customInit?.Invoke(store);
 
 				store.Initialize();
+				
+				if (settings.UpdateIndexes)
+					IndexCreation.CreateIndexesAsync(typeof(SetupDocumentStore).Assembly, store, null, store.Database);
 			}
 			catch
 			{

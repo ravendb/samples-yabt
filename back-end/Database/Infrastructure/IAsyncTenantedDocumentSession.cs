@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Linq;
+using Raven.Client.Documents.Queries;
 using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Models;
 
@@ -20,15 +21,29 @@ namespace Raven.Yabt.Database.Infrastructure
 	public interface IAsyncTenantedDocumentSession : IDisposable
 	{
 		/// <summary>
+		///		Direct access to <seealso cref="IAsyncDocumentSession.Advanced"/> property
+		/// </summary>
+		IAsyncAdvancedSessionOperations Advanced { get; }
+		
+		/// <summary>
 		///		Flag defining the behaviour on requesting a record of a wrong tenant.
 		///		<value>true</value> - would throw an exception. <value>false</value> - silent return of NULL.
 		/// </summary>
 		bool ThrowExceptionOnWrongTenant { get; }
 
 		/// <summary>
-		///		Direct access to <seealso cref="IAsyncDocumentSession.Advanced"/> property
+		///		Check if there are any changes to save or run any patch requests
+		///		An extension of the <see cref="IAdvancedDocumentSessionOperations.HasChanges"/> property usually accessed from <seealso cref="IAsyncDocumentSession.Advanced"/>
 		/// </summary>
-		IAsyncAdvancedSessionOperations Advanced { get; }
+		bool HasChanges();
+		
+		/// <summary>
+		/// 	Add a RavenDB patch request for executing after calling <see cref="IAsyncDocumentSession.SaveChangesAsync"/> 
+		/// </summary>
+		/// <remarks>
+		///		Operation against indexes can't be performed in the same transaction. This method offloads the operation to the Server to run
+		/// </remarks>
+		public void AddDeferredPatchQuery(IndexQuery patchQuery);
 
 		/// <summary>
 		///		Extension of the <seealso cref="IAsyncDocumentSession.CountersFor(object)"/> method to get counters for the entity.
@@ -110,11 +125,5 @@ namespace Raven.Yabt.Database.Infrastructure
 		/// <param name="collectionName"> Name of the collection (mutually exclusive with indexName) </param>
 		/// <param name="isMapReduce"> Whether we are querying a map/reduce index (modify how we treat identifier properties) </param>
 		IRavenQueryable<T> Query<T>(string? indexName = null, string? collectionName = null, bool isMapReduce = false);
-
-		/// <summary>
-		///		Check if there are any changes to save or run any patch requests
-		///		An extension of the <see cref="IAdvancedDocumentSessionOperations.HasChanges"/> property usually accessed from <seealso cref="IAsyncDocumentSession.Advanced"/>
-		/// </summary>
-		bool HasChanges();
 	}
 }

@@ -4,21 +4,17 @@ using Raven.Client;
 using Raven.Client.Documents.Queries;
 using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Database.Models.BacklogItems.Indexes;
-using Raven.Yabt.Domain.Infrastructure;
+using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.UserServices.Command;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 {
-	internal class UpdateUserReferencesCommand : IUpdateUserReferencesCommand
+	internal class UpdateUserReferencesCommand : BaseDbService, IUpdateUserReferencesCommand
 	{
-		private readonly IPatchOperationsAddDeferred _patchOperations;
-
-		public UpdateUserReferencesCommand(IPatchOperationsAddDeferred patchOperations)
-		{
-			_patchOperations = patchOperations;
-		}
+		public UpdateUserReferencesCommand(IAsyncTenantedDocumentSession session): base(session) {}
 
 		public void ClearUserId(string userId)
 		{
@@ -46,16 +42,16 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 																		}});
 								}}";
 			var query = new IndexQuery
-			{
-				Query = queryString,
-				QueryParameters = new Parameters
 				{
-					{ "userId", userId.ToUpper() }
-				}
-			};
+					Query = queryString,
+					QueryParameters = new Parameters
+					{
+						{ "userId", userId.ToUpper() }
+					}
+				};
 
 			// Add the patch to a collection
-			_patchOperations.AddDeferredPatchQuery(query);
+			DbSession.AddDeferredPatchQuery(query);
 		}
 
 		public void UpdateReferences(UserReference newUserReference)
@@ -84,17 +80,17 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 																		}});
 								}}";
 			var query = new IndexQuery
-			{
-				Query = queryString,
-				QueryParameters = new Parameters
 				{
-					{ "userId", GetSanitisedId(newUserReference.Id).ToUpper() },
-					{ "userRef", newUserReference },
-				}
-			};
+					Query = queryString,
+					QueryParameters = new Parameters
+					{
+						{ "userId", GetSanitisedId(newUserReference.Id).ToUpper() },
+						{ "userRef", newUserReference },
+					}
+				};
 
 			// Add the patch to a collection
-			_patchOperations.AddDeferredPatchQuery(query);
+			DbSession.AddDeferredPatchQuery(query);
 		}
 
 		/// <summary>

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -7,16 +8,26 @@ using System.Threading.Tasks;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Linq;
+using Raven.Client.Documents.Operations;
+using Raven.Client.Documents.Queries;
 using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Models;
 
 namespace Raven.Yabt.Database.Infrastructure
 {
+	/// <inheritdoc />
 	public class AsyncTenantedDocumentSession : IAsyncTenantedDocumentSession
 	{
 		/// <inheritdoc />
 		public bool ThrowExceptionOnWrongTenant { get; }
 
+		/// <summary>
+		///		Share <seealso cref="IAsyncDocumentSession.Advanced"/> of the embedded session
+		/// </summary>
+		public IAsyncAdvancedSessionOperations Advanced => DbSession.Advanced;
+
+		#region Fields [PRIVATE] ----------------------------------------------
+		
 		private readonly IDocumentStore _documentStore;
 		private readonly SessionOptions? _sessionOptions;
 
@@ -29,31 +40,36 @@ namespace Raven.Yabt.Database.Infrastructure
 		private readonly Func<string> _getCurrentTenantIdFunc;
 
 		/// <summary>
-		///		Get a DB session on demand. Keep one open session per instance
+		///		Time to wait till indexes catch up after saving
 		/// </summary>
-		private IAsyncDocumentSession DbSession => 
-			_dbSession ??= _sessionOptions != null 
-				? _documentStore.OpenAsyncSession(_sessionOptions) 
-				: _documentStore.OpenAsyncSession();
-
-		private IAsyncDocumentSession? _dbSession;
+		/// <remarks>
+		///		Use it in testing to avoid running on stale indexes.
+		///		Note that when deferred patches need to be applied then <see cref="SaveChangesAsync"/> will wait for indexes anyway
+		/// </remarks>
+		private readonly TimeSpan? _waitingForIndexesAfterSave;
 
 		/// <summary>
-		///		Share <seealso cref="IAsyncDocumentSession.Advanced"/> of the embedded session
+		///		Get a DB session on demand. Keep one open session per instance
 		/// </summary>
-		public IAsyncAdvancedSessionOperations Advanced => DbSession.Advanced;
+		private IAsyncDocumentSession DbSession => _dbSession ??= OpenAsyncDocumentSession();
+
+		private IAsyncDocumentSession? _dbSession;
+		
+		#endregion / Fields [PRIVATE] -----------------------------------------
 
 		/// <summary>
 		///		Constructor.
 		/// </summary>
 		/// <param name="documentStore"> An instance of the <see cref="IDocumentStore"/> </param>
 		/// <param name="getCurrentTenantIdFunc"> The function resolving the current Tenant ID </param>
+		/// <param name="waitingForIndexesAfterSave"> [Optional] Time to wait till indexes catch up after saving. Use it in testing to avoid running on stale indexes </param>
 		/// <param name="throwExceptionOnWrongTenant"> The flag defining the behaviour on requesting a record of a wrong tenant </param>
 		/// <param name="options"> Optional session settings (see <see cref="SessionOptions"/>) </param>
-		public AsyncTenantedDocumentSession(IDocumentStore documentStore, Func<string> getCurrentTenantIdFunc, bool throwExceptionOnWrongTenant = false, SessionOptions? options = null)
+		public AsyncTenantedDocumentSession(IDocumentStore documentStore, Func<string> getCurrentTenantIdFunc, TimeSpan? waitingForIndexesAfterSave = null, bool throwExceptionOnWrongTenant = false, SessionOptions? options = null)
 		{
 			_documentStore = documentStore;
 			_getCurrentTenantIdFunc = getCurrentTenantIdFunc;
+			_waitingForIndexesAfterSave = waitingForIndexesAfterSave;
 			ThrowExceptionOnWrongTenant = throwExceptionOnWrongTenant;
 			_sessionOptions = options;
 		}
@@ -79,7 +95,14 @@ namespace Raven.Yabt.Database.Infrastructure
 		}
 
 		/// <inheritdoc />
-		public Task SaveChangesAsync(CancellationToken token = default) => DbSession.SaveChangesAsync(token);
+		public async Task SaveChangesAsync(CancellationToken token = default)
+		{
+			if (HasChanges())
+			{
+				await DbSession.SaveChangesAsync(token);
+				await SendDeferredPatchByQueryOperationsAsync(token);
+			}
+		}
 
 		#region StoreAsync [PUBLIC] -------------------------------------------
 
@@ -175,7 +198,7 @@ namespace Raven.Yabt.Database.Infrastructure
 			return query.Where(e => (e as ITenantedEntity)!.TenantId == tenantId);
 		}
 		#endregion Query [PUBLIC] ---------------------------------------------
-
+		
 		/// <inheritdoc />
 		public bool HasChanges()
 		{
@@ -185,8 +208,62 @@ namespace Raven.Yabt.Database.Infrastructure
 				|| _dbSession?.Advanced is InMemoryDocumentSessionOperations { DeferredCommandsCount: > 0 };
 		}
 
-		#region Auxiliary methods [PRIVATE] -----------------------------------
+		#region Processing Deferred Path Queries [PUBLIC, PRIVATE] ------------
+
+		/// <inheritdoc/>
+		public void AddDeferredPatchQuery(IndexQuery patchQuery)
+		{
+			_deferredPatchQueries.Enqueue(patchQuery);
+		}
 		
+		/// <summary>
+		///		Collection of deferred patch queries.
+		///		Will be executed after saving data in the main DB session
+		/// </summary>
+		private readonly ConcurrentQueue<IndexQuery> _deferredPatchQueries = new();
+		
+		/// <summary>
+		///		Execute deferred queries.
+		///		It gets called after saving data.
+		/// </summary>
+		private async Task SendDeferredPatchByQueryOperationsAsync(CancellationToken token)
+		{
+			if (token.IsCancellationRequested)
+				return;
+			
+			while (_deferredPatchQueries.TryDequeue(out var queryIndex))
+			{
+				// The default timeout is not documented (seems to be around 15 sec)
+				// Wait as long as it's required. It's better to fail (e.g. timeout on API response) rather than update on stale indexes 
+				queryIndex.WaitForNonStaleResultsTimeout = TimeSpan.MaxValue;
+				queryIndex.WaitForNonStaleResults = true;
+				var sentOperation = await Advanced.DocumentStore.Operations.SendAsync(new PatchByQueryOperation(queryIndex), Advanced.SessionInfo, token);
+
+				if (_waitingForIndexesAfterSave.HasValue)
+					// Waiting can come in handy  during tests
+					await sentOperation.WaitForCompletionAsync(_waitingForIndexesAfterSave.Value);
+				
+				if (token.IsCancellationRequested)
+					return;
+			}
+		}
+		#endregion / Processing Deferred Path Queries [PUBLIC, PRIVATE] -------
+
+		#region Auxiliary methods [PRIVATE] -----------------------------------
+
+		private IAsyncDocumentSession OpenAsyncDocumentSession()
+		{
+			var session = _sessionOptions != null 
+				? _documentStore.OpenAsyncSession(_sessionOptions) 
+				: _documentStore.OpenAsyncSession();
+			
+			if (_waitingForIndexesAfterSave.HasValue)
+				// Wait on each change to avoid adding WaitForIndexing() in each case
+				session.Advanced.WaitForIndexesAfterSaveChanges(_waitingForIndexesAfterSave.Value,false);
+
+			return session;
+		}
+
 		private static bool IsNotTenantedType<T>() => IsNotTenantedType(typeof(T));
 		private static bool IsNotTenantedType(Type type) => !type.GetInterfaces().Contains(typeof(ITenantedEntity));
 		

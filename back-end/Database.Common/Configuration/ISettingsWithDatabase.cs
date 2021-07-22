@@ -1,5 +1,8 @@
 ﻿namespace Raven.Yabt.Database.Common.Configuration
 {
+	/// <summary>
+	///		Constraint on naming config parameters in 2 different `appsettings.json` files  
+	/// </summary>
 	public interface ISettingsWithDatabase
 	{
 		/// <summary>

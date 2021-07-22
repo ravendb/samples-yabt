@@ -1,8 +1,5 @@
-﻿using System.Reflection;
+﻿using Microsoft.Extensions.Hosting;
 
-using Microsoft.Extensions.Hosting;
-
-using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.TicketImporter.Configuration;
 
@@ -26,7 +23,7 @@ namespace Raven.Yabt.TicketImporter
 									.AddAndConfigureDatabaseForImport()
 									.AddAndConfigureAuthentication()
 									.AddAndConfigureJobServices()
-									.RegisterModules(Assembly.GetAssembly(typeof(BaseService<>))!);
+									.AddAndConfigureDomainServices(true);
 						});
 			// The app starts executing classes implementing 'IHostedService' (e.g. 'HostedServiceWrapper')
 		}
