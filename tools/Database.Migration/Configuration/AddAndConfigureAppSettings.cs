@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace Raven.Yabt.Database.Migration.Configuration
@@ -9,12 +9,15 @@ namespace Raven.Yabt.Database.Migration.Configuration
 		/// <summary>
 		///		Register Global Settings
 		/// </summary>
-		public static void AddAndConfigureAppSettings(this IServiceCollection services, HostBuilderContext context)
+		public static IServiceCollection AddAndConfigureAppSettings(this IServiceCollection services, IConfiguration configuration)
 		{
 			services.AddOptions();
 
-			services.Configure<AppSettings>(context.Configuration, c => c.BindNonPublicProperties = true);
-			services.AddSingleton(r => r.GetRequiredService<IOptions<AppSettings>>().Value.Database);
+			services.Configure<AppSettings>(configuration, c => c.BindNonPublicProperties = true);
+			services.AddSingleton(r => r.GetRequiredService<IOptions<AppSettings>>().Value);
+			services.AddSingleton(r => r.GetRequiredService<AppSettings>().Database);
+
+			return services;
 		}
 	}
 }

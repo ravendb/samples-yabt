@@ -83,7 +83,7 @@ namespace Raven.Yabt.Database.Migration
 				if (cancellationToken.IsCancellationRequested)
 					return "Task cancelled";
 
-				var dbStats = await _store.Maintenance.SendAsync(new GetDetailedStatisticsOperation());
+				var dbStats = await _store.Maintenance.SendAsync(new GetDetailedStatisticsOperation(), cancellationToken);
 				staleIndexes = dbStats.Indexes.Any(x => x.IsStale);
 
 				if (staleIndexes)
@@ -98,7 +98,7 @@ namespace Raven.Yabt.Database.Migration
 					if (!string.IsNullOrEmpty(indexErrorMsg))
 						return indexErrorMsg;
 
-					await Task.Delay(1000);
+					await Task.Delay(1000, cancellationToken);
 				}
 			} while (staleIndexes);
 
