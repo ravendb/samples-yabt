@@ -6,7 +6,6 @@ using Microsoft.Extensions.Hosting;
 
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
-using Raven.Yabt.Database;
 using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.TicketImporter.Services;
 

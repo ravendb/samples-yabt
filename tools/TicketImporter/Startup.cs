@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Hosting;
 
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.TicketImporter.Configuration;
 
@@ -20,7 +21,8 @@ namespace Raven.Yabt.TicketImporter
 						{
 							services.AddAndConfigureAppSettings(context.Configuration)
 									.AddAndConfigureHttpClients()
-									.AddAndConfigureDatabaseForImport()
+									.AddAndConfigureDatabase(store => store.Conventions.MaxNumberOfRequestsPerSession = 20_000)
+									.AddAndConfigureDatabaseSessionForImport()
 									.AddAndConfigureAuthentication()
 									.AddAndConfigureJobServices()
 									.AddAndConfigureDomainServices(true);
