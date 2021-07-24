@@ -1,6 +1,8 @@
 ﻿using System;
 
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
@@ -8,7 +10,7 @@ using Raven.Client.Documents.Session;
 using Raven.TestDriver;
 using Raven.Yabt.Database.Infrastructure;
 
-namespace Raven.Yabt.Database.Tests
+namespace Raven.Yabt.Database.Migration.Tests
 {
 	/// <summary>
 	///		Base test class to configure the environment (IoC and Raven)
@@ -16,17 +18,7 @@ namespace Raven.Yabt.Database.Tests
 	public abstract class ConfigureTestEnvironment : RavenTestDriver
 	{
 		private readonly IServiceProvider _container;
-		protected IAsyncTenantedDocumentSession DbSession => _container.GetRequiredService<IAsyncTenantedDocumentSession>();
-		protected bool ThrowExceptionOnWrongTenant = true;
-		
-		private const string MyTenantId = "1-A";
-		private const string NotMyTenantId = "2-A";
-		protected bool IsMyTenantFlag = true;
-
-		/// <summary>
-		///		Get the ID of the current tenant		
-		/// </summary>
-		protected string GetCurrentTenantId() => IsMyTenantFlag ? MyTenantId : NotMyTenantId;
+		protected IAsyncDocumentSession DbSession => _container.GetRequiredService<IAsyncDocumentSession>();
 
 		/// <summary>
 		///		The default c-tor initialising all the IoC interfaces
@@ -47,25 +39,19 @@ namespace Raven.Yabt.Database.Tests
 			base.PreInitialize(store);
 		}
 
+		protected ILogger CreateLogger<T>() => _container.GetRequiredService<ILoggerFactory>().CreateLogger<T>();
+
 		/// <summary>
 		///		Configure IoC, register all dependencies
 		/// </summary>
 		private void ConfigureIocContainer(IServiceCollection services)
 		{
 			// Register the document store & session
-			services.AddScoped(_ =>
-				{
-					IDocumentStore store = GetDocumentStore();
-					// Create all indexes
-					IndexCreation.CreateIndexes(typeof(SetupDocumentStore).Assembly, store, null, store.Database);
-					return store;
-				});
-			services.AddScoped(c =>
-				{
-					var docStore = c.GetRequiredService<IDocumentStore>();
-					var session = new AsyncTenantedDocumentSession(docStore, GetCurrentTenantId, TimeSpan.FromSeconds(30), ThrowExceptionOnWrongTenant, new SessionOptions { NoCaching = true });
-					return session as IAsyncTenantedDocumentSession;
-				});
+			services.AddScoped(_ => GetDocumentStore());
+			services.AddScoped(c => c.GetRequiredService<IDocumentStore>().OpenAsyncSession());
+			
+			// Register a Null Logger (see https://stackoverflow.com/a/47328428/968003)
+			services.AddSingleton<ILoggerFactory, NullLoggerFactory>();
 		}
 	}
 }

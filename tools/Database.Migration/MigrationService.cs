@@ -12,21 +12,24 @@ using Raven.Client.Documents.Operations.Indexes;
 using Raven.Client.Exceptions.Database;
 using Raven.Migrations;
 using Raven.Yabt.Database.Infrastructure;
+using Raven.Yabt.Database.Migration.Configuration;
 
 namespace Raven.Yabt.Database.Migration
 {
 	/// <summary>
-	///		Migrate the DB schema
+	///		A service to migrate the DB schema on the start of the app 
 	/// </summary>
 	public class MigrationService : IHostedService
 	{
 		private readonly MigrationRunner _runner;
 		private readonly IDocumentStore _store;
+		private readonly AppSettings _settings;
 
-		public MigrationService(MigrationRunner runner, IDocumentStore store)
+		public MigrationService(MigrationRunner runner, IDocumentStore store, AppSettings settings)
 		{
 			_runner = runner;
 			_store = store;
+			_settings = settings;
 			if (string.IsNullOrEmpty(_store.Database))
 				throw DatabaseDoesNotExistException.CreateWithMessage(_store.Database, "No database specified");
 		}
@@ -34,13 +37,16 @@ namespace Raven.Yabt.Database.Migration
 		/// <inheritdoc/>
 		public async Task StartAsync(CancellationToken cancellationToken)
 		{
+			// Run all the migrations
 			_runner.Run();
 			if (cancellationToken.IsCancellationRequested)
 				return;
 
+			// Update indexes
 			await IndexCreation.CreateIndexesAsync(typeof(SetupDocumentStore).Assembly, _store, null, _store.Database, cancellationToken);
 
-			var indexErrors = await GetIndexErrors(maxWaitingForStaleIndexes: 30, cancellationToken);
+			// Check for errors in indexes
+			var indexErrors = await GetIndexErrors(maxWaitingForStaleIndexes: _settings.MaxWaitingPeriodForRebuildingStaleIndexes, cancellationToken);
 
 			if (!string.IsNullOrEmpty(indexErrors))
 				throw new DatabaseDisabledException(indexErrors);
@@ -52,7 +58,7 @@ namespace Raven.Yabt.Database.Migration
 		/// <summary>
 		///		Check for errors with the DB indexes
 		/// </summary>
-		/// <param name="maxWaitingForStaleIndexes"> Max waiting interval for checking stale indexes </param>
+		/// <param name="maxWaitingForStaleIndexes"> Max waiting interval for rebuilding stale indexes. 0 - infinite wait </param>
 		/// <param name="cancellationToken"> The cancellation token </param>
 		/// <returns> Error message if fail, otherwise - NULL </returns>
 		private async Task<string?> GetIndexErrors(int maxWaitingForStaleIndexes, CancellationToken cancellationToken)
@@ -88,7 +94,7 @@ namespace Raven.Yabt.Database.Migration
 
 				if (staleIndexes)
 				{
-					if ((DateTime.Now - date).TotalSeconds > maxWaitingForStaleIndexes)
+					if (0 < maxWaitingForStaleIndexes && maxWaitingForStaleIndexes < (DateTime.Now - date).TotalSeconds)
 					{
 						return $"Timeout: After {maxWaitingForStaleIndexes} secs indexes are still stale...";
 					}
