@@ -1,4 +1,4 @@
-name: Angular front-end
+name: Build front-end
 
 env:
   NODE_VERSION: '14.x'

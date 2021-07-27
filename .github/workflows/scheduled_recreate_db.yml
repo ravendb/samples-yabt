@@ -1,4 +1,4 @@
-name: Re-create the database
+name: Scheduled task to re-create the database
 
 on: 
   schedule:
