@@ -6,13 +6,14 @@ using Raven.Yabt.Database.Common.Configuration;
 
 namespace Raven.Yabt.TicketImporter.Configuration
 {
-	internal class AppSettings
+	internal class AppSettings : IAppSettingsWithDatabase
 	{
 		/// <summary>
 		///		The GitHub settings
 		/// </summary>
 		public GitHubSettings GitHub { get; private set; }
 
+		/// <inheritdoc/>
 		public DatabaseSettings Database { get; private set; }
 
 		public GeneratedRecordsSettings GeneratedRecords { get; private set; }
