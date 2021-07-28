@@ -1,0 +1,26 @@
+name: DB schema migration
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+          
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 5.0.203
+          
+      - name: Build
+        run: dotnet build tools/Database.Migration/Database.Migration.csproj --configuration Release
+
+      - name: Run migration
+        run: dotnet tools/Database.Migration/bin/Release/net5.0/Database.Migration.dll
+        env:
+          Database__RavenDbUrls__0: ${{secrets.RavenDB_URL}}
+          Database__DbName: ${{secrets.RavenDB_DB_Name}}
+          Database__Certificate: ${{secrets.CERTIFICATE_PFX}}
