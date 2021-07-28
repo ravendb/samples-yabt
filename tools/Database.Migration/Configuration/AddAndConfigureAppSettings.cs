@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace Raven.Yabt.Database.Migration.Configuration
 {
-	internal static partial class ServiceCollectionExtensions
+	internal static class ServiceCollectionExtensions
 	{
 		/// <summary>
 		///		Register Global Settings

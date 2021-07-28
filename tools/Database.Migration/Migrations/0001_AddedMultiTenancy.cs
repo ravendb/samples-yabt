@@ -22,6 +22,7 @@ namespace Raven.Yabt.Database.Migration.Migrations
 	{
 		public override void Up()
 		{
+			// Create the first tenant/project
 			string? firstTenantId = null;
 			using (var session = DocumentStore.OpenSession())
 			{
@@ -39,6 +40,7 @@ namespace Raven.Yabt.Database.Migration.Migrations
 					throw new Exception("Failed to create a default project");
 			}
 
+			// Set the ID of the first tenant/project in all tenanted entities
 			foreach (var type in new[] {typeof(BacklogItem), typeof(CustomField), typeof(User)})
 			{
 				SetTenantForEntityRecords(type, firstTenantId);

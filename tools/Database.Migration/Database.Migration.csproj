@@ -4,6 +4,8 @@
         <OutputType>Exe</OutputType>
         <AssemblyName>Database.Migration</AssemblyName>
         <RootNamespace>Raven.Yabt.Database.Migration</RootNamespace>
+		
+		<UserSecretsId>a360accb-0b49-44f4-a921-faff5ca5c55d</UserSecretsId>
     </PropertyGroup>
 
 	<ItemGroup>

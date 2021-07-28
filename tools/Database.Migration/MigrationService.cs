@@ -24,12 +24,14 @@ namespace Raven.Yabt.Database.Migration
 		private readonly MigrationRunner _runner;
 		private readonly IDocumentStore _store;
 		private readonly AppSettings _settings;
+		private readonly IHostApplicationLifetime _applicationLifetime;
 
-		public MigrationService(MigrationRunner runner, IDocumentStore store, AppSettings settings)
+		public MigrationService(MigrationRunner runner, IDocumentStore store, AppSettings settings, IHostApplicationLifetime applicationLifetime)
 		{
 			_runner = runner;
 			_store = store;
 			_settings = settings;
+			_applicationLifetime = applicationLifetime;
 			if (string.IsNullOrEmpty(_store.Database))
 				throw DatabaseDoesNotExistException.CreateWithMessage(_store.Database, "No database specified");
 		}
@@ -50,6 +52,9 @@ namespace Raven.Yabt.Database.Migration
 
 			if (!string.IsNullOrEmpty(indexErrors))
 				throw new DatabaseDisabledException(indexErrors);
+			
+			// Stop the application rather than waiting for Ctrl+C from the user
+			_applicationLifetime.StopApplication();
 		}
 
 		/// <inheritdoc/>
