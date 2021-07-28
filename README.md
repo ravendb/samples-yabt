@@ -1,6 +1,6 @@
 # Yet Another Bug Tracker (YABT)
-[![.NET Build & Tests](https://github.com/ravendb/samples-yabt/actions/workflows/dotnet-core.yml/badge.svg)](https://github.com/ravendb/samples-yabt/actions/workflows/dotnet-core.yml)
-[![Angular front-end](https://github.com/ravendb/samples-yabt/actions/workflows/angular.yml/badge.svg)](https://github.com/ravendb/samples-yabt/actions/workflows/angular.yml)
+[![.NET Build & Tests](https://github.com/ravendb/samples-yabt/actions/workflows/build_back-end.yml/badge.svg)](https://github.com/ravendb/samples-yabt/actions/workflows/dotnet-core.yml)
+[![Angular front-end](https://github.com/ravendb/samples-yabt/actions/workflows/build_front-end.yml/badge.svg)](https://github.com/ravendb/samples-yabt/actions/workflows/angular.yml)
 <br/>
 
  An educational project leveraging [RavenDB](https://ravendb.net) database and accompanied with a [series of articles](https://ravendb.net/news/use-cases/yabt-series) explaining various aspects of building bespoke enterprise apps with NoSQL.
