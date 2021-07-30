@@ -15,7 +15,7 @@ namespace Raven.Yabt.Domain.Infrastructure
 			if (addAndConfigureDatabase)
 			{
 				services.AddAndConfigureDatabase();
-				services.AddAndConfigureDatabaseSession(x => x.GetRequiredService<ICurrentTenantResolver>().GetCurrentTenantId);
+				services.AddAndConfigureDatabaseTenantedSession(x => x.GetRequiredService<ICurrentTenantResolver>().GetCurrentTenantId);
 			}
 
 			var types = typeof(BaseDbService).Assembly

@@ -10,7 +10,7 @@ namespace Raven.Yabt.Domain.Common
 		protected string GetFullId(string id) 
 			=> id.Contains('/') 
 				? id	// Assume it's already a full ID with a prefix  
-				: DbSession.GetFullId<TEntity>(id);
+				: DbSession.Advanced.GetFullId<TEntity>(id);
 	}
 
 	public abstract class BaseDbService

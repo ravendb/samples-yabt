@@ -28,7 +28,7 @@ namespace Raven.Yabt.Database.Infrastructure
 		/// </summary>
 		/// <param name="services"> The collection of services </param>
 		/// <param name="currentTenantResolverFunc"> A way to resolve the function for getting the current tenant </param>
-		public static IServiceCollection AddAndConfigureDatabaseSession(this IServiceCollection services, Func<IServiceProvider, Func<string>> currentTenantResolverFunc)
+		public static IServiceCollection AddAndConfigureDatabaseTenantedSession(this IServiceCollection services, Func<IServiceProvider, Func<string>> currentTenantResolverFunc)
 		{
 			return services.AddScoped<IAsyncTenantedDocumentSession>(x =>
 				{
