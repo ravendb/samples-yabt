@@ -21,11 +21,10 @@ namespace Raven.Yabt.TicketImporter
 						{
 							services.AddAndConfigureAppSettings(context.Configuration)
 									.AddAndConfigureHttpClients()
-									.AddAndConfigureDatabase(store => store.Conventions.MaxNumberOfRequestsPerSession = 20_000)
 									.AddAndConfigureDatabaseSessionForImport()
 									.AddAndConfigureAuthentication()
 									.AddAndConfigureJobServices()
-									.AddAndConfigureDomainServices(true);
+									.AddAndConfigureDomainServices(false);
 						});
 			// The app starts executing classes implementing 'IHostedService' (e.g. 'HostedServiceWrapper')
 		}

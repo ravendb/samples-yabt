@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 using Raven.Client.Documents;
+using Raven.Yabt.Database.Infrastructure;
+using Raven.Yabt.Domain.Infrastructure;
 
 namespace Raven.Yabt.TicketImporter.Configuration
 {
@@ -11,12 +13,14 @@ namespace Raven.Yabt.TicketImporter.Configuration
 		/// </summary>
 		public static IServiceCollection AddAndConfigureDatabaseSessionForImport(this IServiceCollection services)
 		{
-			return services.AddScoped(c =>
-				{
-					var session = c.GetRequiredService<IDocumentStore>().OpenAsyncSession();
-						session.Advanced.WaitForIndexesAfterSaveChanges();  // Wait on each change to avoid adding WaitForIndexing() in each test
-					return session;
-				});
+			return services.AddAndConfigureDatabase(store => store.Conventions.MaxNumberOfRequestsPerSession = 20_000)
+			               .AddSingleton(c =>
+			               {
+				               var session = c.GetRequiredService<IDocumentStore>().OpenAsyncSession();
+				                   session.Advanced.WaitForIndexesAfterSaveChanges();  // Wait on each change to avoid adding WaitForIndexing() in each test
+				               return session;
+			               })
+			               .AddAndConfigureDatabaseTenantedSession(x => x.GetRequiredService<ICurrentTenantResolver>().GetCurrentTenantId);
 		}
 	}
 }

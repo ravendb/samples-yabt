@@ -16,17 +16,22 @@ using Raven.Yabt.TicketImporter.Configuration;
 
 namespace Raven.Yabt.TicketImporter.Services
 {
-	internal class SeededUsers: ISeededUsers
+	internal interface ISyncSeededUsersService
 	{
-		private readonly GeneratedRecordsSettings _importSettings;
+		Task<IList<UserReference>> GetGeneratedOrFetchedUsers();
+	}
+
+	internal class SyncSeededUsersService: ISyncSeededUsersService
+	{
+		private readonly int _numberOfUsers;
 		private readonly List<UserReference> _userRefs = new ();
 		private readonly IUserCommandService _userCmdService;
 		private readonly IUserQueryService _userQueryService;
 		private readonly Faker<UserAddUpdRequest> _userFaker;
 
-		public SeededUsers(AppSettings settings, IUserCommandService userCmdService, IUserQueryService userQueryService)
+		public SyncSeededUsersService(GeneratedRecordsSettings settings, IUserCommandService userCmdService, IUserQueryService userQueryService)
 		{
-			_importSettings = settings.GeneratedRecords;
+			_numberOfUsers = settings.NumberOfUsers;
 			_userCmdService = userCmdService;
 			_userQueryService = userQueryService;
 
@@ -34,7 +39,7 @@ namespace Raven.Yabt.TicketImporter.Services
 			             .RuleFor(fake => fake.AvatarUrl, _ => null)
 			             .RuleFor(fake => fake.FirstName, fake => fake.Name.FirstName())
 			             .RuleFor(fake => fake.LastName,  fake => fake.Name.LastName())
-			             .RuleFor(fake => fake.Email,	 (_, p) => $"{p.FirstName}.{p.LastName}@yabt.com");
+			             .RuleFor(fake => fake.Email,	 (_, p) => $"{p.FirstName}.{p.LastName}@yabt.ravendb.net");
 		}
 
 		public async Task<IList<UserReference>> GetGeneratedOrFetchedUsers()
@@ -44,7 +49,7 @@ namespace Raven.Yabt.TicketImporter.Services
 				return _userRefs;
 			
 			// If don't need to generate, read from the DB
-			var userList = await _userQueryService.GetList(new UserListGetRequest { PageSize = _importSettings.NumberOfUsers });
+			var userList = await _userQueryService.GetList(new UserListGetRequest { PageSize = _numberOfUsers });
 			if (userList.TotalRecords > 0)
 			{
 				_userRefs!.AddRange(
@@ -54,7 +59,7 @@ namespace Raven.Yabt.TicketImporter.Services
 			}
 
 			// Generate users
-			for (var i=0; i < _importSettings.NumberOfUsers; i++)
+			for (var i=0; i < _numberOfUsers; i++)
 			{
 				var dto = _userFaker.Generate();
 				var resp = await _userCmdService.Create(dto);
