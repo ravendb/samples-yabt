@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
 
-using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.TicketImporter.Configuration;
 
