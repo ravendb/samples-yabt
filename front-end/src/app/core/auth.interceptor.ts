@@ -1,6 +1,6 @@
 import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { empty, Observable, throwError } from 'rxjs';
+import { EMPTY, Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import { NotificationService } from './notification/notification.service';
@@ -39,7 +39,7 @@ export class AuthInterceptor implements HttpInterceptor {
 						);
 					}
 					// Don't throw an error if the notification is already shown to the user
-					return empty();
+					return EMPTY;
 				}
 				// If the internet connection is lost
 				// * status code would be 0
@@ -65,7 +65,7 @@ export class AuthInterceptor implements HttpInterceptor {
 						);
 					}
 					// Don't throw an error if the notification is already shown to the user
-					return empty();
+					return EMPTY;
 				}
 				return throwError(err);
 			})
