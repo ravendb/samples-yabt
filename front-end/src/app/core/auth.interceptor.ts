@@ -2,7 +2,7 @@ import { HttpErrorResponse, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest
 import { Injectable } from '@angular/core';
 import { empty, Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-import { AppConfigService } from './app-config.service';
+import { AuthService } from './auth.service';
 import { NotificationService } from './notification/notification.service';
 
 /**
@@ -10,18 +10,14 @@ import { NotificationService } from './notification/notification.service';
  */
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-	private readonly apiKey: string;
-
 	private noInternetMessageShown = false;
 	private authFailedRequestShown = false;
 
-	constructor(private notifyService: NotificationService, appCfgService: AppConfigService) {
-		this.apiKey = appCfgService.getCurrentApiKey();
-	}
+	constructor(private notifyService: NotificationService, private authService: AuthService) {}
 
 	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 		const updatedRequest = req.clone({
-			setHeaders: { 'X-API-Key': `${this.apiKey}` },
+			setHeaders: { 'X-API-Key': `${this.authService.getCurrentUser()?.userId}` },
 			withCredentials: true,
 		});
 		return next.handle(updatedRequest).pipe(
@@ -31,7 +27,8 @@ export class AuthInterceptor implements HttpInterceptor {
 					if (!this.authFailedRequestShown) {
 						this.authFailedRequestShown = true;
 						const message =
-							(!!err?.error?.detail ? err!.error!.detail + '<br><br>\n' : '') + 'Please report it as an issue on GitHub';
+							(!!err?.error?.detail ? err!.error!.detail + '<br><br>\n' : '') +
+							'Please report it as an issue on GitHub (<a href="https://github.com/ravendb/samples-yabt/issues" target="_blank">link</a>)';
 
 						// No 'switchMap()' here and start a new flow via 'setTimeout()', as flipping HttpClient pipeline
 						// to UI can be troublesome. The HttpClient pipeline need to finish as it's expected
