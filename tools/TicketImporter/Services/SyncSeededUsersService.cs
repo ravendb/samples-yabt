@@ -8,6 +8,7 @@ using AutoBogus;
 using Bogus;
 
 using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.Domain.UserServices.Command;
 using Raven.Yabt.Domain.UserServices.Command.DTOs;
 using Raven.Yabt.Domain.UserServices.Query;
@@ -24,16 +25,18 @@ namespace Raven.Yabt.TicketImporter.Services
 	internal class SyncSeededUsersService: ISyncSeededUsersService
 	{
 		private readonly int _numberOfUsers;
-		private readonly List<UserReference> _userRefs = new ();
+		private readonly Dictionary<string,List<UserReference>> _userRefs = new ();
 		private readonly IUserCommandService _userCmdService;
 		private readonly IUserQueryService _userQueryService;
+		private readonly ICurrentTenantResolver _tenantResolver;
 		private readonly Faker<UserAddUpdRequest> _userFaker;
 
-		public SyncSeededUsersService(GeneratedRecordsSettings settings, IUserCommandService userCmdService, IUserQueryService userQueryService)
+		public SyncSeededUsersService(GeneratedRecordsSettings settings, IUserCommandService userCmdService, IUserQueryService userQueryService, ICurrentTenantResolver tenantResolver)
 		{
 			_numberOfUsers = settings.NumberOfUsers;
 			_userCmdService = userCmdService;
 			_userQueryService = userQueryService;
+			_tenantResolver = tenantResolver;
 
 			_userFaker = new AutoFaker<UserAddUpdRequest>()
 			             .RuleFor(fake => fake.AvatarUrl, _ => null)
@@ -44,18 +47,22 @@ namespace Raven.Yabt.TicketImporter.Services
 
 		public async Task<IList<UserReference>> GetGeneratedOrFetchedUsers()
 		{
+			var currentTenantId = _tenantResolver.GetCurrentTenantId();
+			if (!_userRefs.ContainsKey(currentTenantId))
+				_userRefs.Add(currentTenantId, new List<UserReference>());
+			
 			// Returned cached users if any
-			if (_userRefs.Count > 0)
-				return _userRefs;
+			if (_userRefs[currentTenantId].Any())
+				return _userRefs[currentTenantId];
 			
 			// If don't need to generate, read from the DB
 			var userList = await _userQueryService.GetList(new UserListGetRequest { PageSize = _numberOfUsers });
 			if (userList.TotalRecords > 0)
 			{
-				_userRefs!.AddRange(
+				_userRefs[currentTenantId]!.AddRange(
 					userList.Entries.Select(u => new UserReference { Id = u.Id, Name = u.NameWithInitials, FullName = u.FullName })
 				);
-				return _userRefs!;
+				return _userRefs[currentTenantId]!;
 			}
 
 			// Generate users
@@ -66,9 +73,9 @@ namespace Raven.Yabt.TicketImporter.Services
 				if (!resp.IsSuccess)
 					throw new Exception("Failed to create a new user");
 				
-				_userRefs!.Add(resp.Value);
+				_userRefs[currentTenantId]!.Add(resp.Value);
 			}
-			return _userRefs!;
+			return _userRefs[currentTenantId]!;
 		}
 	}
 }

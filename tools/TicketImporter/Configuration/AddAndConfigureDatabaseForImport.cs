@@ -13,7 +13,7 @@ namespace Raven.Yabt.TicketImporter.Configuration
 		/// </summary>
 		public static IServiceCollection AddAndConfigureDatabaseSessionForImport(this IServiceCollection services)
 		{
-			return services.AddAndConfigureDatabase(store => store.Conventions.MaxNumberOfRequestsPerSession = 20_000)
+			return services.AddAndConfigureDatabase(store => store.Conventions.MaxNumberOfRequestsPerSession = 40_000)
 			               .AddSingleton(c =>
 			               {
 				               var session = c.GetRequiredService<IDocumentStore>().OpenAsyncSession();
