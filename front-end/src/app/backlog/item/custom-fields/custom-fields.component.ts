@@ -6,8 +6,7 @@ import { BacklogItemCustomFieldValue } from '@core/api-models/backlog-item/item/
 import { BacklogItemType } from '@core/api-models/common/backlog-item';
 import { CustomFieldListGetResponse } from '@core/api-models/custom-field/list';
 import { CustomFieldsService } from '@core/api-services/customfields.service';
-import { orderBy } from 'lodash';
-import { isEmpty } from 'lodash-es';
+import { isEmpty, orderBy } from 'lodash-es';
 import { filter, map, take } from 'rxjs/operators';
 import { CustomFieldsAddDialogComponent, ICustomFieldsAddDialogParams } from './add-dialog/custom-fields-add-dialog.component';
 

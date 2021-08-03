@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Database.Infrastructure;
@@ -31,7 +32,11 @@ namespace Raven.Yabt.Domain.UserServices.Query
 		/// <inheritdoc/>
 		public async Task<UserReference> GetCurrentUserReference()
 		{
-			return (await GetReferenceById(_currentUserResolver.GetCurrentUserId()))!.RemoveEntityPrefixFromId();
+			var currentUserId = _currentUserResolver.GetCurrentUserId();
+			var userRef = await GetReferenceById(currentUserId);
+			if (userRef == null)
+				throw new ArgumentException($"Can't resolve user details for #{currentUserId}");
+			return userRef.RemoveEntityPrefixFromId();
 		}
 	}
 }
