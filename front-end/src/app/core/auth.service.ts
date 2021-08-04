@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { first } from 'lodash-es';
 import { UsersConfigModel } from './api-models/users-config.model';
 import { AppConfigService } from './app-config.service';
 
@@ -11,12 +10,12 @@ export class AuthService {
 
 	constructor(private appCfgService: AppConfigService) {}
 
-	setCurrentUser(userId: string | undefined): void {
+	setCurrentUser(userId: string): void {
 		this.currentUserId = userId;
 	}
 
-	getCurrentUser(): UsersConfigModel | undefined {
+	getCurrentUser(): UsersConfigModel {
 		const usersAndTenants = this.appCfgService.getConfiguredUsersAndTenants();
-		return !!this.currentUserId ? usersAndTenants.find(u => u.userId == this.currentUserId) : first(usersAndTenants);
+		return !!this.currentUserId ? usersAndTenants.find(u => u.userId == this.currentUserId)! : usersAndTenants[0];
 	}
 }

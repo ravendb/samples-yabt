@@ -4,6 +4,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { Router } from '@angular/router';
 import { CurrentUserResponse } from '@core/api-models/user/item/CurrentUserResponse';
 import { UsersService } from '@core/api-services/users.service';
+import { ChangeUserAndTenantService } from '@core/change-user-and-tenant-dialog/change-user-and-tenant.service';
 import { get, some } from 'lodash-es';
 import { Subscription } from 'rxjs';
 import { MainMenuMapItem } from './main-menu-map-item';
@@ -59,7 +60,8 @@ export class MainMenuComponent implements OnInit, AfterViewInit, OnDestroy {
 		private breakpoint: BreakpointObserver,
 		private router: Router,
 		private cdr: ChangeDetectorRef,
-		private userService: UsersService
+		private userService: UsersService,
+		private changeUserDialogService: ChangeUserAndTenantService
 	) {}
 
 	ngOnInit(): void {
@@ -106,6 +108,10 @@ export class MainMenuComponent implements OnInit, AfterViewInit, OnDestroy {
 		if (this.isMobile) {
 			this.sidenav.close();
 		}
+	}
+
+	changeUserAndTenantDialog(): void {
+		this.changeUserDialogService.displayDialog();
 	}
 
 	openedRecentItemsMenu(): void {}

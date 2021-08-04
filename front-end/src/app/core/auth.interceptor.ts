@@ -41,13 +41,14 @@ export class AuthInterceptor implements HttpInterceptor {
 					// Don't throw an error if the notification is already shown to the user
 					return EMPTY;
 				}
-				// If the internet connection is lost
+				// If server can't be accessed
 				// * status code would be 0
-				// * window.navigator.onLine would return false
 				else if (err instanceof HttpErrorResponse && err.status === 0) {
 					if (!this.noInternetMessageShown) {
 						this.noInternetMessageShown = true;
 						setTimeout(() => {
+							// If the internet connection is lost
+							// * window.navigator.onLine would return false
 							const title = !window.navigator.onLine ? 'Internet Connection Lost' : 'No server connection';
 							const msg = !window.navigator.onLine
 								? 'Unable to connect to Internet. Please check your Internet connection.'
