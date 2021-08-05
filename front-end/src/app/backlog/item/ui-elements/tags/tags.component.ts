@@ -5,7 +5,7 @@ import { MatAutocomplete, MatAutocompleteSelectedEvent } from '@angular/material
 import { MatChipInputEvent } from '@angular/material/chips';
 import { BacklogItemsService } from '@core/api-services/backlogItems.service';
 import { CustomFormControlBase } from '@shared/forms/custom-form-control-base';
-import { map } from 'rxjs/internal/operators/map';
+import { map } from 'rxjs/operators';
 
 @Component({
 	selector: 'backlog-item-tags-selector',
