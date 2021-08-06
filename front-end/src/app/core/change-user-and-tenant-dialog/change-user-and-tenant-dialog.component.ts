@@ -10,14 +10,10 @@ import { AuthService } from '@core/auth.service';
 export class ChangeUserAndTenantDialogComponent {
 	users: UsersConfigModel[];
 
-	get currentUserId(): string {
-		return this.authService.getCurrentUser().userId;
-	}
-	set currentUserId(value: string) {
-		this.authService.setCurrentUser(value);
-	}
+	currentUser: string;
 
-	constructor(appCfgService: AppConfigService, private authService: AuthService) {
+	constructor(appCfgService: AppConfigService, authService: AuthService) {
 		this.users = appCfgService.getConfiguredUsersAndTenants();
+		this.currentUser = authService.getCurrentUser().apiKey;
 	}
 }

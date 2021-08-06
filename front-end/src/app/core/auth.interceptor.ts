@@ -16,8 +16,11 @@ export class AuthInterceptor implements HttpInterceptor {
 	constructor(private notifyService: NotificationService, private authService: AuthService) {}
 
 	intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+		const apiKey = this.authService.getCurrentUser().apiKey;
+		if (!apiKey) throw new Error('Failed to resolve the API key');
+
 		const updatedRequest = req.clone({
-			setHeaders: { 'X-API-Key': `${this.authService.getCurrentUser()?.userId}` },
+			setHeaders: { 'X-API-Key': `${apiKey}` },
 			withCredentials: true,
 		});
 		return next.handle(updatedRequest).pipe(

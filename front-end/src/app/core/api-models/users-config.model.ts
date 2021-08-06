@@ -1,5 +1,5 @@
 export interface UsersConfigModel {
-	userId: string;
+	apiKey: string;
 	userName: string;
 	tenantName: string;
 }

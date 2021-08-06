@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { LocalStorageService } from '@core/local-storage.service';
+import { LocalStorageService } from '@core/storage.service';
 import { filter, take } from 'rxjs/operators';
 import { WelcomeDialogComponent } from './welcome-dialog.component';
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.Json;
 
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -12,7 +13,7 @@ namespace Raven.Yabt.WebApi.Configuration
 	internal static partial class ServiceCollectionExtensions
 	{
 		private const string CookieNameApiBaseUrl = "apiBaseUrl";
-		private const string CookieNameApiUserKeys = "apiUserKeys";
+		private const string CookieNameApiUsers = "apiUsers";
 		
 		/// <summary>
 		///		Register hosting of the SPA app including:
@@ -23,7 +24,7 @@ namespace Raven.Yabt.WebApi.Configuration
 		/// <remarks>
 		///		Links for 'UseStaticFiles' vs 'UseSpa' - https://stackoverflow.com/a/56977859/968003
 		/// </remarks>
-		public static void AddAppSpaStaticFiles(this IApplicationBuilder app, AppSettingsUserApiKey[] userApiKeys)
+		public static void AddAppSpaStaticFiles(this IApplicationBuilder app, AppSettingsUserApiKey[] userTenantsAndKeys)
 		{
 			// Serves other than `index.html` files under the web root (by default `wwwroot`) folder.
 			// Without this method Kestrel would return 'index.html' on all the requests for static content 
@@ -38,7 +39,7 @@ namespace Raven.Yabt.WebApi.Configuration
 					}
 				});
 
-			var apiKeys = string.Join(';', userApiKeys.Select(k => k.ApiKey));
+			var usersTenantsAndKeys = GetSerialisedJsonObject(userTenantsAndKeys as UserAndTenantAndApiKeyDto[]);
 
 			// Does 3 things:
 			//	- Redirects all requests to the default page;
@@ -65,9 +66,18 @@ namespace Raven.Yabt.WebApi.Configuration
 						//	a) inject into 'index.html' (would need add an MVC controller to serve altered 'index.html')
 						//	b) pass into cookie (it's simple, see below) 
 						response.Cookies.Append(CookieNameApiBaseUrl, "/", new CookieOptions { MaxAge = TimeSpan.FromSeconds(30) });
-						response.Cookies.Append(CookieNameApiUserKeys, apiKeys, new CookieOptions { MaxAge = TimeSpan.FromSeconds(30) });
+						response.Cookies.Append(CookieNameApiUsers, usersTenantsAndKeys, new CookieOptions { MaxAge = TimeSpan.FromSeconds(30) });
 					}
 				});
+		}
+
+		private static string GetSerialisedJsonObject<T>(T obj)
+		{
+			var jsonSettings = new JsonSerializerOptions
+			{
+				PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+			};
+			return JsonSerializer.Serialize(obj, jsonSettings);
 		}
 	}
 }
