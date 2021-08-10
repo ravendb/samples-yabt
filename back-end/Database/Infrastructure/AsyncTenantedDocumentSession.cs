@@ -21,9 +21,7 @@ namespace Raven.Yabt.Database.Infrastructure
 		/// <inheritdoc />
 		public bool ThrowExceptionOnWrongTenant { get; }
 
-		/// <summary>
-		///		Share <seealso cref="IAsyncDocumentSession.Advanced"/> of the embedded session
-		/// </summary>
+		/// <inheritdoc />
 		public IAsyncAdvancedSessionOperations Advanced => DbSession.Advanced;
 
 		#region Fields [PRIVATE] ----------------------------------------------
