@@ -18,7 +18,7 @@ The main projects of the solution:
 | Domain          | Queries and commands, domain layer logic.                                                                      |
 | WebAPI          | The application layer (API).                                                                                   |
 
-![Onion architecture](../documentation/projects-diagram.png)
+![Solution diagram](../documentation/projects-diagram.png)
 
 NOTE: all tests are located under ['./tests'](../tests/) folder.
 
