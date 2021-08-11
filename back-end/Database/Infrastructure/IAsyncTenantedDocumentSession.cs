@@ -13,7 +13,7 @@ namespace Raven.Yabt.Database.Infrastructure
 {
 	/// <summary>
 	///		A multi-tenanted DB session, a wrapper on <see cref="IAsyncDocumentSession"/>.
-	///		Automatically filters entities implementing <see cref="ITenantedEntity"/> by the current tenant ID.	///		
+	///		Automatically filters entities implementing <see cref="ITenantedEntity"/> by the current tenant ID.
 	/// </summary>
 	/// <remarks>
 	///		All the <seealso cref="IAsyncDocumentSession"/> methods that won't support multi-tenancy checks (e.g. Delete(string)) have been omitted
@@ -43,7 +43,7 @@ namespace Raven.Yabt.Database.Infrastructure
 		/// <remarks>
 		///		Operation against indexes can't be performed in the same transaction. This method offloads the operation to the Server to run
 		/// </remarks>
-		public void AddDeferredPatchQuery(IndexQuery patchQuery);
+		void AddDeferredPatchQuery(IndexQuery patchQuery);
 
 		/// <summary>
 		///		Extension of the <seealso cref="IAsyncDocumentSession.CountersFor(object)"/> method to get counters for the entity.
