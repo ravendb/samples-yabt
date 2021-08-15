@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -211,6 +212,9 @@ namespace Raven.Yabt.Database.Infrastructure
 		/// <inheritdoc/>
 		public void AddDeferredPatchQuery(IndexQuery patchQuery)
 		{
+			var match = Regex.Match(patchQuery.Query, @$"\b{nameof(ITenantedEntity.TenantId)}\b", RegexOptions.IgnoreCase);
+			if (match.Success)
+				throw new ArgumentException("Attempt to access a tenant in RQL");
 			_deferredPatchQueries.Enqueue(patchQuery);
 		}
 		
