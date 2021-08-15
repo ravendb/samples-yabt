@@ -203,7 +203,9 @@ namespace Raven.Yabt.Database.Infrastructure
 		{
 			// Use direct property, so we don't open a new session too early 
 			return _dbSession?.Advanced.HasChanges == true
-				// Check if there is a PATCH request
+				// if a deferred patch query exist
+				|| _deferredPatchQueries.Any()
+				// if there is a PATCH request in the underlining session
 				|| _dbSession?.Advanced is InMemoryDocumentSessionOperations { DeferredCommandsCount: > 0 };
 		}
 
