@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,9 +23,6 @@ namespace Raven.Yabt.Database.Infrastructure
 		/// <inheritdoc />
 		public bool ThrowExceptionOnWrongTenant { get; }
 
-		/// <inheritdoc />
-		public IAsyncAdvancedSessionOperations Advanced => DbSession.Advanced;
-
 		#region Fields [PRIVATE] ----------------------------------------------
 		
 		private readonly IDocumentStore _documentStore;
@@ -43,7 +41,7 @@ namespace Raven.Yabt.Database.Infrastructure
 		/// </summary>
 		/// <remarks>
 		///		Use it in testing to avoid running on stale indexes.
-		///		Note that when deferred patches need to be applied then <see cref="SaveChangesAsync"/> will wait for indexes anyway
+		///		Note that when deferred patches need to be applied then <see cref="IAsyncDocumentSession.SaveChangesAsync"/> will wait for indexes anyway
 		/// </remarks>
 		private readonly TimeSpan? _waitingForIndexesAfterSave;
 
@@ -94,13 +92,25 @@ namespace Raven.Yabt.Database.Infrastructure
 		}
 
 		/// <inheritdoc />
-		public async Task SaveChangesAsync(CancellationToken token = default)
+		public async Task<bool> SaveChangesAsync(CancellationToken token = default)
 		{
-			if (HasChanges())
-			{
-				await DbSession.SaveChangesAsync(token);
-				await SendDeferredPatchByQueryOperationsAsync(token);
-			}
+			if (!HasChanges()) 
+				return false;
+			
+			await DbSession.SaveChangesAsync(token);
+			await SendDeferredPatchByQueryOperationsAsync(token);
+			return true;
+		}
+
+		/// <inheritdoc />
+		public async Task<bool> SaveChangesAsync(bool clearCache, CancellationToken token = default)
+		{
+			var saved = await SaveChangesAsync(token);
+			if (clearCache)
+				// Clear all cached entities
+				DbSession.Advanced.Clear();
+			
+			return saved;
 		}
 
 		#region StoreAsync [PUBLIC] -------------------------------------------
@@ -199,16 +209,67 @@ namespace Raven.Yabt.Database.Infrastructure
 		#endregion Query [PUBLIC] ---------------------------------------------
 		
 		/// <inheritdoc />
-		public bool HasChanges()
-		{
-			// Use direct property, so we don't open a new session too early 
-			return _dbSession?.Advanced.HasChanges == true
-				// if a deferred patch query exist
+		public bool HasChanges() =>
+				// Usages of the direct property avoids opening a new session too early 
+				 _dbSession?.Advanced.HasChanges == true
+				// a deferred patch query might exist
 				|| _deferredPatchQueries.Any()
-				// if there is a PATCH request in the underlining session
+				// Note, the below has been added to 'Advanced.HasChanges()' in v5.2
 				|| _dbSession?.Advanced is InMemoryDocumentSessionOperations { DeferredCommandsCount: > 0 };
+
+		/// <inheritdoc />
+		public string GetFullId<T>(string shortId) where T : IEntity
+			=> DbSession.Advanced.GetFullId<T>(shortId);
+		
+		#region 'Patch' & 'Exists' for individual records [PUBLIC, PRIVATE] ---   
+		
+		/// <inheritdoc />
+		public void PatchWithoutValidation<TEntity, TItem>(
+				string shortId,
+				Expression<Func<TEntity, IEnumerable<TItem>>> path,
+				Expression<Func<JavaScriptArray<TItem>, object>> arrayAdder
+			) where TEntity : IEntity
+		{
+			// Consider adding tenant validation in here
+			DbSession.Advanced.Patch(GetFullId<TEntity>(shortId), path, arrayAdder);
 		}
 
+		/// <inheritdoc />
+		public async Task<bool> Patch<TEntity, TProp>(string shortId, Expression<Func<TEntity, TProp>> path, TProp value) where TEntity : IEntity
+		{
+			var fullId = GetFullId<TEntity>(shortId);
+			if (!IsNotTenantedType<TEntity>() && !await TenantedEntityExistsAsync<TEntity>(fullId))
+			{
+				ThrowArgumentExceptionIfRequired();
+				return false;
+			}
+			
+			DbSession.Advanced.Patch(fullId, path, value);
+			return true;
+		}
+
+		/// <inheritdoc />
+		public Task<bool> ExistsAsync<TEntity>(string shortId, CancellationToken token = default) where TEntity : IEntity
+		{
+			var fullId = GetFullId<TEntity>(shortId);
+			return IsNotTenantedType<TEntity>() 
+				? DbSession.Advanced.ExistsAsync(fullId, token) 
+				: TenantedEntityExistsAsync<TEntity>(fullId, token);
+		}
+
+		/// <summary>
+		///		Validate if a tenanted record exists
+		/// </summary>
+		private async Task<bool> TenantedEntityExistsAsync<TEntity>(string fullId, CancellationToken token = default) where TEntity : IEntity
+		{
+			var recordsTenantId = 
+				await ( from e in Query<TEntity>() 
+						where e.Id == fullId	// a condition to filter on tenant gets added in Query<T>() 
+						select e.Id).SingleOrDefaultAsync(token);
+			return recordsTenantId != null;
+		}
+		#endregion / 'Patch' & 'Exists' for individual records [PUBLIC, PRIVATE]
+		
 		#region Processing Deferred Path Queries [PUBLIC, PRIVATE] ------------
 
 		/// <inheritdoc/>
@@ -241,10 +302,10 @@ namespace Raven.Yabt.Database.Infrastructure
 				// Wait as long as it's required. It's better to fail (e.g. timeout on API response) rather than update on stale indexes 
 				queryIndex.WaitForNonStaleResultsTimeout = TimeSpan.MaxValue;
 				queryIndex.WaitForNonStaleResults = true;
-				var sentOperation = await Advanced.DocumentStore.Operations.SendAsync(new PatchByQueryOperation(queryIndex), Advanced.SessionInfo, token);
+				var sentOperation = await DbSession.Advanced.DocumentStore.Operations.SendAsync(new PatchByQueryOperation(queryIndex), DbSession.Advanced.SessionInfo, token);
 
 				if (_waitingForIndexesAfterSave.HasValue)
-					// Waiting can come in handy  during tests
+					// Waiting comes in handy in the tests
 					await sentOperation.WaitForCompletionAsync(_waitingForIndexesAfterSave.Value);
 				
 				if (token.IsCancellationRequested)

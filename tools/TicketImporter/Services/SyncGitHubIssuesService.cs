@@ -161,8 +161,7 @@ namespace Raven.Yabt.TicketImporter.Services
 
 		private async Task SaveChanges(CancellationToken cancellationToken)
 		{
-			await _dbSession.SaveChangesAsync(cancellationToken);
-			_dbSession.Advanced.Clear(); // Clear all cached entities
+			await _dbSession.SaveChangesAsync(true, cancellationToken);
 		}
 
 		private static BacklogItemType GetBacklogItemType(IssueResponse issue)

@@ -21,19 +21,17 @@ namespace Raven.Yabt.Domain.Infrastructure
 		/// <inheritdoc/>
 		public async Task<long> SaveChangesWithTimerAsync()
 		{
-			if (!DbSession.HasChanges())
-				return 0;
-			
+			bool hasSaved;
 			Stopwatch sw = Stopwatch.StartNew();
 			try
 			{	// Saving. Note it throws an exception on any error
-				await DbSession.SaveChangesAsync();	// Though, Stopwatch is not thread-safe, it's used as a local variable, so must be OK when the context is switched on return 
+				hasSaved =await DbSession.SaveChangesAsync();	// Though, Stopwatch is not thread-safe, it's used as a local variable, so must be OK when the context is switched on return 
 			}
 			finally
 			{
 				sw.Stop();
 			}
-			return sw.ElapsedMilliseconds;
+			return hasSaved ? sw.ElapsedMilliseconds : 0;
 		}
 	}
 }

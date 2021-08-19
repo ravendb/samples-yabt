@@ -17,8 +17,8 @@ namespace Raven.Yabt.Database.Tests.BacklogItem
 		public async Task Querying_By_Entity_Filters_Result_By_Tenant()
 		{
 			// GIVEN 2 tickets with different TenantIDs
-			var ticketMy = await CreateMySampleTicket();
-			await CreateNotMySampleTicket();
+			var ticketMy = await CreateMySampleTicketAndKeepItInCache();
+			await CreateNotMySampleTicketAndKeepItInCache();
 			
 			// WHEN query all tickets
 			var tickets = (await DbSession.Query<BacklogItemTask>()
@@ -33,8 +33,8 @@ namespace Raven.Yabt.Database.Tests.BacklogItem
 		public async Task Querying_BacklogItems_By_Index_Filters_Result_By_Tenant()
 		{
 			// GIVEN 2 tickets with different TenantIDs
-			var ticketMy = await CreateMySampleTicket();
-			await CreateNotMySampleTicket();
+			var ticketMy = await CreateMySampleTicketAndKeepItInCache();
+			await CreateNotMySampleTicketAndKeepItInCache();
 			
 			// WHEN query all tickets
 			var tickets = await DbSession.Query<Models.BacklogItems.BacklogItem,BacklogItems_ForList>().ToArrayAsync();
@@ -50,8 +50,8 @@ namespace Raven.Yabt.Database.Tests.BacklogItem
 			// GIVEN 2 tickets with different TenantIDs but the same tag
 			const string tag = "test_tag";
 			var tags = new[] { tag };
-			await CreateMySampleTicket(t => t.Tags = tags);
-			await CreateNotMySampleTicket(t => t.Tags = tags);
+			await CreateMySampleTicketAndKeepItInCache(t => t.Tags = tags);
+			await CreateNotMySampleTicketAndKeepItInCache(t => t.Tags = tags);
 			
 			// WHEN query all tickets by the tag
 			var tagStats = await (
@@ -68,8 +68,8 @@ namespace Raven.Yabt.Database.Tests.BacklogItem
 		public async Task Querying_By_Entity_And_Selecting_Fields_Filters_Result_By_Tenant()
 		{
 			// GIVEN 2 tickets with different TenantIDs
-			var ticketMy = await CreateMySampleTicket();
-			await CreateNotMySampleTicket();
+			var ticketMy = await CreateMySampleTicketAndKeepItInCache();
+			await CreateNotMySampleTicketAndKeepItInCache();
 			
 			// WHEN query all tickets
 			var query = DbSession.Query<BacklogItemTask>().Select(t => t.Id);
@@ -83,8 +83,8 @@ namespace Raven.Yabt.Database.Tests.BacklogItem
 		public async Task Querying_By_Index_And_Selecting_Fields_Filters_Result_By_Tenant()
 		{
 			// GIVEN 2 tickets with different TenantIDs
-			var ticketMy = await CreateMySampleTicket();
-			await CreateNotMySampleTicket();
+			var ticketMy = await CreateMySampleTicketAndKeepItInCache();
+			await CreateNotMySampleTicketAndKeepItInCache();
 			
 			// WHEN query all tickets
 			var tickets = await DbSession.Query<BacklogItemIndexedForList,BacklogItems_ForList>().Select(t => t.Id).ToArrayAsync();

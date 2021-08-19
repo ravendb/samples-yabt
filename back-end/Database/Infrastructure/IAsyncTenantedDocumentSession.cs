@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,29 +22,12 @@ namespace Raven.Yabt.Database.Infrastructure
 	public interface IAsyncTenantedDocumentSession : IDisposable
 	{
 		/// <summary>
-		///		Direct access to <seealso cref="IAsyncDocumentSession.Advanced"/> property
-		/// </summary>
-		IAsyncAdvancedSessionOperations Advanced { get; }
-		
-		/// <summary>
 		///		Flag defining the behaviour on requesting a record of a wrong tenant.
 		///		<value>true</value> - would throw an exception. <value>false</value> - silent return of NULL.
 		/// </summary>
 		bool ThrowExceptionOnWrongTenant { get; }
 
-		/// <summary>
-		///		Check if there are any changes to save or run any patch requests
-		///		An extension of the <see cref="IAdvancedDocumentSessionOperations.HasChanges"/> property usually accessed from <seealso cref="IAsyncDocumentSession.Advanced"/>
-		/// </summary>
-		bool HasChanges();
-		
-		/// <summary>
-		/// 	Add a RavenDB patch request for executing after calling <see cref="IAsyncDocumentSession.SaveChangesAsync"/> 
-		/// </summary>
-		/// <remarks>
-		///		Operation against indexes can't be performed in the same transaction. This method offloads the operation to the Server to run
-		/// </remarks>
-		void AddDeferredPatchQuery(IndexQuery patchQuery);
+		#region IAsyncDocumentSession methods ---------------------------------
 
 		/// <summary>
 		///		Extension of the <seealso cref="IAsyncDocumentSession.CountersFor(object)"/> method to get counters for the entity.
@@ -65,7 +49,17 @@ namespace Raven.Yabt.Database.Infrastructure
 		///		Saves all the pending changes to the server.
 		///		Propagation of the <seealso cref="IAsyncDocumentSession.SaveChangesAsync"/>
 		/// </summary>
-		Task SaveChangesAsync(CancellationToken token = default);
+		/// <param name="token"> Cancellation token [Optional] </param>
+		/// <returns> True - changes were saved, False - no changes detected </returns>
+		Task<bool> SaveChangesAsync(CancellationToken token = default);
+
+		/// <summary>
+		///		Saves all the pending changes to the server.
+		/// </summary>
+		/// <param name="clearCache"> Clears session's cache on saving </param>
+		/// <param name="token"> Cancellation token [Optional] </param>
+		/// <returns> <value>true</value> - changes were saved, <value>false</value> - no changes detected </returns>
+		Task<bool> SaveChangesAsync(bool clearCache, CancellationToken token = default);
 
 		/// <summary>
 		///     Extension of the <seealso cref="IAsyncDocumentSession.StoreAsync(object, CancellationToken)"/> method to stores entity in session.
@@ -125,5 +119,69 @@ namespace Raven.Yabt.Database.Infrastructure
 		/// <param name="collectionName"> Name of the collection (mutually exclusive with indexName) </param>
 		/// <param name="isMapReduce"> Whether we are querying a map/reduce index (modify how we treat identifier properties) </param>
 		IRavenQueryable<T> Query<T>(string? indexName = null, string? collectionName = null, bool isMapReduce = false);
+		
+		#endregion / IAsyncDocumentSession methods ----------------------------
+		
+		#region Patch requests (aka Set based operations) ---------------------
+		
+		/// <summary>
+		/// 	Add a RavenDB patch request for executing after calling <see cref="IAsyncDocumentSession.SaveChangesAsync"/> 
+		/// </summary>
+		/// <remarks>
+		///		Operation against indexes can't be performed in the same transaction. This method offloads the operation to the Server to run
+		/// </remarks>
+		void AddDeferredPatchQuery(IndexQuery patchQuery);
+
+		/// <summary>
+		///		Updates properties on a record without loading it and validation of the correct tenant
+		/// </summary>
+		/// <remarks>
+		///		Propagates to <see cref="IAsyncAdvancedSessionOperations.Patch{T,U}(string, Expression{Func{T, IEnumerable{U}}},Expression{Func{JavaScriptArray{U},object}})"/> method
+		/// </remarks>
+		void PatchWithoutValidation<TEntity, TItem>(
+			string shortId,
+			Expression<Func<TEntity, IEnumerable<TItem>>> path,
+			Expression<Func<JavaScriptArray<TItem>, object>> arrayAdder) where TEntity : IEntity;
+		
+		/// <summary>
+		///		Updates properties on a record with validation of the correct tenant
+		/// </summary>
+		/// <returns>
+		///		True if the patch request was applied to the record. False otherwise
+		/// </returns>
+		/// <remarks>
+		///		Propagates to <see cref="IAsyncAdvancedSessionOperations.Patch{T,U}(string,Expression{Func{T,U}},U)"/> method
+		/// </remarks>
+		Task<bool> Patch<TEntity, TProp>(string shortId, Expression<Func<TEntity, TProp>> path, TProp value) where TEntity : IEntity;
+		
+		#endregion / Patch requests (aka Set based operations) ----------------
+		
+		#region Auxilliary methods --------------------------------------------
+		
+		/// <summary>
+		///		Check if document exists
+		/// </summary>
+		/// <param name="shortId"> Short document ID </param>
+		/// <param name="token"> Cancellation token [Optional] </param>
+		/// <remarks>
+		///		Propagates to <see cref="IAsyncAdvancedSessionOperations.ExistsAsync(string, CancellationToken)"/> method
+		/// </remarks>
+		Task<bool> ExistsAsync<TEntity>(string shortId, CancellationToken token = default) where TEntity : IEntity;
+		
+		/// <summary>
+		///		Check if there are any changes to save or run any patch requests
+		///		An extension of the <see cref="IAdvancedDocumentSessionOperations.HasChanges"/> property usually accessed from <seealso cref="IAsyncDocumentSession.Advanced"/>
+		/// </summary>
+		bool HasChanges();
+
+		/// <summary>
+		///		Gets full document ID for a given entity (e.g. for '1-A' returns 'users/1-A')
+		/// </summary>
+		/// <typeparam name="T"> The entity type (e.g. class `Users`) </typeparam>
+		/// <param name="shortId"> The short ID (e.g. '1-A') </param>
+		/// <returns> A full ID (e.g. 'users/1-A') </returns>
+		string GetFullId<T>(string shortId) where T : IEntity;
+
+		#endregion / Auxilliary methods ---------------------------------------
 	}
 }

@@ -48,7 +48,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 			// Add the patch to a collection
 			DbSession.AddDeferredPatchQuery(query);
 		}
-
+		
 		public void UpdateReferences(UserReference newUserReference)
 		{
 			if (string.IsNullOrEmpty(newUserReference.Id))
@@ -86,7 +86,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 					QueryParameters = new Parameters
 					{
 						{ "userId", newUserReference.Id },
-						{ "newMention", newUserReference!.MentionedName },
+						{ "newMention", newUserReference.MentionedName },
 					}
 				};
 

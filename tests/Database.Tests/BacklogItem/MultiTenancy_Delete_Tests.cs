@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.BacklogItems;
 
 using Xunit;
@@ -15,15 +16,15 @@ namespace Raven.Yabt.Database.Tests.BacklogItem
 		public async Task Delete_My_Entity_Works()
 		{
 			// GIVEN a ticket created by the current user
-			var ticket = await CreateMySampleTicket();
+			var ticket = await CreateMySampleTicketAndKeepItInCache();
 			
 			// WHEN the ticket is loaded and then deleted
-			DbSession.Delete(ticket);
-			await DbSession.SaveChangesAsync();
+			DbSession.Delete(ticket);	// Note: 'ticket' must stay in the session's cache
+			await DbSession.SaveChangesAsync(true);
 			
 			// THEN the ticket is NOT present in the DB
 			//		`ExistsAsync` returns `false`
-			var ticketExists = await DbSession.Advanced.ExistsAsync(ticket.Id);
+			var ticketExists = await DbSession.ExistsAsync<BacklogItemTask>(ticket.Id.GetShortId()!);
 			Assert.False(ticketExists);
 			//		`LoadAsync` returns `null`
 			var loadedTicket = await DbSession.LoadAsync<BacklogItemTask>(ticket.Id);
@@ -38,13 +39,13 @@ namespace Raven.Yabt.Database.Tests.BacklogItem
 			ThrowExceptionOnWrongTenant = throwExceptionOnWrongTenant;
 
 			// GIVEN a someone else's ticket
-			var ticket = await CreateNotMySampleTicket();
+			var ticket = await CreateNotMySampleTicketAndKeepItInCache();
 			
 			// WHEN delete the ticket
 			async Task DeleteTicketFunc()
 				{
-					DbSession.Delete(ticket);
-					await DbSession.SaveChangesAsync();
+					DbSession.Delete(ticket);	// Note: 'ticket' must stay in the session's cache
+					await DbSession.SaveChangesAsync(true);
 				}
 			if (!throwExceptionOnWrongTenant) 
 				await DeleteTicketFunc(); 
@@ -52,9 +53,10 @@ namespace Raven.Yabt.Database.Tests.BacklogItem
 			// THEN it fails
 			if (throwExceptionOnWrongTenant)
 				await Assert.ThrowsAsync<ArgumentException>(DeleteTicketFunc);
-
-			//		and the ticket remains in the DB  
-			var ticketExists = await DbSession.Advanced.ExistsAsync(ticket.Id);
+			//		and the ticket remains in the DB (under another tenant)
+			IsMyTenantFlag = false;
+			var ticketExists = await DbSession.ExistsAsync<BacklogItemTask>(ticket.Id.GetShortId()!);
+			IsMyTenantFlag = true;
 			Assert.True(ticketExists);
 		}
 	}

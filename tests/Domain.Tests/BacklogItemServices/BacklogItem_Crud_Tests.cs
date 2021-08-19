@@ -121,7 +121,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			// WHEN changing the status to 'Closed'
 			await _commandService.SetState(id!, BacklogItemState.Closed);
 			await SaveChanges();
-
+			
 			// THEN 
 			// The new state gets persisted
 			var (ticket, _) = await _queryService.GetById(id!);

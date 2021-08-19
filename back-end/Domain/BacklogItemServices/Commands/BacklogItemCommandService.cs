@@ -83,7 +83,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			if (ticket.RelatedItems.Any())
 				foreach (var item in ticket.RelatedItems)
 				{
-					DbSession.Advanced.Patch<BacklogItem, BacklogItemRelatedItem>(GetFullId(item.RelatedTo.Id!),
+					DbSession.PatchWithoutValidation<BacklogItem, BacklogItemRelatedItem>(item.RelatedTo.Id!,
 						x => x.RelatedItems,
 						items => items.RemoveAll(i => i.RelatedTo.Id == shortId));
 				}
@@ -95,11 +95,9 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 		public async Task<IDomainResult> SetState(string backlogItemId, BacklogItemState newState)
 		{
-			var fullId = GetFullId(backlogItemId);
-			if (!await DbSession.Advanced.ExistsAsync(fullId))
+			if (!await DbSession.Patch<BacklogItem, BacklogItemState>(backlogItemId, x => x.State, newState))
 				return IDomainResult.NotFound();
-			
-			DbSession.Advanced.Patch<BacklogItem, BacklogItemState>(fullId, x => x.State, newState);
+
 			await AddHistoryRecordPatch(backlogItemId, $"Changed status to {newState.ToString()}");
 			
 			return IDomainResult.Success();
@@ -107,10 +105,6 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 		public async Task<IDomainResult> AssignToUser(string backlogItemId, string? userShortenId)
 		{
-			var fullId = GetFullId(backlogItemId);
-			if (!await DbSession.Advanced.ExistsAsync(fullId))
-				return IDomainResult.NotFound("The Backlog Item not found");
-
 			UserReference? userRef = null;
 			if (userShortenId != null)
 			{
@@ -119,7 +113,9 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 					return DomainResult.NotFound("The user not found");
 			}
 
-			DbSession.Advanced.Patch<BacklogItem, UserReference?>(fullId, x => x.Assignee, userRef);
+			if (!await DbSession.Patch<BacklogItem, UserReference?>(backlogItemId, x => x.Assignee, userRef))
+				return IDomainResult.NotFound("The Backlog Item not found");
+			
 			await AddHistoryRecordPatch(backlogItemId, userRef == null ? "Removed assigned user" : $"Assigned user '{userRef.MentionedName}'");
 			
 			return IDomainResult.Success();
@@ -133,8 +129,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			{
 				if (link.ActionType == ListActionType.Add)
 				{
-					DbSession.Advanced.Patch<BacklogItem, BacklogItemRelatedItem>(
-						GetFullId(link.BacklogItemId),
+					DbSession.PatchWithoutValidation<BacklogItem, BacklogItemRelatedItem>(
+						link.BacklogItemId,
 						x => x.RelatedItems,
 						items => items.Add(
 							new BacklogItemRelatedItem
@@ -149,8 +145,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				{
 					var relatedId = ticketRef.Id!;
 					var relationType = link.RelationType.GetMirroredType();
-					DbSession.Advanced.Patch<BacklogItem, BacklogItemRelatedItem>(
-						GetFullId(link.BacklogItemId),
+					DbSession.PatchWithoutValidation<BacklogItem, BacklogItemRelatedItem>(
+						link.BacklogItemId,
 						x => x.RelatedItems,
 						items => items.RemoveAll(
 							i => i.RelatedTo.Id! == relatedId && i.LinkType == relationType));
@@ -163,8 +159,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 		private async Task AddHistoryRecordPatch(string backlogItemId, string message)
 		{
 			var userRef = await _userResolver.GetCurrentUserReference();
-			DbSession.Advanced.Patch<BacklogItem, BacklogItemHistoryRecord>(
-				GetFullId(backlogItemId),
+			DbSession.PatchWithoutValidation<BacklogItem, BacklogItemHistoryRecord>(
+				backlogItemId,
 				x => x.ModifiedBy,
 				items => items.Add(new BacklogItemHistoryRecord(userRef, message)));
 		}

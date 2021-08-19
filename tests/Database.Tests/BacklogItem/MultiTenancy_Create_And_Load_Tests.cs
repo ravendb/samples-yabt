@@ -18,10 +18,9 @@ namespace Raven.Yabt.Database.Tests.BacklogItem
 			// GIVEN an empty DB
 			
 			// WHEN create a task
-			var createdTicket = await CreateMySampleTicket();
+			var createdTicket = await CreateMySampleTicketAndKeepItInCache();
 			
 			// THEN it the current Tenant ID injected
-			DbSession.Advanced.Clear();
 			var validatedTicket = await DbSession.LoadAsync<BacklogItemTask>(createdTicket.Id);
 			Assert.Equal(GetCurrentTenantId(), validatedTicket?.TenantId);
 		}
@@ -30,11 +29,10 @@ namespace Raven.Yabt.Database.Tests.BacklogItem
 		public async Task Loading_Multiple_Entities_With_Correct_TenantIds_Works()
 		{
 			// GIVEN 2 tickets
-			var ticket1 = await CreateMySampleTicket();
-			var ticket2 = await CreateMySampleTicket();
+			var ticket1 = await CreateMySampleTicketAndKeepItInCache();
+			var ticket2 = await CreateMySampleTicketAndKeepItInCache();
 			
 			// WHEN load them by IDs
-			DbSession.Advanced.Clear();
 			var loadedTickets = await DbSession.LoadAsync<BacklogItemTask>(new [] {ticket1.Id, ticket2.Id});
 			
 			// THEN tickets are loaded
@@ -49,10 +47,9 @@ namespace Raven.Yabt.Database.Tests.BacklogItem
 			ThrowExceptionOnWrongTenant = throwExceptionOnWrongTenant;
 			
 			// GIVEN a ticket with a different TenantID
-			var ticket = await CreateNotMySampleTicket();
+			var ticket = await CreateNotMySampleTicketAndKeepItInCache();
 			
 			// WHEN load the ticket by ID
-			DbSession.Advanced.Clear();
 			Task<BacklogItemTask?> LoadTicketFunc() => DbSession.LoadAsync<BacklogItemTask>(ticket.Id);
 
 			var loadedTicket = !throwExceptionOnWrongTenant ? await LoadTicketFunc() : null; 
@@ -72,11 +69,10 @@ namespace Raven.Yabt.Database.Tests.BacklogItem
 			ThrowExceptionOnWrongTenant = throwExceptionOnWrongTenant;
 			
 			// GIVEN 2 tickets with a different TenantID
-			var ticket1 = await CreateNotMySampleTicket();
-			var ticket2 = await CreateNotMySampleTicket();
+			var ticket1 = await CreateNotMySampleTicketAndKeepItInCache();
+			var ticket2 = await CreateNotMySampleTicketAndKeepItInCache();
 			
 			// WHEN load the ticket by ID
-			DbSession.Advanced.Clear();
 			Task<Dictionary<string, BacklogItemTask>> LoadTicketsFunc() => DbSession.LoadAsync<BacklogItemTask>(new [] {ticket1.Id, ticket2.Id});
 
 			var loadedTickets = !throwExceptionOnWrongTenant ? await LoadTicketsFunc() : new Dictionary<string, BacklogItemTask>(); 

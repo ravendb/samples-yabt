@@ -17,6 +17,7 @@ namespace Raven.Yabt.Database.Tests
 	{
 		private readonly IServiceProvider _container;
 		protected IAsyncTenantedDocumentSession DbSession => _container.GetRequiredService<IAsyncTenantedDocumentSession>();
+		protected IDocumentStore DbStore => _container.GetRequiredService<IDocumentStore>();
 		protected bool ThrowExceptionOnWrongTenant = true;
 		
 		private const string MyTenantId = "1-A";

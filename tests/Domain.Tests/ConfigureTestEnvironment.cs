@@ -19,6 +19,7 @@ namespace Raven.Yabt.Domain.Tests
 	{
 		protected IServiceProvider Container { get; }
 		protected IAsyncTenantedDocumentSession DbSession => Container.GetRequiredService<IAsyncTenantedDocumentSession>();
+		protected IDocumentStore DbStore => Container.GetRequiredService<IDocumentStore>();
 		
 		/// <summary>
 		///		Get the ID of the current tenant		
@@ -49,8 +50,7 @@ namespace Raven.Yabt.Domain.Tests
 		/// </summary>
 		protected async Task SaveChanges()
 		{
-			await DbSession.SaveChangesAsync();
-			DbSession.Advanced.Clear(); // Clear all cached entities
+			await DbSession.SaveChangesAsync(true);
 		}
 
 		/// <summary>
