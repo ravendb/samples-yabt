@@ -31,7 +31,7 @@ namespace Raven.Yabt.Database.Infrastructure
 				throw new ArgumentException("ID has incorrect format", nameof(shortId));
 
 			// Pluralise the collection name (e.g. 'User' becomes 'Users', 'Person' becomes 'People')
-			var pluralisedName = DocumentConventions.DefaultGetCollectionName(typeof(T));
+			var pluralisedName = advSession.DocumentStore.Conventions.GetCollectionName(typeof(T));
 			// Fix the later case - converts 'Users' to 'users', 'BacklogItems' to 'backlogItems'
 			var prefix = advSession.DocumentStore.Conventions.TransformTypeCollectionNameToDocumentIdPrefix(pluralisedName);
 
