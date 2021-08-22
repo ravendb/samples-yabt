@@ -11,7 +11,14 @@ namespace Raven.Yabt.WebApi.Authorization
 	{
 		private readonly IHttpContextAccessor _httpContextAccessor;
 
-		public const string UserIdClaimType = "http://schemas.microsoft.com/identity/claims/objectidentifier";
+		/// <summary>
+		///		Claim's name for 'user ID'
+		/// </summary>
+		/// <remarks>
+		///		It's used to be "http://schemas.microsoft.com/identity/claims/objectidentifier", but now has been renamed to "oid".
+		///		See https://docs.microsoft.com/en-us/dotnet/api/microsoft.identity.web.claimconstants
+		/// </remarks>
+		public const string UserIdClaimType = "oid";
 
 		public CurrentUserResolver(IHttpContextAccessor httpContextAccessor)
 		{

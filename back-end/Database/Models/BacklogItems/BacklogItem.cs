@@ -15,14 +15,14 @@ namespace Raven.Yabt.Database.Models.BacklogItems
 	/// <remarks>
 	///		Can't make the class 'abstract', due to getting exception: Cannot find collection name for abstract class, only concrete class are supported. 
 	/// </remarks>
-	public class BacklogItem : BaseEntity
+	public class BacklogItem : BaseTenantedEntity
 	{
 		/// <summary>
 		///		The Title [mandatory field]
 		/// </summary>
 		public string Title { get; set; } = null!;
 
-		public virtual BacklogItemType Type { get; set; }    // Can't make it 'abstract'
+		public virtual BacklogItemType Type { get; protected set; }		// Can't make it 'abstract'
 
 		/// <summary>
 		///		Current state of the backlog item

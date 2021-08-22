@@ -1,0 +1,16 @@
+<h2 mat-dialog-title class="title">Choose user/tenant</h2>
+<mat-dialog-content>
+	<div>
+		This demo-project is multi-tenanted. Choose below the user/tenant account to run the system:
+	</div>
+	<mat-radio-group [(ngModel)]="currentUser">
+		<mat-radio-button *ngFor="let u of users" [value]="u.apiKey">
+			User "<span class='user-name'>{{u.userName}}</span>" from "<span class='tenant-name'>{{u.tenantName}}</span>" project
+		</mat-radio-button>
+	</mat-radio-group>
+	<br>
+</mat-dialog-content>
+<mat-dialog-actions>
+	<button mat-raised-button color="primary" [mat-dialog-close]="currentUser" cdkFocusInitial>Proceed</button>
+	<button mat-raised-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>

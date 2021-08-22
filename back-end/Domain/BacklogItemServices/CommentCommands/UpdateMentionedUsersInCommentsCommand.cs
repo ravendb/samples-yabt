@@ -3,21 +3,17 @@
 using Raven.Client;
 using Raven.Client.Documents.Queries;
 using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Database.Models.BacklogItems.Indexes;
-using Raven.Yabt.Domain.Infrastructure;
+using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.UserServices.Command;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 {
-	internal class UpdateMentionedUsersInCommentsCommand : IUpdateUserReferencesCommand
+	internal class UpdateMentionedUsersInCommentsCommand : BaseDbService, IUpdateUserReferencesCommand
 	{
-		private readonly IPatchOperationsAddDeferred _patchOperations;
-
-		public UpdateMentionedUsersInCommentsCommand(IPatchOperationsAddDeferred patchOperations)
-		{
-			_patchOperations = patchOperations;
-		}
+		public UpdateMentionedUsersInCommentsCommand(IAsyncTenantedDocumentSession session): base(session) {}
 
 		public void ClearUserId(string userId)
 		{
@@ -41,18 +37,18 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 										}});
 								}}";
 			var query = new IndexQuery 
-			{ 
-				Query = queryString,
-				QueryParameters = new Parameters
-				{
-					{ "userId", userId },
-				}
-			};
+				{ 
+					Query = queryString,
+					QueryParameters = new Parameters
+					{
+						{ "userId", userId },
+					}
+				};
 
 			// Add the patch to a collection
-			_patchOperations.AddDeferredPatchQuery(query);
+			DbSession.AddDeferredPatchQuery(query);
 		}
-
+		
 		public void UpdateReferences(UserReference newUserReference)
 		{
 			if (string.IsNullOrEmpty(newUserReference.Id))
@@ -85,17 +81,17 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 										}});
 								}}";
 			var query = new IndexQuery
-			{
-				Query = queryString,
-				QueryParameters = new Parameters
 				{
-					{ "userId", newUserReference.Id },
-					{ "newMention", newUserReference!.MentionedName },
-				}
-			};
+					Query = queryString,
+					QueryParameters = new Parameters
+					{
+						{ "userId", newUserReference.Id },
+						{ "newMention", newUserReference.MentionedName },
+					}
+				};
 
 			// Add the patch to a collection
-			_patchOperations.AddDeferredPatchQuery(query);
+			DbSession.AddDeferredPatchQuery(query);
 		}
 		
 		/// <summary>

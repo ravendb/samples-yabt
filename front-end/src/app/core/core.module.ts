@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatToolbarModule } from '@angular/material/toolbar';
@@ -13,6 +15,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { DomSanitizer } from '@angular/platform-browser';
 import { RouterModule } from '@angular/router';
 import { AuthInterceptor } from './auth.interceptor';
+import { ChangeUserAndTenantDialogComponent } from './change-user-and-tenant-dialog';
 import { FooterComponent } from './footer';
 import { MainMenuComponent } from './main-menu';
 import { BreadcrumbsComponent } from './main-menu/breadcrumbs/breadcrumbs.component';
@@ -30,17 +33,20 @@ import { WelcomeDialogComponent } from './welcome-dialog';
 		NotificationComponent,
 		ConfirmationDialogComponent,
 		BreadcrumbsComponent,
+		ChangeUserAndTenantDialogComponent,
 		WelcomeDialogComponent,
 	],
 	exports: [FooterComponent, MainMenuComponent],
 	imports: [
 		CommonModule,
+		FormsModule,
 		HttpClientModule,
 		MatButtonModule,
 		MatDialogModule,
 		MatIconModule,
 		MatListModule,
 		MatMenuModule,
+		MatRadioModule,
 		MatSidenavModule,
 		MatSnackBarModule,
 		MatToolbarModule,

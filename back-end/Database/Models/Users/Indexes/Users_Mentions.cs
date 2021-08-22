@@ -14,6 +14,7 @@ namespace Raven.Yabt.Database.Models.Users.Indexes
 				select new MentionedUsersIndexed
 				{
 					MentionedName = user.FirstName + user.LastName,	// filter,
+					TenantId = user.TenantId						// filter
 				};
 		}
 	}

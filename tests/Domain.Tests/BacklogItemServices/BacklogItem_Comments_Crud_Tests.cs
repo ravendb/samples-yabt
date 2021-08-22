@@ -7,7 +7,6 @@ using Microsoft.Extensions.DependencyInjection;
 
 using NSubstitute;
 
-using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Domain.BacklogItemServices.ByIdQuery;
@@ -101,12 +100,12 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 		private async Task Deleted_Comment_Disappears_From_Db()
 		{
 			// GIVEN a 'bug' with a comment
-			var ticketRef = await CreateSampleBug();
-			var commentRef = (await _commentCommandService.Create(ticketRef.Id!, "Test")).Value;
+			var (id, _) = await CreateSampleBug();
+			var commentRef = (await _commentCommandService.Create(id!, "Test")).Value;
 			await SaveChanges();
 
 			// WHEN deleting the comment
-			var ticketDeletedRef = await _commentCommandService.Delete(ticketRef.Id!, commentRef.CommentId!);
+			var ticketDeletedRef = await _commentCommandService.Delete(id!, commentRef.CommentId!);
 			await SaveChanges();
 
 			// THEN 
@@ -114,7 +113,7 @@ namespace Raven.Yabt.Domain.Tests.BacklogItemServices
 			Assert.True(ticketDeletedRef.IsSuccess);
 
 			// the comment gets removed from the ticket
-			var ticket = (await _queryService.GetById(ticketRef.Id!)).Value;
+			var ticket = (await _queryService.GetById(id!)).Value;
 			Assert.NotNull(ticket);
 			Assert.True(ticket.Comments?.Any() != true);
 		}

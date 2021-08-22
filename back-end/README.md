@@ -9,14 +9,16 @@ It has minimum third-party dependencies and heaps of best practices like the [Do
 
 ## Overview of the solution
 
+The main projects of the solution:
+
 | Project name    | Description                                                                                                    |
 | --------------- | -------------------------------------------------------------------------------------------------------------- |
 | Database.Common | Shared auxiliary structures used in DB models and DTOs on the WebAPI.                                          |
-| Database        | All entities and aggregates, plus DB-related settings. Note: this project is exposed only to `Domain` project. |
-| Domain          | All interfaces, types and logic specific to the domain layer.                                                  |
+| Database        | All entities and aggregates, plus DB-related settings and session. Note: this project is exposed only to `Domain` project. |
+| Domain          | Queries and commands, domain layer logic.                                                                      |
 | WebAPI          | The application layer (API).                                                                                   |
 
-![Onion architecture](../documentation/projects-diagram.png)
+![Solution diagram](../documentation/projects-diagram.png)
 
 NOTE: all tests are located under ['./tests'](../tests/) folder.
 

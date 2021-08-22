@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Reflection;
 using System.Threading.Tasks;
 
 using Microsoft.Extensions.DependencyInjection;
@@ -8,8 +7,7 @@ using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Session;
 using Raven.TestDriver;
-using Raven.Yabt.Database;
-using Raven.Yabt.Domain.Common;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Domain.Infrastructure;
 
 namespace Raven.Yabt.Domain.Tests
@@ -20,8 +18,14 @@ namespace Raven.Yabt.Domain.Tests
 	public abstract class ConfigureTestEnvironment : RavenTestDriver
 	{
 		protected IServiceProvider Container { get; }
-		protected IAsyncDocumentSession DbSession => Container.GetService<IAsyncDocumentSession>()!;
-
+		protected IAsyncTenantedDocumentSession DbSession => Container.GetRequiredService<IAsyncTenantedDocumentSession>();
+		protected IDocumentStore DbStore => Container.GetRequiredService<IDocumentStore>();
+		
+		/// <summary>
+		///		Get the ID of the current tenant		
+		/// </summary>
+		protected virtual string GetCurrentTenantId() => "1-A";
+		
 		/// <summary>
 		///		The default c-tor initialising all the IoC interfaces
 		/// </summary>
@@ -46,14 +50,7 @@ namespace Raven.Yabt.Domain.Tests
 		/// </summary>
 		protected async Task SaveChanges()
 		{
-			await DbSession.SaveChangesAsync();
-
-			// Process all patch requests
-			var asyncPatchesHandlers = Container.GetServices<IPatchOperationsExecuteAsync>();
-			foreach (var handler in asyncPatchesHandlers)
-				await handler.SendAsyncDeferredPatchByQueryOperations(true);
-			
-			DbSession.Advanced.Clear(); // Clear all cached entities
+			await DbSession.SaveChangesAsync(true);
 		}
 
 		/// <summary>
@@ -61,7 +58,7 @@ namespace Raven.Yabt.Domain.Tests
 		/// </summary>
 		protected virtual void ConfigureIocContainer(IServiceCollection services)
 		{
-			services.RegisterModules(Assembly.GetAssembly(typeof(BaseService<>))!);
+			services.AddAndConfigureDomainServices(false);
 
 			// Register the document store & session
 			services.AddScoped(_ =>
@@ -73,9 +70,9 @@ namespace Raven.Yabt.Domain.Tests
 				});
 			services.AddScoped(c =>
 				{
-					var session = c.GetService<IDocumentStore>()!.OpenAsyncSession(new SessionOptions { NoCaching = true });
-						session.Advanced.WaitForIndexesAfterSaveChanges();  // Wait on each change to avoid adding WaitForIndexing() in each test
-					return session;
+					var docStore = c.GetRequiredService<IDocumentStore>();
+					var session = new AsyncTenantedDocumentSession(docStore, GetCurrentTenantId, TimeSpan.FromSeconds(30), true, new SessionOptions { NoCaching = true });
+					return session as IAsyncTenantedDocumentSession;
 				});
 		}
 

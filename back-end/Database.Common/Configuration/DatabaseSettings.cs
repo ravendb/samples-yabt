@@ -23,5 +23,12 @@ namespace Raven.Yabt.Database.Common.Configuration
 		///     The Database name
 		/// </summary>
 		public string DbName { get; private set; }
+		
+		/// <summary>
+		///     Flag triggering updating the indexes if 'true'.
+		///		Ideally, it shouldn't be set in PROD as updating indexes is a migration concern,
+		///		but setting it in dev environment makes live a bit easier by applying index updates on a start-up
+		/// </summary>
+		public bool UpdateIndexes { get; private set; }
 	}
 }

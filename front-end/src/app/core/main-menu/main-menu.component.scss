@@ -138,4 +138,10 @@ mat-sidenav-container.mat-drawer-container {
 			font-weight: 700;
 		}
 	}
+	&.change-user {
+		span,
+		mat-icon {
+			color: $accent-color;
+		}
+	}
 }

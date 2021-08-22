@@ -7,10 +7,10 @@ using DomainResults.Common;
 
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
-using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common;
 using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Database.Models.BacklogItems.Indexes;
 using Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
@@ -33,7 +33,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 		private readonly IUserReferenceResolver _userResolver;
 		private readonly ICustomFieldListQueryService _customFieldQueryService;
 
-		public BacklogItemDtoToEntityConversion(IAsyncDocumentSession dbSession, IUserReferenceResolver userResolver, ICustomFieldListQueryService customFieldQueryService) : base(dbSession)
+		public BacklogItemDtoToEntityConversion(IAsyncTenantedDocumentSession dbSession, IUserReferenceResolver userResolver, ICustomFieldListQueryService customFieldQueryService) : base(dbSession)
 		{
 			_userResolver = userResolver;
 			_customFieldQueryService = customFieldQueryService;
@@ -51,7 +51,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			entity.Assignee = dto.AssigneeId != null ? await _userResolver.GetReferenceById(dto.AssigneeId) : null;
 
 			if (dto.Tags?.Any(t => t.Length > 11) == true)
-				return DomainResult<BacklogItem>.Failed("Each tag can't exceed 10 symbols");
+				return DomainResult<BacklogItem>.Failed("Each tag can't exceed 11 symbols");
 			entity.Tags = dto.Tags?.Distinct().ToArray();
 
 			entity.AddHistoryRecord(
@@ -86,6 +86,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			{
 				featureEntity.Description = featureDto.Description;
 			}
+			else
+				throw new ArgumentException($"Conversion of backlog item type {typeof(TModel)} hasn't been implemented");
 
 			return DomainResult.Success<BacklogItem>(entity);
 		}
@@ -96,7 +98,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				return;
 
 			// Remove 'old' links
-			foreach (var (id, linkType) in from a in actions
+			foreach (var (id, linkType) in 
+				from a in actions
 				where a.ActionType == ListActionType.Remove
 				select (a.BacklogItemId, a.RelationType))
 			{
@@ -113,7 +116,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			{
 				// Resolve new references
 				var fullIds = array.Select(a => a.fullId).Distinct();
-				var references = await (from b in DbSession.Query<BacklogItemIndexedForList, BacklogItems_ForList>()
+				var references = await (
+					from b in DbSession.Query<BacklogItemIndexedForList, BacklogItems_ForList>()
 					where b.Id.In(fullIds)
 					select new BacklogItemReference
 					{
@@ -139,7 +143,8 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 				return;
 
 			// Remove 'old' fields
-			foreach (var id in from a in actions
+			foreach (var id in 
+				from a in actions
 				where a.ActionType == ListActionType.Remove || a.Value is null
 				select a.CustomFieldId)
 			{
@@ -147,17 +152,14 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 			}
 			
 			// Add new fields
-			var array = 
-				(from a in actions
-					where a.ActionType == ListActionType.Add	// Keep only the ones that we're adding
-					select a
-				).ToList();
+			// Keep only the ones that we're adding
+			var array = actions.Where(a => a.ActionType == ListActionType.Add).ToArray();
 			if (array.Any())
 			{
 				var fieldRequest = new CustomFieldListGetRequest
 					{
 						Ids = array.Select(a => a.CustomFieldId).Distinct(),
-						PageSize = Int32.MaxValue
+						PageSize = int.MaxValue,
 					};
 				var verifiedCustomFields = await _customFieldQueryService.GetArray(fieldRequest);
 
@@ -169,10 +171,10 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 
 					var obj = field.FieldType switch
 					{
-						CustomFieldType.Text or CustomFieldType.Url => a.GetValue<string>(),
-						CustomFieldType.Numeric => a.GetValue<decimal>(),
-						CustomFieldType.Date => a.GetValue<DateTime>(),
-						CustomFieldType.Checkbox => a.GetValue<bool>(),
+						CustomFieldType.Text or CustomFieldType.Url	=> a.GetValue<string>(),
+						CustomFieldType.Numeric						=> a.GetValue<decimal>(),
+						CustomFieldType.Date						=> a.GetValue<DateTime>(),
+						CustomFieldType.Checkbox					=> a.GetValue<bool>(),
 						_ => throw new ArgumentOutOfRangeException($"Unsupported field type: {field.FieldType}")
 					};
 					if (obj is null)

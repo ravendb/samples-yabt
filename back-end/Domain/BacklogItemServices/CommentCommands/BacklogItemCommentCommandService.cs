@@ -4,11 +4,10 @@ using System.Threading.Tasks;
 
 using DomainResults.Common;
 
-using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Domain.Common;
-using Raven.Yabt.Domain.Helpers;
 using Raven.Yabt.Domain.UserServices.Query;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
@@ -18,7 +17,7 @@ namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands
 		private readonly IUserReferenceResolver _userResolver;
 		private readonly IMentionedUserResolver _mentionedUserResolver;
 
-		public BacklogItemCommentCommandService(IAsyncDocumentSession dbSession, 
+		public BacklogItemCommentCommandService(IAsyncTenantedDocumentSession dbSession, 
 		                                        IUserReferenceResolver userResolver,
 		                                        IMentionedUserResolver mentionedUserResolver) : base(dbSession)
 		{

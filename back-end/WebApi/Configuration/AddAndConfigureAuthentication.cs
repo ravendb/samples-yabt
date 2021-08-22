@@ -14,6 +14,7 @@ namespace Raven.Yabt.WebApi.Configuration
 		public static void AddAndConfigureAuthentication(this IServiceCollection services)
 		{
 			services.AddScoped<ICurrentUserResolver, CurrentUserResolver>();
+			services.AddScoped<ICurrentTenantResolver, CurrentTenantResolver>();
 
 			services.AddAuthentication(options =>
 				{

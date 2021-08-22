@@ -1,0 +1,26 @@
+name: Build front-end
+
+env:
+  NODE_VERSION: '14.x'
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: npm install and build
+      run: |
+        npm install
+        npm run build -- --prod
+      working-directory: front-end

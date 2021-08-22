@@ -1,5 +1,3 @@
-using System.Reflection;
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -9,24 +7,20 @@ using Microsoft.Extensions.Hosting;
 using Raven.Yabt.Domain.Infrastructure;
 using Raven.Yabt.WebApi.Configuration;
 using Raven.Yabt.WebApi.Configuration.Settings;
-using Raven.Yabt.WebApi.Infrastructure;
-using Raven.Yabt.WebApi.Infrastructure.StartupTasks;
 
 namespace Raven.Yabt.WebApi
 {
 	public class Startup
-	{	
+	{
 		private readonly IConfiguration _configuration;
-		private readonly IHostEnvironment _env;
 
-		public Startup(IConfiguration configuration, IHostEnvironment env)
+		public Startup(IConfiguration configuration)
 		{
 			_configuration = configuration;
-			_env = env;
 		}
 
 		/// <summary>
-		///		This method gets called by the runtime. Use this method to add services to the container.
+		///		This method gets called by the runtime to add services to the container.
 		/// </summary>
 		public void ConfigureServices(IServiceCollection services)
 		{
@@ -39,25 +33,17 @@ namespace Raven.Yabt.WebApi
 			// Register authentication
 			services.AddAndConfigureAuthentication();
 
-			// Register the database and DB session
-			services.AddAndConfigureDatabase();
-			
-			// A start-up task to update DB indexes shouldn't be executed in PROD as it's a migration concern,
-			// but registering it here makes dev live a bit easier by applying index updates on a start-up
-			if (!_env.IsProduction())
-				services.AddStartupTask<DbStartupTask>();
+			// Register the domain services along with the database and DB session
+			services.AddAndConfigureDomainServices(true);
 
 			// Register Swagger
 			services.AddAndConfigureSwagger(settings.UserApiKey);
-
-			// Register all domain dependencies
-			services.RegisterModules(assembly: Assembly.GetAssembly(typeof(ModuleRegistrationBase))!);
 
 			services.AddApplicationInsightsTelemetry();
 		}
 
 		/// <summary>
-		///		This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+		///		This method gets called by the runtime to configure the HTTP request pipeline.
 		/// </summary>
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AppSettings appSettings)
 		{
@@ -65,7 +51,8 @@ namespace Raven.Yabt.WebApi
 				// CORS is used for development only 
 				app.UseCors();
 			else
-			{	// Enforce use of HTTPS
+			{
+				// Enforce use of HTTPS
 				app.UseHsts();
 				app.UseHttpsRedirection();
 			}
@@ -79,9 +66,9 @@ namespace Raven.Yabt.WebApi
 			// Matches request to an endpoint
 			app.UseRouting();
 			// Executes the matched endpoint
-			app.UseEndpoints(endpoints => 
-				endpoints.MapControllers() // Maps attributes on the controllers, like, [Route], [HttpGet], etc.
-			);
+			app.UseEndpoints(
+					endpoints => endpoints.MapControllers() // Maps attributes on the controllers, like, [Route], [HttpGet], etc.
+				);
 
 			app.AddAppSpaStaticFiles(appSettings.UserApiKey);
 		}

@@ -19,10 +19,11 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 					let lastUpdated	= ticket.ModifiedBy.OrderBy(t => t.Timestamp).Last()
 				select new
 				{
-					ticket.Title,       // sort
-					ticket.Type,        // filter
-					AssignedUserId = ticket.Assignee.Id,    // filter
-					AssignedUserName = ticket.Assignee.FullName,    // sort
+					ticket.TenantId,								// filter
+					ticket.Title,									// sort
+					ticket.Type,									// filter
+					AssignedUserId = ticket.Assignee.Id,			// filter
+					AssignedUserName = ticket.Assignee.FullName,	// sort
 
 					CreatedByUserId = created.ActionedBy.Id,		// filter
 					CreatedTimestamp = created.Timestamp,			// sort
@@ -38,7 +39,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 							}
 							.Concat(ticket.Comments.Select(c => c.Message)),
 
-					Tags = ticket.Tags.Distinct().ToList(),		// filter
+					Tags = ticket.Tags!.Distinct().ToList(),	// filter (the RavenDB engine will gracefully handle if no tags)
 					ticket.State,								// filter
 
 					// Dynamic fields
@@ -55,7 +56,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 					// Create a dictionary for mentioned users
 					_1 = from um in 
 							from comment in ticket.Comments 
-							from user in comment.MentionedUserIds 
+							from user in comment.MentionedUserIds!
 							select new { user, comment.LastModified }
 						 group um by um.user into g
 						 select CreateField(
@@ -64,7 +65,7 @@ namespace Raven.Yabt.Database.Models.BacklogItems.Indexes
 								),
 					// Create a dictionary for Custom Fields
 					_2 = from x in ticket.CustomFields
-						 let fieldType = LoadDocument<CustomFields.CustomField>($"{nameof(CustomField)}s/{x.Key}").FieldType
+						 let fieldType = LoadDocument<CustomField>($"{nameof(CustomField)}s/{x.Key}").FieldType
 						 let key = $"{nameof(BacklogItem.CustomFields)}_{x.Key.ToUpper()}"
 						 select 
 							fieldType == CustomFieldType.Text

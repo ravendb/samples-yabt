@@ -1,0 +1,19 @@
+@import 'theme';
+
+.mat-dialog-content {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+.mat-dialog-actions {
+	justify-content: flex-end;
+}
+div {
+	padding-bottom: 12px;
+}
+.user-name {
+	font-weight: bold;
+}
+.tenant-name {
+	font-family: monospace;
+}

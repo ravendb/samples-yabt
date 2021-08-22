@@ -9,23 +9,31 @@ using System.Threading.Tasks;
 
 using Microsoft.Extensions.Logging;
 
+using Raven.Yabt.TicketImporter.Configuration;
 using Raven.Yabt.TicketImporter.Helpers;
 using Raven.Yabt.TicketImporter.Infrastructure.DTOs;
 
 namespace Raven.Yabt.TicketImporter.Infrastructure
 {
+	internal interface IGitHubService
+	{
+		IAsyncEnumerable<IssueResponse[]> GetIssuesAsync(string repoName, Func<IssueResponse, bool>? validateIssue = null, CancellationToken cancellationToken = default);
+	}
+	
 	internal class GitHubService : IGitHubService
 	{
 		private readonly HttpClient _httpClient;
+		private readonly GitHubSettings _gitHubSettings;
 		private readonly ILogger<GitHubService> _logger;
 
-		public GitHubService(HttpClient httpClient, ILogger<GitHubService> logger)
+		public GitHubService(HttpClient httpClient, GitHubSettings gitHubSettings, ILogger<GitHubService> logger)
 		{
 			_httpClient = httpClient;
+			_gitHubSettings = gitHubSettings;
 			_logger = logger;
 		}
 
-		public IAsyncEnumerable<IssueResponse[]> GetIssues(string repoName, int maxNumber = int.MaxValue, Func<IssueResponse, bool>? validateIssue = null, CancellationToken cancellationToken = default)
+		public IAsyncEnumerable<IssueResponse[]> GetIssuesAsync(string repoName, Func<IssueResponse, bool>? validateIssue = null, CancellationToken cancellationToken = default)
 		{
 			var builder = new QueryBuilder(DtoConversion.ToDictionary(new IssuesRequest()));
 			var requestString = string.Concat($"repos/{repoName}/issues", builder.ToString());
@@ -36,7 +44,7 @@ namespace Raven.Yabt.TicketImporter.Infrastructure
 				foreach (var issue in issueQuery.Where(i => i.CommentsCount > 0))
 				{
 					issue.Comments = new List<CommentResponse>();
-					await foreach (var comments in GetList<CommentResponse>(issue.CommentsUrl, maxNumber, cancellationToken))
+					await foreach (var comments in GetList<CommentResponse>(issue.CommentsUrl, _gitHubSettings.MaxImportedIssues, cancellationToken))
 					{
 						issue.Comments.AddRange(comments);
 					}
@@ -44,7 +52,7 @@ namespace Raven.Yabt.TicketImporter.Infrastructure
 				return issueQuery.ToArray();
 			}
 
-			return GetList<IssueResponse>(requestString, maxNumber, cancellationToken, IssueProcessing);
+			return GetList<IssueResponse>(requestString, _gitHubSettings.MaxImportedIssues, cancellationToken, IssueProcessing);
 		}
 
 		private async IAsyncEnumerable<T[]> GetList<T>(string? startUrl, int maxNumber, [EnumeratorCancellation] CancellationToken cancellationToken, Func<T[], Task<T[]>>? processing = null)

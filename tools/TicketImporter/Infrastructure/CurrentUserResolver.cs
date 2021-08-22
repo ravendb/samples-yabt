@@ -11,9 +11,9 @@ namespace Raven.Yabt.TicketImporter.Infrastructure
 	/// </summary>
 	internal class CurrentUserResolver : ICurrentUserResolver
 	{
-		private readonly ISeededUsers _seededUser;
+		private readonly ISyncSeededUsersService _seededUser;
 
-		public CurrentUserResolver(ISeededUsers seededUser)
+		public CurrentUserResolver(ISyncSeededUsersService seededUser)
 		{
 			_seededUser = seededUser;
 		}

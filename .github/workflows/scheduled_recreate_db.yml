@@ -1,0 +1,30 @@
+name: Scheduled task to re-create the database
+
+on: 
+  schedule:
+    - cron: "0 0 * * 1"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Curl
+        run: sudo apt-get update; sudo apt-get install curl
+
+      - name: Export certificate to files
+        run: 'echo "$CERTIFICATE_KEY" > crt.key && echo "$CERTIFICATE_PEM" > crt.pem'
+        shell: bash
+        env:
+          CERTIFICATE_KEY: ${{secrets.CERTIFICATE_KEY}}
+          CERTIFICATE_PEM: ${{secrets.CERTIFICATE_PEM}}
+
+      - name: Re-create the DB
+        run: sh ./devops/recreate_database.sh
+        shell: bash
+        env:
+          RavenDB_URL: ${{secrets.RavenDB_URL}}
+          RavenDB_DB_Name: ${{secrets.RavenDB_DB_Name}}

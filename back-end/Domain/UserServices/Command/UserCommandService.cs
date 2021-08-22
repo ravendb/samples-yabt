@@ -3,8 +3,8 @@ using System.Threading.Tasks;
 
 using DomainResults.Common;
 
-using Raven.Client.Documents.Session;
 using Raven.Yabt.Database.Common.References;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.Users;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.Helpers;
@@ -16,7 +16,7 @@ namespace Raven.Yabt.Domain.UserServices.Command
 	{
 		private readonly IEnumerable<IUpdateUserReferencesCommand> _updateUserReferences;
 
-		public UserCommandService(IAsyncDocumentSession dbSession, IEnumerable<IUpdateUserReferencesCommand> updateUserReferences) : base(dbSession)
+		public UserCommandService(IAsyncTenantedDocumentSession dbSession, IEnumerable<IUpdateUserReferencesCommand> updateUserReferences) : base(dbSession)
 		{
 			_updateUserReferences = updateUserReferences;
 		}
@@ -39,7 +39,7 @@ namespace Raven.Yabt.Domain.UserServices.Command
 			if (user == null)
 				return DomainResult.NotFound<UserReference>();
 
-			DbSession.Delete(fullId);
+			DbSession.Delete(user);
 
 			// Delete the ID in all references to this user
 			foreach (var updateUserRef in _updateUserReferences)

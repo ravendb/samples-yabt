@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 using Raven.Client.Documents;
 using Raven.Client.Documents.Linq;
-using Raven.Client.Documents.Session;
+using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.Users;
 using Raven.Yabt.Database.Models.Users.Indexes;
 using Raven.Yabt.Domain.Common;
@@ -20,7 +20,7 @@ namespace Raven.Yabt.Domain.UserServices.Query
 		/// </summary>
 		private readonly Regex _mentionRegex = new Regex(@"(?<=\B\@)([\w\._\-\/]+)", RegexOptions.Compiled);
 		
-		public MentionedUserResolver(IAsyncDocumentSession dbSession) : base(dbSession) {}
+		public MentionedUserResolver(IAsyncTenantedDocumentSession dbSession) : base(dbSession) {}
 
 		/// <summary>
 		/// 	Resolves mentioned users from a text with references

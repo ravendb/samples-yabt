@@ -9,8 +9,8 @@
 
 	<ItemGroup>
 		<PackageReference Include="DomainResult.Common" Version="1.1.1" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
 		<PackageReference Include="RavenDB.Client" Version="5.1.8" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>

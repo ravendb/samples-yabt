@@ -12,8 +12,11 @@ namespace Raven.Yabt.TicketImporter.Configuration
 		public static IServiceCollection AddAndConfigureJobServices(this IServiceCollection services)
 		{
 			return services.AddHostedService<HostedServiceWrapper>()
-							.AddScoped<ISeededUsers, SeededUsers>()
-							.AddScoped<TicketImportService>();
+							.AddScoped<ISyncProjectsService, SyncProjectsService>()
+							.AddScoped<ISyncSeededUsersService, SyncSeededUsersService>()
+							.AddScoped<ISyncGitHubIssuesService, SyncGitHubIssuesService>()
+							.AddScoped<ICustomFieldService, CustomFieldService>()
+							.AddScoped<MainWorker>();
 		}
 	}
 }

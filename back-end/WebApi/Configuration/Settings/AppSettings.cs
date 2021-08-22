@@ -5,12 +5,14 @@
 namespace Raven.Yabt.WebApi.Configuration.Settings
 {
 #nullable disable
-	public record AppSettings : ISettingsWithDatabase
+	public record AppSettings : IAppSettingsWithDatabase
 	{
 		/// <inheritdoc/>
 		public DatabaseSettings Database { get; private set; }
 		
-		/// <inheritdoc/>
+		/// <summary>
+		///		Raven database session settings
+		/// </summary>
 		public DatabaseSessionSettings DatabaseSession { get; private set; }
 
 		/// <summary>

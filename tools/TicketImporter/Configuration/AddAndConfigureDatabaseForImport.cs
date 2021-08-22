@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
 using Raven.Client.Documents;
-using Raven.Yabt.Database;
-using Raven.Yabt.Database.Common.Configuration;
+using Raven.Yabt.Database.Infrastructure;
+using Raven.Yabt.Domain.Infrastructure;
 
 namespace Raven.Yabt.TicketImporter.Configuration
 {
@@ -11,24 +11,16 @@ namespace Raven.Yabt.TicketImporter.Configuration
 		/// <summary>
 		///		Register the document store as single instance, initializing it on first use
 		/// </summary>
-		public static IServiceCollection AddAndConfigureDatabaseForImport(this IServiceCollection services)
+		public static IServiceCollection AddAndConfigureDatabaseSessionForImport(this IServiceCollection services)
 		{
-			services.AddSingleton(x =>
-				{
-					var config = x.GetService<DatabaseSettings>();
-					return SetupDocumentStore.GetDocumentStore(
-						config!,
-						true, 
-						(store) => store.Conventions.MaxNumberOfRequestsPerSession = 20000, 
-						true);
-				});
-			services.AddScoped(c =>
-				{
-					var session = c.GetService<IDocumentStore>()!.OpenAsyncSession();
-						session.Advanced.WaitForIndexesAfterSaveChanges();  // Wait on each change to avoid adding WaitForIndexing() in each test
-					return session;
-				});
-			return services;
+			return services.AddAndConfigureDatabase(store => store.Conventions.MaxNumberOfRequestsPerSession = 40_000)
+			               .AddSingleton(c =>
+			               {
+				               var session = c.GetRequiredService<IDocumentStore>().OpenAsyncSession();
+				                   session.Advanced.WaitForIndexesAfterSaveChanges();  // Wait on each change to avoid adding WaitForIndexing() in each test
+				               return session;
+			               })
+			               .AddAndConfigureDatabaseTenantedSession(x => x.GetRequiredService<ICurrentTenantResolver>().GetCurrentTenantId);
 		}
 	}
 }

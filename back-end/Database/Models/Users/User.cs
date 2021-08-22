@@ -6,7 +6,7 @@ using Raven.Yabt.Database.Common.References;
 
 namespace Raven.Yabt.Database.Models.Users
 {
-	public class User : BaseEntity
+	public class User : BaseTenantedEntity
 	{
 		/// <summary>
 		///		First name. One of the first/last names should be mandatory
