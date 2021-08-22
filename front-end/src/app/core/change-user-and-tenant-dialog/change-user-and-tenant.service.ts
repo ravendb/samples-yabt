@@ -21,7 +21,7 @@ export class ChangeUserAndTenantService {
 			)
 			.subscribe((key: string) => {
 				this.sessionStorageService.setItem(AppConfigService.sessionUserChangedParamName, key);
-				location.reload();
+				location.href = '/';
 			});
 	}
 }
