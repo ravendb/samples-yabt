@@ -1,5 +1,5 @@
 # See the list of tags at https://mcr.microsoft.com/v2/dotnet/sdk/tags/list
-FROM mcr.microsoft.com/dotnet/sdk:5.0.203 as back-end-build
+FROM mcr.microsoft.com/dotnet/sdk:5.0.206 as back-end-build
 
 WORKDIR /build
 COPY . /build
@@ -16,7 +16,7 @@ RUN npm install \
     && node_modules/.bin/ng build --prod
 
 # See the list of tags at https://mcr.microsoft.com/v2/dotnet/aspnet/tags/list
-FROM mcr.microsoft.com/dotnet/aspnet:5.0.6 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:5.0.9 AS runtime
 
 COPY --from=back-end-build /publish /app
 COPY --from=front-end-build /client/dist /app/wwwroot
