@@ -10,7 +10,7 @@
 ![Screenshot](./documentation/screenshot.png)
 
 ## Technologies
-* ASP .NET Core 5.0
+* ASP .NET Core 5
 * RavenDB 5.3
 * Angular 12
 

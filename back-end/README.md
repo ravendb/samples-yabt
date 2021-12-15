@@ -2,7 +2,7 @@
 
 ## Technologies
 
-- ASP .NET Core 5.0
+- ASP .NET Core 5
 - RavenDB 5.3
 
 It has minimum third-party dependencies and heaps of best practices like the [Domain Driven Design](https://en.wikipedia.org/wiki/Domain-driven_design) (DDD), [Command Query Responsibility Segregation](https://martinfowler.com/bliki/CQRS.html) (CQRS), etc.
