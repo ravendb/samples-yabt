@@ -38,12 +38,14 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs
 		/// <summary>
 		///		Converts an object to <see cref="System.Text.Json.JsonElement"/>
 		/// </summary>
-		/// <remarks> See https://stackoverflow.com/a/67003925/968003 </remarks>
+		/// <remarks>
+		///		See https://stackoverflow.com/a/67003925/968003.
+		///		Note that in .NET 6 they've added SerializeToElement() method that would simplify it a lot
+		/// </remarks>
 		private static JsonElement JsonElementFromObject(object value)
 		{
-			var jsonUtf8Bytes = JsonSerializer.SerializeToUtf8Bytes(value, new JsonSerializerOptions { WriteIndented = true });
-			var reader = new Utf8JsonReader(jsonUtf8Bytes);
-			using var doc = JsonDocument.ParseValue(ref reader);
+			var jsonUtf8Bytes = JsonSerializer.SerializeToUtf8Bytes(value, new JsonSerializerOptions());
+			using var doc = JsonDocument.Parse(jsonUtf8Bytes);
 			return doc.RootElement.Clone();
 		}
 	}
