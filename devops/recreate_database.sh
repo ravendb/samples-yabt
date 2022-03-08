@@ -16,9 +16,11 @@ deleteArgs="-X DELETE $RavenDB_URL/admin/databases --data-raw {'HardDelete':true
 
 importArgs="$RavenDB_URL/databases/$RavenDB_DB_Name/smuggler/import -F importOptions={'IncludeExpired':false,'IncludeArtificial':false,'RemoveAnalyzers':false,'OperateOnTypes':'Documents,Indexes,Identities','OperateOnDatabaseRecordTypes':'None'} -F file=@documentation/exported_data.ravendbdump"
 
-for arg in "$deleteArgs" "$createArgs" "$importArgs"
+certificateArgs="-X POST $RavenDB_URL/admin/certificates/edit --data-raw {'Name':'app','Thumbprint':'B219C9650F17AE7252007551263C60B3104A9485','SecurityClearance':'ValidUser','Permissions':{'$RavenDB_DB_Name':'ReadWrite'}}"
+
+for arg in "$deleteArgs" "$createArgs" "$importArgs" "$certificateArgs"
 do
     echo $arg
-	curl --silent --show-error --fail $arg --key ./crt.key --cert ./crt.pem || exit 3
+    curl --silent --show-error --fail $arg --key ./crt.key --cert ./crt.pem || exit 3
     echo ""
 done
