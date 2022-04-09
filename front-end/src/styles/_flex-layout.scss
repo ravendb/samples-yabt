@@ -49,7 +49,7 @@ $flex-gap: 16px;
 		> *:not(:first-child) {
 			margin-left: $flex-gap;
 			@include breakpointXSmall() {
-				margin-left: $flex-gap / 2;
+				margin-left: calc($flex-gap / 2);
 			}
 		}
 	}
