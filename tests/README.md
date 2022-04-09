@@ -1,6 +1,10 @@
 # YABT. Tests
- 
- `Domain.Tests` project covers the domain logic and all the database indexes in various test scenarios applying Behavior Driven Tests (BDT).  
+- `Database.Tests` – tests for the indexes and entities (to a lesser extent).<br>
+  That's mostly used in TDD.
+- `Database.Migration.Tests` – tests for the migration logic.<br>
+  Reduces risks of messing up the production database on deploying critical DB update.
+- `Domain.Tests` – tests for the domain services.<br>
+Integration tests to ensure the expected behaviour around querying/filtering data and persisting changes. Applies Behavior Driven Tests (BDT).  
 
 ## Technology
 * xUnit, NSubstitute
