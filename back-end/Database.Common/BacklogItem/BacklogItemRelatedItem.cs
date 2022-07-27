@@ -1,11 +1,10 @@
 ﻿using Raven.Yabt.Database.Common.References;
 
-namespace Raven.Yabt.Database.Common.BacklogItem
-{
-	public record BacklogItemRelatedItem
-	{
-		public BacklogItemReference RelatedTo { get; set; } = null!;
+namespace Raven.Yabt.Database.Common.BacklogItem;
 
-		public BacklogRelationshipType LinkType { get; set; }
-	}
+public record BacklogItemRelatedItem
+{
+	public BacklogItemReference RelatedTo { get; set; } = null!;
+
+	public BacklogRelationshipType LinkType { get; set; }
 }

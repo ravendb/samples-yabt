@@ -18,130 +18,129 @@ using Raven.Yabt.Domain.UserServices.Query;
 
 using Xunit;
 
-namespace Raven.Yabt.Domain.Tests.BacklogItemServices
+namespace Raven.Yabt.Domain.Tests.BacklogItemServices;
+
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+public class BacklogItem_Crud_Tests : ConfigureTestEnvironment
 {
-	[SuppressMessage("ReSharper", "InconsistentNaming")]
-	public class BacklogItem_Crud_Tests : ConfigureTestEnvironment
+	private readonly IBacklogItemCommandService _commandService;
+	private readonly IBacklogItemByIdQueryService _queryService;
+
+	private readonly UserReference _currentUser = new (){ Id = "1", Name = "H. Simpson", FullName = "Homer Simpson" };
+
+	public BacklogItem_Crud_Tests()
 	{
-		private readonly IBacklogItemCommandService _commandService;
-		private readonly IBacklogItemByIdQueryService _queryService;
+		_commandService = Container.GetService<IBacklogItemCommandService>()!;
+		_queryService = Container.GetService<IBacklogItemByIdQueryService>()!;
+	}
 
-		private readonly UserReference _currentUser = new (){ Id = "1", Name = "H. Simpson", FullName = "Homer Simpson" };
+	protected override void ConfigureIocContainer(IServiceCollection services)
+	{
+		base.ConfigureIocContainer(services);
 
-		public BacklogItem_Crud_Tests()
+		var userResolver = Substitute.For<IUserReferenceResolver>();
+		userResolver.GetCurrentUserReference().Returns(_currentUser);
+		services.AddScoped(_ => userResolver);
+	}
+
+	[Fact]
+	private async Task Added_Bug_Can_Be_Queried_By_Id()
+	{
+		// GIVEN an empty DB
+
+		// WHEN adding a new ticket
+		var ticketRef = await CreateSampleBug();
+
+		// THEN 
+		// The returned ID of the newly created ticket gets returned
+		Assert.NotNull(ticketRef);
+
+		// the ticket appears in the DB
+		var ticket = await _queryService.GetById(ticketRef.Id!);
+		Assert.True(ticket.IsSuccess);
+		Assert.Equal(ticketRef.Name, ticket.Value.Title);
+	}
+
+	[Fact]
+	private async Task Updated_Bug_Properties_Get_Persisted()
+	{
+		// GIVEN a ticket
+		var ticketRef = await CreateSampleBug();
+
+		// WHEN changing the title of the ticket
+		var dto = new BugAddUpdRequest
 		{
-			_commandService = Container.GetService<IBacklogItemCommandService>()!;
-			_queryService = Container.GetService<IBacklogItemByIdQueryService>()!;
-		}
+			Title = "Test Bug (Updated)",
+			Severity = BugSeverity.Low,
+			Priority = BugPriority.P1
+		};
+		var ticketUpdatedRef = await _commandService.Update(ticketRef.Id!, dto);
+		await SaveChanges();
 
-		protected override void ConfigureIocContainer(IServiceCollection services)
-		{
-			base.ConfigureIocContainer(services);
+		// THEN 
+		// The returned ID of the updated ticket hasn't changed
+		Assert.True(ticketUpdatedRef.IsSuccess);
+		Assert.Equal(ticketRef.Id, ticketUpdatedRef.Value.Id);
 
-			var userResolver = Substitute.For<IUserReferenceResolver>();
-				userResolver.GetCurrentUserReference().Returns(_currentUser);
-			services.AddScoped(_ => userResolver);
-		}
+		// the new ticket's properties appear in the DB
+		var ticket = await _queryService.GetById(ticketRef.Id!);
+		Assert.True(ticket.IsSuccess);
+		var bug = ticket.Value as BugGetResponse;
+		Assert.NotNull(bug);
+		Assert.Equal(dto.Title, bug!.Title);
+		Assert.Equal(dto.Severity, bug.Severity);
+		Assert.Equal(dto.Priority, bug.Priority);
+	}
 
-		[Fact]
-		private async Task Added_Bug_Can_Be_Queried_By_Id()
-		{
-			// GIVEN an empty DB
+	[Fact]
+	private async Task Deleted_Bug_Disappears_From_Db()
+	{
+		// GIVEN a ticket
+		var ticketRef = await CreateSampleBug();
 
-			// WHEN adding a new ticket
-			var ticketRef = await CreateSampleBug();
+		// WHEN deleting the ticket
+		var ticketDeletedRef = await _commandService.Delete(ticketRef.Id!);
+		await SaveChanges();
 
-			// THEN 
-			// The returned ID of the newly created ticket gets returned
-			Assert.NotNull(ticketRef);
+		// THEN 
+		// The returned ID of the deleted ticket is correct
+		Assert.True(ticketDeletedRef.IsSuccess);
+		Assert.Equal(ticketRef.Id, ticketDeletedRef.Value.Id);
 
-			// the ticket appears in the DB
-			var ticket = await _queryService.GetById(ticketRef.Id!);
-			Assert.True(ticket.IsSuccess);
-			Assert.Equal(ticketRef.Name, ticket.Value.Title);
-		}
+		// the ticket disappears from the DB
+		var ticket = await _queryService.GetById(ticketRef.Id!);
+		Assert.Equal(DomainOperationStatus.NotFound, ticket.Status);
+	}
 
-		[Fact]
-		private async Task Updated_Bug_Properties_Get_Persisted()
-		{
-			// GIVEN a ticket
-			var ticketRef = await CreateSampleBug();
+	[Fact]
+	private async Task Set_New_Status_Get_Persisted()
+	{
+		// GIVEN a ticket with 'Open' status
+		var (id, _) = await CreateSampleBug();
 
-			// WHEN changing the title of the ticket
-			var dto = new BugAddUpdRequest
-			{
-				Title = "Test Bug (Updated)",
-				Severity = BugSeverity.Low,
-				Priority = BugPriority.P1
-			};
-			var ticketUpdatedRef = await _commandService.Update(ticketRef.Id!, dto);
-			await SaveChanges();
-
-			// THEN 
-			// The returned ID of the updated ticket hasn't changed
-			Assert.True(ticketUpdatedRef.IsSuccess);
-			Assert.Equal(ticketRef.Id, ticketUpdatedRef.Value.Id);
-
-			// the new ticket's properties appear in the DB
-			var ticket = await _queryService.GetById(ticketRef.Id!);
-			Assert.True(ticket.IsSuccess);
-			var bug = ticket.Value as BugGetResponse;
-			Assert.NotNull(bug);
-			Assert.Equal(dto.Title, bug!.Title);
-			Assert.Equal(dto.Severity, bug.Severity);
-			Assert.Equal(dto.Priority, bug.Priority);
-		}
-
-		[Fact]
-		private async Task Deleted_Bug_Disappears_From_Db()
-		{
-			// GIVEN a ticket
-			var ticketRef = await CreateSampleBug();
-
-			// WHEN deleting the ticket
-			var ticketDeletedRef = await _commandService.Delete(ticketRef.Id!);
-			await SaveChanges();
-
-			// THEN 
-			// The returned ID of the deleted ticket is correct
-			Assert.True(ticketDeletedRef.IsSuccess);
-			Assert.Equal(ticketRef.Id, ticketDeletedRef.Value.Id);
-
-			// the ticket disappears from the DB
-			var ticket = await _queryService.GetById(ticketRef.Id!);
-			Assert.Equal(DomainOperationStatus.NotFound, ticket.Status);
-		}
-
-		[Fact]
-		private async Task Set_New_Status_Get_Persisted()
-		{
-			// GIVEN a ticket with 'Open' status
-			var (id, _) = await CreateSampleBug();
-
-			// WHEN changing the status to 'Closed'
-			await _commandService.SetState(id!, BacklogItemState.Closed);
-			await SaveChanges();
+		// WHEN changing the status to 'Closed'
+		await _commandService.SetState(id!, BacklogItemState.Closed);
+		await SaveChanges();
 			
-			// THEN 
-			// The new state gets persisted
-			var (ticket, _) = await _queryService.GetById(id!);
-			Assert.Equal(BacklogItemState.Closed, ticket.State);
-		}
+		// THEN 
+		// The new state gets persisted
+		var (ticket, _) = await _queryService.GetById(id!);
+		Assert.Equal(BacklogItemState.Closed, ticket.State);
+	}
 
-		private async Task<BacklogItemReference> CreateSampleBug()
+	private async Task<BacklogItemReference> CreateSampleBug()
+	{
+		var dto = new BugAddUpdRequest
 		{
-			var dto = new BugAddUpdRequest
-			{
-				Title = "Test Bug",
-				Severity = BugSeverity.Critical,
-				Priority = BugPriority.P1
-			};
-			var ticketAddedRef = await _commandService.Create(dto);
-			if (!ticketAddedRef.IsSuccess)
-				throw new Exception("Failed to create a backlog item");
-			await SaveChanges();
+			Title = "Test Bug",
+			Severity = BugSeverity.Critical,
+			Priority = BugPriority.P1
+		};
+		var ticketAddedRef = await _commandService.Create(dto);
+		if (!ticketAddedRef.IsSuccess)
+			throw new Exception("Failed to create a backlog item");
+		await SaveChanges();
 
-			return ticketAddedRef.Value;
-		}
+		return ticketAddedRef.Value;
 	}
 }

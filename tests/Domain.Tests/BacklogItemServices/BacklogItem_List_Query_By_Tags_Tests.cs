@@ -19,89 +19,88 @@ using Raven.Yabt.Domain.UserServices.Query;
 using Xunit;
 // ReSharper disable UnusedVariable
 
-namespace Raven.Yabt.Domain.Tests.BacklogItemServices
+namespace Raven.Yabt.Domain.Tests.BacklogItemServices;
+
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+public class BacklogItem_List_Query_By_Tags_Tests : ConfigureTestEnvironment
 {
-	[SuppressMessage("ReSharper", "InconsistentNaming")]
-	public class BacklogItem_List_Query_By_Tags_Tests : ConfigureTestEnvironment
+	private readonly IBacklogItemCommandService _commandService;
+	private readonly IBacklogItemListQueryService _queryService;
+
+	private readonly UserReference _currentUser = new UserReference { Id = "1-A", Name = "H. Simpson", FullName = "Homer Simpson" };
+
+	public BacklogItem_List_Query_By_Tags_Tests()
 	{
-		private readonly IBacklogItemCommandService _commandService;
-		private readonly IBacklogItemListQueryService _queryService;
+		_commandService = Container.GetService<IBacklogItemCommandService>()!;
+		_queryService = Container.GetService<IBacklogItemListQueryService>()!;
+	}
 
-		private readonly UserReference _currentUser = new UserReference { Id = "1-A", Name = "H. Simpson", FullName = "Homer Simpson" };
+	protected override void ConfigureIocContainer(IServiceCollection services)
+	{
+		base.ConfigureIocContainer(services);
 
-		public BacklogItem_List_Query_By_Tags_Tests()
-		{
-			_commandService = Container.GetService<IBacklogItemCommandService>()!;
-			_queryService = Container.GetService<IBacklogItemListQueryService>()!;
-		}
+		var currentUserResolver = Substitute.For<ICurrentUserResolver>();
+		currentUserResolver.GetCurrentUserId().Returns(c => _currentUser.Id);
+		services.AddScoped(x => currentUserResolver);
+		var userResolver = Substitute.For<IUserReferenceResolver>();
+		userResolver.GetCurrentUserReference().Returns(_currentUser);
+		services.AddScoped(x => userResolver);
+	}
 
-		protected override void ConfigureIocContainer(IServiceCollection services)
-		{
-			base.ConfigureIocContainer(services);
+	[Fact]
+	private async Task Querying_By_Tag_Works()
+	{
+		// GIVEN 2 backlog items
+		var itemRef1 = await CreateBacklogItem("tag1");
+		var itemRef2 = await CreateBacklogItem("tag1", "tag2");
 
-			var currentUserResolver = Substitute.For<ICurrentUserResolver>();
-				currentUserResolver.GetCurrentUserId().Returns(c => _currentUser.Id);
-			services.AddScoped(x => currentUserResolver);
-			var userResolver = Substitute.For<IUserReferenceResolver>();
-				userResolver.GetCurrentUserReference().Returns(_currentUser);
-			services.AddScoped(x => userResolver);
-		}
+		// WHEN querying items by 'tag2'
+		var items = await _queryService.GetList(
+			new BacklogItemListGetRequest
+			{
+				Tags = new [] { "tag2" }
+			});
 
-		[Fact]
-		private async Task Querying_By_Tag_Works()
-		{
-			// GIVEN 2 backlog items
-			var itemRef1 = await CreateBacklogItem("tag1");
-			var itemRef2 = await CreateBacklogItem("tag1", "tag2");
+		// THEN 
+		// the returned only 1 record
+		Assert.Equal(1, items.TotalRecords);
+		// with correct ID
+		Assert.Equal(itemRef2.Id, items.Entries.First().Id);
+	}
 
-			// WHEN querying items by 'tag2'
-			var items = await _queryService.GetList(
-						new BacklogItemListGetRequest
-						{
-							Tags = new [] { "tag2" }
-						});
+	[Fact]
+	private async Task Querying_By_2Tags_Works()
+	{
+		// GIVEN 4 backlog items
+		var itemRef1 = await CreateBacklogItem("tag1");
+		var itemRef2 = await CreateBacklogItem("tag2");
+		var itemRef3 = await CreateBacklogItem("tag1", "tag2");
+		var itemRef4 = await CreateBacklogItem("tag2", "tag1", "tag3");
 
-			// THEN 
-			// the returned only 1 record
-			Assert.Equal(1, items.TotalRecords);
-			// with correct ID
-			Assert.Equal(itemRef2.Id, items.Entries.First().Id);
-		}
+		// WHEN querying items by 'tag1' and 'tag2'
+		var items = await _queryService.GetList(
+			new BacklogItemListGetRequest
+			{
+				Tags = new [] { "tag1", "tag2" },
+				OrderBy = BacklogItemsOrderColumns.Number,
+				OrderDirection = OrderDirections.Asc
+			});
 
-		[Fact]
-		private async Task Querying_By_2Tags_Works()
-		{
-			// GIVEN 4 backlog items
-			var itemRef1 = await CreateBacklogItem("tag1");
-			var itemRef2 = await CreateBacklogItem("tag2");
-			var itemRef3 = await CreateBacklogItem("tag1", "tag2");
-			var itemRef4 = await CreateBacklogItem("tag2", "tag1", "tag3");
+		// THEN 
+		// the returned only 2 record
+		Assert.Equal(2, items.TotalRecords);
+		// with correct ID
+		Assert.Equal(new [] { itemRef3.Id, itemRef4.Id }, items.Entries.Select(e => e.Id));
+	}
 
-			// WHEN querying items by 'tag1' and 'tag2'
-			var items = await _queryService.GetList(
-						new BacklogItemListGetRequest
-						{
-							Tags = new [] { "tag1", "tag2" },
-							OrderBy = BacklogItemsOrderColumns.Number,
-							OrderDirection = OrderDirections.Asc
-						});
+	private async Task<BacklogItemReference> CreateBacklogItem(params string[] tags)
+	{
+		var dto = new BugAddUpdRequest { Title = "Test_" + GetRandomString(), Tags = tags };
+		var addedRef = await _commandService.Create(dto);
+		if (!addedRef.IsSuccess)
+			throw new Exception("Failed to create a backlog item");
+		await SaveChanges();
 
-			// THEN 
-			// the returned only 2 record
-			Assert.Equal(2, items.TotalRecords);
-			// with correct ID
-			Assert.Equal(new [] { itemRef3.Id, itemRef4.Id }, items.Entries.Select(e => e.Id));
-		}
-
-		private async Task<BacklogItemReference> CreateBacklogItem(params string[] tags)
-		{
-			var dto = new BugAddUpdRequest { Title = "Test_" + GetRandomString(), Tags = tags };
-			var addedRef = await _commandService.Create(dto);
-			if (!addedRef.IsSuccess)
-				throw new Exception("Failed to create a backlog item");
-			await SaveChanges();
-
-			return addedRef.Value;
-		}
+		return addedRef.Value;
 	}
 }

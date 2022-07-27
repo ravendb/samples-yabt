@@ -1,9 +1,8 @@
-namespace Raven.Yabt.Domain.CustomFieldServices.Query.DTOs
+namespace Raven.Yabt.Domain.CustomFieldServices.Query.DTOs;
+
+public enum CustomFieldOrderColumns
 {
-	public enum CustomFieldOrderColumns
-	{
-		Default,
-		Name,
-		Type
-	}
+	Default,
+	Name,
+	Type
 }

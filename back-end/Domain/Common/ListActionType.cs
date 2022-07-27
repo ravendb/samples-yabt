@@ -1,8 +1,7 @@
-namespace Raven.Yabt.Domain.Common
+namespace Raven.Yabt.Domain.Common;
+
+public enum ListActionType
 {
-	public enum ListActionType
-	{
-		Add,
-		Remove
-	}
+	Add,
+	Remove
 }

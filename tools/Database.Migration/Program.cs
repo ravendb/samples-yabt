@@ -2,14 +2,13 @@
 
 using Microsoft.Extensions.Hosting;
 
-namespace Raven.Yabt.Database.Migration
+namespace Raven.Yabt.Database.Migration;
+
+class Program
 {
-	class Program
+	public static Task Main(string[] args)
 	{
-		public static Task Main(string[] args)
-		{
-			return Startup.CreateHostBuilder(args)
-			              .RunConsoleAsync();
-		}		
-	}
+		return Startup.CreateHostBuilder(args)
+		              .RunConsoleAsync();
+	}		
 }

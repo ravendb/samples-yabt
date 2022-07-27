@@ -1,10 +1,9 @@
-﻿namespace Raven.Yabt.Domain.UserServices.Query.DTOs
+﻿namespace Raven.Yabt.Domain.UserServices.Query.DTOs;
+
+public enum UsersOrderColumns
 {
-	public enum UsersOrderColumns
-	{
-		Default,
-		Name,
-		Email,
-		RegistrationDate
-	}
+	Default,
+	Name,
+	Email,
+	RegistrationDate
 }

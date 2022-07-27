@@ -4,10 +4,9 @@ using DomainResults.Common;
 
 using Raven.Yabt.Domain.CustomFieldServices.Query.DTOs;
 
-namespace Raven.Yabt.Domain.CustomFieldServices.Query
+namespace Raven.Yabt.Domain.CustomFieldServices.Query;
+
+public interface ICustomFieldByIdQueryService
 {
-	public interface ICustomFieldByIdQueryService
-	{
-		Task<IDomainResult<CustomFieldItemResponse>> GetById(string id);
-	}
+	Task<IDomainResult<CustomFieldItemResponse>> GetById(string id);
 }

@@ -1,11 +1,10 @@
 ﻿using Raven.Yabt.Database.Common.BacklogItem;
 
-namespace Raven.Yabt.Database.Models.BacklogItems
+namespace Raven.Yabt.Database.Models.BacklogItems;
+
+public class BacklogItemTask : BacklogItem
 {
-	public class BacklogItemTask : BacklogItem
-	{
-		public override BacklogItemType Type { get; protected set; } = BacklogItemType.Task;
+	public override BacklogItemType Type { get; protected set; } = BacklogItemType.Task;
 		
-		public string? Description { get; set; }
-	}
+	public string? Description { get; set; }
 }

@@ -1,7 +1,6 @@
-﻿namespace Raven.Yabt.Database.Models.Users.Indexes
+﻿namespace Raven.Yabt.Database.Models.Users.Indexes;
+
+public class UserIndexedForList : User, ISearchable
 {
-	public class UserIndexedForList : User, ISearchable
-	{
-		public string Search { get; set; } = null!;
-	}
+	public string Search { get; set; } = null!;
 }

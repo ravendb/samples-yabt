@@ -7,36 +7,35 @@ using Raven.Client.Documents.Linq;
 using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models;
 
-namespace Raven.Yabt.Domain.Common
+namespace Raven.Yabt.Domain.Common;
+
+public abstract class BaseQueryService<TEntity> : BaseService<TEntity> where TEntity : IEntity
 {
-	public abstract class BaseQueryService<TEntity> : BaseService<TEntity> where TEntity : IEntity
+	protected bool IsSearchResult;
+
+	protected BaseQueryService(IAsyncTenantedDocumentSession dbSession) : base(dbSession) { }
+
+	protected virtual IRavenQueryable<TIndexModel> ApplySearch<TIndexModel>(IRavenQueryable<TIndexModel> query, string? search) where TIndexModel: ISearchable
 	{
-		protected bool IsSearchResult;
+		return ApplySearch(query, s => s.Search, search);
+	}
 
-		protected BaseQueryService(IAsyncTenantedDocumentSession dbSession) : base(dbSession) { }
+	protected IRavenQueryable<T> ApplySearch<T>(IRavenQueryable<T> query, Expression<Func<T, object?>> fieldExpression, string? search)
+	{
+		if (string.IsNullOrWhiteSpace(search))
+			return query;
 
-		protected virtual IRavenQueryable<TIndexModel> ApplySearch<TIndexModel>(IRavenQueryable<TIndexModel> query, string? search) where TIndexModel: ISearchable
-		{
-			return ApplySearch(query, s => s.Search, search);
-		}
+		search = search.Trim();
 
-		protected IRavenQueryable<T> ApplySearch<T>(IRavenQueryable<T> query, Expression<Func<T, object?>> fieldExpression, string? search)
-		{
-			if (string.IsNullOrWhiteSpace(search))
-				return query;
+		// Generate a search string for just beginning of the words.
+		// E.g. "David Smith-Lowe" becomes "David* Smith-Lowe*"
+		string searchWildCards = Regex.Replace(search + " ", @"[\s,;:""{}[]|\\/`~!@#$%^&*()_=\+]+", "* ").Trim();
 
-			search = search.Trim();
+		IsSearchResult = true;
 
-			// Generate a search string for just beginning of the words.
-			// E.g. "David Smith-Lowe" becomes "David* Smith-Lowe*"
-			string searchWildCards = Regex.Replace(search + " ", @"[\s,;:""{}[]|\\/`~!@#$%^&*()_=\+]+", "* ").Trim();
-
-			IsSearchResult = true;
-
-			// boost exact matches more so they are displayed first
-			return query
-						.Search(fieldExpression, search.ToLower(), boost: 1000M)
-						.Search(fieldExpression, searchWildCards.ToLower(), boost: 800M);
-		}
+		// boost exact matches more so they are displayed first
+		return query
+		       .Search(fieldExpression, search.ToLower(), boost: 1000M)
+		       .Search(fieldExpression, searchWildCards.ToLower(), boost: 800M);
 	}
 }

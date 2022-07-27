@@ -5,11 +5,10 @@ using DomainResults.Common;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.UserServices.Query.DTOs;
 
-namespace Raven.Yabt.Domain.UserServices.Query
+namespace Raven.Yabt.Domain.UserServices.Query;
+
+public interface IUserQueryService
 {
-	public interface IUserQueryService
-	{
-		Task<IDomainResult<UserGetByIdResponse>> GetById(string id);
-		Task<ListResponse<UserListGetResponse>> GetList(UserListGetRequest dto);
-	}
+	Task<IDomainResult<UserGetByIdResponse>> GetById(string id);
+	Task<ListResponse<UserListGetResponse>> GetList(UserListGetRequest dto);
 }

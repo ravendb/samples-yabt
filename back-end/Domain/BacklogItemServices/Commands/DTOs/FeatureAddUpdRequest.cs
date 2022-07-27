@@ -1,7 +1,6 @@
-﻿namespace Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs
+﻿namespace Raven.Yabt.Domain.BacklogItemServices.Commands.DTOs;
+
+public record FeatureAddUpdRequest : BacklogItemAddUpdRequestBase
 {
-	public record FeatureAddUpdRequest : BacklogItemAddUpdRequestBase
-	{
-		public string? Description { get; set; }
-	}
+	public string? Description { get; set; }
 }

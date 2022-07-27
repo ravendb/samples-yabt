@@ -1,7 +1,6 @@
-namespace Raven.Yabt.WebApi.Controllers.DTOs
+namespace Raven.Yabt.WebApi.Controllers.DTOs;
+
+public class BacklogItemCommentAddUpdateRequest
 {
-	public class BacklogItemCommentAddUpdateRequest
-	{
-		public string Message { get; set; } = null!;
-	}
+	public string Message { get; set; } = null!;
 }

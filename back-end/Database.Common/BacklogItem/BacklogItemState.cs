@@ -1,10 +1,9 @@
-namespace Raven.Yabt.Database.Common.BacklogItem
+namespace Raven.Yabt.Database.Common.BacklogItem;
+
+public enum BacklogItemState
 {
-	public enum BacklogItemState
-	{
-		New,
-		InProgress,
-		Testing,
-		Closed
-	}
+	New,
+	InProgress,
+	Testing,
+	Closed
 }

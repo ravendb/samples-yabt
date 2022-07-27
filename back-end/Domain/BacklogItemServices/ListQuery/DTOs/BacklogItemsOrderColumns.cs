@@ -1,14 +1,13 @@
-﻿namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs
+﻿namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs;
+
+public enum BacklogItemsOrderColumns
 {
-	public enum BacklogItemsOrderColumns
-	{
-		Default,
-		Number,
-		Title,
-		Assignee,
-		Created,
-		Updated,
-		TimestampModifiedByCurrentUser,
-		TimestampMentionsOfCurrentUser,
-	}
+	Default,
+	Number,
+	Title,
+	Assignee,
+	Created,
+	Updated,
+	TimestampModifiedByCurrentUser,
+	TimestampMentionsOfCurrentUser,
 }
