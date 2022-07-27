@@ -1,7 +1,6 @@
-﻿namespace Raven.Yabt.Domain.Infrastructure
+﻿namespace Raven.Yabt.Domain.Infrastructure;
+
+public interface ICurrentUserResolver
 {
-	public interface ICurrentUserResolver
-	{
-		string GetCurrentUserId();
-	}
+	string GetCurrentUserId();
 }

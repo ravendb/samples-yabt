@@ -10,21 +10,21 @@ using Raven.Yabt.Database.Models.BacklogItems.Indexes;
 using Raven.Yabt.Domain.Common;
 using Raven.Yabt.Domain.UserServices.Command;
 
-namespace Raven.Yabt.Domain.BacklogItemServices.Commands
+namespace Raven.Yabt.Domain.BacklogItemServices.Commands;
+
+internal class UpdateUserReferencesCommand : BaseDbService, IUpdateUserReferencesCommand
 {
-	internal class UpdateUserReferencesCommand : BaseDbService, IUpdateUserReferencesCommand
+	public UpdateUserReferencesCommand(IAsyncTenantedDocumentSession session): base(session) {}
+
+	public void ClearUserId(string userId)
 	{
-		public UpdateUserReferencesCommand(IAsyncTenantedDocumentSession session): base(session) {}
+		if (string.IsNullOrEmpty(userId))
+			return;
 
-		public void ClearUserId(string userId)
-		{
-			if (string.IsNullOrEmpty(userId))
-				return;
+		var sanitisedId = GetSanitisedId(userId);
 
-			var sanitisedId = GetSanitisedId(userId);
-
-			// Form a patch query
-			var queryString= $@"FROM INDEX '{new BacklogItems_ForList().IndexName}' AS i
+		// Form a patch query
+		var queryString= $@"FROM INDEX '{new BacklogItems_ForList().IndexName}' AS i
 								WHERE i.{nameof(BacklogItemIndexedForList.ModifiedBy)}_{sanitisedId} != null OR i.{nameof(BacklogItemIndexedForList.AssignedUserId)} == $userId
 								UPDATE
 								{{
@@ -41,28 +41,28 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 																				modif.{nameof(BacklogItemHistoryRecord.ActionedBy)}.{nameof(UserReference.Id)} = null;
 																		}});
 								}}";
-			var query = new IndexQuery
+		var query = new IndexQuery
+			{
+				Query = queryString,
+				QueryParameters = new Parameters
 				{
-					Query = queryString,
-					QueryParameters = new Parameters
-					{
-						{ "userId", userId.ToUpper() }
-					}
-				};
+					{ "userId", userId.ToUpper() }
+				}
+			};
 
-			// Add the patch to a collection
-			DbSession.AddDeferredPatchQuery(query);
-		}
+		// Add the patch to a collection
+		DbSession.AddDeferredPatchQuery(query);
+	}
 
-		public void UpdateReferences(UserReference newUserReference)
-		{
-			if (string.IsNullOrEmpty(newUserReference.Id))
-				return;
+	public void UpdateReferences(UserReference newUserReference)
+	{
+		if (string.IsNullOrEmpty(newUserReference.Id))
+			return;
 			
-			var sanitisedId = GetSanitisedId(newUserReference.Id);
+		var sanitisedId = GetSanitisedId(newUserReference.Id);
 
-			// Form a patch query
-			var queryString = $@"FROM INDEX '{new BacklogItems_ForList().IndexName}' AS i
+		// Form a patch query
+		var queryString = $@"FROM INDEX '{new BacklogItems_ForList().IndexName}' AS i
 								WHERE i.{nameof(BacklogItemIndexedForList.ModifiedBy)}_{sanitisedId} != null OR i.{nameof(BacklogItemIndexedForList.AssignedUserId)} == $userId
 								UPDATE
 								{{
@@ -79,23 +79,22 @@ namespace Raven.Yabt.Domain.BacklogItemServices.Commands
 																				modif.{nameof(BacklogItemHistoryRecord.ActionedBy)} = $userRef;
 																		}});
 								}}";
-			var query = new IndexQuery
-				{
-					Query = queryString,
-					QueryParameters = new Parameters
-					{
-						{ "userId", GetSanitisedId(newUserReference.Id).ToUpper() },
-						{ "userRef", newUserReference },
-					}
-				};
+		var query = new IndexQuery
+		{
+			Query = queryString,
+			QueryParameters = new Parameters
+			{
+				{ "userId", GetSanitisedId(newUserReference.Id).ToUpper() },
+				{ "userRef", newUserReference },
+			}
+		};
 
-			// Add the patch to a collection
-			DbSession.AddDeferredPatchQuery(query);
-		}
-
-		/// <summary>
-		///		Replace invalid characters with empty strings. Can't pass it as a parameter, as string parameters get wrapped in '\"' when inserted
-		/// </summary>
-		private static string GetSanitisedId(string id) => Regex.Replace(id, @"[^\w\.@-]", "");
+		// Add the patch to a collection
+		DbSession.AddDeferredPatchQuery(query);
 	}
+
+	/// <summary>
+	///		Replace invalid characters with empty strings. Can't pass it as a parameter, as string parameters get wrapped in '\"' when inserted
+	/// </summary>
+	private static string GetSanitisedId(string id) => Regex.Replace(id, @"[^\w\.@-]", "");
 }

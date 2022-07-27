@@ -1,7 +1,6 @@
-﻿namespace Raven.Yabt.Database.Common.BacklogItem
+﻿namespace Raven.Yabt.Database.Common.BacklogItem;
+
+public enum BugPriority
 {
-	public enum BugPriority
-	{
-		P1, P2, P3, P4
-	}
+	P1, P2, P3, P4
 }

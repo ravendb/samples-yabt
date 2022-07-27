@@ -1,9 +1,6 @@
-using Raven.Yabt.Database.Common;
+namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs;
 
-namespace Raven.Yabt.Domain.BacklogItemServices.ListQuery.DTOs
+public class BacklogItemTagListGetRequest
 {
-	public class BacklogItemTagListGetRequest
-	{
-		public string? Search { get; set; }
-	}
+	public string? Search { get; set; }
 }

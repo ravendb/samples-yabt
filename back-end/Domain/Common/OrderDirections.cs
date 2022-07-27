@@ -1,8 +1,7 @@
-﻿namespace Raven.Yabt.Domain.Common
+﻿namespace Raven.Yabt.Domain.Common;
+
+public enum OrderDirections
 {
-	public enum OrderDirections
-	{
-		Asc,
-		Desc
-	}
+	Asc,
+	Desc
 }

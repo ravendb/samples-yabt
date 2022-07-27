@@ -1,5 +1,4 @@
-﻿using Raven.Yabt.Database.Common;
-using Raven.Yabt.Database.Common.BacklogItem;
+﻿using Raven.Yabt.Database.Common.BacklogItem;
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Domain.Common;
 

@@ -1,7 +1,6 @@
-﻿namespace Raven.Yabt.Domain.Infrastructure
+﻿namespace Raven.Yabt.Domain.Infrastructure;
+
+public interface ICurrentTenantResolver
 {
-	public interface ICurrentTenantResolver
-	{
-		string GetCurrentTenantId();
-	}
+	string GetCurrentTenantId();
 }

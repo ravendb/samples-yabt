@@ -1,7 +1,6 @@
-namespace Raven.Yabt.Database.Models
+namespace Raven.Yabt.Database.Models;
+
+public class BaseTenantedEntity : BaseEntity, ITenantedEntity
 {
-	public class BaseTenantedEntity : BaseEntity, ITenantedEntity
-	{
-		public string TenantId { get; init; } = null!;
-	}
+	public string TenantId { get; init; } = null!;
 }

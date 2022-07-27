@@ -1,7 +1,6 @@
-namespace Raven.Yabt.Domain.CustomFieldServices.Command
+namespace Raven.Yabt.Domain.CustomFieldServices.Command;
+
+public interface IRemoveCustomFieldReferencesCommand
 {
-	public interface IRemoveCustomFieldReferencesCommand
-	{
-		void ClearCustomFieldId(string customFieldId);
-	}
+	void ClearCustomFieldId(string customFieldId);
 }

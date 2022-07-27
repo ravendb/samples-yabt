@@ -1,9 +1,8 @@
 ﻿using Raven.Yabt.Database.Common;
 
-namespace Raven.Yabt.Domain.CustomFieldServices.Command.DTOs
+namespace Raven.Yabt.Domain.CustomFieldServices.Command.DTOs;
+
+public class CustomFieldAddRequest : CustomFieldUpdateRequest
 {
-	public class CustomFieldAddRequest : CustomFieldUpdateRequest
-	{
-		public CustomFieldType FieldType { get; set; }
-	}
+	public CustomFieldType FieldType { get; set; }
 }

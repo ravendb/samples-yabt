@@ -1,10 +1,9 @@
-﻿namespace Raven.Yabt.Database.Common.BacklogItem
+﻿namespace Raven.Yabt.Database.Common.BacklogItem;
+
+public enum BugSeverity
 {
-	public enum BugSeverity
-	{
-		Critical,
-		High,
-		Medium,
-		Low
-	}
+	Critical,
+	High,
+	Medium,
+	Low
 }

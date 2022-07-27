@@ -13,13 +13,13 @@ jobs:
       - name: Setup .NET Core
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 5.0.404
+          dotnet-version: 6.0.302
           
       - name: Build
         run: dotnet build tools/Database.Migration/Database.Migration.csproj --configuration Release
 
       - name: Run migration
-        run: dotnet tools/Database.Migration/bin/Release/net5.0/Database.Migration.dll
+        run: dotnet tools/Database.Migration/bin/Release/net6.0/Database.Migration.dll
         env:
           Database__RavenDbUrls__0: ${{secrets.RavenDB_URL}}
           Database__DbName: ${{secrets.RavenDB_DB_Name}}

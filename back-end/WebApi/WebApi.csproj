@@ -8,10 +8,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="DomainResult" Version="2.0.0" />
-	  <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.19.0" />
-	  <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.13" />
-	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+	  <PackageReference Include="DomainResult" Version="3.0.0" />
+	  <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
+	  <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.7" />
+	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
 	</ItemGroup>
 
 	<ItemGroup>

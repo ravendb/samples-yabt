@@ -2,73 +2,72 @@
 using System.Net.Http;
 using System.Text.RegularExpressions;
 
-namespace Raven.Yabt.TicketImporter.Infrastructure.DTOs
+namespace Raven.Yabt.TicketImporter.Infrastructure.DTOs;
+
+/// <summary>
+///     Resolves "link" header
+/// </summary>
+/// <remarks>
+///     Based on https://gist.github.com/pimbrouwers/8f78e318ccfefff18f518a483997be29
+/// </remarks>
+internal class LinkHeader
 {
-	/// <summary>
-	///     Resolves "link" header
-	/// </summary>
-	/// <remarks>
-	///     Based on https://gist.github.com/pimbrouwers/8f78e318ccfefff18f518a483997be29
-	/// </remarks>
-	internal class LinkHeader
+	public string? FirstLink { get; private set; }
+	public string? PrevLink { get; private set; }
+	public string? NextLink { get; private set; }
+	public string? LastLink { get; private set; }
+
+	public static LinkHeader? LinksFromHeader(HttpResponseMessage? httpResponse)
 	{
-		public string? FirstLink { get; private set; }
-		public string? PrevLink { get; private set; }
-		public string? NextLink { get; private set; }
-		public string? LastLink { get; private set; }
-
-		public static LinkHeader? LinksFromHeader(HttpResponseMessage? httpResponse)
+		if (httpResponse != null && httpResponse.Headers.TryGetValues("link", out var values))
 		{
-			if (httpResponse != null && httpResponse.Headers.TryGetValues("link", out var values))
-			{
-				return LinksFromHeader(values.FirstOrDefault());
-			}
-			return null;
+			return LinksFromHeader(values.FirstOrDefault());
 		}
+		return null;
+	}
 
-		public static LinkHeader? LinksFromHeader(string? linkHeaderStr)
+	public static LinkHeader? LinksFromHeader(string? linkHeaderStr)
+	{
+		LinkHeader? linkHeader = null;
+
+		if (!string.IsNullOrWhiteSpace(linkHeaderStr))
 		{
-			LinkHeader? linkHeader = null;
+			string[] linkStrings = linkHeaderStr.Split(',');
 
-			if (!string.IsNullOrWhiteSpace(linkHeaderStr))
+			if (linkStrings.Any())
 			{
-				string[] linkStrings = linkHeaderStr.Split(',');
+				linkHeader = new LinkHeader();
 
-				if (linkStrings.Any())
+				foreach (string linkString in linkStrings)
 				{
-					linkHeader = new LinkHeader();
+					var relMatch = Regex.Match(linkString, "(?<=rel=\").+?(?=\")", RegexOptions.IgnoreCase);
+					var linkMatch = Regex.Match(linkString, "(?<=<).+?(?=>)", RegexOptions.IgnoreCase);
 
-					foreach (string linkString in linkStrings)
+					if (relMatch.Success && linkMatch.Success)
 					{
-						var relMatch = Regex.Match(linkString, "(?<=rel=\").+?(?=\")", RegexOptions.IgnoreCase);
-						var linkMatch = Regex.Match(linkString, "(?<=<).+?(?=>)", RegexOptions.IgnoreCase);
+						string rel = relMatch.Value.ToUpper();
+						string link = linkMatch.Value;
 
-						if (relMatch.Success && linkMatch.Success)
+						switch (rel)
 						{
-							string rel = relMatch.Value.ToUpper();
-							string link = linkMatch.Value;
-
-							switch (rel)
-							{
-								case "FIRST":
-									linkHeader.FirstLink = link;
-									break;
-								case "PREV":
-									linkHeader.PrevLink = link;
-									break;
-								case "NEXT":
-									linkHeader.NextLink = link;
-									break;
-								case "LAST":
-									linkHeader.LastLink = link;
-									break;
-							}
+							case "FIRST":
+								linkHeader.FirstLink = link;
+								break;
+							case "PREV":
+								linkHeader.PrevLink = link;
+								break;
+							case "NEXT":
+								linkHeader.NextLink = link;
+								break;
+							case "LAST":
+								linkHeader.LastLink = link;
+								break;
 						}
 					}
 				}
 			}
-
-			return linkHeader;
 		}
+
+		return linkHeader;
 	}
 }

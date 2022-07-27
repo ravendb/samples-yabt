@@ -1,7 +1,6 @@
-﻿namespace Raven.Yabt.Database.Models.Users.Indexes
+﻿namespace Raven.Yabt.Database.Models.Users.Indexes;
+
+public class MentionedUsersIndexed : User
 {
-	public class MentionedUsersIndexed : User
-	{
-		public string? MentionedName { get; set; }
-	}
+	public string? MentionedName { get; set; }
 }

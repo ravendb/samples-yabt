@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Raven.Yabt.Domain.UserServices.Query
+namespace Raven.Yabt.Domain.UserServices.Query;
+
+public interface IMentionedUserResolver
 {
-	public interface IMentionedUserResolver
-	{
-		Task<IDictionary<string, string>> GetMentionedUsers(string text);
-	}
+	Task<IDictionary<string, string>> GetMentionedUsers(string text);
 }

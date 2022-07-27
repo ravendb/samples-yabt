@@ -1,14 +1,13 @@
 using System.Linq;
 
-namespace Raven.Yabt.Domain.Common
+namespace Raven.Yabt.Domain.Common;
+
+public class ListResponseWithSanitisedIds
 {
-	public class ListResponseWithSanitisedIds
+	private string? _id;
+	public string? Id
 	{
-		private string? _id;
-		public string? Id
-		{
-			get => _id;
-			set => _id = value?.Split('/').Last();
-		}
+		get => _id;
+		set => _id = value?.Split('/').Last();
 	}
 }

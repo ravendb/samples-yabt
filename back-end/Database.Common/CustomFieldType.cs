@@ -1,11 +1,10 @@
-﻿namespace Raven.Yabt.Database.Common
+﻿namespace Raven.Yabt.Database.Common;
+
+public enum CustomFieldType
 {
-	public enum CustomFieldType
-	{
-		Text,
-		Date,
-		Checkbox,
-		Numeric,
-		Url
-	}
+	Text,
+	Date,
+	Checkbox,
+	Numeric,
+	Url
 }

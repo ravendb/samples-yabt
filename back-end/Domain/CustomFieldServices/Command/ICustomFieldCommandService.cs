@@ -4,14 +4,13 @@ using DomainResults.Common;
 
 using Raven.Yabt.Domain.CustomFieldServices.Command.DTOs;
 
-namespace Raven.Yabt.Domain.CustomFieldServices.Command
+namespace Raven.Yabt.Domain.CustomFieldServices.Command;
+
+public interface ICustomFieldCommandService
 {
-	public interface ICustomFieldCommandService
-	{
-		Task<IDomainResult<CustomFieldReferenceDto>> Create(CustomFieldAddRequest dto);
+	Task<IDomainResult<CustomFieldReferenceDto>> Create(CustomFieldAddRequest dto);
 
-		Task<IDomainResult<CustomFieldReferenceDto>> Update(string id, CustomFieldUpdateRequest dto);
+	Task<IDomainResult<CustomFieldReferenceDto>> Update(string id, CustomFieldUpdateRequest dto);
 
-		Task<IDomainResult<CustomFieldReferenceDto>> Delete(string id);
-	}
+	Task<IDomainResult<CustomFieldReferenceDto>> Delete(string id);
 }

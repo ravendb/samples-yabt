@@ -1,7 +1,6 @@
-﻿namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs
+﻿namespace Raven.Yabt.Domain.BacklogItemServices.ByIdQuery.DTOs;
+
+public class FeatureGetResponse : BacklogItemGetResponseBase
 {
-	public class FeatureGetResponse : BacklogItemGetResponseBase
-	{
-		public string? Description { get; set; }
-	}
+	public string? Description { get; set; }
 }
