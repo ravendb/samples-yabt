@@ -1,12 +1,11 @@
-﻿using System.Text.RegularExpressions;
+﻿using Raven.Client.Documents.Linq;
 
-using Raven.Client;
-using Raven.Client.Documents.Queries;
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Database.Models.BacklogItems;
 using Raven.Yabt.Database.Models.BacklogItems.Indexes;
 using Raven.Yabt.Domain.Common;
+using Raven.Yabt.Domain.Helpers;
 using Raven.Yabt.Domain.UserServices.Command;
 
 namespace Raven.Yabt.Domain.BacklogItemServices.CommentCommands;
@@ -15,87 +14,60 @@ internal class UpdateMentionedUsersInCommentsCommand : BaseDbService, IUpdateUse
 {
 	public UpdateMentionedUsersInCommentsCommand(IAsyncTenantedDocumentSession session): base(session) {}
 
+	/// <inheritdoc/>
 	public void ClearUserId(string userId)
-	{
-		var sanitisedId = GetSanitizedUserId(userId);
+		=> UpdateMentionedUsersInComments(userId, null);
 
-		// Form a patch query
-		var queryString = $@"FROM INDEX '{new BacklogItems_ForList().IndexName}' AS i
-								WHERE i.{nameof(BacklogItemIndexedForList.MentionedUser)}_{sanitisedId} != null
-								UPDATE
-								{{
-									i.{nameof(BacklogItem.Comments)}.forEach(comment => 
-										{{
-											let mentionedUsers = comment.{nameof(Comment.MentionedUserIds)};
-											if (mentionedUsers != null)
-												Object.keys(mentionedUsers).forEach(key =>
-												{{
-													if (mentionedUsers[key].toUpperCase() == $userId.toUpperCase())
-														delete mentionedUsers[key];
-												}});
-											return comment;
-										}});
-								}}";
-		var query = new IndexQuery 
-		{ 
-			Query = queryString,
-			QueryParameters = new Parameters
-			{
-				{ "userId", userId },
-			}
-		};
-
-		// Add the patch to a collection
-		DbSession.AddDeferredPatchQuery(query);
-	}
-		
+	/// <inheritdoc/>
 	public void UpdateReferences(UserReference newUserReference)
+		=> UpdateMentionedUsersInComments(newUserReference.Id, newUserReference);
+
+	private void UpdateMentionedUsersInComments(string? userId, UserReference? userReference)
 	{
-		if (string.IsNullOrEmpty(newUserReference.Id))
+		if (string.IsNullOrEmpty(userId))
 			return;
-
-		var sanitisedId = GetSanitizedUserId(newUserReference.Id);
-
+			
+		var sanitisedId = userId.GetSanitisedIdForPatchQuery();
+		
 		// Form a patch query
-		var queryString = $@"FROM INDEX '{new BacklogItems_ForList().IndexName}' AS i
-								WHERE i.{nameof(BacklogItemIndexedForList.MentionedUser)}_{sanitisedId} != null
-								UPDATE
+		
+// ReSharper disable once ConditionIsAlwaysTrueOrFalse
+#pragma warning disable CS8602, CS8073
+		var idxQuery = DbSession.GetIndexQuery(
+				DbSession.Query<BacklogItemIndexedForList, BacklogItems_ForList>()
+				         .Where(i => i.MentionedUser[sanitisedId] != null)
+			);
+#pragma warning restore CS8073, CS8602
+
+		idxQuery.Query += $@" UPDATE
+						{{
+							this.{nameof(BacklogItem.Comments)}.forEach(comment => 
 								{{
-									i.{nameof(BacklogItem.Comments)}.forEach(comment => 
+									let mentionedUsers = comment.{nameof(Comment.MentionedUserIds)};
+									if (mentionedUsers != null)
+										Object.keys(mentionedUsers).forEach(key =>
 										{{
-											let mentionedUsers = comment.{nameof(Comment.MentionedUserIds)};
-											if (mentionedUsers != null)
-												Object.keys(mentionedUsers).forEach(key =>
-												{{
-													if (mentionedUsers[key].toUpperCase() == $userId.toUpperCase())
-													{{
-														// Replace the element in the dictionary with the new reference  
-														delete mentionedUsers[key];
-														mentionedUsers[$newMention] = $userId;
-														// Replace references in the comment's text
-														let regEx = new RegExp('@'+key,'gi');
-														comment.{nameof(Comment.Message)} = comment.{nameof(Comment.Message)}.replace(regEx, '@'+$newMention);
-													}}
-												}});
-											return comment;
+											if (mentionedUsers[key].toUpperCase() == $userId)
+											{{
+												// Delete old reference
+												delete mentionedUsers[key];
+												// Update reference (if required)
+												if (!!$newMention) {{
+													mentionedUsers[$newMention] = $userId;
+													// Replace references in the comment's text
+													let regEx = new RegExp('@'+key,'gi');
+													comment.{nameof(Comment.Message)} = comment.{nameof(Comment.Message)}.replace(regEx, '@'+$newMention);
+												}}
+											}}
 										}});
-								}}";
-		var query = new IndexQuery
-		{
-			Query = queryString,
-			QueryParameters = new Parameters
-			{
-				{ "userId", newUserReference.Id },
-				{ "newMention", newUserReference.MentionedName },
-			}
-		};
+									return comment;
+								}});
+						}}";
+		// Append parameters rather than overwriting, as it already has some from the strongly-typed WHERE condition 
+		idxQuery.QueryParameters.Add("userId", sanitisedId);
+		idxQuery.QueryParameters.Add("newMention", userReference?.MentionedName);
 
 		// Add the patch to a collection
-		DbSession.AddDeferredPatchQuery(query);
+		DbSession.AddDeferredPatchQuery(idxQuery);
 	}
-		
-	/// <summary>
-	///		Replace invalid characters with empty strings. Can't pass it as a parameter, as string parameters get wrapped in '\"' when inserted
-	/// </summary>
-	private static string GetSanitizedUserId(string userId) =>  Regex.Replace(userId, @"[^\w\.@-]", "");
 }

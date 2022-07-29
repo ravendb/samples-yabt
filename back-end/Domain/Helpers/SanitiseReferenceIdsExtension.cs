@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 using Raven.Yabt.Database.Common.References;
 using Raven.Yabt.Database.Infrastructure;
@@ -61,7 +62,7 @@ internal static class SanitiseReferenceIdsExtension
 
 		if (newRefId == null)
 			return target;
-		var type = target!.GetType();
+		var type = target.GetType();
 			
 		var idProp = type.GetProperty(nameof(IEntityReference.Id));
 		if (idProp == null)
@@ -71,4 +72,11 @@ internal static class SanitiseReferenceIdsExtension
 
 		return target;
 	}
+	
+	/// <summary>
+	///		Remove suspicious symbols and convert to UPPER case 
+	///		Replace invalid characters with empty strings. Can't pass it as a parameter, as string parameters get wrapped in '\"' when inserted
+	/// </summary>
+	internal static string GetSanitisedIdForPatchQuery(this string id) 
+		=> Regex.Replace(id, @"[^\w\.@-]", "").ToUpper();
 }

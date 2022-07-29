@@ -273,11 +273,18 @@ public class AsyncTenantedDocumentSession : IAsyncTenantedDocumentSession
 	#region Processing Deferred Path Queries [PUBLIC, PRIVATE] ------------
 
 	/// <inheritdoc/>
+	public IndexQuery GetIndexQuery<T>(IRavenQueryable<T> queryable)
+	{
+		var inspector = (IRavenQueryInspector)queryable;
+		return inspector.GetIndexQuery(isAsync: true);
+	}
+	
+	/// <inheritdoc/>
 	public void AddDeferredPatchQuery(IndexQuery patchQuery)
 	{
-		var match = Regex.Match(patchQuery.Query, @$"\b{nameof(ITenantedEntity.TenantId)}\b", RegexOptions.IgnoreCase);
-		if (match.Success)
-			throw new ArgumentException("Attempt to access a tenant in RQL");
+		// Consider adding tenant validation in here
+		// E.g. by running Regex.Match(patchQuery.Query, @$"\b{nameof(ITenantedEntity.TenantId)}\b", RegexOptions.IgnoreCase);
+
 		_deferredPatchQueries.Enqueue(patchQuery);
 	}
 		
