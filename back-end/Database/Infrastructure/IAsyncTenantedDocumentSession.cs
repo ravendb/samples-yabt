@@ -123,7 +123,15 @@ public interface IAsyncTenantedDocumentSession : IDisposable
 	#endregion / IAsyncDocumentSession methods ----------------------------
 		
 	#region Patch requests (aka Set based operations) ---------------------
-		
+
+	/// <summary>
+	/// 	Get <see cref="IndexQuery"/> for a strongly-typed query 
+	/// </summary>
+	/// <remarks>
+	///		Leverage a strongly-typed WHERE condition while the UPDATE section is a JavaScript string (https://github.com/ravendb/ravendb/issues/12650)
+	/// </remarks>
+	IndexQuery GetIndexQuery<T>(IRavenQueryable<T> queryable);
+	
 	/// <summary>
 	/// 	Add a RavenDB patch request for executing after calling <see cref="IAsyncDocumentSession.SaveChangesAsync"/> 
 	/// </summary>
