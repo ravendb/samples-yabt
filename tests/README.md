@@ -9,7 +9,7 @@ Integration tests to ensure the expected behaviour around querying/filtering dat
 ## Technology
 * xUnit, NSubstitute
 * RavenDB.TestDriver
-* .NET 5
+* .NET 6
 
 The tests that work against a real embedded _RavenDB_ database.
 
