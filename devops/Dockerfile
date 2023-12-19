@@ -8,12 +8,12 @@ RUN dotnet restore back-end/WebApi/WebApi.csproj \
     && dotnet publish -c Release -o /publish back-end/WebApi/WebApi.csproj \
     && cp devops/run.sh /publish/run.sh
     
-FROM mhart/alpine-node:14 as front-end-build 
+FROM node:lts-alpine3.18 as front-end-build 
 
 WORKDIR /client
 COPY ./front-end /client
-RUN npm install \ 
-    && node_modules/.bin/ng build --prod
+RUN npm install --legacy-peer-deps \
+    && node_modules/.bin/ng build --configuration production
 
 # See the list of tags at https://mcr.microsoft.com/v2/dotnet/aspnet/tags/list
 FROM mcr.microsoft.com/dotnet/aspnet:8.0.0 AS runtime
