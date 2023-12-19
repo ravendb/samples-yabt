@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormControl } from '@angular/forms';
+import { UntypedFormBuilder, UntypedFormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BacklogCustomFieldAction } from '@core/api-models/backlog-item/item/BacklogCustomFieldAction';
 import { ListActionType } from '@core/api-models/common/ListActionType';
@@ -18,13 +18,13 @@ export interface ICustomFieldsAddDialogParams {
 })
 export class CustomFieldsAddDialogComponent implements OnInit {
 	form!: FormGroupTyped<BacklogCustomFieldAction>;
-	customFieldCtrl = new FormControl(null, [CustomValidators.required()]) as FormControlTyped<CustomFieldListGetResponse>;
+	customFieldCtrl = new UntypedFormControl(null, [CustomValidators.required()]) as FormControlTyped<CustomFieldListGetResponse>;
 
 	private subscriptions = new Subscription();
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public dialogParams: ICustomFieldsAddDialogParams,
-		private fb: FormBuilder,
+		private fb: UntypedFormBuilder,
 		private dialogRef: MatDialogRef<CustomFieldsAddDialogComponent>
 	) {}
 

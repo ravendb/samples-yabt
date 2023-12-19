@@ -1,5 +1,5 @@
 import { Directive, Input, ViewChild } from '@angular/core';
-import { ControlContainer, ControlValueAccessor, FormControl, FormControlDirective } from '@angular/forms';
+import { ControlContainer, ControlValueAccessor, UntypedFormControl, FormControlDirective } from '@angular/forms';
 import {AbstractControl, FormControlTyped} from "../../../typings";
 
 @Directive()
@@ -7,7 +7,7 @@ export class CustomFormControlBase<T> implements ControlValueAccessor {
 	@ViewChild(FormControlDirective, { static: true })
 	formControlDirective!: FormControlDirective;
 	@Input()
-	formControl: FormControl | undefined;
+	formControl: UntypedFormControl | undefined;
 	@Input()
 	formControlName: string | undefined;
 
@@ -19,7 +19,7 @@ export class CustomFormControlBase<T> implements ControlValueAccessor {
 		return this.formControl || (!!this.formControlName && this.controlContainer.control?.get(this.formControlName)) || undefined;
 	}
 
-	readonly mainControl: FormControlTyped<T> = new FormControl();
+	readonly mainControl: FormControlTyped<T> = new UntypedFormControl();
 
 	/* View -> model callback called when select has been touched */
 	public onTouched: () => void = () => {};

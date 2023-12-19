@@ -125,6 +125,8 @@
 				}
 			}
 		}
-	},
-	"defaultProject": "yabt"
+  },
+  "cli": {
+    "analytics": false
+  }
 }

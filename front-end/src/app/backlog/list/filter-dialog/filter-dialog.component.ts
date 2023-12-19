@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, Inject } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BacklogItemListGetRequest } from '@core/api-models/backlog-item/list/BacklogItemListGetRequest';
 import { generateFormGroupFromObject } from '@utils/abstract-control';
@@ -16,7 +16,7 @@ export class BacklogFilterDialogComponent implements AfterViewInit {
 	constructor(
 		@Inject(MAT_DIALOG_DATA) private initValue: Partial<BacklogItemListGetRequest>,
 		private dialogRef: MatDialogRef<BacklogFilterDialogComponent>,
-		fb: FormBuilder
+		fb: UntypedFormBuilder
 	) {
 		this.formGroup = generateFormGroupFromObject(fb, initValue);
 	}

@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 import { UserAddUpdRequest, UserGetByIdResponse } from '@core/api-models/user/item';
 import { UsersService } from '@core/api-services/users.service';
@@ -26,7 +26,7 @@ export class UserItemComponent implements OnInit, OnDestroy {
 	constructor(
 		private activatedRoute: ActivatedRoute,
 		private router: Router,
-		private fb: FormBuilder,
+		private fb: UntypedFormBuilder,
 		private apiService: UsersService,
 		private notifyService: NotificationService,
 		private location: Location

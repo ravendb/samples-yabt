@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { BacklogItemListGetResponse } from '@core/api-models/backlog-item/list';
@@ -27,7 +27,7 @@ export class RelatedItemsAddDialogComponent implements OnInit {
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public currentBacklogItemId: string | undefined,
-		private fb: FormBuilder,
+		private fb: UntypedFormBuilder,
 		private backlogService: BacklogItemsService,
 		private dialogRef: MatDialogRef<RelatedItemsAddDialogComponent>
 	) {}
