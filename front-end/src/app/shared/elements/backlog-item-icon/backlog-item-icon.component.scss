@@ -1,3 +1,4 @@
+@use "sass:math";
 @import 'variables';
 
 mat-icon.mat-icon {
@@ -9,7 +10,7 @@ mat-icon.mat-icon {
 	margin-right: 4px;
 	::ng-deep {
 		g {
-			transform: scale($list-component-icon-size / 24px);
+			transform: scale(math.div($list-component-icon-size, 24px));
 		}
 	}
 	&.feature {

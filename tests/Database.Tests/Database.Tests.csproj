@@ -12,4 +12,8 @@
 		<ProjectReference Include="..\..\back-end\Database\Database.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageReference Update="RavenDB.TestDriver" Version="6.0.1" />
+	</ItemGroup>
+
 </Project>

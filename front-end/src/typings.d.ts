@@ -4,6 +4,8 @@
 */
 
 // BASIC TYPES DEFINED IN @angular/forms + rxjs/Observable
+import {FormControlStatus} from "@angular/forms";
+
 type FormGroup = import('@angular/forms').FormGroup;
 type FormArray = import('@angular/forms').FormArray;
 type FormControl = import('@angular/forms').FormControl;
@@ -18,7 +20,7 @@ interface AbstractControlTyped<T> extends AbstractControl {
 	// BASE PROPS AND METHODS COMMON TO ALL FormControl/FormGroup/FormArray
 	readonly value: T;
 	valueChanges: Observable<T>;
-	readonly status: STATUSs;
+	readonly status: FormControlStatus;
 	statusChanges: Observable<STATUS>;
 	get<V = unknown>(path: Array<string | number> | string): AbstractControlTyped<V> | null;
 	setValue<V>(value: V extends T ? V : never, options?: { onlySelf?: boolean; emitEvent?: boolean }): void;
@@ -30,7 +32,7 @@ interface FormControlTyped<T> extends FormControl {
 	// COPIED FROM AbstractControlTyped<T> BECOUSE TS NOT SUPPORT MULPILE extends FormControl, AbstractControlTyped<T>
 	readonly value: T;
 	valueChanges: Observable<T>;
-	readonly status: STATUSs;
+	readonly status: FormControlStatus;
 	statusChanges: Observable<STATUS>;
 	get<V = unknown>(path: Array<string | number> | string): AbstractControlTyped<V> | null;
 	setValue<V>(value: V extends T ? V : never, options?: { onlySelf?: boolean; emitEvent?: boolean }): void;
@@ -56,7 +58,7 @@ interface FormGroupTyped<T> extends FormGroup {
 	// COPIED FROM AbstractControlTyped<T> BECOUSE TS NOT SUPPORT MULPILE extends FormGroup, AbstractControlTyped<T>
 	readonly value: T;
 	valueChanges: Observable<T>;
-	readonly status: STATUSs;
+	readonly status: FormControlStatus;
 	statusChanges: Observable<STATUS>;
 	get<V = unknown>(path: Array<string | number> | string): AbstractControlTyped<V> | null;
 	setValue<V>(value: V extends T ? V : never, options?: { onlySelf?: boolean; emitEvent?: boolean }): void;
@@ -75,7 +77,7 @@ interface FormArrayTyped<T> extends FormArray {
 	// COPIED FROM AbstractControlTyped<T[]> BECOUSE TS NOT SUPPORT MULPILE extends FormArray, AbastractControlTyped<T[]>
 	readonly value: T[];
 	valueChanges: Observable<T[]>;
-	readonly status: STATUSs;
+	readonly status: FormControlStatus;
 	statusChanges: Observable<STATUS>;
 	get<V = unknown>(path: Array<string | number> | string): AbstractControlTyped<V> | null;
 	setValue<V>(value: V extends T[] ? V : never, options?: { onlySelf?: boolean; emitEvent?: boolean }): void;

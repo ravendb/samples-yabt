@@ -1,6 +1,7 @@
 import { Component, Input, ViewChild } from '@angular/core';
 import { AbstractControl, ControlContainer, ControlValueAccessor, FormControlDirective, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { get, has } from 'lodash-es';
+import {FormControl} from "../../../typings";
 
 @Component({
 	selector: 'error-messages',
@@ -48,9 +49,9 @@ export class ErrorMessagesComponent implements ControlValueAccessor {
 			  });
 	}
 
-	/* 
-		Resolve FormControl instance no matter `formControl` or `formControlName` is given. 
-		If formControlName is given, then this.controlContainer.control is the parent FormGroup (or FormArray) instance. 
+	/*
+		Resolve FormControl instance no matter `formControl` or `formControlName` is given.
+		If formControlName is given, then this.controlContainer.control is the parent FormGroup (or FormArray) instance.
 	*/
 	private getControl(): AbstractControl | undefined {
 		return this.formControl || (!!this.formControlName && this.controlContainer.control?.get(this.formControlName)) || undefined;

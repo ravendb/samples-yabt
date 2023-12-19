@@ -1,9 +1,10 @@
 import { Directive, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { UntypedFormControl } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { debounceTime, delay, distinctUntilChanged, switchMap, take, tap } from 'rxjs/operators';
 import { IKeyValuePair } from '../ikey-value-pair';
 import { BaseFilterButtonComponent } from './base-filter-button.component';
+import {FormControlTyped, Observable} from "../../../../typings";
 
 @Directive()
 export abstract class BaseSearchableFilterButtonComponent<TKey> extends BaseFilterButtonComponent<TKey> implements OnInit, OnDestroy {
@@ -13,7 +14,7 @@ export abstract class BaseSearchableFilterButtonComponent<TKey> extends BaseFilt
 	search: ((term: string) => Observable<IKeyValuePair[]>) | undefined;
 
 	loading = false;
-	searchCtrl: FormControlTyped<string> = new FormControl('');
+	searchCtrl: FormControlTyped<string> = new UntypedFormControl('');
 
 	protected _subscriptions: Subscription = new Subscription();
 

@@ -1,10 +1,10 @@
-@use '~@angular/material' as mat;
+@use '@angular/material' as mat;
 @import url('//fonts.googleapis.com/icon?family=Material+Icons|Material+Icons+Outlined');
 @import url('//fonts.googleapis.com/css?family=Roboto:300,400,500&display=swap');
 
 @import 'theme';
 
-/* 
+/*
 	Theming guidance - https://material.angular.io/guide/theming-your-components
 */
 // Include non-theme styles for core.

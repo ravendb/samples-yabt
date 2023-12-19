@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { BacklogItemListGetRequest } from '@core/api-models/backlog-item/list/BacklogItemListGetRequest';
 import { CurrentUserRelations } from '@core/api-models/backlog-item/list/CurrentUserRelations';
@@ -18,7 +18,7 @@ export class FilterBarComponent extends FilterBarComponentBase<BacklogItemListGe
 		return { key, value: CurrentUserRelations[key as keyof typeof CurrentUserRelations] };
 	});
 
-	constructor(private dialog: MatDialog, fb: FormBuilder) {
+	constructor(private dialog: MatDialog, fb: UntypedFormBuilder) {
 		super(fb);
 	}
 

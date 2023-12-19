@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { UntypedFormBuilder } from '@angular/forms';
 import { UserListGetRequest } from '@core/api-models/user/list';
 import { FilterBarComponentBase } from '@shared/filters/filter-bar-base.component';
 
@@ -9,7 +9,7 @@ import { FilterBarComponentBase } from '@shared/filters/filter-bar-base.componen
 	templateUrl: './user-filters.component.html',
 })
 export class UserFiltersComponent extends FilterBarComponentBase<UserListGetRequest> {
-	constructor(fb: FormBuilder) {
+	constructor(fb: UntypedFormBuilder) {
 		super(fb);
 	}
 }

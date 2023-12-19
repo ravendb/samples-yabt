@@ -5,6 +5,7 @@ import { UserReference } from '@core/api-models/common/references';
 import { BacklogItemsService } from '@core/api-services/backlogItems.service';
 import { NotificationService } from '@core/notification/notification.service';
 import { filter, switchMap } from 'rxjs/operators';
+import {Observable} from "../../../../typings";
 
 @Component({
 	selector: 'backlog-item-comment',
