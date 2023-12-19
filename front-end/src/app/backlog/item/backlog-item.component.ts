@@ -21,6 +21,7 @@ import { Observable, of, Subscription } from 'rxjs';
 import { filter, map, switchMap, take, tap } from 'rxjs/operators';
 import { BacklogItemReadonlyProperties } from './backlog-item-readonly-properties';
 import { BacklogItemFullHistoryDialogComponent } from './ui-elements/full-history-dialog/full-history-dialog.component';
+import {FormGroupTyped} from "../../../typings";
 
 @Component({
 	templateUrl: './backlog-item.component.html',

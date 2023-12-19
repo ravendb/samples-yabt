@@ -5,6 +5,7 @@ import { generateFormGroupFromObject } from '@utils/abstract-control';
 import { isArray, isEmpty, isNil, map } from 'lodash-es';
 import { merge, Subscription } from 'rxjs';
 import { delay, distinctUntilChanged } from 'rxjs/operators';
+import {AbstractControl, FormGroupTyped} from "../../../typings";
 
 @Directive()
 export class FilterBarComponentBase<TFilter extends ListRequest> implements OnInit, OnDestroy {

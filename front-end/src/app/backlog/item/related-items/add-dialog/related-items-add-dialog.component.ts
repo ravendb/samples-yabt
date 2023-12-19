@@ -10,6 +10,7 @@ import { IKeyValuePair } from '@shared/filters';
 import { CustomValidators } from '@utils/custom-validators';
 import { debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { BacklogRelationshipActionEx } from '../BacklogRelationshipActionEx';
+import {FormGroupTyped} from "../../../../../typings";
 
 @Component({
 	templateUrl: './related-items-add-dialog.component.html',

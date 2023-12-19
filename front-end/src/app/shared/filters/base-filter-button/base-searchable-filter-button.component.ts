@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { debounceTime, delay, distinctUntilChanged, switchMap, take, tap } from 'rxjs/operators';
 import { IKeyValuePair } from '../ikey-value-pair';
 import { BaseFilterButtonComponent } from './base-filter-button.component';
+import {FormControlTyped, Observable} from "../../../../typings";
 
 @Directive()
 export abstract class BaseSearchableFilterButtonComponent<TKey> extends BaseFilterButtonComponent<TKey> implements OnInit, OnDestroy {

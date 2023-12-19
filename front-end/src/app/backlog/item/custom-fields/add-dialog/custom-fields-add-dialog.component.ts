@@ -6,6 +6,7 @@ import { ListActionType } from '@core/api-models/common/ListActionType';
 import { CustomFieldListGetResponse } from '@core/api-models/custom-field/list';
 import { CustomValidators } from '@utils/custom-validators';
 import { Subscription } from 'rxjs';
+import {FormControlTyped, FormGroupTyped} from "../../../../../typings";
 
 export interface ICustomFieldsAddDialogParams {
 	availableFields: CustomFieldListGetResponse[] | undefined;

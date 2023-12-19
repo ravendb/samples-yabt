@@ -8,6 +8,7 @@ import { BacklogItemsService } from '@core/api-services/backlogItems.service';
 import { UsersService } from '@core/api-services/users.service';
 import { IKeyValuePair } from '@shared/filters';
 import { map } from 'rxjs/operators';
+import {FormGroupTyped, Observable} from "../../../../typings";
 
 @Component({
 	selector: 'backlog-filters',

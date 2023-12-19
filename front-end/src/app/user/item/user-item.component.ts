@@ -9,6 +9,7 @@ import { NotificationService } from '@core/notification/notification.service';
 import { CustomValidators } from '@utils/custom-validators';
 import { of, Subscription } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
+import {FormGroupTyped} from "../../../typings";
 
 @Component({
 	templateUrl: './user-item.component.html',

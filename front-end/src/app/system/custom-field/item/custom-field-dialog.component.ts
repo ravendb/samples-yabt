@@ -13,6 +13,7 @@ import { CustomValidators } from '@utils/custom-validators';
 import { of, Subscription } from 'rxjs';
 import { filter, switchMap, take } from 'rxjs/operators';
 import { IDialogData } from './IDialogData';
+import {FormGroupTyped} from "../../../../typings";
 
 @Component({
 	styleUrls: ['./custom-field-dialog.component.scss'],

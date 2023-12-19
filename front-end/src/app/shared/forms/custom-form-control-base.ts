@@ -1,5 +1,6 @@
 import { Directive, Input, ViewChild } from '@angular/core';
 import { ControlContainer, ControlValueAccessor, FormControl, FormControlDirective } from '@angular/forms';
+import {AbstractControl, FormControlTyped} from "../../../typings";
 
 @Directive()
 export class CustomFormControlBase<T> implements ControlValueAccessor {
@@ -10,9 +11,9 @@ export class CustomFormControlBase<T> implements ControlValueAccessor {
 	@Input()
 	formControlName: string | undefined;
 
-	/* 
-		Resolve FormControl instance no matter `formControl` or `formControlName` is given. 
-		If formControlName is given, then this.controlContainer.control is the parent FormGroup (or FormArray) instance. 
+	/*
+		Resolve FormControl instance no matter `formControl` or `formControlName` is given.
+		If formControlName is given, then this.controlContainer.control is the parent FormGroup (or FormArray) instance.
 	*/
 	get control(): AbstractControl | undefined {
 		return this.formControl || (!!this.formControlName && this.controlContainer.control?.get(this.formControlName)) || undefined;
