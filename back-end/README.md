@@ -44,7 +44,7 @@ Once you can run tests of the solutions, it's time to spin off a database and ru
       2. [download](https://ravendb.net/download) and install locally for your OS or Docker.
    2. Create a new database on the _RavenDB_ server ([see the docs](https://ravendb.net/docs/article-page/latest/csharp/studio/server/databases/create-new-database/general-flow)).
    3. Import test data from `/documentation/exported_data.ravendbdump` file ([see the docs](https://ravendb.net/docs/article-page/latest/csharp/studio/database/tasks/import-data/import-data-file))
-   4. Set the address to the _RavenDB_ server and the DB name in `./back-end/WebApi/appsettings.Development.json`.
+   4. Set the DbName and put your database server url in the RavenDbUrls array in `./back-end/WebApi/appsettings.Development.json`.
 2. Launch the solution (the `WebAPI` project).
 3. Open `https://localhost:5001/swagger` in the browser.
 
