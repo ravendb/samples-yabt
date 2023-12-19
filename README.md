@@ -10,8 +10,8 @@
 ![Screenshot](./documentation/screenshot.png)
 
 ## Technologies
-* ASP.NET Core 6
-* RavenDB 5.3
+* ASP.NET Core 8
+* RavenDB 6.0.1
 * Angular 12
 
 It has minimum third-party dependencies and heaps of best practices.

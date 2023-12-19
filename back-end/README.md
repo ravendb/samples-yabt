@@ -2,8 +2,8 @@
 
 ## Technologies
 
-- ASP .NET Core 6
-- RavenDB 5.3
+- ASP .NET Core 8
+- RavenDB 6.0.1
 
 It has minimum third-party dependencies and heaps of best practices like the [Domain Driven Design](https://en.wikipedia.org/wiki/Domain-driven_design) (DDD), [Command Query Responsibility Segregation](https://martinfowler.com/bliki/CQRS.html) (CQRS), etc.
 
@@ -28,8 +28,8 @@ Firstly, check out the GIT repo.
 
 ### Compile and run the tests
 
-1. Install [.NET SDK](https://dotnet.microsoft.com/download) v6.x.<br>
-   Note that while the back-end would run on any version of .NET 6, the embedded _RavenDB_ used for the test project has a strong dependency on the _.NET SDK_ version. Check the required version in the [GitHub Action](../.github/workflows/dotnet-core.yml) used to run tests.
+1. Install [.NET SDK](https://dotnet.microsoft.com/download) v8.x.<br>
+   Note that while the back-end would run on any version of .NET 8, the embedded _RavenDB_ used for the test project has a strong dependency on the _.NET SDK_ version. Check the required version in the [GitHub Action](../.github/workflows/dotnet-core.yml) used to run tests.
 
 2. Open the solution and run the tests located under ['./tests'](../tests/) folder.<br>
    The tests that work against a real embedded _RavenDB_ database and cover multiple scenarios.
