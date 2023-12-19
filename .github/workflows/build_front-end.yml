@@ -22,5 +22,5 @@ jobs:
     - name: npm install and build
       run: |
         npm install
-        npm run build -- --prod
+        npm run build -- --configuration production
       working-directory: front-end
