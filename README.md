@@ -12,7 +12,7 @@
 ## Technologies
 * ASP.NET Core 8
 * RavenDB 6.0.1
-* Angular 12
+* Angular 14
 
 It has minimum third-party dependencies and heaps of best practices.
 
