@@ -34,7 +34,7 @@ export class TagsComponent extends CustomFormControlBase<string[]> {
 	}
 
 	add(event: MatChipInputEvent): void {
-		const input = event.input;
+		const input = event.chipInput?.inputElement;
 		const value = event.value;
 
 		// Add a new tag
@@ -59,6 +59,12 @@ export class TagsComponent extends CustomFormControlBase<string[]> {
 	}
 
 	selected(event: MatAutocompleteSelectedEvent): void {
-		this.add({ input: this.tagsInput.nativeElement, value: event.option.viewValue });
+		const value = event.option.viewValue;
+		if ((value || '').trim()) {
+			this.mainControl.setValue([...this.mainControl.value, value.trim()]);
+			this.mainControl.updateValueAndValidity();
+		}
+
+		this.tagsInput.nativeElement.value = '';
 	}
 }
