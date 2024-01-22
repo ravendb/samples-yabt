@@ -40,6 +40,8 @@ public class Startup
 		services.AddAndConfigureSwagger(settings.UserApiKey);
 
 		services.AddApplicationInsightsTelemetry();
+		
+		services.AddHttpLogging(_ => { });
 	}
 
 	/// <summary>
