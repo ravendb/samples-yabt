@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Raven.Client.Documents;
 using Raven.Client.Documents.Indexes;
 using Raven.Client.Documents.Session;
+using Raven.Embedded;
 using Raven.TestDriver;
 using Raven.Yabt.Database.Infrastructure;
 using Raven.Yabt.Domain.Infrastructure;
@@ -17,6 +18,20 @@ namespace Raven.Yabt.Domain.Tests;
 /// </summary>
 public abstract class ConfigureTestEnvironment : RavenTestDriver
 {
+	static ConfigureTestEnvironment()
+	{
+		// The embedded test server doesn't need a real license; restore the
+		// pre-6.2 behaviour of silently running unlicensed rather than
+		// throwing LicenseExpiredException.
+		ConfigureServer(new TestServerOptions
+		{
+			Licensing = new ServerOptions.LicensingOptions
+			{
+				ThrowOnInvalidOrMissingLicense = false
+			}
+		});
+	}
+
 	protected IServiceProvider Container { get; }
 	protected IAsyncTenantedDocumentSession DbSession => Container.GetRequiredService<IAsyncTenantedDocumentSession>();
 	protected IDocumentStore DbStore => Container.GetRequiredService<IDocumentStore>();
