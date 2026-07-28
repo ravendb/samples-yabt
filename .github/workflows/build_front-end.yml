@@ -21,6 +21,6 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
     - name: npm install and build
       run: |
-        npm install
+        npm install --legacy-peer-deps
         npm run build -- --configuration production
       working-directory: front-end
