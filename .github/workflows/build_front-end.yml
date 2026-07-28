@@ -1,7 +1,7 @@
 name: Build front-end
 
 env:
-  NODE_VERSION: '14.x'
+  NODE_VERSION: '20.x'
 
 on:
   push:
@@ -14,9 +14,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Use Node.js ${{ env.NODE_VERSION }}
-      uses: actions/setup-node@v1
+      uses: actions/setup-node@v4
       with:
         node-version: ${{ env.NODE_VERSION }}
     - name: npm install and build
