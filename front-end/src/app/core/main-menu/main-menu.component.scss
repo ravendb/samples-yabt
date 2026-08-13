@@ -35,8 +35,8 @@ mat-sidenav-container.mat-drawer-container {
 			height: $toolbar-height;
 			img.logo {
 				height: 36px;
-				width: 36px;
-				margin: -6px;
+				width: auto;
+				margin: -6px 0;
 			}
 			span {
 				margin-left: 16px;
