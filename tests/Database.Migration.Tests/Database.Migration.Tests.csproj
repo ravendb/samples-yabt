@@ -10,7 +10,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="RavenMigrations" Version="5.0.1" />
-		<PackageReference Update="RavenDB.TestDriver" Version="7.2.5" />
+		<PackageReference Update="RavenDB.TestDriver" Version="7.2.6" />
 	</ItemGroup>
 
 	<ItemGroup>
