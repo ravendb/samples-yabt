@@ -13,7 +13,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Update="RavenDB.TestDriver" Version="7.2.5" />
+	  <PackageReference Update="RavenDB.TestDriver" Version="7.2.6" />
 	</ItemGroup>
 
 </Project>
